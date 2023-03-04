@@ -1,0 +1,52 @@
+/****** Colores ******/
+/* Fondo #D9D9D9 */
+
+/****** Letra ******/
+/* font-family: 'Roboto', sans-serif; */
+/* Thin 100 */
+/* Light 300 */
+/* Regular 400 */
+
+
+.navbar {
+    background-color: #D9D9D9;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 70px;
+    align-items: center;
+    padding: 5px 30px;
+}
+
+.imageLogo {
+    padding-left: 100px;
+
+}
+
+.imageLogo img {
+    width: 288px;
+    height: 80;
+}
+
+.user {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 14px;
+    padding-right: 130px;
+    margin-top: 10px;
+}
+
+.user h3 {
+    margin-top: 40px;
+    margin-right: 10px;
+    font-weight: 300;
+}
+
+.user .iconUser {
+    width: 64px;
+    height: 64px;
+}

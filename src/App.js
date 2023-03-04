@@ -1,11 +1,17 @@
+
 import './App.css';
+import Footer from './components/Footer';
+import Navbar from './components/Navbar';
+import {Section} from './components/Section';
 
 
 function App() {
   return (
-    <div className="App">
-      <h1>LogisticMedApp</h1>
-    </div>
+    <>
+      <Navbar />
+      <Section />
+      <Footer/>
+    </>
   );
 }
 
