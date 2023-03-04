@@ -1,0 +1,19 @@
+.section {
+    background-color: #C7DCC7;
+    display: flex;
+    text-align: center;
+    align-items: center;
+}
+
+.section img {
+    height: 315px;
+    width: 600px;
+    padding: 70px;
+    top: 510px;
+    border-radius: 0px;
+}
+.section h2 {
+    font-size: 40px;
+    font-weight: 400;
+    padding-right: 100px;
+}
