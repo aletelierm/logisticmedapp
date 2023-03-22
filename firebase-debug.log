@@ -1,0 +1,25 @@
+[debug] [2023-03-04T21:44:22.249Z] ----------------------------------------------------------------------
+[debug] [2023-03-04T21:44:22.251Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\aletelier\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init hosting
+[debug] [2023-03-04T21:44:22.252Z] CLI Version:   11.24.0
+[debug] [2023-03-04T21:44:22.252Z] Platform:      win32
+[debug] [2023-03-04T21:44:22.252Z] Node Version:  v16.17.1
+[debug] [2023-03-04T21:44:22.253Z] Time:          Sat Mar 04 2023 18:44:22 GMT-0300 (hora de verano de Chile)
+[debug] [2023-03-04T21:44:22.254Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-03-04T21:44:22.336Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-03-04T21:44:22.337Z] > authorizing via signed-in user (almlogistico@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\aletelier\Desktop\Proyectos\logisticmedapp
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
