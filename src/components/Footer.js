@@ -1,5 +1,5 @@
 import React from 'react';
-import './footer.css'
+import '../styles/footer.css'
 import { FaWhatsapp } from "react-icons/fa";
 import { TfiEmail } from "react-icons/tfi";
 import { FiPhoneCall } from "react-icons/fi";

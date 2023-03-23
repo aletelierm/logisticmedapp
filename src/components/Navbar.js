@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { BiUserCircle } from "react-icons/bi";
-import './navbar.css'
+import '../styles/navbar.css'
 
 const Navbar = () => {
     return (
