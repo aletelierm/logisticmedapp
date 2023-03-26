@@ -1,45 +1,46 @@
 import React, { useState } from 'react';
 import { FaTh,FaUserAlt,FaRegChartBar,FaCommentAlt, FaShoppingBag, FaBars } from 'react-icons/fa'
 import { NavLink } from 'react-router-dom';
+import '../App.css'
 
 const SideBar = ({children}) => {
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
     const toggle = ()=> setIsOpen(!isOpen);
-
     const menuItem = [
         {
-            path:"/equipos",
+            path:"/home/equipos",
             name: "Mis Equipos",
             icon: <FaTh/>
         },
         {
-            path:"/entradas",
+            path:"/home/entradas",
             name: "Mis Entradas",
             icon: <FaUserAlt/>
         },
         {
-            path:"/salidas",
+            path:"/home/salidas",
             name: "Mis Salidas",
             icon: <FaRegChartBar/>
         },
         {
-            path:"/clientes",
+            path:"/home/clientes",
             name: "Mis Clientes",
             icon: <FaCommentAlt/>
         },
         {
-            path:"/proveedores",
+            path:"/home/proveedores",
             name: "Mis Proveedores",
             icon: <FaShoppingBag/>
         },
         {
-            path:"/usuarios",
+            path:"/home/usuarios",
             name: "Usuarios",
             icon: <FaUserAlt/>
         }
     ]
     return (
+       
         <div className='container'>
            <div style={{width: isOpen ? "300px" : "50px"}} className='sidebar'>
                 <div className='top_section'>
@@ -57,8 +58,11 @@ const SideBar = ({children}) => {
                     ))
                 }                
            </div>
-           <main>{children}</main>
+           <main>
+                {children}
+           </main>
         </div>
+        
     );
 };
 
