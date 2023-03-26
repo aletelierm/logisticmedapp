@@ -5,7 +5,7 @@ import Section from "./Section"
 
 const Landing = () => {
     return (
-        <div>
+        <div className="contenedor-landing">
             <Navbar/>
             <Section/>
             <Footer/>

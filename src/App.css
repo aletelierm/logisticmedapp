@@ -14,11 +14,13 @@
   }
   
   .sidebar{
-    background-color: #C7DCC7;
+    background-color: #E8F3EB;
     color: #000;
     height: 87vh;
     width: 300px;
     transition: all 0,5s;
+    border: 1px solid;
+    border-color: #31A036;
   }
   .top_section{
     display: flex;
@@ -28,11 +30,13 @@
   
   .logo{
     font-size: 25px;
+    
   }
   .bars{
     display: flex;
     margin-left: 50px;
     font-size: 25px;
+    color:#16B9CF;
   }
   .link{
     display: flex;
