@@ -1,9 +1,12 @@
 
 import React from 'react';
 import { BiUserCircle } from "react-icons/bi";
+import { useNavigate } from 'react-router-dom';
 import '../styles/navbar.css'
 
 const Navbar = () => {
+
+    const navigate = useNavigate();
     return (
         <>
             <div className='navbar'>
@@ -12,7 +15,7 @@ const Navbar = () => {
                 </div>
                 <div className='user'>
                     <h3>Iniciar Sesion</h3>
-                    <div className='icon'>
+                    <div className='icon' onClick={()=> navigate('/home')}>
                         <BiUserCircle className='iconUser' />
                     </div>
                 </div>
