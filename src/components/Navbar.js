@@ -2,6 +2,7 @@
 import React, {useState} from 'react';
 import { BiUserCircle } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
+// import Login from '../components/Login'
 import '../styles/navbar.css'
 
 const Navbar = () => {
@@ -11,7 +12,7 @@ const Navbar = () => {
 
     const handleChange = ()=>{
             setSesion(false);
-            navigate('/home');
+            navigate('/login');
 
     }
 
