@@ -35,18 +35,22 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 14px;
+    font-size: 20px;
     padding-right: 130px;
     margin-top: 10px;
+    
 }
 
 .user h3 {
-    margin-top: 40px;
+  /*   margin-top: 40px; */
     margin-right: 10px;
     font-weight: 300;
+    font-size: 30px;
 }
 
 .user .iconUser {
     width: 64px;
-    height: 64px;
+    height: 64px;    
+    color:#16B9CF;
+    cursor: pointer;
 }
