@@ -21,7 +21,6 @@
 
 .imageLogo {
     padding-left: 100px;
-
 }
 
 .imageLogo img {
@@ -38,11 +37,10 @@
     font-size: 20px;
     padding-right: 130px;
     margin-top: 10px;
-    
 }
 
 .user h3 {
-  /*   margin-top: 40px; */
+    /*   margin-top: 40px; */
     margin-right: 10px;
     font-weight: 300;
     font-size: 30px;
@@ -50,7 +48,89 @@
 
 .user .iconUser {
     width: 64px;
-    height: 64px;    
-    color:#16B9CF;
+    height: 64px;
+    color: #16B9CF;
     cursor: pointer;
+}
+
+@media screen and (max-width: 576px){
+    .navbar {
+        display: flex;
+        align-items: center;
+        padding: 5px 0px;
+    }
+
+    .imageLogo {
+        padding-left: 20px;
+    }
+
+    .imageLogo img {
+        width: 208px;
+        height: 5;
+    }
+
+    .user {
+        padding-right: 20px;
+    }
+
+    .user h3 {
+        font-size: 15px;
+        margin-right: 0;
+    }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+    .navbar {
+        display: flex;
+        align-items: center;
+        padding: 5px 0px;
+    }
+
+    .imageLogo {
+        padding-left: 20px;
+    }
+
+    .imageLogo img {
+        width: 248px;
+        height: 40;
+    }
+
+    .user {
+        padding-right: 20px;
+    }
+
+    .user h3 {
+        font-size: 20px;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px){
+    .navbar {
+        display: flex;
+        align-items: center;
+        padding: 5px 0px;
+    }
+
+    .imageLogo {
+        padding-left: 60px;
+    }
+
+    .user {
+        padding-right: 60px;
+    }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1024px) {
+    .navbar {
+        display: flex;
+        padding: 5px 25px;
+    }
+
+    .imageLogo {
+        padding-left: 100px;
+    }
+
+    .user {
+        padding-right: 80px;
+    }
 }
