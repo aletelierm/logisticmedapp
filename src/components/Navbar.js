@@ -8,10 +8,10 @@ import '../styles/navbar.css'
 const Navbar = () => {
 
     const navigate = useNavigate();
-    const [sesion, setSesion] = useState(true);
+    const [sesion, setSesion] = useState(false);
 
     const handleChange = ()=>{
-            setSesion(false);
+            setSesion(true);
             navigate('/login');
 
     }
@@ -24,7 +24,7 @@ const Navbar = () => {
                     <img src='./logo2.png' alt='Logo' />
                 </div>
                 <div className='user'>
-                    {sesion ? <h3>Iniciar Sesion</h3> : <h3>Cerrar Sesion</h3>}
+                    {!sesion ? <h3>Iniciar Sesion</h3> : <h3>Cerrar Sesion</h3>}
                    
                     <div className='icon' onClick={()=> handleChange()}>
                         <BiUserCircle className='iconUser' />
