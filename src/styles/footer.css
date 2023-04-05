@@ -16,7 +16,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 40px;
+    padding: 5px 40px;
 }
 
 .footer h2 {
@@ -44,3 +44,113 @@
     display: inline-block;
 }
 
+
+@media screen and (max-width: 576px) {
+    .footer {
+        text-align: center;
+        flex-direction: column;
+        padding: 5px 20px;
+    }
+
+    .footer h2 {
+        font-size: 30px;
+        padding: 20px;
+    }
+
+    .contact{
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .contact li{
+        padding-bottom: 10px;
+        font-size: 12px;
+        text-align: center;
+        margin-right: 60px;
+    }
+    
+    .reserved-right h4 {
+        text-align: center;
+        font-size: 10px;
+        padding-top: 15px;
+    }
+}
+
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        padding: 5px 20px;
+    }
+
+    .footer h2 {
+        font-size: 30px;
+        padding: 10px;
+    }
+
+    .contact li{
+        padding-left: 20px;
+        font-size: 15px;
+    }
+    
+    .reserved-right h4 {
+        font-size: 10px;
+        padding-top: 15px;
+    }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+    .footer {
+        padding: 5px 15px;
+    }
+
+    .footer h2 {
+        font-size: 30px;
+    }
+
+    .contact li{
+        padding-left: 15px;
+        font-size: 12px;
+    }
+    
+    .reserved-right h4 {
+        font-size: 10px;
+        padding-top: 25px;
+    }
+}
+
+
+@media screen and (min-width: 992px) and (max-width: 1024px) {    
+    .footer h2 {
+        font-size: 25px;
+    }
+
+    .contact li{
+        padding-left: 30px;
+        font-size: 16px;
+    }
+    
+    .reserved-right h4 {
+        font-size: 10px;
+        padding-top: 40px;
+    }
+}
+
+
+@media screen and (min-width: 1024px) and (max-width: 1280px) {    
+    .footer h2 {
+        font-size: 35px;
+    }
+
+    .contact li{
+        padding-left: 30px;
+        font-size: 17px;
+    }
+    
+    .reserved-right h4 {
+        font-size: 10px;
+        padding-top: 25px;
+    }
+}

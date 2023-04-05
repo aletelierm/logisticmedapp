@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, getAuth } from "firebase/auth";
+
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
@@ -18,3 +20,17 @@ const auth = getAuth();
 const db = getFirestore();
 
 export {db, auth};
+
+export const recovery = async (email) => {
+  const auth = getAuth(app);
+  return sendPasswordResetEmail(auth, email);
+}
+  
+
+export const createUser = async (email, password) => {
+    return createUserWithEmailAndPassword(getAuth(app), email, password);
+  }
+  
+  export const signInUser = async (email, password) => {
+    return signInWithEmailAndPassword(getAuth(app), email, password);
+  }
