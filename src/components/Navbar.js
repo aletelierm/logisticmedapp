@@ -16,7 +16,7 @@ const Navbar = () => {
 
     }
 
-    console.log('Valor de la sesion',sesion)
+    
     return (
         <>
             <div className='navbar'>

@@ -30,7 +30,7 @@ const SideBar = ({children}) => {
                     
                 }  */}
                 {DataMenu.map((item, index) => {
-                return  < div className='link'>  
+                return  < div className='link' key={index}>  
                          {/*    <div className='icoon'>{item.icon}</div> */}
                             {/* <div style={{display: isOpen ? "block" : "none"}} className='link_text'><SubMenu item={item} key={index} /></div> */}
                             <div className='link_text'>

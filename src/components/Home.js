@@ -19,7 +19,7 @@ export const Home = () => {
     <Navbar/>  
     <SideBar>    
     <Routes>
-            <Route path="/equipos" element={<Equipos/>}/>
+            <Route path="/home/misequipos" element={<Equipos/>}/>
             <Route path="/entradas" element={<Entradas/>}/>
             <Route path="/salidas" element={<Salidas/>}/>
             <Route path="/clientes" element={<Clientes/>}/>
