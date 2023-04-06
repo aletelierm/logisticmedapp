@@ -21,7 +21,7 @@ export const DataMenu = [
       },
       {
         title: 'Agregar Tipo',
-        path: '/home/misequipos/agregarcategoria',
+        path: '/home/misequipos/agregartipo',
         icon: <IoIcons.IoMdAddCircleOutline />
       },
       {
@@ -36,7 +36,7 @@ export const DataMenu = [
       },
       {
         title: 'Crear Equipos',
-        path: '/home/misequipos/productos',
+        path: '/home/misequipos/crearequipo',
         icon: <IoIcons.IoIosCreate />
       }
     ]
