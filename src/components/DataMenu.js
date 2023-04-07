@@ -79,7 +79,7 @@ export const DataMenu = [
  
   {
     title: 'Servicio Tecnico',
-    path: '/home/messages',
+    path: '/home/tecnico',
     icon: <MdIcons.MdMedicalServices />,
 
     iconClosed: <RiIcons.RiArrowDownSFill />,
@@ -103,7 +103,7 @@ export const DataMenu = [
       },
       {
         title: 'Ejecutar Mant.',
-        path: '/home/ejecutar',
+        path: '/home/mantenimiento',
         icon: <IoIcons.IoIosPlay />
       }
     ]

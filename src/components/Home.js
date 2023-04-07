@@ -34,7 +34,7 @@ export const Home = () => {
             <Route path="/salidas" element={<Salidas/>}/>
             <Route path="/clientes" element={<Clientes/>}/>
             <Route path="/proveedores" element={<Proveedores/>}/>
-            <Route path="/usuarios" element={<Usuarios/>}/>           
+            <Route path="/registrarusuarios" element={<Usuarios/>}/>           
     </Routes>
     </SideBar>
     
