@@ -3,32 +3,29 @@ import '../styles/agregarFamilia.css'
 
 const AgregarModelo = () => {
 
-    const [inputFamily, setInputFamily] = useState('')
+    const [inputModelo, setInputModelo] = useState('')
 
     const handleChange = (e) => {
         if (e.target.name === 'familia') {
-            setInputFamily(e.target.value);
+            setInputModelo(e.target.value);
         } else {
-            alert('Esta Familia ya fue ingresada');
+            alert('Este Modelo ya fue ingresada');
         }
     }
 
     return (
         <div className='containerFamily'>
-            <h2 className='titleForm'>Modelo</h2>
+            <h2 className='titleForm'>Modelo de Equipos</h2>
             <div>
-                <div>
-                    <h4>Creación de Modelo</h4>
-                </div>
                 <form action='' className='formulario'>
                     <div>
-                        <label htmlFor='usuario' className='label'>Nombre Familia Equipamiento Medico</label>
+                        <label htmlFor='modelo' className='label'>Agregar Modelo</label>
                         <input
                             type='text'
-                            name='familia'
-                            id='familia'
-                            placeholder='Ingrese Familia'
-                            value={inputFamily}
+                            name='modelo'
+                            id='modelo'
+                            placeholder='Ingrese Modelo Equipamiento Médico'
+                            value={inputModelo}
                             onChange={handleChange}
                             className='input'
                         />

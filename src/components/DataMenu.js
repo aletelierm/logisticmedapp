@@ -25,13 +25,13 @@ export const DataMenu = [
         icon: <IoIcons.IoMdAddCircleOutline />
       },
       {
-        title: 'Agregar Modelo',
-        path: '/home/misequipos/agregarmodelo',
+        title: 'Agregar Marca',
+        path: '/home/misequipos/agregarmarca',
         icon: <IoIcons.IoMdAddCircleOutline />
       },
       {
-        title: 'Agregar Marca',
-        path: '/home/misequipos/agregarmarca',
+        title: 'Agregar Modelo',
+        path: '/home/misequipos/agregarmodelo',
         icon: <IoIcons.IoMdAddCircleOutline />
       },
       {

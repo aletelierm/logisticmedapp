@@ -15,16 +15,16 @@ const AgregarFamilia = () => {
 
     return (
         <div className='containerFamily'>
-            <h2 className='titleForm'>Equipamiento Médico</h2>
+            <h2 className='titleForm'>Familias de Equipos</h2>
             <div>
                 <form action='' className='formulario'>
                     <div>
-                        <label htmlFor='usuario' className='label'>Agregar Familia</label>
+                        <label htmlFor='familia' className='label'>Agregar Familia</label>
                         <input
                             type='text'
                             name='familia'
                             id='familia'
-                            placeholder='Nombre Familia Equipamiento Medico'
+                            placeholder='Ingrese Familia Equipamiento Médico'
                             value={inputFamily}
                             onChange={handleChange}
                             className='input'

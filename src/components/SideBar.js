@@ -4,6 +4,8 @@ import { FaBars } from 'react-icons/fa'
 import { DataMenu } from './DataMenu'
 import SubMenu from './SubMenu';
 
+import '../styles/sideBar.css'
+
 
 const SideBar = ({ children }) => {
 
