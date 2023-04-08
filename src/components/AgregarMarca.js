@@ -3,32 +3,29 @@ import '../styles/agregarFamilia.css'
 
 const AgregarMarca = () => {
 
-    const [inputFamily, setInputFamily] = useState('')
+    const [inputMarca, setInputMarca] = useState('')
 
     const handleChange = (e) => {
         if (e.target.name === 'familia') {
-            setInputFamily(e.target.value);
+            setInputMarca(e.target.value);
         } else {
-            alert('Esta Familia ya fue ingresada');
+            alert('Esta Marca ya fue ingresada');
         }
     }
 
     return (
         <div className='containerFamily'>
-            <h2 className='titleForm'>Marcas</h2>
+            <h2 className='titleForm'>Marca de Equipos</h2>
             <div>
-                <div>
-                    <h4>Creación de Marcas</h4>
-                </div>
                 <form action='' className='formulario'>
                     <div>
-                        <label htmlFor='usuario' className='label'>Nombre Familia Equipamiento Medico</label>
+                        <label htmlFor='marca' className='label'>Agregar Marca</label>
                         <input
                             type='text'
-                            name='familia'
-                            id='familia'
-                            placeholder='Ingrese Familia'
-                            value={inputFamily}
+                            name='marca'
+                            id='marca'
+                            placeholder='Ingrese Marca Equipamiento Médico'
+                            value={inputMarca}
                             onChange={handleChange}
                             className='input'
                         />
@@ -36,7 +33,7 @@ const AgregarMarca = () => {
                     <button as='button' type='submit' className='boton'>Guardar</button>
                 </form>
             </div>
-            
+
         </div >
     )
 }

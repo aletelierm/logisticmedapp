@@ -27,8 +27,8 @@ export const Home = () => {
             <Route path="/misequipos" element={<Equipos/>}/>
             <Route path="/misequipos/agregarfamilia" element={<AgregarFamilia/>}/>
             <Route path="/misequipos/agregartipo" element={<AgregarTipo/>}/>
-            <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>
             <Route path="/misequipos/agregarmarca" element={<AgregraMarca/>}/>
+            <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>
             <Route path="/misequipos/crearequipo" element={<CrearEquipo/>}/>
             <Route path="/entradas" element={<Entradas/>}/>
             <Route path="/salidas" element={<Salidas/>}/>
