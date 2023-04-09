@@ -35,7 +35,7 @@ const AgregarFamilia = () => {
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        e.target.value="";
+       
 
         setFamilias(
             [
