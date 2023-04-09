@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import '../styles/agregarFamilia.css'
+import ListaMarcas from './ListaMarcas';
 
 
 const AgregarMarca = () => {
@@ -43,7 +44,7 @@ const [marcas, setMarcas] = useState([]);
                             className='formFamily__input'
                             placeholder='Ingrese Marca Equipamiento Médico'
                             value={inputMarca}
-                            onChange={handleInput}
+                            onChange={(e) => handleInput(e)}
                             
                         />
                     </div>
@@ -52,7 +53,7 @@ const [marcas, setMarcas] = useState([]);
                     </button>
                 </form>
             </div>
-
+            <ListaMarcas marcas={marcas} setMarcas={setMarcas} />
         </div >
     )
 }

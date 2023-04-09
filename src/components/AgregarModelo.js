@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import '../styles/agregarFamilia.css'
+import ListaModelos from './ListaModelos';
 
 
 const AgregarModelo = () => {
@@ -52,7 +53,7 @@ const AgregarModelo = () => {
                     </button>
                 </form>
             </div>
-            
+            <ListaModelos modelos={modelos} setModelos={setModelos} />
         </div >
     )
 }

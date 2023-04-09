@@ -2,16 +2,16 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faEdit, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const Familia = ({ familia, editarFamilia, borrarFamilia }) => {
+const Familia = ({ marca, editarMarca, borrarMarca }) => {
 
-    const [editandoFamilia, setEditandoFamilia] = useState(false);
+    const [editandoMarca, setEditandoMarca] = useState(false);
 
-    const [nuevaFamilia, setNuevaFamilia] = useState(familia.texto)
+    const [nuevoMarca, setNuevoMarca] = useState(marca.texto)
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        editarFamilia(familia.id, nuevaFamilia)
-        setEditandoFamilia(false)
+        editarMarca(marca.id, nuevoMarca)
+        setEditandoMarca(false)
     }
 
     return (
@@ -21,13 +21,13 @@ const Familia = ({ familia, editarFamilia, borrarFamilia }) => {
                 className='lista-tareas__icono lista-tareas__icono-check'
             />
             <div className='Lista-tareas__texto'>
-                {editandoFamilia ?
+                {editandoMarca ?
                     <form action='' className='formulario-editar-tarea' onSubmit={handleSubmit}>
                         <input
                             type='texto'
                             className='formulario-editar-tarea__input'
-                            value={nuevaFamilia}
-                            onChange={(e) => setNuevaFamilia(e.target.value)}
+                            value={nuevoMarca}
+                            onChange={(e) => setNuevoMarca(e.target.value)}
                         />
                         <button
                             type='submit'
@@ -36,19 +36,19 @@ const Familia = ({ familia, editarFamilia, borrarFamilia }) => {
                             Actualizar
                         </button>
                     </form>
-                    : familia.texto
+                    : marca.texto
                 }
             </div>
             <div className='lista-tareas__contenedor-botones'>
                 <FontAwesomeIcon
                     icon={faEdit}
                     className='lista-tareas__icono lista-tareas__icono-accion'
-                    onClick={() => setEditandoFamilia(!editandoFamilia)}
+                    onClick={() => setEditandoMarca(!editandoMarca)}
                 />
                 <FontAwesomeIcon
                     icon={faTimes}
                     className='lista-tareas__icono lista-tareas__icono-accion'
-                    onClick={() => borrarFamilia(familia.id)}
+                    onClick={() => borrarMarca(marca.id)}
                 />
             </div>
         </li>

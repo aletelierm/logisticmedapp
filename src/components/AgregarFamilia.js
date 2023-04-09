@@ -8,7 +8,17 @@ import ListaFamilias from './ListaFamilias';
 
 const AgregarFamilia = () => {
 
-    const [familias, setFamilias] = useState([]);
+    const [familias, setFamilias] = useState([
+        // Ejemplos
+        {
+            id: 1,
+            texto: 'Ventilador'
+        },
+        {
+            id: 2,
+            texto: 'Mascarilla'
+        }
+    ]);
 
     const [inputFamilia, setInputFamilia] = useState('')
 
@@ -52,7 +62,7 @@ const AgregarFamilia = () => {
                     </button>
                 </form>
             </div>
-        <ListaFamilias familias={familias} />
+        <ListaFamilias familias={familias} setFamilias={setFamilias} />
         </div >
     )
 }

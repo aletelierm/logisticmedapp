@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import '../styles/agregarFamilia.css'
+import ListaTipos from './ListaTipos'
 
 
 const AgregarTipo = () => {
@@ -52,7 +53,7 @@ const AgregarTipo = () => {
                     </button>
                 </form>
             </div>
-            
+            <ListaTipos tipos={tipos} setTipos={setTipos} />
         </div >
     )
 }
