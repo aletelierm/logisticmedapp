@@ -1,36 +1,55 @@
 import React, { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import '../styles/agregarFamilia.css'
+
 
 const AgregarMarca = () => {
 
+const [marcas, setMarcas] = useState([]);
+
     const [inputMarca, setInputMarca] = useState('')
 
-    const handleChange = (e) => {
-        if (e.target.name === 'familia') {
-            setInputMarca(e.target.value);
-        } else {
-            alert('Esta Marca ya fue ingresada');
-        }
+    const handleInput = (e) => {
+        setInputMarca(e.target.value)
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        setMarcas(
+            [
+                ...marcas,
+                {
+                    id: uuidv4(),
+                    texto: inputMarca,
+                }
+            ]
+        );
+    }
+
+    console.log(marcas)
 
     return (
         <div className='containerFamily'>
             <h2 className='titleForm'>Marca de Equipos</h2>
             <div>
-                <form action='' className='formulario'>
+                <form action='' className='formFamily' onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor='marca' className='label'>Agregar Marca</label>
+                        <label htmlFor='marca' className='formFamily__label'>Agregar Marca</label>
                         <input
                             type='text'
-                            name='marca'
-                            id='marca'
+                            className='formFamily__input'
                             placeholder='Ingrese Marca Equipamiento Médico'
                             value={inputMarca}
-                            onChange={handleChange}
-                            className='input'
+                            onChange={handleInput}
+                            
                         />
                     </div>
-                    <button as='button' type='submit' className='boton'>Guardar</button>
+                    <button as='button' type='submit' className='formFamily__btn'>
+                        <FontAwesomeIcon icon={faPlus} className='formFamily__iconBtn'/>
+                    </button>
                 </form>
             </div>
 
