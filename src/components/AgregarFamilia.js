@@ -1,15 +1,44 @@
-import React, { useState } from 'react'
-import '../styles/agregarFamilia.css'
+import React, { useState } from 'react';
+import '../styles/agregarFamilia.css';
+import Alertas from './Alertas';
 
 const AgregarFamilia = () => {
 
     const [inputFamily, setInputFamily] = useState('')
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+
 
     const handleChange = (e) => {
-        if (e.target.name === 'familia') {
-            setInputFamily(e.target.value);
+        setInputFamily(e.target.value);
+       /*  if (e.target.name === 'familia') {
+            
         } else {
             alert('Esta Familia ya fue ingresada');
+        } */
+    }
+    
+    const handleSubmit = (e)=>{
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        console.log(inputFamily)
+        if (inputFamily === 'familia') {
+          /*   setInputFamily(e.target.value); */
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Familia Ingresada Correctamente'
+            })
+            e.target.value = 0;
+        } else {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Por favor Ingrese una familia¡¡'
+            })
+            
         }
     }
 
@@ -17,7 +46,7 @@ const AgregarFamilia = () => {
         <div className='containerFamily'>
             <h2 className='titleForm'>Familias de Equipos</h2>
             <div>
-                <form action='' className='formulario'>
+                <form onSubmit={handleSubmit} className='formulario'>
                     <div>
                         <label htmlFor='familia' className='label'>Agregar Familia</label>
                         <input
@@ -33,8 +62,13 @@ const AgregarFamilia = () => {
                     <button as='button' type='submit' className='boton'>Guardar</button>
                 </form>
             </div>
-            
+            <Alertas tipo={alerta.tipo}
+                     mensaje={alerta.mensaje}
+                     estadoAlerta={estadoAlerta}
+                     cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
         </div >
+        
     )
 }
 
