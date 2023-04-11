@@ -17,7 +17,7 @@ const ListaMarcas = ({marcas, setMarcas}) => {
             if(marca.id !== id) {
                 return marca;
             }
-            return;
+            return '';
         }))
     }
 

@@ -17,7 +17,7 @@ const ListaTipos = ({tipos, setTipos}) => {
             if(tipo.id !== id) {
                 return tipo;
             }
-            return;
+            return '';
         }))
     }
 

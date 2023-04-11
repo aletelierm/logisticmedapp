@@ -9,7 +9,7 @@ import '../styles/sideBar.css'
 
 const SideBar = ({ children }) => {
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
     const toggle = () => setIsOpen(!isOpen);
 
 

@@ -1,21 +1,21 @@
 
 import React from 'react';
-import { BiUserCircle } from "react-icons/bi";
+import {BiExit} from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
-
+import { auth } from '../firebase/firebaseConfig';
 
 // import Login from '../components/Login'
 import '../styles/navbar.css'
 
-const Navbar = () => {
+const NavbarSesion = () => {
 
-   
+    const user = auth.currentUser;
     const navigate = useNavigate();
-    
+   
 
     const handleChange = ()=>{
             
-            navigate('/login');
+            navigate('/');
 
     }
 
@@ -27,10 +27,10 @@ const Navbar = () => {
                     <img src='./logo2.png' alt='Logo' />
                 </div>
                 <div className='user'>
-                     <h4>Iniciar Sesion</h4>
+                     <h3>{user.email}</h3>
                    
                     <div className='icon' onClick={()=> handleChange()}>
-                        <BiUserCircle className='iconUser' />
+                        <BiExit className='iconUser' />
                     </div>
                 </div>
             </div>
@@ -38,4 +38,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default NavbarSesion;

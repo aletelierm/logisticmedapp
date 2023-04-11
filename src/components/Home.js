@@ -1,7 +1,7 @@
 import React from 'react'
 import { Routes, Route} from 'react-router-dom'
 
-import Navbar from './Navbar';
+
 import Footer from './Footer';
 import SideBar from './SideBar';
 
@@ -24,12 +24,15 @@ import Certificados from './Certificados';
 import Mantenimiento from './Mantenimiento';
 import Configuracion from './Configuracion';
 import Empresas from './Empresas';
+import NavbarSesion from './NavbarSesion';
 
   // ingresando al home => erivas
 export const Home = () => {
+  
+  
   return (
-    <div>
-    <Navbar/>  
+    <div>  
+    <NavbarSesion />
     <SideBar>    
     <Routes>
             <Route path="/misequipos" element={<Equipos/>}/>

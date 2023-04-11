@@ -35,10 +35,8 @@ const AgregarFamilia = () => {
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-<<<<<<< HEAD
        
-        /* console.log(inputFamilia); */
-        
+               
         if(inputFamilia.length !== 0)
         {
             setFamilias(
@@ -66,26 +64,6 @@ const AgregarFamilia = () => {
             setInputFamilia('');
         }
         
-=======
-        e.target.value="";
-
-        setFamilias(
-            [
-                ...familias,
-                {
-                    id: uuidv4(),
-                    texto: inputFamilia,
-                }
-            ]
-        );
-
-        cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Familia Ingresada Correctamente'
-            })       
-
->>>>>>> master
         
     }
     
@@ -111,21 +89,12 @@ const AgregarFamilia = () => {
                 </form>
             </div>
             
-<<<<<<< HEAD
             <ListaFamilias familias={familias} setFamilias={setFamilias} />
             <Alertas tipo={alerta.tipo}
                      mensaje={alerta.mensaje}
                      estadoAlerta={estadoAlerta}
                      cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-=======
-        <ListaFamilias familias={familias} setFamilias={setFamilias} />
-        <Alertas tipo={alerta.tipo}
-                     mensaje={alerta.mensaje}
-                     estadoAlerta={estadoAlerta}
-                     cambiarEstadoAlerta={cambiarEstadoAlerta}
-         />
->>>>>>> master
         </div >
         
     )

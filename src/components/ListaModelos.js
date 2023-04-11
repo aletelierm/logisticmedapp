@@ -17,7 +17,7 @@ const ListaModelos = ({modelos, setModelos}) => {
             if(modelo.id !== id) {
                 return modelo;
             }
-            return;
+            return '';
         }))
     }
 

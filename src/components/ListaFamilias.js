@@ -17,7 +17,7 @@ const ListaFamilias = ({familias, setFamilias}) => {
             if(familia.id !== id) {
                 return familia;
             }
-            /* return; */
+            return '';
         }))
     }
 
