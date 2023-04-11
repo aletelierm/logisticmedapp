@@ -36,7 +36,7 @@ const AgregarModelo = () => {
                     ...modelos,
                     {
                         id: uuidv4(),
-                        texto: inputModelo,
+                        texto: inputModelo.toUpperCase(),
                     }
                 ]
             );

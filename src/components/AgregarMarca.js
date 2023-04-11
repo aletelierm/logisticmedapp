@@ -36,7 +36,7 @@ const AgregarMarca = () => {
                     ...marcas,
                     {
                         id: uuidv4(),
-                        texto: inputMarca,
+                        texto: inputMarca.toUpperCase(),
                     }
                 ]
             );

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import '../styles/agregarFamilia.css';
-import Alertas from './Alertas';
 import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import '../styles/agregarFamilia.css'
 import ListaFamilias from './ListaFamilias';
+import Alertas from './Alertas';
+import '../styles/agregarFamilia.css';
 
 
 const AgregarFamilia = () => {
@@ -39,7 +38,7 @@ const AgregarFamilia = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'No ha ingresado un Familia'
+                mensaje: 'No ha ingresado una Familia'
             })
 
         } else {

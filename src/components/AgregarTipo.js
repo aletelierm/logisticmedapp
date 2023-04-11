@@ -36,7 +36,7 @@ const AgregarTipo = () => {
                     ...tipos,
                     {
                         id: uuidv4(),
-                        texto: inputTipo,
+                        texto: inputTipo.toUpperCase(),
                     }
                 ]
             );
