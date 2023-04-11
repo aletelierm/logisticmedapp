@@ -1,7 +1,11 @@
 .main{
     display: flex;
+    justify-content: center;
     width: 100%;
+<<<<<<< HEAD
     justify-content: center;    
+=======
+>>>>>>> FormFamily
     text-align: center;
 }
 
