@@ -35,43 +35,7 @@ const AgregarFamilia = () => {
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-<<<<<<< HEAD
        
-=======
-<<<<<<< HEAD
-       
-        /* console.log(inputFamilia); */
-        
-        if(inputFamilia.length !== 0)
-        {
-            setFamilias(
-                [
-                    ...familias,
-                    {
-                        id: uuidv4(),
-                        texto: inputFamilia,
-                    }
-                ]
-            );
-    
-            cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Familia Ingresada Correctamente'
-                })       
-            setInputFamilia('');
-        }else{
-            cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Familia Incorrecta'
-                })       
-            setInputFamilia('');
-        }
-        
-=======
-        e.target.value="";
->>>>>>> 3708f2ac6044ba338fc5f0ef8c04372f89d5184c
 
         setFamilias(
             [
@@ -89,7 +53,6 @@ const AgregarFamilia = () => {
                 mensaje: 'Familia Ingresada Correctamente'
             })       
 
->>>>>>> master
         
     }
     
@@ -115,21 +78,12 @@ const AgregarFamilia = () => {
                 </form>
             </div>
             
-<<<<<<< HEAD
-            <ListaFamilias familias={familias} setFamilias={setFamilias} />
-            <Alertas tipo={alerta.tipo}
-                     mensaje={alerta.mensaje}
-                     estadoAlerta={estadoAlerta}
-                     cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />
-=======
         <ListaFamilias familias={familias} setFamilias={setFamilias} />
         <Alertas tipo={alerta.tipo}
                      mensaje={alerta.mensaje}
                      estadoAlerta={estadoAlerta}
                      cambiarEstadoAlerta={cambiarEstadoAlerta}
          />
->>>>>>> master
         </div >
         
     )
