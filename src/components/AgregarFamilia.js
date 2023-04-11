@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import '../styles/agregarFamilia.css'
-import ListaFamilias from './ListaFamilias';     
-          
-            
+import ListaFamilias from './ListaFamilias';
+
+
 const AgregarFamilia = () => {
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
@@ -35,60 +35,31 @@ const AgregarFamilia = () => {
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-<<<<<<< HEAD
-       
-        /* console.log(inputFamilia); */
-        
-        if(inputFamilia.length !== 0)
-        {
+        if ( inputFamilia.length === 0 ) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha ingresado un Familia'
+            })
+
+        } else {
             setFamilias(
                 [
                     ...familias,
                     {
                         id: uuidv4(),
-                        texto: inputFamilia,
+                        texto: inputFamilia.toUpperCase(),
                     }
                 ]
             );
     
             cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Familia Ingresada Correctamente'
-                })       
-            setInputFamilia('');
-        }else{
-            cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Familia Incorrecta'
-                })       
-            setInputFamilia('');
-        }
-        
-=======
-        e.target.value="";
-
-        setFamilias(
-            [
-                ...familias,
-                {
-                    id: uuidv4(),
-                    texto: inputFamilia,
-                }
-            ]
-        );
-
-        cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
                 mensaje: 'Familia Ingresada Correctamente'
-            })       
-
->>>>>>> master
-        
+            })
+        }
     }
-    
 
     return (
         <div className='containerFamily'>
@@ -110,24 +81,14 @@ const AgregarFamilia = () => {
                     </button>
                 </form>
             </div>
-            
-<<<<<<< HEAD
+
             <ListaFamilias familias={familias} setFamilias={setFamilias} />
             <Alertas tipo={alerta.tipo}
-                     mensaje={alerta.mensaje}
-                     estadoAlerta={estadoAlerta}
-                     cambiarEstadoAlerta={cambiarEstadoAlerta}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-=======
-        <ListaFamilias familias={familias} setFamilias={setFamilias} />
-        <Alertas tipo={alerta.tipo}
-                     mensaje={alerta.mensaje}
-                     estadoAlerta={estadoAlerta}
-                     cambiarEstadoAlerta={cambiarEstadoAlerta}
-         />
->>>>>>> master
         </div >
-        
     )
 }
 
