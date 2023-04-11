@@ -17,12 +17,19 @@ const ListaMarcas = ({marcas, setMarcas}) => {
             if(marca.id !== id) {
                 return marca;
             }
-            return;
+            return '';
         }))
     }
 
     return (
         <ul className='lista-tareas'>
+
+            <tr className='lista-tareas__tarea encabezado'>
+                <th>N°</th>
+                <th>Marcas</th>
+                <th>Acción</th>
+            </tr>
+
             {marcas.length > 0 ? marcas.map((marca) => {
                 return <Marca
                     key={marca.id} 
