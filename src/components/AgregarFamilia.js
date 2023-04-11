@@ -34,6 +34,7 @@ const AgregarFamilia = () => {
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        
         if ( inputFamilia.length === 0 ) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -80,7 +81,6 @@ const AgregarFamilia = () => {
                     </button>
                 </form>
             </div>
-
             <ListaFamilias familias={familias} setFamilias={setFamilias} />
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
