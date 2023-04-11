@@ -63,13 +63,13 @@ export const DataMenu = [
     subNav: [
       {
         title: 'Entradas',
-        path: '/home/entradas',
+        path: '/home/transacciones/entradas',
         icon: <MdIcons.MdInput />,
         cName: 'sub-nav'
       },
       {
         title: 'Salidas',
-        path: '/home/salidas',
+        path: '/home/transacciones/salidas',
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
       }
@@ -79,7 +79,7 @@ export const DataMenu = [
  
   {
     title: 'Servicio Tecnico',
-    path: '/home/tecnico',
+    path: '/home/serviciotecnico',
     icon: <MdIcons.MdMedicalServices />,
 
     iconClosed: <RiIcons.RiArrowDownSFill />,
@@ -88,22 +88,22 @@ export const DataMenu = [
     subNav: [
       {
         title: 'Protocolos',
-        path: '/home/protocolos',
+        path: '/home/serviciotecnico/protocolos',
         icon: <IoIcons.IoIosAlbums />
       },
       {
         title: 'Programas',
-        path: '/home/programas',
+        path: '/home/serviciotecnico/programas',
         icon: <IoIcons.IoIosTimer />
       },
       {
         title: 'Certificados',
-        path: '/home/certificaados',
+        path: '/home/serviciotecnico/certificados',
         icon: <FaIcons.FaCertificate />
       },
       {
         title: 'Ejecutar Mant.',
-        path: '/home/mantenimiento',
+        path: '/home/serviciotecnico/mantencion',
         icon: <IoIcons.IoIosPlay />
       }
     ]
@@ -118,12 +118,12 @@ export const DataMenu = [
     subNav: [
       {
         title: 'Registrar Usuarios',
-        path: '/home/registrausuarios',
+        path: '/home/configuracion/registrausuarios',
         icon: <FaIcons.FaUserMd />
       },
       {
         title: 'Empresas',
-        path: '/home/empresas',
+        path: '/home/configuracion/empresas',
         icon: <FaIcons.FaDeezer />
       }
     ]

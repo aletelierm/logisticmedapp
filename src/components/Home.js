@@ -16,6 +16,14 @@ import AgregarTipo from './AgregarTipo';
 import AgregraMarca from './AgregarMarca';
 import AgregarModelo from './AgregarModelo';
 import CrearEquipo from './CrearEquipo';
+import Transaccion from './Transaccion';
+import ServicioTecnico from './ServicioTecnico';
+import Protocolos from './Protocolos';
+import Programas  from './Programas';
+import Certificados from './Certificados';
+import Mantenimiento from './Mantenimiento';
+import Configuracion from './Configuracion';
+import Empresas from './Empresas';
 
   // ingresando al home => erivas
 export const Home = () => {
@@ -30,11 +38,20 @@ export const Home = () => {
             <Route path="/misequipos/agregarmarca" element={<AgregraMarca/>}/>
             <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>
             <Route path="/misequipos/crearequipo" element={<CrearEquipo/>}/>
-            <Route path="/entradas" element={<Entradas/>}/>
-            <Route path="/salidas" element={<Salidas/>}/>
+            <Route path="/transacciones" element={<Transaccion/>}/>
+            <Route path="/transacciones/entradas" element={<Entradas/>}/>
+            <Route path="/transacciones/salidas" element={<Salidas/>}/>
+            <Route path="/serviciotecnico" element={<ServicioTecnico/>}/>
+            <Route path="/serviciotecnico/protocolos" element={<Protocolos/>}/>
+            <Route path="/serviciotecnico/programas" element={<Programas/>}/>
+            <Route path="/serviciotecnico/certificados" element={<Certificados/>}/>
+            <Route path="/serviciotecnico/mantencion" element={<Mantenimiento/>}/>
             <Route path="/clientes" element={<Clientes/>}/>
             <Route path="/proveedores" element={<Proveedores/>}/>
-            <Route path="/registrarusuarios" element={<Usuarios/>}/>           
+            <Route path="/configuracion" element={<Configuracion/>}/>        
+            <Route path="/configuracion/registrausuarios" element={<Usuarios/>}/>
+            <Route path="/configuracion/empresas" element={<Empresas/>}/>
+
     </Routes>
     </SideBar>
     
