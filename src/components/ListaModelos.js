@@ -1,12 +1,12 @@
 import React from 'react'
 import Modelo from './Modelo'
 
-const ListaModelos = ({modelos, setModelos}) => {
+const ListaModelos = ({ modelos, setModelos }) => {
 
     const editarModelo = (id, nuevoTexto) => {
         setModelos(modelos.map((modelo) => {
-            if(modelo.id === id) {
-                return {...modelo, texto: nuevoTexto}
+            if (modelo.id === id) {
+                return { ...modelo, texto: nuevoTexto }
             }
             return modelo;
         }))
@@ -14,7 +14,7 @@ const ListaModelos = ({modelos, setModelos}) => {
 
     const borrarModelo = (id) => {
         setModelos(modelos.filter((modelo) => {
-            if(modelo.id !== id) {
+            if (modelo.id !== id) {
                 return modelo;
             }
             return '';
@@ -23,16 +23,23 @@ const ListaModelos = ({modelos, setModelos}) => {
 
     return (
         <ul className='lista-tareas'>
+
+            <tr className='lista-tareas__tarea encabezado'>
+                <th>N°</th>
+                <th>Modelos</th>
+                <th>Acción</th>
+            </tr>
+
             {modelos.length > 0 ? modelos.map((modelo) => {
-                return <Modelo 
-                    key={modelo.id} 
-                    modelo={modelo} 
+                return <Modelo
+                    key={modelo.id}
+                    modelo={modelo}
                     editarModelo={editarModelo}
                     borrarModelo={borrarModelo}
                 />
             })
-            : <div className='lista-tareas__mensaje'>No hay Modelos agregados</div>
-        }
+                : <div className='lista-tareas__mensaje'>No hay Modelos agregados</div>
+            }
         </ul>
     )
 }

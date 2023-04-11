@@ -1,12 +1,12 @@
 import React from 'react'
 import Tipos from './Tipos'
 
-const ListaTipos = ({tipos, setTipos}) => {
+const ListaTipos = ({ tipos, setTipos }) => {
 
     const editarTipo = (id, nuevoTexto) => {
         setTipos(tipos.map((tipo) => {
-            if(tipo.id === id) {
-                return {...tipo, texto: nuevoTexto}
+            if (tipo.id === id) {
+                return { ...tipo, texto: nuevoTexto }
             }
             return tipo;
         }))
@@ -14,7 +14,7 @@ const ListaTipos = ({tipos, setTipos}) => {
 
     const borrarTipo = (id) => {
         setTipos(tipos.filter((tipo) => {
-            if(tipo.id !== id) {
+            if (tipo.id !== id) {
                 return tipo;
             }
             return '';
@@ -23,16 +23,23 @@ const ListaTipos = ({tipos, setTipos}) => {
 
     return (
         <ul className='lista-tareas'>
+
+            <tr className='lista-tareas__tarea encabezado'>
+                <th>N°</th>
+                <th>Tipos</th>
+                <th>Acción</th>
+            </tr>
+
             {tipos.length > 0 ? tipos.map((tipo) => {
-                return <Tipos 
-                    key={tipo.id} 
-                    tipo={tipo} 
+                return <Tipos
+                    key={tipo.id}
+                    tipo={tipo}
                     editarTipo={editarTipo}
                     borrarTipo={borrarTipo}
                 />
             })
-            : <div className='lista-tareas__mensaje'>No hay Tipos agregados</div>
-        }
+                : <div className='lista-tareas__mensaje'>No hay Tipos agregados</div>
+            }
         </ul>
     )
 }

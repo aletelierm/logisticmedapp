@@ -1,12 +1,12 @@
 import React from 'react'
 import Familia from './Familia'
 
-const ListaFamilias = ({familias, setFamilias}) => {
+const ListaFamilias = ({ familias, setFamilias }) => {
 
     const editarFamilia = (id, nuevoTexto) => {
         setFamilias(familias.map((familia) => {
-            if(familia.id === id) {
-                return {...familia, texto: nuevoTexto}
+            if (familia.id === id) {
+                return { ...familia, texto: nuevoTexto }
             }
             return familia;
         }))
@@ -14,7 +14,7 @@ const ListaFamilias = ({familias, setFamilias}) => {
 
     const borrarFamilia = (id) => {
         setFamilias(familias.filter((familia) => {
-            if(familia.id !== id) {
+            if (familia.id !== id) {
                 return familia;
             }
             return '';
@@ -23,16 +23,22 @@ const ListaFamilias = ({familias, setFamilias}) => {
 
     return (
         <ul className='lista-tareas'>
+            <tr className='lista-tareas__tarea encabezado'>
+                <th>N°</th>
+                <th>Familias</th>
+                <th>Acción</th>
+            </tr>
+            
             {familias.length > 0 ? familias.map((familia) => {
-                return <Familia 
-                    key={familia.id} 
-                    familia={familia} 
+                return <Familia
+                    key={familia.id}
+                    familia={familia}
                     editarFamilia={editarFamilia}
                     borrarFamilia={borrarFamilia}
                 />
             })
-            : <div className='lista-tareas__mensaje'>No hay Familias agregadas</div>
-        }
+                : <div className='lista-tareas__mensaje'>No hay Familias agregadas</div>
+            }
         </ul>
     )
 }
