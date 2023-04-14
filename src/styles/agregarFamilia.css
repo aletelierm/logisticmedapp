@@ -73,6 +73,7 @@
 }
 
 .lista-tareas__tarea {
+	background-color: #76e57a80;
 	height: 35px;
 	padding: 0 20px;
 	align-items: center;
@@ -120,6 +121,11 @@
 	color: #746a6a;
 	font-size: 20px;
 	padding: 40px 20px;
+}
+
+.encabezado {
+	background-color: #8AAB8A;
+	color: #000;
 }
 
 /* * --- --- ---  FORMULARIO EDITAR TAREA --- --- --- */

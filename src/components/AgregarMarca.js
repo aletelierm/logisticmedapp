@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
+import Alertas from './Alertas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import '../styles/agregarFamilia.css'
@@ -8,8 +9,9 @@ import ListaMarcas from './ListaMarcas';
 
 const AgregarMarca = () => {
 
-const [marcas, setMarcas] = useState([]);
-
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+    const [marcas, setMarcas] = useState([]);
     const [inputMarca, setInputMarca] = useState('')
 
     const handleInput = (e) => {
@@ -19,18 +21,33 @@ const [marcas, setMarcas] = useState([]);
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        setMarcas(
-            [
-                ...marcas,
-                {
-                    id: uuidv4(),
-                    texto: inputMarca,
-                }
-            ]
-        );
-    }
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        if (inputMarca.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha ingresado una Marca'
+            })
 
-    console.log(marcas)
+        } else {
+            setMarcas(
+                [
+                    ...marcas,
+                    {
+                        id: uuidv4(),
+                        texto: inputMarca.toUpperCase(),
+                    }
+                ]
+            );
+
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Marca Ingresada Correctamente'
+            })
+        }
+    }
 
     return (
         <div className='containerFamily'>
@@ -45,15 +62,20 @@ const [marcas, setMarcas] = useState([]);
                             placeholder='Ingrese Marca Equipamiento Médico'
                             value={inputMarca}
                             onChange={(e) => handleInput(e)}
-                            
+
                         />
                     </div>
                     <button as='button' type='submit' className='formFamily__btn'>
-                        <FontAwesomeIcon icon={faPlus} className='formFamily__iconBtn'/>
+                        <FontAwesomeIcon icon={faPlus} className='formFamily__iconBtn' />
                     </button>
                 </form>
             </div>
             <ListaMarcas marcas={marcas} setMarcas={setMarcas} />
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
         </div >
     )
 }
