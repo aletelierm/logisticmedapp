@@ -25,6 +25,7 @@ import Mantenimiento from './Mantenimiento';
 import Configuracion from './Configuracion';
 import Empresas from './Empresas';
 import NavbarSesion from './NavbarSesion';
+import ActualizaProveedor from './ActualizaProveedor'
 
   // ingresando al home => erivas
 export const Home = () => {
@@ -51,6 +52,7 @@ export const Home = () => {
             <Route path="/serviciotecnico/mantencion" element={<Mantenimiento/>}/>
             <Route path="/clientes" element={<Clientes/>}/>
             <Route path="/proveedores" element={<Proveedores/>}/>
+            <Route path="/actualiza" element={<ActualizaProveedor/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>        
             <Route path="/configuracion/registrausuarios" element={<Usuarios/>}/>
             <Route path="/configuracion/empresas" element={<Empresas/>}/>
@@ -62,3 +64,5 @@ export const Home = () => {
     </div>
   )
 }
+
+export default Home;
