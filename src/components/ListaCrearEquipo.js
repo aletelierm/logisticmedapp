@@ -32,16 +32,7 @@ const ListaFamilias = ({ familias, setFamilias }) => {
                 <th>Acción</th>
             </tr>
 
-            {/* {familias.length > 0 ? familias.map((familia) => {
-                return <Familia
-                    key={familia.id}
-                    familia={familia}
-                    editarFamilia={editarFamilia}
-                    borrarFamilia={borrarFamilia}
-                />
-            })
-                : <div className='lista-tareas__mensaje'>No hay Familias agregadas</div>
-            } */}
+            
 
             <div className='lista-tareas__mensaje'>No hay Dispositivos Médicos Creados</div>
         </ul>

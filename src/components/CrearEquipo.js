@@ -9,6 +9,27 @@ import '../styles/crearEquipo.css'
 
 const CrearEquipo = () => {
 
+    const arreglo1 = [
+        { key: '1', value: '1', text: 'DISPOSITIVOS DE INFUSION' },
+        { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
+    ]
+
+    const arreglo2 = [
+        { key: '1', value: '1', text: 'BOMBA ENTERAL' },
+        { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
+    ]
+    const arreglo3 = [
+        { key: '1', value: '1', text: 'ABBOTT' },
+        { key: 'ax', value: 'ax', text: 'SUSED' }
+    ]
+
+    const arreglo4 = [
+        { key: '1', value: '1', text: 'FREEGO' },
+        { key: 'ax', value: 'ax', text: 'TRX-800' }
+    ]
+
+    const [selectFamilia, setSelectFamilia] = useState(''); 
+
     const [series, setSeries] = useState([])
     const [inputSerie, setInputSerie] = useState('')
 
@@ -39,22 +60,23 @@ const CrearEquipo = () => {
 
                     <div >
                         <label htmlFor='familia' className='labelEquipment'>Familia</label>
-                        <SelectExample placeholder='Seleccionar Familia'/>
+                        <SelectExample placeholder='Seleccionar Familia' opcion={arreglo1} />
+                        
                     </div>
 
                     <div>
                         <label htmlFor='tipo' className='labelEquipment'>Tipo Equipamiento</label>
-                        <SelectExample placeholder='Seleccionar Tipo' />
+                        <SelectExample placeholder='Seleccionar Tipo' opcion={arreglo2} />
                     </div>
-                    
+
                     <div>
                         <label htmlFor='marca' className='labelEquipment'>Marca</label>
-                        <SelectExample placeholder='Seleccionar Marca' />
+                        <SelectExample placeholder='Seleccionar Marca' opcion={arreglo3}/>
                     </div>
 
                     <div>
                         <label htmlFor='modelo' className='labelEquipment'>Modelo</label>
-                        <SelectExample placeholder='Seleccionar Modelo' />
+                        <SelectExample placeholder='Seleccionar Modelo' opcion={arreglo4} />
                     </div>
 
                     <div>
