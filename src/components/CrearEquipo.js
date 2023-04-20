@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import SelectExample from './SelectExample';
+import ListaCrearEquipo from './ListaCrearEquipo'
 import '../styles/crearEquipo.css'
 
 
@@ -26,86 +28,51 @@ const CrearEquipo = () => {
                 }
             ]
         )
+        setInputSerie('');
     }
 
     return (
         <div className='containerEquipment'>
             <h2 className='titleFormEquipment'>Crear Dispositivos Médicos</h2>
             <div>
-                <form action='' className='formEquipment' onSubmit={handleSubmit}>
+                <form action='' className='formEquipment formItem' onSubmit={handleSubmit}>
 
-                    <div className='formItem'>
-                        <div >
-                            <label htmlFor='familia' className='labelEquipment'>Familia</label>
-                            <input
-                                type='text'
-                                placeholder='Seleccione Familia'
-                                // value={input}
-                                // onChange={handleChange}
-                                className='inputEquipment'
-                            />
-                        </div>
-                        <FontAwesomeIcon icon={faChevronDown} className='formItem_Bnt' />
+                    <div >
+                        <label htmlFor='familia' className='labelEquipment'>Familia</label>
+                        <SelectExample placeholder='Seleccionar Familia'/>
                     </div>
 
-                    <div className='formItem'>
-                        <div>
-                            <label htmlFor='tipo' className='labelEquipment'>Tipo</label>
-                            <input
-                                type='text'
-                                placeholder='Seleccione Tipo Equipamiento'
-                                // value={input}
-                                // onChange={handleChange}
-                                className='inputEquipment'
-                            />
-                        </div>
-                        <FontAwesomeIcon icon={faChevronDown} className='formItem_Bnt' />
+                    <div>
+                        <label htmlFor='tipo' className='labelEquipment'>Tipo Equipamiento</label>
+                        <SelectExample placeholder='Seleccionar Tipo' />
+                    </div>
+                    
+                    <div>
+                        <label htmlFor='marca' className='labelEquipment'>Marca</label>
+                        <SelectExample placeholder='Seleccionar Marca' />
                     </div>
 
-                    <div className='formItem'>
-                        <div>
-                            <label htmlFor='marca' className='labelEquipment'>Marca</label>
-                            <input
-                                type='text'
-                                placeholder='Seleccione Marca'
-                                // value={input}
-                                // onChange={handleChange}
-                                className='inputEquipment'
-                            />
-                        </div>
-                        <FontAwesomeIcon icon={faChevronDown} className='formItem_Bnt' />
+                    <div>
+                        <label htmlFor='modelo' className='labelEquipment'>Modelo</label>
+                        <SelectExample placeholder='Seleccionar Modelo' />
                     </div>
 
-                    <div className='formItem'>
-                        <div>
-                            <label htmlFor='modelo' className='labelEquipment'>Modelo</label>
-                            <input
-                                type='text'
-                                placeholder='Seleccione Modelo'
-                                // value={input}
-                                // onChange={handleChange}
-                                className='inputEquipment'
-                            />
-                        </div>
-                        <FontAwesomeIcon icon={faChevronDown} className='formItem_Bnt' />
-                    </div>
-
-                    <div className='formItem'>
-                        <div>
-                            <label htmlFor='serie' className='labelEquipment'>N° Serie</label>
-                            <input
-                                type='text'
-                                placeholder='Ingrese Numero Serie'
-                                value={inputSerie}
-                                onChange={(e) => handleInput(e)}
-                                className='inputEquipment'
-                            />
-                        </div>
+                    <div>
+                        <label htmlFor='serie' className='labelEquipment'>N° Serie</label>
+                        <input
+                            type='text'
+                            placeholder='Ingrese Serie'
+                            value={inputSerie}
+                            onChange={(e) => handleInput(e)}
+                            className='inputEquipment'
+                        />
                     </div>
 
                     <button as='button' type='submit' className='botonEquipment'>Guardar</button>
                 </form>
             </div>
+
+            <ListaCrearEquipo />
 
         </div >
     )

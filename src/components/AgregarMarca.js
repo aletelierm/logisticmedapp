@@ -40,6 +40,8 @@ const AgregarMarca = () => {
                     }
                 ]
             );
+            
+            setInputMarca('');
 
             cambiarEstadoAlerta(true);
             cambiarAlerta({

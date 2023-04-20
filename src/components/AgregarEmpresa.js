@@ -2,23 +2,21 @@ import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { db } from '../firebase/firebaseConfig'
-import { collection, addDoc } from 'firebase/firestore';
-import ListaFamilias from './ListaFamilias';
+import ListaEmpresas from './ListaEmpresas';
 import Alertas from './Alertas';
 import '../styles/agregarFamilia.css';
 
 
-const AgregarFamilia = () => {
+const AgregarEmpresa = () => {
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
-    const [familias, setFamilias] = useState('');
+    const [empresas, setEmpresas] = useState('');
 
-    const [inputFamilia, setInputFamilia] = useState('')
+    const [inputEmpresa, setInputEmpresa] = useState('')
 
     const handleInput = (e) => {
-        setInputFamilia(e.target.value)
+        setInputEmpresa(e.target.value)
     }
 
     const handleSubmit = async (e) => {
@@ -27,7 +25,7 @@ const AgregarFamilia = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (inputFamilia.length === 0) {
+        if (inputEmpresa.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -35,26 +33,17 @@ const AgregarFamilia = () => {
             })
 
         } else {
-            // setFamilias(
-            //     [
-            //         ...familias,
-            //         {
-            //             id: uuidv4(),
-            //             texto: inputFamilia.toUpperCase(),
-            //         }
-            //     ]
-            // );
+            setEmpresas(
+                [
+                    ...empresas,
+                    {
+                        id: uuidv4(),
+                        texto: inputEmpresa.toUpperCase(),
+                    }
+                ]
+            );
 
-            const documento = await addDoc(collection(db, "familias"), {
-                namefamilia: inputFamilia,
-                fecha: '',
-                usuario: '',
-                empresa: ''
-            })
-            console.log(documento.id)
-            console.log(inputFamilia)
-
-            setInputFamilia('');
+            setInputEmpresa('');
 
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -66,16 +55,16 @@ const AgregarFamilia = () => {
 
     return (
         <div className='containerFamily'>
-            <h2 className='titleForm'>Familias de Equipos</h2>
+            <h2 className='titleForm'>Empresas</h2>
             <div>
                 <form action='' className='formFamily' onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor='familia' className='formFamily__label'>Agregar Familia</label>
+                        <label htmlFor='familia' className='formFamily__label'>Agregar Empresa</label>
                         <input
                             type='text'
                             className='formFamily__input'
-                            placeholder='Ingrese Familia Equipamiento Médico'
-                            value={inputFamilia}
+                            placeholder='Ingrese Empresa'
+                            value={inputEmpresa}
                             onChange={(e) => handleInput(e)}
                         />
                     </div>
@@ -84,7 +73,7 @@ const AgregarFamilia = () => {
                     </button>
                 </form>
             </div>
-            <ListaFamilias familias={familias} setFamilias={setFamilias} />
+            <ListaEmpresas empresas={empresas} setEmpresas={setEmpresas} />
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
@@ -95,4 +84,4 @@ const AgregarFamilia = () => {
 }
 
 
-export default AgregarFamilia;
+export default AgregarEmpresa;

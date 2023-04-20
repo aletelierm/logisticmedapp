@@ -38,7 +38,7 @@ const ListaMarcas = ({marcas, setMarcas}) => {
                     borrarMarca={borrarMarca}
                 />
             })
-            : <div className='lista-tareas__mensaje'>No hay Marcas agregadas</div>
+            : <div className='lista-tareas__mensaje'>~ No hay Marcas agregadas ~</div>
         }
         </ul>
     )

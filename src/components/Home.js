@@ -23,10 +23,13 @@ import Programas  from './Programas';
 import Certificados from './Certificados';
 import Mantenimiento from './Mantenimiento';
 import Configuracion from './Configuracion';
-import Empresas from './Empresas';
 import NavbarSesion from './NavbarSesion';
+<<<<<<< HEAD
 import ActualizaProveedor from './ActualizaProveedor'
 import AsignarRoles from './AsignarRoles';
+=======
+import AgregarEmpresa from './AgregarEmpresa';
+>>>>>>> master
 
   // ingresando al home => erivas
 export const Home = () => {
@@ -56,8 +59,12 @@ export const Home = () => {
             <Route path="/actualiza" element={<ActualizaProveedor/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>        
             <Route path="/configuracion/registrausuarios" element={<Usuarios/>}/>
+<<<<<<< HEAD
             <Route path="/configuracion/asignaroles" element={<AsignarRoles/>}/>
             <Route path="/configuracion/empresas" element={<Empresas/>}/>
+=======
+            <Route path="/configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
+>>>>>>> master
 
     </Routes>
     </SideBar>

@@ -122,6 +122,7 @@ export const DataMenu = [
         icon: <FaIcons.FaUserMd />
       },
       {
+<<<<<<< HEAD
         title: 'Asignar Roles',
         path: '/home/configuracion/asignaroles',
         icon: <FaIcons.FaUserMd />
@@ -129,6 +130,10 @@ export const DataMenu = [
       {
         title: 'Registrar Empresas',
         path: '/home/configuracion/empresas',
+=======
+        title: 'Agrgar Empresa',
+        path: '/home/configuracion/agregarempresa',
+>>>>>>> master
         icon: <FaIcons.FaDeezer />
       }
     ]
