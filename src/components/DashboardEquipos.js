@@ -14,7 +14,7 @@ var data = {
     datasets: [
         {
             label: 'Popularidad en navidad',
-            data: [35,20,20,15,10],
+            data: [35,20,10,15,10],
             backgroundColor: [
                 'rgba(63,191,131,0.2',
                 'rgba(63,191,86,0.2',
