@@ -27,6 +27,8 @@ import NavbarSesion from './NavbarSesion';
 import AgregarEmpresa from './AgregarEmpresa';
 import ActualizaProveedor from './ActualizaProveedor'
 
+import AgregarEmpresa from './AgregarEmpresa';
+import ActualizaProveedor from './ActualizaProveedor';
   // ingresando al home => erivas
 export const Home = () => {
   
