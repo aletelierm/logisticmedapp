@@ -23,8 +23,8 @@ import Programas  from './Programas';
 import Certificados from './Certificados';
 import Mantenimiento from './Mantenimiento';
 import Configuracion from './Configuracion';
-import Empresas from './Empresas';
 import NavbarSesion from './NavbarSesion';
+import AgregarEmpresa from './AgregarEmpresa';
 
   // ingresando al home => erivas
 export const Home = () => {
@@ -53,7 +53,7 @@ export const Home = () => {
             <Route path="/proveedores" element={<Proveedores/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>        
             <Route path="/configuracion/registrausuarios" element={<Usuarios/>}/>
-            <Route path="/configuracion/empresas" element={<Empresas/>}/>
+            <Route path="/configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
 
     </Routes>
     </SideBar>

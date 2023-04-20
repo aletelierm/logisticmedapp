@@ -38,7 +38,7 @@ const ListaTipos = ({ tipos, setTipos }) => {
                     borrarTipo={borrarTipo}
                 />
             })
-                : <div className='lista-tareas__mensaje'>No hay Tipos agregados</div>
+                : <div className='lista-tareas__mensaje'>~ No hay Tipos agregados ~</div>
             }
         </ul>
     )

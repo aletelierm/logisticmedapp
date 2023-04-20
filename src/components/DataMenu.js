@@ -122,8 +122,8 @@ export const DataMenu = [
         icon: <FaIcons.FaUserMd />
       },
       {
-        title: 'Empresas',
-        path: '/home/configuracion/empresas',
+        title: 'Agrgar Empresa',
+        path: '/home/configuracion/agregarempresa',
         icon: <FaIcons.FaDeezer />
       }
     ]

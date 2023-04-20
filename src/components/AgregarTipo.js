@@ -41,6 +41,8 @@ const AgregarTipo = () => {
                 ]
             );
 
+            setInputTipo('');
+
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',

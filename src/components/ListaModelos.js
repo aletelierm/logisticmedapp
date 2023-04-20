@@ -38,7 +38,7 @@ const ListaModelos = ({ modelos, setModelos }) => {
                     borrarModelo={borrarModelo}
                 />
             })
-                : <div className='lista-tareas__mensaje'>No hay Modelos agregados</div>
+                : <div className='lista-tareas__mensaje'>~ No hay Modelos agregados ~</div>
             }
         </ul>
     )

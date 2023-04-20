@@ -41,6 +41,8 @@ const AgregarModelo = () => {
                 ]
             );
 
+            setInputModelo('');
+
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
