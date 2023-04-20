@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 
 // import Login from '../components/Login'
-import '../styles/navbar.css'
+import './../styles/navbar.css'
 
 const NavbarSesion = () => {
 
@@ -24,10 +24,10 @@ const NavbarSesion = () => {
         <>
             <div className='navbar'>
                 <div className='imageLogo'>
-                    <img src='./logo2.png' alt='Logo' />
+                    <img src='../logo2.png' alt='Logo' />
                 </div>
                 <div className='user'>
-                     <h3>{user.email}</h3>
+                     <h4>{user.email}</h4>
                    
                     <div className='icon' onClick={()=> handleChange()}>
                         <BiExit className='iconUser' />
