@@ -3,6 +3,7 @@ import React from 'react';
 import {BiExit} from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
+import { signOut } from "firebase/auth";
 
 // import Login from '../components/Login'
 import './../styles/navbar.css'
@@ -13,8 +14,8 @@ const NavbarSesion = () => {
     const navigate = useNavigate();
    
 
-    const handleChange = ()=>{
-            
+    const cerrarSesion= ()=>{
+            signOut(auth)
             navigate('/');
 
     }
@@ -29,7 +30,7 @@ const NavbarSesion = () => {
                 <div className='user'>
                      <h4>{user.email}</h4>
                    
-                    <div className='icon' onClick={()=> handleChange()}>
+                    <div className='icon' onClick={()=> cerrarSesion()}>
                         <BiExit className='iconUser' />
                     </div>
                 </div>
