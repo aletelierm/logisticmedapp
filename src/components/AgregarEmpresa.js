@@ -1,87 +1,105 @@
-import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import ListaEmpresas from './ListaEmpresas';
-import Alertas from './Alertas';
-import '../styles/agregarFamilia.css';
+import React from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase/firebaseConfig';
+import { Table } from 'semantic-ui-react'
 
 
 const AgregarEmpresa = () => {
 
-    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [alerta, cambiarAlerta] = useState({});
-    const [empresas, setEmpresas] = useState('');
+    const navigate = useNavigate();
+    const user = auth.currentUser;
 
-    const [inputEmpresa, setInputEmpresa] = useState('')
-
-    const handleInput = (e) => {
-        setInputEmpresa(e.target.value)
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-
-        if (inputEmpresa.length === 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'No ha ingresado una Familia'
-            })
-
-        } else {
-            setEmpresas(
-                [
-                    ...empresas,
-                    {
-                        id: uuidv4(),
-                        texto: inputEmpresa.toUpperCase(),
-                    }
-                ]
-            );
-
-            setInputEmpresa('');
-
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Familia Ingresada Correctamente'
-            })
-        }
+    const volver = () => {
+        navigate('/home/actualiza')
     }
 
     return (
-        <div className='containerFamily'>
-            <h2 className='titleForm'>Empresas</h2>
-            <div>
-                <form action='' className='formFamily' onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor='familia' className='formFamily__label'>Agregar Empresa</label>
-                        <input
+        <ContenedorProveedor>
+            <h1>Empresas</h1>
+            <ContenedorFormulario>
+                <Formulario action=''>
+                    <ContentElemen>
+                        <Label>Agregar Empresa</Label>
+                    </ContentElemen>
+                    <ContentElemen>
+                        <Input
                             type='text'
-                            className='formFamily__input'
-                            placeholder='Ingrese Empresa'
-                            value={inputEmpresa}
-                            onChange={(e) => handleInput(e)}
+                            placeholder='Ingrese Empresa Equipamiento Médico'
                         />
-                    </div>
-                    <button as='button' type='submit' className='formFamily__btn'>
-                        <FontAwesomeIcon icon={faPlus} className='formFamily__iconBtn' />
-                    </button>
-                </form>
-            </div>
-            <ListaEmpresas empresas={empresas} setEmpresas={setEmpresas} />
-            <Alertas tipo={alerta.tipo}
-                mensaje={alerta.mensaje}
-                estadoAlerta={estadoAlerta}
-                cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />
-        </div >
-    )
-}
+                    </ContentElemen>
+                    <Boton>Guardar</Boton>
+                </Formulario>
+            </ContenedorFormulario>
+            <ListarProveedor>
+                <h2>Listado de Empresas</h2>
+                <Table singleLine>
 
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Empresa</Table.HeaderCell>
+                            <Table.HeaderCell>Accion</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>1</Table.Cell>
+                            <Table.Cell>Distribuidor Bomy</Table.Cell>
+                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+
+                </Table>
+            </ListarProveedor>
+        </ContenedorProveedor>
+    );
+};
+
+const ContenedorProveedor = styled.div``
+
+const ContenedorFormulario = styled.div`
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #d1d1d1;
+    border-radius: 20px;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+`
+const ContentElemen = styled.div`
+    text-align: center;
+    padding: 7px;
+`
+
+const ListarProveedor = styled.div`
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #d1d1d1;
+    border-radius: 20px;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+`
+const Formulario = styled.form`
+    padding: 20px;
+`
+
+const Input = styled.input`
+    border: 2px solid #d1d1d1;
+    border-radius: 10px;
+    padding: 5px;
+    
+`
+
+const Label = styled.label`
+        padding: 10px;
+        font-size: 20px;
+`
+
+const Boton = styled.button`
+        background-color: #83d394;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        margin-top: 10px;
+`
 
 export default AgregarEmpresa;

@@ -1,104 +1,158 @@
-import React, { useState } from 'react'
-import { v4 as uuidv4 } from 'uuid';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import SelectExample from './SelectExample';
-import ListaCrearEquipo from './ListaCrearEquipo'
-import '../styles/crearEquipo.css'
+import React from 'react';
+import styled from 'styled-components';
+import Select from './SelectExample';
+import { Table } from 'semantic-ui-react'
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase/firebaseConfig';
 
 
-const CrearEquipo = () => {
+const Proveedores = () => {
 
-    const arreglo1 = [
+    const familia = [
         { key: '1', value: '1', text: 'DISPOSITIVOS DE INFUSION' },
         { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
     ]
 
-    const arreglo2 = [
+    const tipo = [
         { key: '1', value: '1', text: 'BOMBA ENTERAL' },
         { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
     ]
-    const arreglo3 = [
+    const marca = [
         { key: '1', value: '1', text: 'ABBOTT' },
         { key: 'ax', value: 'ax', text: 'SUSED' }
     ]
 
-    const arreglo4 = [
+    const modelo = [
         { key: '1', value: '1', text: 'FREEGO' },
         { key: 'ax', value: 'ax', text: 'TRX-800' }
     ]
 
-    const [selectFamilia, setSelectFamilia] = useState(''); 
+    const navigate = useNavigate();
+    const user = auth.currentUser;
 
-    const [series, setSeries] = useState([])
-    const [inputSerie, setInputSerie] = useState('')
-
-    const handleInput = (e) => {
-        setInputSerie(e.target.value)
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-
-        setSeries(
-            [
-                ...series,
-                {
-                    id: uuidv4(),
-                    texto: inputSerie,
-                }
-            ]
-        )
-        setInputSerie('');
+    const volver = () => {
+        navigate('/home/actualiza')
     }
 
     return (
-        <div className='containerEquipment'>
-            <h2 className='titleFormEquipment'>Crear Dispositivos Médicos</h2>
-            <div>
-                <form action='' className='formEquipment formItem' onSubmit={handleSubmit}>
+        <ContenedorProveedor>
+            <h1>Crear Dispositivos Médicos</h1>
+            <ContenedorFormulario>
+                <Formulario action=''>
 
-                    <div >
-                        <label htmlFor='familia' className='labelEquipment'>Familia</label>
-                        <SelectExample placeholder='Seleccionar Familia' opcion={arreglo1} />
-                        
-                    </div>
+                    <ContentElemen>
+                        <ContentElemenSelect>
+                            <label>Familia</label>
+                            <Select placeholder='Seleccionar Familia' opciones={familia} />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <label>Tipo</label>
+                            <Select placeholder='Seleccionar Familia' opciones={tipo} />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <label>Marca</label>
+                            <Select placeholder='Seleccionar Familia' opciones={marca} />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <label>Modelo</label>
+                            <Select placeholder='Seleccionar Familia' opciones={modelo} />
+                        </ContentElemenSelect>
+                    </ContentElemen>
+                    <ContentElemen>
+                        <Label >N° Serie</Label>
+                        <Input type='number' />
+                        <Label >RFID</Label>
+                        <Input type='number' />
+                    </ContentElemen>
+                    <Boton>Guardar</Boton>
+                </Formulario>
+            </ContenedorFormulario>
+            <ListarProveedor>
+                <h2>Listado</h2>
+                <Table singleLine>
 
-                    <div>
-                        <label htmlFor='tipo' className='labelEquipment'>Tipo Equipamiento</label>
-                        <SelectExample placeholder='Seleccionar Tipo' opcion={arreglo2} />
-                    </div>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Familia</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo</Table.HeaderCell>
+                            <Table.HeaderCell>Marca</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N° Serie</Table.HeaderCell>
+                            <Table.HeaderCell>RFID</Table.HeaderCell>
+                            <Table.HeaderCell>Acción</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
 
-                    <div>
-                        <label htmlFor='marca' className='labelEquipment'>Marca</label>
-                        <SelectExample placeholder='Seleccionar Marca' opcion={arreglo3}/>
-                    </div>
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>1</Table.Cell>
+                            <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
+                            <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
+                            <Table.Cell>SUSED</Table.Cell>
+                            <Table.Cell>TRX-800</Table.Cell>
+                            <Table.Cell>234JN93THC4GHO6</Table.Cell>
+                            <Table.Cell>-------</Table.Cell>
+                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
 
-                    <div>
-                        <label htmlFor='modelo' className='labelEquipment'>Modelo</label>
-                        <SelectExample placeholder='Seleccionar Modelo' opcion={arreglo4} />
-                    </div>
+                </Table>
+            </ListarProveedor>
+            {console.log(user.uid)}
+        </ContenedorProveedor>
+    );
+};
 
-                    <div>
-                        <label htmlFor='serie' className='labelEquipment'>N° Serie</label>
-                        <input
-                            type='text'
-                            placeholder='Ingrese Serie'
-                            value={inputSerie}
-                            onChange={(e) => handleInput(e)}
-                            className='inputEquipment'
-                        />
-                    </div>
+const ContenedorProveedor = styled.div``
 
-                    <button as='button' type='submit' className='botonEquipment'>Guardar</button>
-                </form>
-            </div>
+const ContenedorFormulario = styled.div`
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #d1d1d1;
+    border-radius: 20px;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
+    
+`
 
-            <ListaCrearEquipo />
+const ContentElemen = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+`
 
-        </div >
-    )
-}
+const ContentElemenSelect = styled.div`
+    padding: 20px;
+`
 
 
-export default CrearEquipo;
+const ListarProveedor = styled.div`
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #d1d1d1;
+    border-radius: 20px;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
+`
+
+const Formulario = styled.form``
+
+const Input = styled.input`
+    border: 2px solid #d1d1d1;
+    border-radius: 10px;
+    padding: 5px;
+`
+
+const Label = styled.label`
+        padding: 5px;
+        font-size: 20px;
+`
+
+const Boton = styled.button`
+        background-color: #83d394;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        margin-top: 20px;
+`
+
+export default Proveedores;

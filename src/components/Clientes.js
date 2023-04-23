@@ -47,7 +47,7 @@ const Label = styled.label`
 `
 
 const Boton = styled.button`
-        background-color: #8354;
+        background-color: #83d394;
         padding: 10px;
         border-radius: 5px;
         border: none;
@@ -82,7 +82,7 @@ const Clientes = () => {
                         <Label>Nombre Contacto</Label>
                         <Input/>  
                     </ContentElemen>
-                     <Boton>Guardar</Boton>              
+                    <Boton>Guardar</Boton>              
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
