@@ -21,7 +21,7 @@ export default function Login() {
 
     // validate the inputs
     if (!email || !password) {
-      setError("Please enter your username and password.");
+      setError("Por favor ingresa email y password");
       return;
     }
 

@@ -7,15 +7,18 @@ import { collection, addDoc } from 'firebase/firestore';
 import ListaFamilias from './ListaFamilias';
 import Alertas from './Alertas';
 import '../styles/agregarFamilia.css';
-
+import format from 'date-fns/format'
+import {es} from 'date-fns/locale';
 
 const AgregarFamilia = () => {
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [familias, setFamilias] = useState('');
-
     const [inputFamilia, setInputFamilia] = useState('')
+
+    let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`, {locale: es});
+    console.log(fechaActual)
 
     const handleInput = (e) => {
         setInputFamilia(e.target.value)

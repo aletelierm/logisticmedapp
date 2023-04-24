@@ -124,12 +124,17 @@ export const DataMenu = [
       {
         title: 'Asignar Roles',
         path: '/home/configuracion/asignaroles',
-        icon: <FaIcons.FaUserMd />
+        icon: <RiIcons.RiProfileFill />
       },
       {
         title: 'Registrar Empresa',
         path: '/home/configuracion/agregarempresa',
         icon: <FaIcons.FaDeezer />
+      },
+      {
+        title: 'Parametro Global',
+        path: '/home/configuracion/global',
+        icon: <RiIcons.RiGlobalLine />
       }
     ]
   }

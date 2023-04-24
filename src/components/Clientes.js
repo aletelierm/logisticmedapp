@@ -63,7 +63,10 @@ const Clientes = () => {
 
     return (
         <ContenedorProveedor>
-            <h1>Mis Clientes</h1>
+            <ContenedorFormulario>
+                <h2>Mis Clientes</h2>
+            </ContenedorFormulario>
+           
             <ContenedorFormulario>
                 <Formulario action=''>
                     <ContentElemen>

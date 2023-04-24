@@ -63,7 +63,12 @@ const Proveedores = () => {
 
     return (
         <ContenedorProveedor>
-            <h1>Mis Proveedores</h1>
+            <ContenedorFormulario>
+            <h2>Mis Proveedores</h2>
+            </ContenedorFormulario>
+            
+           
+           
             <ContenedorFormulario>
                 <Formulario action=''>
                     <ContentElemen>
