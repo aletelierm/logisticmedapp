@@ -1,101 +1,105 @@
-import React, { useState } from 'react';
-/* import { v4 as uuidv4 } from 'uuid'; */
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { db } from '../firebase/firebaseConfig'
-import { collection, addDoc } from 'firebase/firestore';
-import ListaFamilias from './ListaFamilias';
-import Alertas from './Alertas';
-import '../styles/agregarFamilia.css';
-import format from 'date-fns/format'
-import {es} from 'date-fns/locale';
+import React from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase/firebaseConfig';
+import { Table } from 'semantic-ui-react'
+
 
 const AgregarFamilia = () => {
 
-    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [alerta, cambiarAlerta] = useState({});
-    const [familias, setFamilias] = useState('');
-    const [inputFamilia, setInputFamilia] = useState('')
+    const navigate = useNavigate();
+    const user = auth.currentUser;
 
-    let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`, {locale: es});
-    console.log(fechaActual)
-
-    const handleInput = (e) => {
-        setInputFamilia(e.target.value)
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-
-        if (inputFamilia.length === 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'No ha ingresado una Familia'
-            })
-
-        } else {
-            // setFamilias(
-            //     [
-            //         ...familias,
-            //         {
-            //             id: uuidv4(),
-            //             texto: inputFamilia.toUpperCase(),
-            //         }
-            //     ]
-            // );
-
-            const documento = await addDoc(collection(db, "familias"), {
-                namefamilia: inputFamilia,
-                fecha: '',
-                usuario: '',
-                empresa: ''
-            })
-            console.log(documento.id)
-            console.log(inputFamilia)
-
-            setInputFamilia('');
-
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Familia Ingresada Correctamente'
-            })
-        }
+    const volver = () => {
+        navigate('/home/actualiza')
     }
 
     return (
-        <div className='containerFamily'>
-            <h2 className='titleForm'>Familias de Equipos</h2>
-            <div>
-                <form action='' className='formFamily' onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor='familia' className='formFamily__label'>Agregar Familia</label>
-                        <input
+        <ContenedorProveedor>
+            <h1>Familia de Equipos</h1>
+            <ContenedorFormulario>
+                <Formulario action=''>
+                    <ContentElemen>
+                        <Label>Agregar Familia</Label>
+                    </ContentElemen>
+                    <ContentElemen>
+                        <Input
                             type='text'
-                            className='formFamily__input'
                             placeholder='Ingrese Familia Equipamiento Médico'
-                            value={inputFamilia}
-                            onChange={(e) => handleInput(e)}
                         />
-                    </div>
-                    <button as='button' type='submit' className='formFamily__btn'>
-                        <FontAwesomeIcon icon={faPlus} className='formFamily__iconBtn' />
-                    </button>
-                </form>
-            </div>
-            <ListaFamilias familias={familias} setFamilias={setFamilias} />
-            <Alertas tipo={alerta.tipo}
-                mensaje={alerta.mensaje}
-                estadoAlerta={estadoAlerta}
-                cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />
-        </div >
-    )
-}
+                    </ContentElemen>
+                    <Boton>Guardar</Boton>
+                </Formulario>
+            </ContenedorFormulario>
+            <ListarProveedor>
+                <h2>Listado de Familias</h2>
+                <Table singleLine>
 
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Familia</Table.HeaderCell>
+                            <Table.HeaderCell>Accion</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>1</Table.Cell>
+                            <Table.Cell>DISPOSITIVOS DE INFUSION</Table.Cell>
+                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+
+                </Table>
+            </ListarProveedor>
+        </ContenedorProveedor>
+    );
+};
+
+const ContenedorProveedor = styled.div``
+
+const ContenedorFormulario = styled.div`
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #d1d1d1;
+    border-radius: 20px;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+`
+const ContentElemen = styled.div`
+    text-align: center;
+    padding: 7px;
+`
+
+const ListarProveedor = styled.div`
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #d1d1d1;
+    border-radius: 20px;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+`
+const Formulario = styled.form`
+    padding: 20px;
+`
+
+const Input = styled.input`
+    border: 2px solid #d1d1d1;
+    border-radius: 10px;
+    padding: 5px;
+    
+`
+
+const Label = styled.label`
+        padding: 10px;
+        font-size: 20px;
+`
+
+const Boton = styled.button`
+        background-color: #83d394;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        margin-top: 10px;
+`
 
 export default AgregarFamilia;
