@@ -9,14 +9,17 @@ const AgregarMarca = () => {
 
     const navigate = useNavigate();
     const user = auth.currentUser;
-
+    console.log(user)
     const volver = () => {
         navigate('/home/actualiza')
     }
 
     return (
         <ContenedorProveedor>
-            <h1>Marcas de Equipos</h1>
+            <ContenedorFormulario>
+                <h2>Marcas de Equipos</h2>
+            </ContenedorFormulario>
+            
             <ContenedorFormulario>
                 <Formulario action=''>
                     <ContentElemen>
@@ -28,7 +31,7 @@ const AgregarMarca = () => {
                             placeholder='Ingrese Marca Equipamiento Médico'
                         />
                     </ContentElemen>
-                    <Boton>Guardar</Boton>
+                    <Boton>Agregar</Boton>
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
@@ -80,7 +83,10 @@ const ListarProveedor = styled.div`
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
 const Formulario = styled.form`
+    display: flex;
     padding: 20px;
+    text-align: center;
+    text-align: center;
 `
 
 const Input = styled.input`
@@ -100,7 +106,7 @@ const Boton = styled.button`
         padding: 10px;
         border-radius: 5px;
         border: none;
-        margin-top: 10px;
+        margin-top: 5px;
 `
 
 export default AgregarMarca;

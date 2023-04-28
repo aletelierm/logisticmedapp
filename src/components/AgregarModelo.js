@@ -9,14 +9,17 @@ const AgregarModelo = () => {
 
     const navigate = useNavigate();
     const user = auth.currentUser;
-
+    console.log(user)
     const volver = () => {
         navigate('/home/actualiza')
     }
 
     return (
         <ContenedorProveedor>
-            <h1>Modelos de Equipos</h1>
+            <ContenedorFormulario>
+                    <h2>Modelos de Equipos</h2>
+            </ContenedorFormulario>
+            
             <ContenedorFormulario>
                 <Formulario action=''>
                     <ContentElemen>
@@ -28,7 +31,7 @@ const AgregarModelo = () => {
                             placeholder='Ingrese Modelo Equipamiento Médico'
                         />
                     </ContentElemen>
-                    <Boton>Guardar</Boton>
+                    <Boton>Agregar</Boton>
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
@@ -47,7 +50,7 @@ const AgregarModelo = () => {
                         <Table.Row>
                             <Table.Cell>1</Table.Cell>
                             <Table.Cell>ABBOTT</Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
+                            <Table.Cell><Boton onClick={volver}>Modificar</Boton></Table.Cell>
                         </Table.Row>
                     </Table.Body>
 
@@ -79,7 +82,10 @@ const ListarProveedor = styled.div`
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
 const Formulario = styled.form`
+    display: flex;
     padding: 20px;
+    text-align: center;
+    align-items: center;
 `
 
 const Input = styled.input`
@@ -99,7 +105,7 @@ const Boton = styled.button`
         padding: 10px;
         border-radius: 5px;
         border: none;
-        margin-top: 10px;
+        margin-top: 5px;
 `
 
 export default AgregarModelo;

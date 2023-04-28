@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import Select from './Select';
-import ListaCrearEquipo from './ListaCrearEquipo'
+import ListaCrearEquipo from '../ListaCrearEquipo'
 import '../styles/crearEquipo.css'
 
 

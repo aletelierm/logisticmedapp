@@ -10,7 +10,7 @@ import Entradas from './Entradas';
 import Salidas from './Salidas';
 import Clientes from './Clientes';
 import Proveedores from './Proveedores';
-import Usuarios from './Usuarios';
+/* import Usuarios from './Usuarios'; */
 import AgregarFamilia from './AgregarFamilia';
 import AgregarTipo from './AgregarTipo';
 import AgregraMarca from './AgregarMarca';
@@ -27,6 +27,8 @@ import NavbarSesion from './NavbarSesion';
 import AgregarEmpresa from './AgregarEmpresa';
 import ActualizaProveedor from './ActualizaProveedor';
 import AsignarRoles from './AsignarRoles';
+import { RegistroUsuarios } from './RegistroUsuarios';
+import ActualizaCliente from './ActualizaCliente';
 
   // ingresando al home => erivas
 export const Home = () => {
@@ -53,9 +55,10 @@ export const Home = () => {
             <Route path="/serviciotecnico/mantencion" element={<Mantenimiento/>}/>
             <Route path="/clientes" element={<Clientes/>}/>
             <Route path="/proveedores" element={<Proveedores/>}/>
-            <Route path="/actualiza" element={<ActualizaProveedor/>}/>
+            <Route path="/actualizaproveedor" element={<ActualizaProveedor/>}/>
+            <Route path="/actualizacliente" element={<ActualizaCliente/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>        
-            <Route path="/configuracion/registrausuarios" element={<Usuarios/>}/>
+            <Route path="/configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="/configuracion/asignaroles" element={<AsignarRoles/>}/>
             <Route path="/configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
 

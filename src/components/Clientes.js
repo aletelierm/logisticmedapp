@@ -58,7 +58,7 @@ const Clientes = () => {
     const user = auth.currentUser;
 
     const volver = ()=>{
-        navigate('/home/actualiza')
+        navigate('/home/actualizacliente')
     }
 
     return (

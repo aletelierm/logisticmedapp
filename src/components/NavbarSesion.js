@@ -6,16 +6,15 @@ import { auth } from '../firebase/firebaseConfig';
 import { signOut } from "firebase/auth";
 import format from 'date-fns/format'
 import {es} from 'date-fns/locale';
-
-// import Login from '../components/Login'
 import './../styles/navbar.css'
 
 const NavbarSesion = () => {
 
-
+    const user = auth.currentUser;
+   
     let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`, {locale: es});
    /*  let horaActual = format (new Date(), `k ':' m`) */
-    const user = auth.currentUser;
+    
     const navigate = useNavigate();
    
 

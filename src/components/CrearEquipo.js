@@ -36,7 +36,10 @@ const Proveedores = () => {
 
     return (
         <ContenedorProveedor>
-            <h1>Crear Dispositivos Médicos</h1>
+            <ContenedorFormulario>
+                <h2>Crear Dispositivos Médicos</h2>
+            </ContenedorFormulario>
+            
             <ContenedorFormulario>
                 <Formulario action=''>
 
@@ -64,11 +67,11 @@ const Proveedores = () => {
                         <Label >RFID</Label>
                         <Input type='number' />
                     </ContentElemen>
-                    <Boton>Guardar</Boton>
+                    <Boton>Crear</Boton>
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
-                <h2>Listado</h2>
+                <h2>Listado de Dispositivos Médicos</h2>
                 <Table singleLine>
 
                     <Table.Header>

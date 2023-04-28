@@ -102,35 +102,10 @@ const Entradas = () => {
                 </Formulario>
             </ContenedorFormulario>
 
-            <ListarProveedor>
-                <h2>Listado Entradas</h2>
-                <Table singleLine>
-
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>Proveedor</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
-                            <Table.HeaderCell>Acción</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>0012984572</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>Bomy CHILE</Table.Cell>
-                            <Table.Cell>23-04-2023</Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-
-                </Table>
-            </ListarProveedor>
+            
 
             <ListarProveedor>
-                <h2>Listado Equipos de anoEntradas</h2>
+                <h2>Listado Equipos Recepcionados</h2>
                 <Table singleLine>
 
                     <Table.Header>

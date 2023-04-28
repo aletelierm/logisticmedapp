@@ -1,34 +1,85 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+/* import { useNavigate } from 'react-router-dom'; */
 import { auth } from '../firebase/firebaseConfig';
-import { Table } from 'semantic-ui-react'
-
+import { Table } from 'semantic-ui-react';
+import AgregarEmpresaDb from '../firebase/AgregarEmpresaDb';
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 const AgregarEmpresa = () => {
 
-    const navigate = useNavigate();
-    const user = auth.currentUser;
+    /* const navigate = useNavigate(); */
+    const user = auth.currentUser;    
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
 
-    const volver = () => {
-        navigate('/home/actualiza')
+    const [empresa, setEmpresa] = useState('');
+    const [leer, setLeer] = useState([])
+
+    const handleChange = (e)=>{
+       setEmpresa(e.target.value) ;
+       
     }
+
+    const handleSubmit = (e)=>{
+            e.preventDefault();           
+            if(empresa ===''){                
+                alert('campo no puede estar vacio')
+                
+            }else{
+               
+                AgregarEmpresaDb({
+                    empresa: empresa,
+                    userAdd: user.email,
+                    userMod: user.email,                
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod
+                })
+                .then(()=>{
+                    alert('datos grabados correctamente')
+                    setEmpresa('');
+                })
+                
+            }
+            
+    }
+
+   /*  const volver = () => {
+        navigate('/home/volver')
+    } */
+
+    const getData = async ()=>{
+        const data = await getDocs(collection(db, "empresas"));
+        setLeer(data.docs.map((doc)=>({...doc.data(),id: doc.id} )))
+        
+    }
+
+    useEffect(()=>{
+        getData();
+    },[setEmpresa,empresa])
 
     return (
         <ContenedorProveedor>
-            <h1>Empresas</h1>
             <ContenedorFormulario>
-                <Formulario action=''>
+                    <h2>Empresas</h2>
+            </ContenedorFormulario>
+            
+            <ContenedorFormulario>
+                <Formulario onSubmit={handleSubmit}>
                     <ContentElemen>
                         <Label>Agregar Empresa</Label>
                     </ContentElemen>
                     <ContentElemen>
                         <Input
                             type='text'
-                            placeholder='Ingrese Empresa Equipamiento Médico'
+                            placeholder='Ingrese Empresa'
+                            name='empresa'
+                            value={empresa}
+                            onChange={handleChange}
                         />
                     </ContentElemen>
-                    <Boton>Guardar</Boton>
+                    <Boton>Agregar</Boton>
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
@@ -44,11 +95,16 @@ const AgregarEmpresa = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>1</Table.Cell>
-                            <Table.Cell>Distribuidor Bomy</Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
-                        </Table.Row>
+                        {leer.map((item, index)=>{
+                                return(
+                                    <Table.Row>
+                                    <Table.Cell>{index+1}</Table.Cell>
+                                    <Table.Cell>{item.empresa}</Table.Cell>
+                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                    </Table.Row>
+                                )
+                        })}
+                        
                     </Table.Body>
 
                 </Table>
@@ -79,7 +135,10 @@ const ListarProveedor = styled.div`
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
 const Formulario = styled.form`
+    display: flex;
     padding: 20px;
+    text-align: center;
+    align-items: center;
 `
 
 const Input = styled.input`
@@ -99,7 +158,8 @@ const Boton = styled.button`
         padding: 10px;
         border-radius: 5px;
         border: none;
-        margin-top: 10px;
+        margin-top: 5px;
+        margin-left: 20px;
 `
 
 export default AgregarEmpresa;

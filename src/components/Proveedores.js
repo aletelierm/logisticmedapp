@@ -58,7 +58,7 @@ const Proveedores = () => {
     const user = auth.currentUser;
 
     const volver = ()=>{
-        navigate('/home/actualiza')
+        navigate('/home/actualizaproveedor')
     }
 
     return (
