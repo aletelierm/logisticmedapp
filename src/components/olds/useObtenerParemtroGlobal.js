@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db, auth } from '../firebase/firebaseConfig';
+import { db, auth } from '../../firebase/firebaseConfig';
 import { doc, getDoc, collection, setDoc } from 'firebase/firestore';
 /* import { useNavigate } from 'react-router-dom';; */
 
@@ -31,8 +31,8 @@ import { doc, getDoc, collection, setDoc } from 'firebase/firestore';
             const coleccion = collection(db, 'usuarios');
 
              await setDoc(doc(coleccion, id), {
-                    nombre: 'andres',
-                    apellido: 'letelier',
+                    nombre: 'Catalina',
+                    apellido: 'Astudillo',
                     empresa: 'ALLCOMPANY',
                     ROL: 'DADMIN',
                     USER_ADD: user.email,

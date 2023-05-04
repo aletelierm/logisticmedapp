@@ -62,7 +62,7 @@ const AgregarEmpresa = () => {
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                    <h2>Empresas</h2>
+                    <Titulo>Registrar Empresas</Titulo>
             </ContenedorFormulario>
             
             <ContenedorFormulario>
@@ -90,6 +90,7 @@ const AgregarEmpresa = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Empresa</Table.HeaderCell>
+                            <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -100,6 +101,7 @@ const AgregarEmpresa = () => {
                                     <Table.Row>
                                     <Table.Cell>{index+1}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
                                     </Table.Row>
                                 )
@@ -113,6 +115,9 @@ const AgregarEmpresa = () => {
     );
 };
 
+const Titulo = styled.h2`
+    color:  #83d394;
+`
 const ContenedorProveedor = styled.div``
 
 const ContenedorFormulario = styled.div`
@@ -125,6 +130,7 @@ const ContenedorFormulario = styled.div`
 const ContentElemen = styled.div`
     text-align: center;
     padding: 7px;
+    margin-right: 30px;
 `
 
 const ListarProveedor = styled.div`

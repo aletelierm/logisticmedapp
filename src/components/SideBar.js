@@ -21,7 +21,7 @@ const SideBar = ({ children }) => {
                 </div>
                
                 {DataMenu.map((item, index) => {
-                    return < div className='link' key={index}>
+                    return                     < div className='link' key={index}>
                         <div className='link_text'>
                             <SubMenu item={item} key={index} isopen={isOpen} />
                         </div>

@@ -117,15 +117,15 @@ export const DataMenu = [
 
     subNav: [
       {
-        title: 'Registrar Usuarios',
+        title: 'Usuarios y Roles',
         path: '/home/configuracion/registrausuarios',
         icon: <FaIcons.FaUserMd />
       },
-      {
+      /* {
         title: 'Asignar Roles',
         path: '/home/configuracion/asignaroles',
         icon: <RiIcons.RiProfileFill />
-      },
+      }, */
       {
         title: 'Registrar Empresa',
         path: '/home/configuracion/agregarempresa',
