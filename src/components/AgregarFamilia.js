@@ -1,27 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
+import Alertas from './Alertas';
+// import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 
 const AgregarFamilia = () => {
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const user = auth.currentUser;
-    console.log(user)
-    const volver = () => {
-        navigate('/home/actualiza')
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
+
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+    const [familia, setFamilia] = useState('');
+    const [leer, setLeer] = useState([])
+
+    const handleChange = (e) => {
+        setFamilia(e.target.value);
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (familia === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha ingresado una Familia'
+            })
+            // alert('campo no puede estar vacio')
+        } else {
+
+            AgregarFamiliaDb({
+                familia: familia,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod
+            })
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Familia Ingresada Correctamente'
+                    })
+                    // alert('datos grabados correctamente')
+                    setFamilia('');
+                })
+        }
+    }
+
+    // const volver = () => {
+    //     navigate('/home/actualiza')
+    // }
+
+    const getData = async () => {
+        const data = await getDocs(collection(db, "familias"));
+        setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+
+    useEffect(() => {
+        getData();
+    }, [setFamilia, familia])
 
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                    <h2>Familia de Equipos</h2>
+                <h2>Familia de Equipos</h2>
             </ContenedorFormulario>
-            
+
             <ContenedorFormulario>
-                <Formulario action=''>
+                <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
                         <Label>Agregar Familia</Label>
                     </ContentElemen>
@@ -29,6 +87,9 @@ const AgregarFamilia = () => {
                         <Input
                             type='text'
                             placeholder='Ingrese Familia Equipamiento Médico'
+                            name='familia'
+                            value={familia}
+                            onChange={handleChange}
                         />
                     </ContentElemen>
                     <Boton>Agregar</Boton>
@@ -47,15 +108,24 @@ const AgregarFamilia = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>1</Table.Cell>
-                            <Table.Cell>DISPOSITIVOS DE INFUSION</Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
-                        </Table.Row>
+                        {leer.map((item, index) => {
+                            return (
+                                <Table.Row>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.familia}</Table.Cell>
+                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
                     </Table.Body>
 
                 </Table>
             </ListarProveedor>
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
         </ContenedorProveedor>
     );
 };

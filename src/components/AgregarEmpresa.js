@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 /* import { useNavigate } from 'react-router-dom'; */
 import { auth } from '../firebase/firebaseConfig';
@@ -10,61 +10,59 @@ import { db } from '../firebase/firebaseConfig';
 const AgregarEmpresa = () => {
 
     /* const navigate = useNavigate(); */
-    const user = auth.currentUser;    
+    const user = auth.currentUser;
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
     const [empresa, setEmpresa] = useState('');
     const [leer, setLeer] = useState([])
 
-    const handleChange = (e)=>{
-       setEmpresa(e.target.value) ;
-       
+    const handleChange = (e) => {
+        setEmpresa(e.target.value);
+
     }
 
-    const handleSubmit = (e)=>{
-            e.preventDefault();           
-            if(empresa ===''){                
-                alert('campo no puede estar vacio')
-                
-            }else{
-               
-                AgregarEmpresaDb({
-                    empresa: empresa,
-                    userAdd: user.email,
-                    userMod: user.email,                
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod
-                })
-                .then(()=>{
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (empresa === '') {
+            alert('campo no puede estar vacio')
+
+        } else {
+
+            AgregarEmpresaDb({
+                empresa: empresa,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod
+            })
+                .then(() => {
                     alert('datos grabados correctamente')
                     setEmpresa('');
                 })
-                
-            }
-            
+        }
     }
 
-   /*  const volver = () => {
-        navigate('/home/volver')
-    } */
+    /*  const volver = () => {
+         navigate('/home/volver')
+     } */
 
-    const getData = async ()=>{
+    const getData = async () => {
         const data = await getDocs(collection(db, "empresas"));
-        setLeer(data.docs.map((doc)=>({...doc.data(),id: doc.id} )))
-        
+        setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getData();
-    },[setEmpresa,empresa])
+    }, [setEmpresa, empresa])
 
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                    <h2>Empresas</h2>
+                <h2>Empresas</h2>
             </ContenedorFormulario>
-            
+
             <ContenedorFormulario>
                 <Formulario onSubmit={handleSubmit}>
                     <ContentElemen>
@@ -95,16 +93,16 @@ const AgregarEmpresa = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {leer.map((item, index)=>{
-                                return(
-                                    <Table.Row>
-                                    <Table.Cell>{index+1}</Table.Cell>
+                        {leer.map((item, index) => {
+                            return (
+                                <Table.Row>
+                                    <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
-                                    </Table.Row>
-                                )
+                                </Table.Row>
+                            )
                         })}
-                        
+
                     </Table.Body>
 
                 </Table>

@@ -1,27 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import AgregarTipoDb from '../firebase/AgregarTipoDb';
+import Alertas from './Alertas';
+// import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
-import { Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react';
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 
 const AgregarTipo = () => {
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const user = auth.currentUser;
-    console.log(user)
-    const volver = () => {
-        navigate('/home/actualiza')
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
+
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+    const [tipo, setTipo] = useState('');
+    const [leer, setLeer] = useState([])
+
+    const handleChange = (e) => {
+        setTipo(e.target.value);
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (tipo === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha ingresado una Tipo Equipamiento'
+            })
+            // alert('campo no puede estar vacio')
+        } else {
+            AgregarTipoDb({
+                tipo: tipo,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod
+            })
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Familia Ingresada Correctamente'
+                    })
+                    // alert('datos grabados correctamente')
+                    setTipo('');
+                })
+        }
+    }
+
+    // const volver = () => {
+    //     navigate('/home/actualiza')
+    // }
+
+    const getData = async () => {
+        const data = await getDocs(collection(db, "tipos"));
+        setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+
+    }
+
+    useEffect(() => {
+        getData();
+    }, [setTipo, tipo])
 
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                    <h2>Tipos de Equipos</h2>
+                <h2>Tipos de Equipos</h2>
             </ContenedorFormulario>
-            
+
             <ContenedorFormulario>
-                <Formulario action=''>
+                <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
                         <Label>Agregar Tipo</Label>
                     </ContentElemen>
@@ -29,13 +87,16 @@ const AgregarTipo = () => {
                         <Input
                             type='text'
                             placeholder='Ingrese Tipo Equipamiento Médico'
+                            name='tipo'
+                            value={tipo}
+                            onChange={handleChange}
                         />
                     </ContentElemen>
                     <Boton>Agregar</Boton>
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
-                <h2>Listado de Tipos</h2>
+                <h2>Listado de Tipos de Equipamiento</h2>
                 <Table singleLine>
 
                     <Table.Header>
@@ -47,15 +108,24 @@ const AgregarTipo = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>1</Table.Cell>
-                            <Table.Cell>TRX-800</Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modificar</Boton></Table.Cell>
-                        </Table.Row>
+                        {leer.map((item, index) => {
+                            return (
+                                <Table.Row>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
                     </Table.Body>
 
                 </Table>
             </ListarProveedor>
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
         </ContenedorProveedor>
     );
 };

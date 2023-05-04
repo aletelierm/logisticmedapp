@@ -1,27 +1,84 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import AgregarMarcaDb from '../firebase/AgregarMarcaDb';
+import Alertas from './Alertas';
+// import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 
 const AgregarMarca = () => {
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const user = auth.currentUser;
-    console.log(user)
-    const volver = () => {
-        navigate('/home/actualiza')
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
+
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+    const [marca, setMarca] = useState('');
+    const [leer, setLeer] = useState([])
+
+    const handleChange = (e) => {
+        setMarca(e.target.value);
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (marca === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha ingresado una Marca'
+            })
+            // alert('campo no puede estar vacio')
+        } else {
+            AgregarMarcaDb({
+                marca: marca,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod
+            })
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Marca Ingresada Correctamente'
+                    })
+                    // alert('datos grabados correctamente')
+                    setMarca('');
+                })
+        }
+    }
+
+    // const volver = () => {
+    //     navigate('/home/actualiza')
+    // }
+
+    const getData = async () => {
+        const data = await getDocs(collection(db, "marcas"));
+        setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+
+    useEffect(() => {
+        getData();
+    }, [setMarca, marca])
 
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
                 <h2>Marcas de Equipos</h2>
             </ContenedorFormulario>
-            
+
             <ContenedorFormulario>
-                <Formulario action=''>
+                <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
                         <Label>Agregar Marca</Label>
                     </ContentElemen>
@@ -29,6 +86,9 @@ const AgregarMarca = () => {
                         <Input
                             type='text'
                             placeholder='Ingrese Marca Equipamiento Médico'
+                            name='marca'
+                            value={marca}
+                            onChange={handleChange}
                         />
                     </ContentElemen>
                     <Boton>Agregar</Boton>
@@ -47,16 +107,24 @@ const AgregarMarca = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>1</Table.Cell>
-                            <Table.Cell>BOMBA ENTERAL</Table.Cell>
-                            <Table.Cell></Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
-                        </Table.Row>
+                        {leer.map((item, index) => {
+                            return (
+                                <Table.Row>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.marca}</Table.Cell>
+                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
                     </Table.Body>
 
                 </Table>
             </ListarProveedor>
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
         </ContenedorProveedor>
     );
 };
