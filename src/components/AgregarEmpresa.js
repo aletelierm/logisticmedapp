@@ -8,6 +8,8 @@ import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import Alerta from './Alertas';
 import * as MdIcons from 'react-icons/md';
+import * as FaIcons from 'react-icons/fa';
+
 
 const AgregarEmpresa = () => {
 
@@ -22,7 +24,7 @@ const AgregarEmpresa = () => {
     const [ estadoAlerta, cambiarEstadoAlerta ] = useState(false);
     const [ pagina, setPagina ] = useState(0);
     const [ buscador, setBuscardor ] = useState('');
-
+   
    
 
     const handleChange = (e)=>{
@@ -51,7 +53,7 @@ const AgregarEmpresa = () => {
                 .then(()=>{
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
-                    tipo: 'exitoas',
+                    tipo: 'exito',
                     mensaje: 'Empresa Registrada Correctamente'
             })
                     setEmpresa('');
@@ -67,12 +69,14 @@ const AgregarEmpresa = () => {
 
     const getData = async ()=>{
         const data = await getDocs(collection(db, "empresas"));
-        setLeer(data.docs.map((doc)=>({...doc.data(),id: doc.id} )))
+        setLeer(data.docs.map((doc, index)=>({...doc.data(),id: doc.id,id2: index+1} )))
         
     }
 
     const filtroEmpresa = ()=>{
+      
         if(buscador.length === 0)
+
           return leer.slice(pagina, pagina + 5);
 
         const nuevoFiltro = leer.filter(  emp => emp.empresa.includes( buscador));
@@ -108,29 +112,23 @@ const AgregarEmpresa = () => {
             
             <ContenedorFormulario>
                 <Formulario onSubmit={handleSubmit}>
-                    <ContentElemen>
+                   {/*  <ContentElemen>
                         <Label>Agregar Empresa</Label>
-                    </ContentElemen>
-                    <ContentElemen>
+                    </ContentElemen> */}
+                    {/* <ContentElemen> */}
                         <Input
+                            style={{width:'100%'}}
                             type='text'
                             placeholder='Ingrese Empresa'
                             name='empresa'
                             value={empresa}
                             onChange={handleChange}
                         />
-                    </ContentElemen>
+                   {/*  </ContentElemen> */}
                     <Boton>Agregar</Boton>
                 </Formulario>
             </ContenedorFormulario>
-          {/*   <ContenedorFormulario>
-                <Input 
-                    type='text'
-                    placeholder='Buscar'
-                    value={ buscador }
-                    onChange={ onBuscarCambios }
-                />
-            </ContenedorFormulario> */}
+          
             <ListarProveedor>
                 <ContentElemen>
                     <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{fontSize:'30px'}}/></Boton>
@@ -138,9 +136,10 @@ const AgregarEmpresa = () => {
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{fontSize:'30px'}}/></Boton>
                 </ContentElemen>
                 <ContentElemen>
+                    <FaIcons.FaSearch style={{fontSize: '30px', color:'green',padding:'5px'}}/>
                     <Input style={{width: '100%'}}
                         type='text'
-                        placeholder='Buscar'
+                        placeholder='Buscar Empresa'
                         value={ buscador }
                         onChange={ onBuscarCambios }
                     />
@@ -152,24 +151,27 @@ const AgregarEmpresa = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Empresa</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
+                            <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
                         {
-                            
-                        filtroEmpresa().map((item, index)=>{                           
-                            
+                             
+                        filtroEmpresa().map((item)=>{                        
+                          
                                 return(
                                     
                                     <Table.Row>
-                                    <Table.Cell>{item.id}</Table.Cell>
+                                    <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
                                     <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
                                     </Table.Row>
                                 )
+                                
                         })}
                         
                     </Table.Body>
@@ -228,12 +230,13 @@ const Input = styled.input`
     border-radius: 10px;
     padding: 5px;
     
+    
 `
 
-const Label = styled.label`
+/* const Label = styled.label`
         padding: 10px;
         font-size: 15px;
-`
+` */
 
 const Boton = styled.button`
         background-color: #83d394;
