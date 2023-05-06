@@ -226,7 +226,7 @@ const Formulario = styled.form`
 `
 
 const Input = styled.input`
-    border: 2px solid #d1d1d1;
+    border: 2px solid  green;
     border-radius: 10px;
     padding: 5px;
     

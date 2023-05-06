@@ -1,25 +1,15 @@
-
 import React from 'react';
 import { BiUserCircle } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
-
-
-// import Login from '../components/Login'
 import '../styles/navbar.css'
 
-const Navbar = () => {
+const Navbar = () => {   
+    const navigate = useNavigate();    
 
-   
-    const navigate = useNavigate();
-    
-
-    const handleChange = ()=>{
-            
+    const handleChange = ()=>{            
             navigate('/login');
-
     }
-
-    
+   
     return (
         <>
             <div className='navbar'>
@@ -27,8 +17,7 @@ const Navbar = () => {
                     <img src='./logo2.png' alt='Logo' />
                 </div>
                 <div className='user'>
-                     <h4>Iniciar Sesion</h4>
-                   
+                     <h4>Iniciar Sesion</h4>                   
                     <div className='icon' onClick={()=> handleChange()}>
                         <BiUserCircle className='iconUser' />
                     </div>

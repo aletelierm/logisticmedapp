@@ -1,17 +1,29 @@
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 import Section from "./Section"
+import Styled from 'styled-components';
 
 
 const Landing = () => {
+
+   
     return (
-        <div className="contenedor-landing">
+        <ContenedorLanding>
             <Navbar/>
             <Section/>
             <Footer/>
-        </div>
+        </ContenedorLanding>
 
       );
 }
  
+const ContenedorLanding = Styled.div`
+        width: 100%;
+        height: 100vh;
+`
+
 export default Landing;
+
+
+
+
