@@ -1,29 +1,50 @@
-import React, {useState}from 'react';
+import React, {useEffect, useState}from 'react';
 import styled from 'styled-components';
-import Select from './SelectExample';
 import Alerta from './Alertas'
-import { auth } from "../firebase/firebaseConfig";
+import { db , auth } from './../firebase/firebaseConfig';
+import { collection, getDocs,doc,setDoc } from 'firebase/firestore';
+import {Roles} from './Roles';
 import {  createUserWithEmailAndPassword } from 'firebase/auth';
-
+import * as FaIcons from 'react-icons/fa';
+import * as MdIcons from 'react-icons/md';
 
 export const RegistroUsuarios = () => {
+
+    let fechaactual = new Date();
+    const userAuth = auth.currentUser.email;
+    const useradd = userAuth;
+    const usermod = userAuth;
 
     const [correo, setCorreo] = useState('');
     const [pass, setPass] = useState('');
     const [pass2, setPass2] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
-    const [rol, setRol] = useState('');
-    const [empresa, setEmpresa] = useState('')
+    const [rol, setRol] = useState([]);   
+    const [empresa, setEmpresa] = useState([]);
+    const [nomEmpresa, setNomEmpresa] = useState([]);
     const [ alerta, cambiarAlerta] = useState({});
     const [ estadoAlerta, cambiarEstadoAlerta ] = useState(false);
 
-    const Empresa = [
-        { key: '1', value: '1', text: 'Sociedad Tres Chanchitos Spa' },
-        { key: '2', value: '2', text: 'Soft & Art Spa' }
-    ]
-
+      
+    //Lee datos de las empresas
+    const getEmpresa = async ()=>{
+        const dataEmpresa = await getDocs(collection(db, "empresas"));
+        setEmpresa(dataEmpresa.docs.map((emp)=>({...emp.data(),id: emp.id})))
+        
+    }
     
+    
+    useEffect(()=>{
+
+        getEmpresa();
+        
+
+    },[])
+
+   
+  
+    //Lee input de formulario
     const handleChange = (e)=>{
         switch(e.target.name){
             case 'email':
@@ -47,38 +68,14 @@ export const RegistroUsuarios = () => {
 
     }
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-        if(!expresionRegular.test(correo)){
-            /* console.log('Favor ingresa un correo valido'); */
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Favor ingresa un correo valido'
-            })
-            return;
-        }
-        if(correo === '' || pass === '' || pass2 === ''){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Rellena todos los datos del usuario'
-            })
-            return;
-        }
-        if(pass !== pass2){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Las contraseñas no son iguales'
-            })
-            return;
-        }
+        
         if(nombre === ''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -86,26 +83,122 @@ export const RegistroUsuarios = () => {
                 mensaje: 'Campo Nombre no puede estar vacio'
             })
             return;
-        }
-        if(apellido === ''){
+        }else if(apellido === ''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Apellido no puede estar vacio'
             })
             return;
-        }
+        }else if(!expresionRegular.test(correo)){
+           
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor ingresa un correo valido'
+            })
+            return;
+        }else if(correo === '' || pass === '' || pass2 === ''){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Por favor ingresa los datos de autenticación '
+            })
+            return;
+        }else if(pass !== pass2){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Las contraseñas no son iguales'
+            })
+            return;
+        }else if(nomEmpresa.length === 0){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Empresa'
+            })
+           
+        }else if(rol.length === 0){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Rol'
+            })
+           
+        }else {
+            try{
+                await createUserWithEmailAndPassword(auth, correo, pass);
+               //Obtener id de usuario creado en Auth
+               const id = auth.currentUser.uid;
+               //Crear usuarios
+               const crear = async ()=>{
+                   const coleccion = collection(db, 'usuarios');        
+                    await setDoc(doc(coleccion, id), {
+                           nombre: nombre,
+                           apellido: apellido,
+                           empresa: nomEmpresa,
+                           rol: rol,
+                           user_add: useradd,
+                           user_mod: usermod,
+                           fecha_add: fechaactual,
+                           fecha_mod: fechaactual
+                   });        
+               }
+               crear();
+               setNombre('');
+               setApellido('');
+               setCorreo('');
+               setPass('');
+               setPass2('');
+               cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Usuario Registrado correctamente'
+            })
+           
+            }catch(error){
+                    console.log('El error es',error.code);
+                    cambiarEstadoAlerta(true);
+                    let mensaje;
+                    switch(error.code){
+                        case 'auth/weak-password':                        
+                            mensaje = 'La contraseña tiene que ser de al menos 6 caracteres';
+                            break;
+                        case 'auth/email-already-in-use':
+                            mensaje = 'Ya existe una cuenta con ese correo';
+                            break;
+                        case 'auth/invalid-email':
+                            mensaje = 'El correo no es valido';
+                            break;
+                            default:
+                            mensaje = 'Error al crear la cuenta';
+                            break;
+                    }
+    
+                   cambiarAlerta({
+                                tipo: 'error',
+                                mensaje:mensaje
+                   });
+            }
+
+            }
+           
+           
     }
 
+    
+        
   return (
     <ContenedorFormulario>
         <Contenedor>
-            <h2>Registro de Usuarios</h2>
+            <Titulo>Registro de Usuarios y Roles</Titulo>
         </Contenedor>
         
         <Contenedor>
          <Formulario onSubmit={handleSubmit}>            
             <ContentElemen>
+                <FaIcons.FaUserAlt style={{color:'green', fontSize:'20px'}} />
                 <Label>Nombre:</Label>
                 <Input 
                     type = 'text'
@@ -116,6 +209,7 @@ export const RegistroUsuarios = () => {
                 />
             </ContentElemen>
             <ContentElemen>
+                <FaIcons.FaUserAlt style={{color:'green', fontSize:'20px'}} />
                 <Label>Apellido:</Label>
                 <Input 
                     type = 'text'
@@ -126,6 +220,7 @@ export const RegistroUsuarios = () => {
                 />
             </ContentElemen>
             <ContentElemen>
+                <MdIcons.MdOutlineEmail style={{color:'green', fontSize:'20px'}} />
                 <Label>Correo:</Label>
                 <Input
                     type = 'email'
@@ -136,6 +231,7 @@ export const RegistroUsuarios = () => {
                 />
             </ContentElemen>
             <ContentElemen>
+                <FaIcons.FaKey style={{color:'green', fontSize:'20px'}} />
                 <Label>Password:</Label>
                 <Input 
                     type = 'password'
@@ -146,6 +242,7 @@ export const RegistroUsuarios = () => {
                 />
             </ContentElemen>
             <ContentElemen>
+            <FaIcons.FaKey style={{color:'green', fontSize:'20px'}} />
                 <Label>Password:</Label>
                 <Input 
                     type = 'password'
@@ -156,11 +253,25 @@ export const RegistroUsuarios = () => {
                 />
             </ContentElemen>  
             <ContentElemen>
-                <Label>Selecciona Empresa</Label>
-                <Select placeholder='Empresa' opciones={Empresa}/>
+            
+                <Label>Empresas</Label>
+                <Select value={nomEmpresa} onChange={e =>setNomEmpresa(e.target.value)}>
+                {empresa.map((d)=>{
+                    return(<option key={d.id}>{d.empresa}</option>)
+                 })}
+                </Select>
+                       
+                <Label>Roles</Label>
+                <Select value={rol} onChange={ev => setRol(ev.target.value)}>                    
+                    {Roles.map((d)=>{
+                        return(<option key={d.key}>{d.text}</option>)
+                    })}
+                </Select>
+                
             </ContentElemen>
+            
             <ContentElemen>
-                <Boton>Guardar</Boton>
+                <Boton>GUARDAR</Boton>
             </ContentElemen>        
          </Formulario>  
         </Contenedor>
@@ -175,21 +286,29 @@ export const RegistroUsuarios = () => {
   )
 }
 
+const Titulo = styled.h2`
+    color:  #83d394;
+`
+
 const ContenedorFormulario = styled.div`
 
 `
 const ContentElemen = styled.div`   
     display: flex;
     padding: 10px;
+    font-size: 15px;
+    text-align: center;
+    align-items: center;    
 `
 
 const Contenedor= styled.div`
-    width: 600px;
+    width: 700px;
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+    font-size: 15px;
 `
 
 const Formulario = styled.form`
@@ -205,9 +324,10 @@ const Input = styled.input`
 `
 
 const Label = styled.label`
-
+        font-size: 15px;
         padding: 5px;
-        font-size: 20px;
+       
+        
         
 `
 const Boton = styled.button`
@@ -217,4 +337,14 @@ const Boton = styled.button`
         border: none;
         margin-top: 5px;
         margin-left: 20px;
+        font-size: 15px;
+        &:hover{
+            background-color: #83d310;
+        }
+`
+const Select = styled.select`
+    border: 2px solid #d1d1d1;
+    border-radius: 10px;
+    padding: 5px;
+    width: 100%;
 `
