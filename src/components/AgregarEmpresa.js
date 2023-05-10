@@ -11,7 +11,9 @@ import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 
 
+
 const AgregarEmpresa = () => {
+    
 
     /* const navigate = useNavigate(); */
     const user = auth.currentUser;    
@@ -163,7 +165,7 @@ const AgregarEmpresa = () => {
                           
                                 return(
                                     
-                                    <Table.Row>
+                                    <Table.Row key={item.id2}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>

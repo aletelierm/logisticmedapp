@@ -53,7 +53,7 @@ export default function Login() {
           </Grid>
         </Grid>
 
-        <CardContent style={{boxShadow:'10px 10px 5px 0px rgba(0,0,0,1);'}} >
+        <CardContent>
           <Typography variant="h5" component="h1" gutterBottom textAlign="center">
             
           </Typography>

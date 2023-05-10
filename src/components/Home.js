@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route} from 'react-router-dom'
+import { Routes, Route, Navigate} from 'react-router-dom'
 
 
 import Footer from './Footer';
@@ -29,6 +29,7 @@ import ActualizaProveedor from './ActualizaProveedor';
 import AsignarRoles from './AsignarRoles';
 import { RegistroUsuarios } from './RegistroUsuarios';
 import ActualizaCliente from './ActualizaCliente';
+import { UserProvider } from '../context/UseProvider';
 
   // ingresando al home => erivas
 export const Home = () => {
@@ -36,6 +37,7 @@ export const Home = () => {
   
   return (
     <div>  
+    <UserProvider>    
     <NavbarSesion />
     <SideBar>    
     <Routes>
@@ -61,10 +63,10 @@ export const Home = () => {
             <Route path="/configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="/configuracion/asignaroles" element={<AsignarRoles/>}/>
             <Route path="/configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
-
+            <Route path="/*" element={<Navigate to="/login"/>}/>
     </Routes>
     </SideBar>
-    
+    </UserProvider>
     <Footer/>
     </div>
   )
