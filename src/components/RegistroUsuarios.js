@@ -255,7 +255,7 @@ export const RegistroUsuarios = () => {
             <ContentElemen>
             
                 <Label>Empresas</Label>
-                <Select value={nomEmpresa} onChange={e =>setNomEmpresa(e.target.value)}>
+                <Select value={nomEmpresa}  onChange={e =>setNomEmpresa(e.target.value)}>
                 {empresa.map((d)=>{
                     return(<option key={d.id}>{d.empresa}</option>)
                  })}

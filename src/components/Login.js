@@ -1,5 +1,5 @@
-import { Alert, Box, Button, Container, Link, TextField, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Alert, Box, Button, Container, TextField, Typography } from "@mui/material";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { signInUser } from "../firebase/firebaseConfig";
 import { startSession } from "../components/session";
@@ -53,7 +53,7 @@ export default function Login() {
           </Grid>
         </Grid>
 
-        <CardContent style={{boxShadow:'10px 10px 5px 0px rgba(0,0,0,1);'}} >
+        <CardContent>
           <Typography variant="h5" component="h1" gutterBottom textAlign="center">
             
           </Typography>
@@ -83,10 +83,9 @@ export default function Login() {
               <Grid style={{ display: 'flex', alignItems: 'center' }} container spacing={2}>
               <Grid item xs={6}>
                 <Typography variant="h8" gutterBottom textAlign="center" >
-                  <Link
+                  <Link to='/recover'
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}
-                    sx={{ mt: 3 }}
-                    href="/recover"
+                    sx={{ mt: 3 }}                  
                     underline="none"
                   >
                     Olvide mi Password!

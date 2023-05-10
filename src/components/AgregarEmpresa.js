@@ -13,7 +13,9 @@ import { BiAddToQueue } from "react-icons/bi";
 import { FaRegEdit } from "react-icons/fa";
 
 
+
 const AgregarEmpresa = () => {
+    
 
     /* const navigate = useNavigate(); */
     const user = auth.currentUser;
@@ -160,21 +162,17 @@ const AgregarEmpresa = () => {
 
                     <Table.Body>
                         {
-
-                            filtroEmpresa().map((item) => {
-
-                                return (
-
+                             
+                        filtroEmpresa().map((item)=>{                        
+                          
+                                return(
+                                    
                                     <Table.Row>
-                                        <Table.Cell>{item.id2}</Table.Cell>
-                                        <Table.Cell>{item.empresa}</Table.Cell>
-                                        <Table.Cell>{item.userAdd}</Table.Cell>
-                                        <Table.Cell>{item.userMod}</Table.Cell>
-                                        <Table.Cell>
-                                            <Boton /* onClick={volver} */>
-                                                <FaRegEdit style={{fontSize: '20px'}} />
-                                            </Boton>
-                                        </Table.Cell>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.empresa}</Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
                                     </Table.Row>
                                 )
 
