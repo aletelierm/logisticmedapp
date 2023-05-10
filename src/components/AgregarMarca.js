@@ -7,6 +7,10 @@ import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
+import { BiAddToQueue } from "react-icons/bi";
+import { FaRegEdit } from "react-icons/fa";
+import * as MdIcons from 'react-icons/md';
+import * as FaIcons from 'react-icons/fa';
 
 
 const AgregarMarca = () => {
@@ -19,7 +23,9 @@ const AgregarMarca = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [marca, setMarca] = useState('');
-    const [leer, setLeer] = useState([])
+    const [leer, setLeer] = useState([]);
+    const [pagina, setPagina] = useState(0);
+    const [buscador, setBuscardor] = useState('');
 
     const handleChange = (e) => {
         setMarca(e.target.value);
@@ -37,10 +43,11 @@ const AgregarMarca = () => {
                 tipo: 'error',
                 mensaje: 'No ha ingresado una Marca'
             })
-            // alert('campo no puede estar vacio')
+
         } else {
+            const mar = marca.toLocaleUpperCase()
             AgregarMarcaDb({
-                marca: marca,
+                marca: mar,
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
@@ -52,7 +59,7 @@ const AgregarMarca = () => {
                         tipo: 'exito',
                         mensaje: 'Marca Ingresada Correctamente'
                     })
-                    // alert('datos grabados correctamente')
+
                     setMarca('');
                 })
         }
@@ -64,7 +71,29 @@ const AgregarMarca = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "marcas"));
-        setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
+
+    const filtroMarca = () => {
+
+        if (buscador.length === 0)
+            return leer.slice(pagina, pagina + 5);
+        const nuevoFiltro = leer.filter(mar => mar.marca.includes(buscador));
+        return nuevoFiltro.slice(pagina, pagina + 5);
+    }
+
+    const siguientePag = () => {
+        if (leer.filter(mar => mar.marca.includes(buscador)).length > pagina + 5)
+            setPagina(pagina + 5);
+    }
+
+    const paginaAnterior = () => {
+        if (pagina > 0) setPagina(pagina - 5)
+    }
+
+    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
+        setPagina(0);
+        setBuscardor(target.value)
     }
 
     useEffect(() => {
@@ -74,45 +103,67 @@ const AgregarMarca = () => {
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                <h2>Marcas de Equipos</h2>
+                <Titulo>Marcas de Equipos</Titulo>
             </ContenedorFormulario>
 
             <ContenedorFormulario>
                 <Formulario action='' onSubmit={handleSubmit}>
-                    <ContentElemen>
-                        <Label>Agregar Marca</Label>
-                    </ContentElemen>
-                    <ContentElemen>
-                        <Input
-                            type='text'
-                            placeholder='Ingrese Marca Equipamiento Médico'
-                            name='marca'
-                            value={marca}
-                            onChange={handleChange}
-                        />
-                    </ContentElemen>
-                    <Boton>Agregar</Boton>
+                    <Input
+                        style={{ width: '100%' }}
+                        type='text'
+                        placeholder='Ingrese Marca Equipamiento Médico'
+                        name='marca'
+                        value={marca}
+                        onChange={handleChange}
+                    />
+                    <Boton>
+                        <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
+                    </Boton>
                 </Formulario>
             </ContenedorFormulario>
-            <ListarProveedor>
-                <h2>Listado de Marcas</h2>
-                <Table singleLine>
 
+            <ListarProveedor>
+                <ContentElemen>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                    <Titulo>Listado de Marcas</Titulo>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                </ContentElemen>
+
+                <ContentElemen>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
+                    <Input style={{ width: '100%' }}
+                        type='text'
+                        placeholder='Buscar Marca'
+                        value={buscador}
+                        onChange={onBuscarCambios}
+                    />
+                </ContentElemen>
+
+                <Table singleLine>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Marca</Table.HeaderCell>
+                            <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
+                            <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        {leer.map((item, index) => {
+                        {filtroMarca().map((item) => {
                             return (
+
                                 <Table.Row>
-                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.marca}</Table.Cell>
-                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell>
+                                        <Boton /* onClick={volver} */>
+                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                        </Boton>
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -138,9 +189,18 @@ const ContenedorFormulario = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
+
+const Titulo = styled.h2`
+    color:  #83d394;
+`
+
 const ContentElemen = styled.div`
+    display: flex;
     text-align: center;
     padding: 7px;
+    margin-right: 30px;
+    align-items: center;
+    justify-content: space-between;
 `
 
 const ListarProveedor = styled.div`
@@ -152,29 +212,25 @@ const ListarProveedor = styled.div`
 `
 const Formulario = styled.form`
     display: flex;
-    padding: 20px;
+    padding: 0px;
     text-align: center;
-    text-align: center;
+    align-items: center;
+    justify-content: space-between;
 `
 
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
-    padding: 5px;
-    
-`
-
-const Label = styled.label`
-        padding: 10px;
-        font-size: 20px;
+    padding: 5px 30px;
 `
 
 const Boton = styled.button`
-        background-color: #83d394;
+        background-color: #ffffff;
         padding: 10px;
         border-radius: 5px;
         border: none;
-        margin-top: 5px;
+        margin: 0 10px;
+        cursor: pointer;
 `
 
 export default AgregarMarca;

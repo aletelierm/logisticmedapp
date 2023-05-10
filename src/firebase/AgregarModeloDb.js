@@ -5,7 +5,7 @@ import { collection, addDoc } from "firebase/firestore";
 const AgregarModeloDb = async  ({modelo, userAdd, userMod, fechaAdd, fechaMod}) => {
 
     return await addDoc(collection(db, 'modelos'),{
-        name: modelo,
+        modelo: modelo,
         userAdd: userAdd,
         userMod: userMod,
         fechaAdd: fechaAdd,

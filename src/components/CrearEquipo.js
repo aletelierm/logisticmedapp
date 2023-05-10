@@ -1,77 +1,257 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Select from './SelectExample';
+import Alerta from './Alertas'
+import CrearEquipoDb from '../firebase/CrearEquipoDb';
 import { Table } from 'semantic-ui-react'
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase/firebaseConfig';
+import { db, auth } from '../firebase/firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
+import { FaRegEdit } from "react-icons/fa";
+import * as MdIcons from 'react-icons/md';
 
 
 const Proveedores = () => {
+    const userAuth = auth.currentUser.email;
+    const userAdd = userAuth;
+    const userMod = userAuth;
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
 
-    const familia = [
-        { key: '1', value: '1', text: 'DISPOSITIVOS DE INFUSION' },
-        { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
-    ]
+    const [familia, setFamilia] = useState([]);
+    const [nomFamilia, setNomFamilia] = useState([]);
+    const [tipo, setTipo] = useState([]);
+    const [nomTipo, setNomTipo] = useState([]);
+    const [marca, setMarca] = useState([]);
+    const [nomMarca, setNomMarca] = useState([]);
+    const [modelo, setModelo] = useState([]);
+    const [nomModelo, setNomModelo] = useState([]);
+    const [serie, setSerie] = useState('');
+    const [rfid, setRfid] = useState('');
+    const [alerta, cambiarAlerta] = useState({});
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [equipo, setEquipo] = useState([]);
+    const [leer, setLeer] = useState([])
+    const [pagina, setPagina] = useState(0);
+    const [buscador, setBuscardor] = useState('');
 
-    const tipo = [
-        { key: '1', value: '1', text: 'BOMBA ENTERAL' },
-        { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
-    ]
-    const marca = [
-        { key: '1', value: '1', text: 'ABBOTT' },
-        { key: 'ax', value: 'ax', text: 'SUSED' }
-    ]
 
-    const modelo = [
-        { key: '1', value: '1', text: 'FREEGO' },
-        { key: 'ax', value: 'ax', text: 'TRX-800' }
-    ]
 
-    const navigate = useNavigate();
-    const user = auth.currentUser;
-
-    const volver = () => {
-        navigate('/home/actualiza')
+    //Leer los datos de Familia
+    const getFamila = async () => {
+        const dataFamilia = await getDocs(collection(db, 'familias'));
+        setFamilia(dataFamilia.docs.map((fam) => ({ ...fam.data(), id: fam.id })));
     }
 
+    //Leer los datos de Tipos
+    const getTipo = async () => {
+        const dataTipo = await getDocs(collection(db, 'tipos'));
+        setTipo(dataTipo.docs.map((tip) => ({ ...tip.data(), id: tip.id })));
+    }
+
+    //Leer los datos de Marcas
+    const getMarca = async () => {
+        const dataMarca = await getDocs(collection(db, 'marcas'));
+        setMarca(dataMarca.docs.map((mar) => ({ ...mar.data(), id: mar.id })));
+    }
+
+    //Leer los datos de Modelos
+    const getModelo = async () => {
+        const dataModelo = await getDocs(collection(db, 'modelos'));
+        setModelo(dataModelo.docs.map((mod) => ({ ...mod.data(), id: mod.id })));
+    }
+
+    //Leer los datos de Equipos
+    const getEquipo = async () => {
+        const dataEquipo = await getDocs(collection(db, 'crearequipos'));
+        setEquipo(dataEquipo.docs.map((eq, index) => ({ ...eq.data(), id: eq.id, id2: index + 1 })));
+    }
+
+    // Paginacion
+    const siguientePag = () => {
+        if (leer.filter(eq => eq.equipo.includes(buscador)).length > pagina + 5)
+            setPagina(pagina + 5);
+    }
+
+    const paginaAnterior = () => {
+        if (pagina > 0) setPagina(pagina - 5)
+    }
+
+    useEffect(() => {
+        getFamila();
+        getTipo();
+        getMarca();
+        getModelo();
+    }, [])
+
+    useEffect(() => {
+        getEquipo();
+    }, [equipo, setEquipo])
+
+    // Lee input de formulario
+    const handleChange = (e) => {
+        switch (e.target.name) {
+            case 'serie':
+                setSerie(e.target.value);
+                break;
+            case 'rfid':
+                setRfid(e.target.value);
+                break;
+            default:
+                break;
+        }
+    }
+
+    const handleSubmit = async (e) => {
+        // console.log(nomFamilia);
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (nomFamilia.length === 0) {
+            console.log(nomFamilia);
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Familia'
+            })
+        } else if (nomTipo.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Tipo Equipamiento'
+            })
+        } else if (nomMarca.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Marca'
+            })
+        } else if (nomModelo.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Modelo'
+            })
+
+        } else if (serie === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Ingresar N° Serie'
+            })
+
+        } else if (rfid === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Ingresar RFID'
+            })
+
+        } else {
+            try {
+                CrearEquipoDb({
+                    familia: nomFamilia,
+                    tipo: nomTipo,
+                    marca: nomMarca,
+                    modelo: nomModelo,
+                    serie: serie,
+                    rfid: rfid,
+                    userAdd: userAdd,
+                    userMod: userMod,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod
+                })
+                setSerie('');
+                setRfid('');
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Equipo creado correctamente'
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+
     return (
-        <ContenedorProveedor>
-            <ContenedorFormulario>
-                <h2>Crear Dispositivos Médicos</h2>
-            </ContenedorFormulario>
-            
-            <ContenedorFormulario>
-                <Formulario action=''>
+        <ContenedorFormulario>
+            <Contenedor>
+                <Titulo>Crear Dispositivos Médicos</Titulo>
+            </Contenedor>
+
+            <Contenedor>
+                <Formulario action='' onSubmit={handleSubmit}>
+                    <ContentElemen>
+                        <ContentElemenSelect>
+                            <Label>Familias</Label>
+                            <Select value={nomFamilia} onChange={e => setNomFamilia(e.target.value)}>
+                                console.log(nomFamilia);
+                                {familia.map((d) => {
+                                    return (<option key={d.id}>{d.familia}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>Tipo Equipamiento</Label>
+                            <Select value={nomTipo} onChange={e => setNomTipo(e.target.value)}>
+                                {tipo.map((d) => {
+                                    return (<option key={d.id}>{d.tipo}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>Marca</Label>
+                            <Select value={nomMarca} onChange={e => setNomMarca(e.target.value)}>
+                                {marca.map((d) => {
+                                    return (<option key={d.id}>{d.marca}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>Modelo</Label>
+                            <Select value={nomModelo} onChange={e => setNomModelo(e.target.value)}>
+                                {modelo.map((d) => {
+                                    return (<option key={d.id}>{d.modelo}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                    </ContentElemen>
 
                     <ContentElemen>
-                        <ContentElemenSelect>
-                            <label>Familia</label>
-                            <Select placeholder='Seleccionar Familia' opciones={familia} />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <label>Tipo</label>
-                            <Select placeholder='Seleccionar Familia' opciones={tipo} />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <label>Marca</label>
-                            <Select placeholder='Seleccionar Familia' opciones={marca} />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <label>Modelo</label>
-                            <Select placeholder='Seleccionar Familia' opciones={modelo} />
-                        </ContentElemenSelect>
-                    </ContentElemen>
-                    <ContentElemen>
                         <Label >N° Serie</Label>
-                        <Input type='number' />
+                        <Input
+                            type='text'
+                            placeholder='Ingrese N° Serie'
+                            name='serie'
+                            value={serie}
+                            onChange={handleChange}
+                        />
                         <Label >RFID</Label>
-                        <Input type='number' />
+                        <Input
+                            type='text'
+                            placeholder='Ingrese RFID'
+                            name='rfid'
+                            value={rfid}
+                            onChange={handleChange}
+                        />
                     </ContentElemen>
                     <Boton>Crear</Boton>
+
+
                 </Formulario>
-            </ContenedorFormulario>
+            </Contenedor>
+
             <ListarProveedor>
-                <h2>Listado de Dispositivos Médicos</h2>
+                <ContentElemen>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                    <Titulo>Listado de Dispositivos Médicos</Titulo>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                </ContentElemen>
+
                 <Table singleLine>
 
                     <Table.Header>
@@ -88,44 +268,74 @@ const Proveedores = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>1</Table.Cell>
-                            <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                            <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                            <Table.Cell>SUSED</Table.Cell>
-                            <Table.Cell>TRX-800</Table.Cell>
-                            <Table.Cell>234JN93THC4GHO6</Table.Cell>
-                            <Table.Cell>-------</Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
-                        </Table.Row>
+                        {
+                            equipo.map((item,) => {
+                                return (
+                                    <Table.Row>
+                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.familia}</Table.Cell>
+                                        <Table.Cell>{item.tipo}</Table.Cell>
+                                        <Table.Cell>{item.marca}</Table.Cell>
+                                        <Table.Cell>{item.modelo}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell>{item.rfid}</Table.Cell>
+                                        <Table.Cell>
+                                            <Boton>
+                                                <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                            </Boton>
+                                        </Table.Cell>
+                                    </Table.Row>
+                                )
+                            })
+                        }
                     </Table.Body>
 
                 </Table>
             </ListarProveedor>
-            {console.log(user.uid)}
-        </ContenedorProveedor>
+            <Alerta
+                tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+        </ContenedorFormulario>
     );
 };
 
-const ContenedorProveedor = styled.div``
 
 const ContenedorFormulario = styled.div`
+`
+
+const Contenedor = styled.div`
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-    
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+    font-size: 15px;
+`
+
+const Titulo = styled.h2`
+    color:  #83d394;
 `
 
 const ContentElemen = styled.div`
     display: flex;
+    text-align: center;
+    padding: 7px;
+    margin-right: 30px;
+    align-items: center;
     justify-content: space-between;
-    padding: 10px;
 `
 
 const ContentElemenSelect = styled.div`
     padding: 20px;
+`
+const Select = styled.select`
+    border: 2px solid #d1d1d1;
+    border-radius: 10px;
+    padding: 5px;
+    width: 200px;
 `
 
 
@@ -151,11 +361,13 @@ const Label = styled.label`
 `
 
 const Boton = styled.button`
-        background-color: #83d394;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
-        margin-top: 20px;
+    background-color: #ffffff;
+    color: green,
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin: 0 10px;
+    cursor: pointer;
 `
 
 export default Proveedores;

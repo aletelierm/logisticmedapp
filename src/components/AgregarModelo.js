@@ -7,6 +7,10 @@ import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
+import { BiAddToQueue } from "react-icons/bi";
+import { FaRegEdit } from "react-icons/fa";
+import * as MdIcons from 'react-icons/md';
+import * as FaIcons from 'react-icons/fa';
 
 
 const AgregarModelo = () => {
@@ -19,21 +23,28 @@ const AgregarModelo = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [modelo, setModelo] = useState('');
-    const [leer, setLeer] = useState([])
+    const [leer, setLeer] = useState([]);
+    const [pagina, setPagina] = useState(0);
+    const [buscador, setBuscardor] = useState('');
 
     const handleChange = (e) => {
         setModelo(e.target.value);
     }
 
-    // const q = query(citiesRef, where("state", "==", "CA"));
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
         const modeloRef = (collection(db, 'modelos'));
+        const x = query(modeloRef, where('modelo', '==', 'FREGGO'));
+        const datos = await getDocs(x);
+        console.log(datos);
+        datos.forEach((d) => {
+            console.log(d.id);
+        })
+        console.log(x.length());
         if (modelo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -41,12 +52,13 @@ const AgregarModelo = () => {
                 mensaje: 'No ha ingresado una Modelo'
             })
             // alert('campo no puede estar vacio')
-        } else if (query(modeloRef, where('name', '==', 'modelos.name')) ) {
+        } else if (query(modeloRef, where('modelo', '==', modelo))) {
             
             alert('Este Modelo de Equipamiento ya existe.')
         } else {
+            const mod = modelo.toLocaleUpperCase()
             AgregarModeloDb({
-                name: modelo,
+                modelo: mod,
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
@@ -70,7 +82,29 @@ const AgregarModelo = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "modelos"));
-        setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
+
+    const filtroModelo = () => {
+
+        if (buscador.length === 0)
+            return leer.slice(pagina, pagina + 5);
+        const nuevoFiltro = leer.filter(mod => mod.modelo.includes(buscador));
+        return nuevoFiltro.slice(pagina, pagina + 5);
+    }
+
+    const siguientePag = () => {
+        if (leer.filter(mod => mod.modelo.includes(buscador)).length > pagina + 5)
+            setPagina(pagina + 5);
+    }
+
+    const paginaAnterior = () => {
+        if (pagina > 0) setPagina(pagina - 5)
+    }
+
+    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
+        setPagina(0);
+        setBuscardor(target.value)
     }
 
     useEffect(() => {
@@ -80,45 +114,67 @@ const AgregarModelo = () => {
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                <h2>Modelos de Equipos</h2>
+                <Titulo>Modelos de Equipos</Titulo>
             </ContenedorFormulario>
 
             <ContenedorFormulario>
                 <Formulario action='' onSubmit={handleSubmit}>
-                    <ContentElemen>
-                        <Label>Agregar Modelo</Label>
-                    </ContentElemen>
-                    <ContentElemen>
                         <Input
+                            style={{ width: '100%' }}
                             type='text'
                             placeholder='Ingrese Modelo Equipamiento Médico'
                             name='modelo'
                             value={modelo}
                             onChange={handleChange}
                         />
-                    </ContentElemen>
-                    <Boton>Agregar</Boton>
+                    <Boton>
+                        <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
+                    </Boton>
                 </Formulario>
             </ContenedorFormulario>
-            <ListarProveedor>
-                <h2>Listado de Modelos</h2>
-                <Table singleLine>
 
+            <ListarProveedor>
+            <ContentElemen>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                    <Titulo>Listado de Familias</Titulo>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                </ContentElemen>
+                
+                <ContentElemen>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
+                    <Input style={{ width: '100%' }}
+                        type='text'
+                        placeholder='Buscar Modelo'
+                        value={buscador}
+                        onChange={onBuscarCambios}
+                    />
+                </ContentElemen>
+
+                <Table singleLine>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
+                            <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        {leer.map((item, index) => {
+                        {filtroModelo().map((item) => {
                             return (
+
                                 <Table.Row>
-                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.modelo}</Table.Cell>
-                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell>
+                                        <Boton /* onClick={volver} */>
+                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                        </Boton>
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -144,9 +200,18 @@ const ContenedorFormulario = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
+
+const Titulo = styled.h2`
+    color:  #83d394;
+`
+
 const ContentElemen = styled.div`
+    display: flex;
     text-align: center;
     padding: 7px;
+    margin-right: 30px;
+    align-items: center;
+    justify-content: space-between;
 `
 
 const ListarProveedor = styled.div`
@@ -158,29 +223,25 @@ const ListarProveedor = styled.div`
 `
 const Formulario = styled.form`
     display: flex;
-    padding: 20px;
+    padding: 0px;
     text-align: center;
     align-items: center;
+    justify-content: space-between;
 `
 
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
-    padding: 5px;
-    
-`
-
-const Label = styled.label`
-        padding: 10px;
-        font-size: 20px;
+    padding: 5px 30px;
 `
 
 const Boton = styled.button`
-        background-color: #83d394;
+        background-color: #ffffff;
         padding: 10px;
         border-radius: 5px;
         border: none;
-        margin-top: 5px;
+        margin: 0 10px;
+        cursor: pointer;
 `
 
 export default AgregarModelo;
