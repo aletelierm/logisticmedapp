@@ -172,7 +172,7 @@ const AgregarEmpresa = () => {
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                    <Table.Cell><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
                                     </Table.Row>
                                 )
 

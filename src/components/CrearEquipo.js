@@ -106,14 +106,14 @@ const Proveedores = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (nomFamilia.length === 0) {
+        if (nomFamilia.length === 0 || nomFamilia==='Selecciona Opcion') {
             console.log(nomFamilia);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Familia'
             })
-        } else if (nomTipo.length === 0) {
+        } else if (nomTipo.length === 0 || nomTipo==='Selecciona Opcion') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
