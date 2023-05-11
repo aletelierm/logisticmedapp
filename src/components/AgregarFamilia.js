@@ -143,7 +143,7 @@ const AgregarFamilia = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Empresa</Table.HeaderCell>
+                            <Table.HeaderCell>Familia</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>

@@ -10,7 +10,7 @@ import Alerta from './Alertas';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
-import { FaRegEdit } from "react-icons/fa";
+/* import { FaRegEdit } from "react-icons/fa"; */
 
 
 
@@ -128,16 +128,16 @@ const AgregarEmpresa = () => {
                     />
                     {/*  </ContentElemen> */}
                     <Boton>
-                        <BiAddToQueue style={{ fontSize: '32px' }} />
+                        <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
                     </Boton>
                 </Formulario>
             </ContenedorFormulario>
 
             <ListarProveedor>
                 <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px' }} /></Boton>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color:'green' }} /></Boton>
                     <Titulo>Listado de Empresas</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px' }} /></Boton>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px' }} />
@@ -157,7 +157,7 @@ const AgregarEmpresa = () => {
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
-            z            </Table.Row>
+                        </Table.Row>
                     </Table.Header>
 
                     <Table.Body>

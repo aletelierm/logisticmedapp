@@ -45,9 +45,9 @@ const ListarProveedor = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
-const Boton = styled.button`
+/* const Boton = styled.button`
         background-color: #83d394;
         padding: 10px;
         border-radius: 5px;
         border: none;
-`
+` */
