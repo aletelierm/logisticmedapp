@@ -17,6 +17,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 5px 40px;
+    text-align: center;
 }
 
 .footer h2 {
@@ -39,9 +40,8 @@
 .reserved-right h4 {
     font-size: 12px;
     font-weight: 100;
-    padding-top: 40px;
-    text-align: right;
     display: inline-block;
+    align-items: center;
 }
 
 

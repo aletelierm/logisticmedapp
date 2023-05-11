@@ -46,24 +46,24 @@ export const RegistroUsuarios = () => {
   
     //Lee input de formulario
     const handleChange = (e)=>{
-        switch(e.target.name){
-            case 'email':
-                setCorreo(e.target.value);
-                break;
-            case 'password':
-                setPass(e.target.value);
-                break;
-            case 'password2':
-                setPass2(e.target.value);
-                break;
-                case 'nombre':
-                setNombre(e.target.value);
-                break;
-                case 'apellido':
-                setApellido(e.target.value);
-                break;
-            default:
-                break;
+            switch(e.target.name){
+                case 'email':
+                    setCorreo(e.target.value);
+                    break;
+                case 'password':
+                    setPass(e.target.value);
+                    break;
+                case 'password2':
+                    setPass2(e.target.value);
+                    break;
+                    case 'nombre':
+                    setNombre(e.target.value);
+                    break;
+                    case 'apellido':
+                    setApellido(e.target.value);
+                    break;
+                    default:
+                    break;
         }
 
     }
@@ -112,14 +112,14 @@ export const RegistroUsuarios = () => {
                 mensaje: 'Las contraseñas no son iguales'
             })
             return;
-        }else if(nomEmpresa.length === 0){
+        }else if(nomEmpresa.length === 0 || nomEmpresa==='Selecciona Opción'){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Empresa'
             })
            
-        }else if(rol.length === 0){
+        }else if(rol.length === 0 || rol==='Selecciona Opción'){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import Alertas from './Alertas';
@@ -70,7 +70,8 @@ const AgregarFamilia = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "familias"));
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }));
+        setLeer(leido.filter(fam => fam.familia !=='Selecciona Opción'));
     }
 
     const filtroFamilia = () => {
@@ -97,6 +98,7 @@ const AgregarFamilia = () => {
 
     useEffect(() => {
         getData();
+        
     }, [setFamilia, familia])
 
     // const editarFamilia = (id, nuevoTexto) => {
@@ -151,7 +153,7 @@ const AgregarFamilia = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Empresa</Table.HeaderCell>
+                            <Table.HeaderCell>Familia</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>

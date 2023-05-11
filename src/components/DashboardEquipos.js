@@ -13,7 +13,7 @@ var data = {
     labels: ['BODEGA','PACIENTE','SERVICIO', 'BAJA', 'OTRO'],
     datasets: [
         {
-            label: 'Popularidad en navidad',
+            label: 'Equipos',
             data: [35,20,10,15,10],
             backgroundColor: [
                 'rgba(63,191,131,0.2',

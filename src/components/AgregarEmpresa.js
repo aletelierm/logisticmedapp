@@ -10,7 +10,7 @@ import Alerta from './Alertas';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
-import { FaRegEdit } from "react-icons/fa";
+/* import { FaRegEdit } from "react-icons/fa"; */
 
 
 
@@ -28,6 +28,7 @@ const AgregarEmpresa = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    
 
 
 
@@ -128,16 +129,16 @@ const AgregarEmpresa = () => {
                     />
                     {/*  </ContentElemen> */}
                     <Boton>
-                        <BiAddToQueue style={{ fontSize: '32px' }} />
+                        <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
                     </Boton>
                 </Formulario>
             </ContenedorFormulario>
 
             <ListarProveedor>
                 <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px' }} /></Boton>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color:'green' }} /></Boton>
                     <Titulo>Listado de Empresas</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px' }} /></Boton>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px' }} />
@@ -157,7 +158,7 @@ const AgregarEmpresa = () => {
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
-            z            </Table.Row>
+                        </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
@@ -167,12 +168,12 @@ const AgregarEmpresa = () => {
                           
                                 return(
                                     
-                                    <Table.Row>
+                                    <Table.Row key={item.id2}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Boton /* onClick={volver} */>Modif</Boton></Table.Cell>
+                                    <Table.Cell><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
                                     </Table.Row>
                                 )
 
@@ -239,7 +240,7 @@ const Input = styled.input`
         font-size: 15px;
 ` */
 
-const Boton = styled.button`
+const Boton = styled.button`    
     background-color: #ffffff;
     padding: 10px;
     border-radius: 5px;

@@ -153,7 +153,7 @@ const AgregarTipo = () => {
                         {filtroTipo().map((item) => {
                             return (
 
-                                <Table.Row>
+                                <Table.Row key={item.id2}> 
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.tipo}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Select } from 'semantic-ui-react'
 import { Table } from 'semantic-ui-react'
-import { useNavigate } from 'react-router-dom';
+/* import { useNavigate } from 'react-router-dom'; */
 import { auth } from '../firebase/firebaseConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -19,12 +19,12 @@ const Entradas = () => {
         { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
     ]
 
-    const navigate = useNavigate();
+   /*  const navigate = useNavigate(); */
     const user = auth.currentUser;
 
-    const volver = () => {
+   /*  const volver = () => {
         navigate('/home/actualiza')
-    }
+    } */
 
     return (
         <ContenedorProveedor>

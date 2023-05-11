@@ -6,19 +6,19 @@ import { FiPhoneCall } from "react-icons/fi";
 
 const Footer = () => {
     return (
-        <>
+        
             <div className='footer'>
                 <h2>Contactanos</h2>
                 <ul className='contact'>
-                    <li><FaWhatsapp />  +569 4798 6702</li>
-                    <li><TfiEmail />  LogisticMed@logistic.cl</li>
-                    <li><FiPhoneCall />  +569 32760999</li>
+                    <li><FaWhatsapp />  +569 54016368</li>
+                    <li><TfiEmail />  almlogistico@gmail.com</li>
+                    <li><FiPhoneCall />  +569 54016368</li>
                 </ul>
                 <div className='reserved-right'>
-                    <h4>© LogistcMed 2023. Todos los derechos reservados.</h4>
+                    <h4>© Logis-Tics 2023. Todos los derechos reservados.</h4>
                 </div>
             </div>
-        </>
+        
     )
 }
 

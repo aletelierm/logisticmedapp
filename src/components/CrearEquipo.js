@@ -106,26 +106,26 @@ const Proveedores = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (nomFamilia.length === 0) {
+        if (nomFamilia.length === 0 || nomFamilia==='Selecciona Opción') {
             console.log(nomFamilia);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Familia'
             })
-        } else if (nomTipo.length === 0) {
+        } else if (nomTipo.length === 0 || nomTipo==='Selecciona Opción') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Tipo Equipamiento'
             })
-        } else if (nomMarca.length === 0) {
+        } else if (nomMarca.length === 0 || nomMarca==='Selecciona Opción') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Marca'
             })
-        } else if (nomModelo.length === 0) {
+        } else if (nomModelo.length === 0 || nomModelo==='Selecciona Opción') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -239,7 +239,7 @@ const Proveedores = () => {
                             onChange={handleChange}
                         />
                     </ContentElemen>
-                    <Boton>Crear</Boton>
+                    <BotonGuardar>Crear</BotonGuardar>
 
 
                 </Formulario>
@@ -269,9 +269,9 @@ const Proveedores = () => {
 
                     <Table.Body>
                         {
-                            equipo.map((item,) => {
+                            equipo.map((item) => {
                                 return (
-                                    <Table.Row>
+                                    <Table.Row key={item.id2}>
                                         <Table.Cell>{item.id2}</Table.Cell>
                                         <Table.Cell>{item.familia}</Table.Cell>
                                         <Table.Cell>{item.tipo}</Table.Cell>
@@ -362,12 +362,24 @@ const Label = styled.label`
 
 const Boton = styled.button`
     background-color: #ffffff;
-    color: green,
+    color: green;
     padding: 10px;
     border-radius: 5px;
     border: none;
     margin: 0 10px;
     cursor: pointer;
+`
+const BotonGuardar = styled.button`
+    background-color: #83d394;
+    color: green;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin: 0 10px;
+    cursor: pointer;
+    &:hover{
+            background-color: #83d310;
+        }
 `
 
 export default Proveedores;
