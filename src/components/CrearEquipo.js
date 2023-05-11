@@ -239,7 +239,7 @@ const Proveedores = () => {
                             onChange={handleChange}
                         />
                     </ContentElemen>
-                    <Boton>Crear</Boton>
+                    <BotonGuardar>Crear</BotonGuardar>
 
 
                 </Formulario>
@@ -362,12 +362,24 @@ const Label = styled.label`
 
 const Boton = styled.button`
     background-color: #ffffff;
-    color: green,
+    color: green;
     padding: 10px;
     border-radius: 5px;
     border: none;
     margin: 0 10px;
     cursor: pointer;
+`
+const BotonGuardar = styled.button`
+    background-color: #83d394;
+    color: green;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin: 0 10px;
+    cursor: pointer;
+    &:hover{
+            background-color: #83d310;
+        }
 `
 
 export default Proveedores;
