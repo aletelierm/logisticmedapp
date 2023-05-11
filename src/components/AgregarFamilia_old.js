@@ -99,14 +99,14 @@ const AgregarFamilia = () => {
         getData();
     }, [setFamilia, familia])
 
-    // const editarFamilia = (id, nuevoTexto) => {
-    //     setFamilia(familia.map((fam) => {
-    //         if (fam.id === id) {
-    //             return { ...fam, texto: nuevoTexto }
-    //         }
-    //         return fam;
-    //     }))
-    // }
+    const editarFamilia = (id, nuevoTexto) => {
+        setFamilia(familia.map((fam) => {
+            if (fam.id === id) {
+                return { ...fam, texto: nuevoTexto }
+            }
+            return fam;
+        }))
+    }
 
     return (
         <ContenedorProveedor>
@@ -147,7 +147,7 @@ const AgregarFamilia = () => {
                     />
                 </ContentElemen>
 
-                <Table singleLine>  
+                <Table singleLine>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
@@ -157,9 +157,8 @@ const AgregarFamilia = () => {
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-                    </Table>
-                    
-                    <ul>
+
+                    <Table.Body>
                         {filtroFamilia().map((item) => {
                             return (
                                 <Editar
@@ -168,12 +167,13 @@ const AgregarFamilia = () => {
                                     familia={item.familia}
                                     userAdd={item.userAdd}
                                     userMod={item.userMod}
-                                    // editar={editarFamilia}
+                                    editar={editarFamilia}
+
                                 />
                             )
                         })}
-                </ul>
-                
+                    </Table.Body>
+                </Table>
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
