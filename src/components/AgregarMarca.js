@@ -154,7 +154,7 @@ const AgregarMarca = () => {
                         {filtroMarca().map((item) => {
                             return (
 
-                                <Table.Row>
+                                <Table.Row key={item.id2}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.marca}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>

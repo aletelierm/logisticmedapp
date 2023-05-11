@@ -165,7 +165,7 @@ const AgregarModelo = () => {
                         {filtroModelo().map((item) => {
                             return (
 
-                                <Table.Row>
+                                <Table.Row key={item.id2}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.modelo}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>

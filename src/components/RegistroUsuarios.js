@@ -46,24 +46,24 @@ export const RegistroUsuarios = () => {
   
     //Lee input de formulario
     const handleChange = (e)=>{
-        switch(e.target.name){
-            case 'email':
-                setCorreo(e.target.value);
-                break;
-            case 'password':
-                setPass(e.target.value);
-                break;
-            case 'password2':
-                setPass2(e.target.value);
-                break;
-                case 'nombre':
-                setNombre(e.target.value);
-                break;
-                case 'apellido':
-                setApellido(e.target.value);
-                break;
-            default:
-                break;
+            switch(e.target.name){
+                case 'email':
+                    setCorreo(e.target.value);
+                    break;
+                case 'password':
+                    setPass(e.target.value);
+                    break;
+                case 'password2':
+                    setPass2(e.target.value);
+                    break;
+                    case 'nombre':
+                    setNombre(e.target.value);
+                    break;
+                    case 'apellido':
+                    setApellido(e.target.value);
+                    break;
+                    default:
+                    break;
         }
 
     }

@@ -28,6 +28,7 @@ const AgregarEmpresa = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    
 
 
 
@@ -167,7 +168,7 @@ const AgregarEmpresa = () => {
                           
                                 return(
                                     
-                                    <Table.Row>
+                                    <Table.Row key={item.id2}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
@@ -239,7 +240,7 @@ const Input = styled.input`
         font-size: 15px;
 ` */
 
-const Boton = styled.button`
+const Boton = styled.button`    
     background-color: #ffffff;
     padding: 10px;
     border-radius: 5px;

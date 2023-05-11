@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import Alertas from './Alertas';
@@ -71,7 +71,8 @@ const AgregarFamilia = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "familias"));
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }));
+        setLeer(leido.filter(fam => fam.familia !=='Selecciona Opción'));
     }
 
     const filtroFamilia = () => {
@@ -98,6 +99,7 @@ const AgregarFamilia = () => {
 
     useEffect(() => {
         getData();
+        
     }, [setFamilia, familia])
 
     return (
@@ -154,7 +156,7 @@ const AgregarFamilia = () => {
                         {filtroFamilia().map((item) => {
                             return (
 
-                                <Table.Row>
+                                <Table.Row key={item.id2}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     {
                                     <Table.Cell>{item.familia}</Table.Cell>

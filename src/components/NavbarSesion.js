@@ -9,18 +9,10 @@ import { es } from 'date-fns/locale';
 import './../styles/navbar.css'
 
 
-const NavbarSesion = () => {
-
-   /*  const { usuario, setUsuario} = useContext( UserContext); */
-
-  
+const NavbarSesion = () => { 
 
     const user = auth.currentUser;
-    
-    
-
-
-   
+       
     let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`, {locale: es});
    /*  let horaActual = format (new Date(), `k ':' m`) */
     
