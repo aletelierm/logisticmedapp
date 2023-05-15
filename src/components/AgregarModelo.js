@@ -2,19 +2,17 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AgregarModeloDb from '../firebase/AgregarModeloDb';
 import Alertas from './Alertas';
-// import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
-import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
+import EditarModelo from './EditarModelo';
 
 
 const AgregarModelo = () => {
-
     // const navigate = useNavigate();
     const user = auth.currentUser;
     let fechaAdd = new Date();
@@ -37,24 +35,23 @@ const AgregarModelo = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        const modeloRef = (collection(db, 'modelos'));
-        const x = query(modeloRef, where('modelo', '==', 'FREGGO'));
-        const datos = await getDocs(x);
-        console.log(datos);
-        datos.forEach((d) => {
-            console.log(d.id);
-        })
-        console.log(x.length());
+        // const modeloRef = (collection(db, 'modelos'));
+        // const x = query(modeloRef, where('modelo', '==', 'FREGGO'));
+        // const datos = await getDocs(x);
+        // console.log(datos);
+        // datos.forEach((d) => {
+        //     console.log(d.id);
+        // })
+        // console.log(x.length());
         if (modelo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No ha ingresado una Modelo'
             })
-            // alert('campo no puede estar vacio')
-        } else if (query(modeloRef, where('modelo', '==', modelo))) {
+
+        // } else if (query(modeloRef, where('modelo', '==', modelo))) {
             
-            alert('Este Modelo de Equipamiento ya existe.')
         } else {
             const mod = modelo.toLocaleUpperCase()
             AgregarModeloDb({
@@ -70,19 +67,16 @@ const AgregarModelo = () => {
                         tipo: 'exito',
                         mensaje: 'Modelo Ingresada Correctamente'
                     })
-                    // alert('datos grabados correctamente')
                     setModelo('');
                 })
         }
     }
 
-    // const volver = () => {
-    //     navigate('/home/actualiza')
-    // }
 
     const getData = async () => {
         const data = await getDocs(collection(db, "modelos"));
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }))
+        setLeer(leido.filter(mod => mod.modelo !== 'Selecciona Opción'));
     }
 
     const filtroModelo = () => {
@@ -164,23 +158,19 @@ const AgregarModelo = () => {
                     <Table.Body>
                         {filtroModelo().map((item) => {
                             return (
-
-                                <Table.Row key={item.id2}>
-                                    <Table.Cell>{item.id2}</Table.Cell>
-                                    <Table.Cell>{item.modelo}</Table.Cell>
-                                    <Table.Cell>{item.userAdd}</Table.Cell>
-                                    <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell>
-                                        <Boton /* onClick={volver} */>
-                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
-                                        </Boton>
-                                    </Table.Cell>
-                                </Table.Row>
+                                <EditarModelo 
+                                key={item.id}
+                                id={item.id}
+                                id2={item.id2}
+                                modelo={item.modelo}
+                                userAdd={item.userAdd}
+                                userMod={item.userMod}
+                                />
                             )
                         })}
                     </Table.Body>
-
                 </Table>
+                
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}

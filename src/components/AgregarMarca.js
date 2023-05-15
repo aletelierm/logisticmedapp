@@ -2,19 +2,17 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AgregarMarcaDb from '../firebase/AgregarMarcaDb';
 import Alertas from './Alertas';
-// import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
-import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
+import EditarMarca from './EditarMarca';
 
 
 const AgregarMarca = () => {
-
     // const navigate = useNavigate();
     const user = auth.currentUser;
     let fechaAdd = new Date();
@@ -59,19 +57,16 @@ const AgregarMarca = () => {
                         tipo: 'exito',
                         mensaje: 'Marca Ingresada Correctamente'
                     })
-
                     setMarca('');
                 })
         }
     }
-
-    // const volver = () => {
-    //     navigate('/home/actualiza')
-    // }
+    
 
     const getData = async () => {
         const data = await getDocs(collection(db, "marcas"));
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }))
+        setLeer(leido.filter(mar => mar.marca !== 'Selecciona Opción'));
     }
 
     const filtroMarca = () => {
@@ -147,24 +142,21 @@ const AgregarMarca = () => {
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
                         {filtroMarca().map((item) => {
                             return (
-
-                                <Table.Row key={item.id2}>
-                                    <Table.Cell>{item.id2}</Table.Cell>
-                                    <Table.Cell>{item.marca}</Table.Cell>
-                                    <Table.Cell>{item.userAdd}</Table.Cell>
-                                    <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell>
-                                        <Boton /* onClick={volver} */>
-                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
-                                        </Boton>
-                                    </Table.Cell>
-                                </Table.Row>
+                                <EditarMarca
+                                    key={item.id}
+                                    id={item.id}
+                                    id2={item.id2}
+                                    marca={item.marca}
+                                    userAdd={item.userAdd}
+                                    userMod={item.userMod}
+                                />
                             )
                         })}
                     </Table.Body>

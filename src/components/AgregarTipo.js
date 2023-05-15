@@ -2,19 +2,17 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AgregarTipoDb from '../firebase/AgregarTipoDb';
 import Alertas from './Alertas';
-// import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
-import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
+import EditarTipo from './EditarTipo';
 
 
 const AgregarTipo = () => {
-
     // const navigate = useNavigate();
     const user = auth.currentUser;
     let fechaAdd = new Date();
@@ -64,13 +62,11 @@ const AgregarTipo = () => {
         }
     }
 
-    // const volver = () => {
-    //     navigate('/home/actualiza')
-    // }
 
     const getData = async () => {
         const data = await getDocs(collection(db, "tipos"));
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }));
+        setLeer(leido.filter(tip => tip.tipo !== 'Selecciona Opción'));
     }
 
     const filtroTipo = () => {
@@ -152,18 +148,14 @@ const AgregarTipo = () => {
                     <Table.Body>
                         {filtroTipo().map((item) => {
                             return (
-
-                                <Table.Row key={item.id2}> 
-                                    <Table.Cell>{item.id2}</Table.Cell>
-                                    <Table.Cell>{item.tipo}</Table.Cell>
-                                    <Table.Cell>{item.userAdd}</Table.Cell>
-                                    <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell>
-                                        <Boton /* onClick={volver} */>
-                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
-                                        </Boton>
-                                    </Table.Cell>
-                                </Table.Row>
+                                <EditarTipo
+                                    key={item.id}
+                                    id={item.id}
+                                    id2={item.id2}
+                                    tipo={item.tipo}
+                                    userAdd={item.userAdd}
+                                    userMod={item.userMod}
+                                />
                             )
                         })}
                     </Table.Body>

@@ -1,22 +1,18 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import Alertas from './Alertas';
-// import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
-// import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import Editar from './Editar';
 
 
-
 const AgregarFamilia = () => {
-
     // const navigate = useNavigate();
     const user = auth.currentUser;
     let fechaAdd = new Date();
@@ -28,7 +24,6 @@ const AgregarFamilia = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
-
 
     const handleChange = (e) => {
         setFamilia(e.target.value);
@@ -71,7 +66,7 @@ const AgregarFamilia = () => {
     const getData = async () => {
         const data = await getDocs(collection(db, "familias"));
         const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }));
-        setLeer(leido.filter(fam => fam.familia !=='Selecciona Opción'));
+        setLeer(leido.filter(fam => fam.familia !== 'Selecciona Opción'));
     }
 
     const filtroFamilia = () => {
@@ -98,17 +93,8 @@ const AgregarFamilia = () => {
 
     useEffect(() => {
         getData();
-        
     }, [setFamilia, familia])
 
-    // const editarFamilia = (id, nuevoTexto) => {
-    //     setFamilia(familia.map((fam) => {
-    //         if (fam.id === id) {
-    //             return { ...fam, texto: nuevoTexto }
-    //         }
-    //         return fam;
-    //     }))
-    // }
 
     return (
         <ContenedorProveedor>
@@ -149,7 +135,7 @@ const AgregarFamilia = () => {
                     />
                 </ContentElemen>
 
-                <Table singleLine>  
+                <Table singleLine>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
@@ -157,25 +143,26 @@ const AgregarFamilia = () => {
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-                    </Table>
-                    
-                    <ul>
+
+                    <Table.Body>
                         {filtroFamilia().map((item) => {
                             return (
                                 <Editar
-                                    key={item.id2}
-                                    id={item.id2}
+                                    key={item.id}
+                                    id={item.id}
+                                    id2={item.id2}
                                     familia={item.familia}
                                     userAdd={item.userAdd}
                                     userMod={item.userMod}
-                                    // editar={editarFamilia}
                                 />
                             )
                         })}
-                </ul>
-                
+                    </Table.Body>
+                </Table>
+
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
