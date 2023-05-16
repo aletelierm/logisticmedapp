@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { Table } from 'semantic-ui-react'
-import { useNavigate } from 'react-router-dom';
+import {  Link } from 'react-router-dom';
 import { auth , db} from '../firebase/firebaseConfig';
 import  Alerta from '../components/Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
@@ -11,7 +11,7 @@ import * as FaIcons from 'react-icons/fa';
 
 const Clientes = () => {
     
-    const navigate = useNavigate();
+    /* const navigate = useNavigate(); */
     const user = auth.currentUser;   
     let fechaAdd = new Date();
     let fechaMod = new Date();
@@ -28,9 +28,9 @@ const Clientes = () => {
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
 
-    const volver = ()=>{
+    /* const volver = ()=>{
         navigate('/home/actualizacliente')
-    }
+    } */
 
     //Leer data
     const getData = async () => {
@@ -102,8 +102,16 @@ const Clientes = () => {
 
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-
-        if(rut ===''){
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+       
+		if(!expresionRegularRut.test(rut)){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no es valido'
+            })
+            return;
+        }else if(rut ===''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -195,7 +203,7 @@ const Clientes = () => {
                     <ContentElemen>
                         <Label>Rut</Label>
                         <Input
-                            type='number'
+                            type='text'
                             name = 'rut'
                             placeholder = 'Ingrese Rut'
                             value = { rut }
@@ -280,13 +288,13 @@ const Clientes = () => {
                                 {
                                     filtroCliente().map((item, index)=>{
                                         return(
-                                            <Table.Row key={item.index}>
+                                            <Table.Row key={index}>
                                                 <Table.Cell>{item.nombre}</Table.Cell>
                                                 <Table.Cell>{item.id}</Table.Cell>       
                                                 <Table.Cell>{item.direccion}</Table.Cell>       
                                                 <Table.Cell>{item.telefono}</Table.Cell>       
-                                                <Table.Cell><Boton onClick={volver}><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
-                                                </Boton></Table.Cell>       
+                                                <Table.Cell><Link to={`/home/actualizacliente/${item.id}`}><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                                </Link></Table.Cell>       
                                             </Table.Row>
                                         )
                                     })

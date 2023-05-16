@@ -170,7 +170,6 @@ const AgregarEmpresa = () => {
                                     
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{item.id2}</Table.Cell>
-                                        <Table.Cell><form><input>dato</input></form></Table.Cell>
                                         <Table.Cell>{item.empresa}</Table.Cell>
                                         <Table.Cell>{item.userAdd}</Table.Cell>
                                         <Table.Cell>{item.userMod}</Table.Cell>
