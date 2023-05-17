@@ -1,7 +1,7 @@
 import { Alert, Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-import { signInUser } from "../firebase/firebaseConfig";
+import { signInUser} from "../firebase/firebaseConfig";
 import { startSession } from "../components/session";
 
 import Card from '@mui/material/Card';
@@ -15,6 +15,8 @@ export default function Login() {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -32,7 +34,7 @@ export default function Login() {
     
     try {
       let loginResponse = await signInUser(email, password);
-      startSession(loginResponse.user);
+      startSession(loginResponse.user);     
       navigate("/home/misequipos");      
     } catch (error) {
       console.error(error.message);
