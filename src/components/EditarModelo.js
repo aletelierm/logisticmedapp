@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components';
 import ActualizarModeloDb from '../firebase/ActualizarModeloDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { FaRegEdit } from "react-icons/fa";
 import { GoChecklist } from "react-icons/go";
-// import { doc, updateDoc } from "firebase/firestore";
 
 
-const EditarModelo = ({ id, id2, modelo, userAdd, userMod }) => {
+const EditarModelo = ({ id, id2, modelo, userAdd, userMod, setModelo }) => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
@@ -20,14 +19,6 @@ const EditarModelo = ({ id, id2, modelo, userAdd, userMod }) => {
     }
 
     const actualizarCampo = () => {
-
-        // const actualizar = doc(db, 'familias', id);
-        // await updateDoc(actualizar, {
-        //     familia: 'azul',
-        //     userMod: user.email,
-        //     fechaMod: fechaMod
-        // })
-
         const mod = nuevoCampo.toLocaleUpperCase();
         ActualizarModeloDb({
             id: id,
@@ -36,12 +27,9 @@ const EditarModelo = ({ id, id2, modelo, userAdd, userMod }) => {
             fechaMod: fechaMod
         })
         setEditando(false)
+        setModelo(nuevoCampo)
         alert('se Actualizo!')
     }
-
-
-    useEffect(() => {
-    }, [])
 
 
     return (

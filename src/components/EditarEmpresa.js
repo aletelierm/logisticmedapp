@@ -1,35 +1,36 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
-import ActualizarFamiliaDb from '../firebase/ActualizarFamiliaDb';
+import ActualizarEmpresaDb from '../firebase/ActualizarEmpresaDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { FaRegEdit } from "react-icons/fa";
 import { GoChecklist } from "react-icons/go";
 
 
-const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
+const EditarEmpresa = ({ id, id2, empresa, userAdd, userMod, setEmpresa }) => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
     const [editando, setEditando] = useState(false)
-    const [nuevoCampo, setNuevoCampo] = useState(familia);
+    const [nuevoCampo, setNuevoCampo] = useState(empresa);
 
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
 
     const actualizarCampo = async () => {
-        const fam = nuevoCampo.toLocaleUpperCase();
-        ActualizarFamiliaDb({
+        const emp = nuevoCampo.toLocaleUpperCase();
+        ActualizarEmpresaDb({
             id: id,
-            familia: fam,
+            empresa: emp,
             userMod: user.email,
             fechaMod: fechaMod
         })
         setEditando(false)
-        setFamilia(nuevoCampo)
-        alert('se Actualizo!', familia)
+        setEmpresa(nuevoCampo)
+        alert('se Actualizo!')
     }
+
 
     return (
 
@@ -40,12 +41,12 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
                     <Formulario >
                         <Input
                             type='text'
-                            name='familia'
+                            name='empresa'
                             value={nuevoCampo}
                             onChange={handleChange}
                         />
                     </Formulario>
-                    : familia
+                    : empresa
                 }
             </Table.Cell>
             <Table.Cell>{userAdd}</Table.Cell>
@@ -92,4 +93,4 @@ const Boton = styled.button`
 
 
 
-export default Editar
+export default EditarEmpresa;

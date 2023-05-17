@@ -1,22 +1,19 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
-/* import { useNavigate } from 'react-router-dom'; */
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
 import AgregarEmpresaDb from '../firebase/AgregarEmpresaDb';
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import Alerta from './Alertas';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
-/* import { FaRegEdit } from "react-icons/fa"; */
+import EditarEmpresa from './EditarEmpresa';
 
 
 
 const AgregarEmpresa = () => {
-    
-
     /* const navigate = useNavigate(); */
     const user = auth.currentUser;
     let fechaAdd = new Date();
@@ -28,28 +25,54 @@ const AgregarEmpresa = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
-    
-
+    const [preguntar, setPreguntar] = useState('')
 
 
     const handleChange = (e) => {
         setEmpresa(e.target.value);
-
     }
+
+    useEffect(() => {
+        const buscar = () => {
+            const empresaRef = (collection(db, 'empresas'));
+            const x = query(empresaRef, where('empresa', '==', empresa.toLocaleUpperCase().trim()));
+            // const datos = await getDocs(x);
+            onSnapshot(x, (snap) => {
+                if (snap.docs.length > 0) {
+                    // console.log('existe')
+                    setPreguntar(true)
+                } else {
+                    // console.log('no existe')
+                    setPreguntar(false)
+                }
+            })
+        }
+        buscar();
+    }, [preguntar, setPreguntar, empresa])
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (empresa === '') {
+
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (preguntar) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Input Empresa no puede estar vacio'
+                mensaje: 'Ya existe esta Empresa'
+            })
+        } else if (empresa === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha ingresado una Empresa.'
             })
 
         } else {
-
+            const emp = empresa.toLocaleUpperCase().trim()
             AgregarEmpresaDb({
-                empresa: empresa,
+                empresa: emp,
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
@@ -66,25 +89,17 @@ const AgregarEmpresa = () => {
         }
     }
 
-    /*  const volver = () => {
-        navigate('/home/volver')
-     } */
-
     const getData = async () => {
         const data = await getDocs(collection(db, "empresas"));
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-
     }
 
     const filtroEmpresa = () => {
 
         if (buscador.length === 0)
-
             return leer.slice(pagina, pagina + 5);
-
         const nuevoFiltro = leer.filter(emp => emp.empresa.includes(buscador));
         return nuevoFiltro.slice(pagina, pagina + 5);
-
     }
 
     const siguientePag = () => {
@@ -94,13 +109,11 @@ const AgregarEmpresa = () => {
 
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
-
     }
 
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
-
     }
 
     useEffect(() => {
@@ -115,10 +128,6 @@ const AgregarEmpresa = () => {
 
             <ContenedorFormulario>
                 <Formulario onSubmit={handleSubmit}>
-                    {/*  <ContentElemen>
-                        <Label>Agregar Empresa</Label>
-                    </ContentElemen> */}
-                    {/* <ContentElemen> */}
                     <Input
                         style={{ width: '100%' }}
                         type='text'
@@ -127,7 +136,6 @@ const AgregarEmpresa = () => {
                         value={empresa}
                         onChange={handleChange}
                     />
-                    {/*  </ContentElemen> */}
                     <Boton>
                         <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
                     </Boton>
@@ -136,10 +144,11 @@ const AgregarEmpresa = () => {
 
             <ListarProveedor>
                 <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color:'green' }} /></Boton>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
                     <Titulo>Listado de Empresas</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
+
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
@@ -149,8 +158,8 @@ const AgregarEmpresa = () => {
                         onChange={onBuscarCambios}
                     />
                 </ContentElemen>
-                <Table singleLine>
 
+                <Table singleLine>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
@@ -162,26 +171,22 @@ const AgregarEmpresa = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {
-                             
-                        filtroEmpresa().map((item)=>{                        
-                          
-                                return(
-                                    
-                                    <Table.Row key={item.id2}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
-                                        <Table.Cell>{item.empresa}</Table.Cell>
-                                        <Table.Cell>{item.userAdd}</Table.Cell>
-                                        <Table.Cell>{item.userMod}</Table.Cell>
-                                        <Table.Cell><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
-                                    </Table.Row>
-                                )
-
-                            })}
-
+                        {filtroEmpresa().map((item) => {
+                            return (
+                                <EditarEmpresa
+                                    key={item.id}
+                                    id={item.id}
+                                    id2={item.id2}
+                                    empresa={item.empresa}
+                                    userAdd={item.userAdd}
+                                    userMod={item.userMod}
+                                    setEmpresa={setEmpresa}
+                                />
+                            )
+                        })}
                     </Table.Body>
-
                 </Table>
+
             </ListarProveedor>
             <Alerta
                 tipo={alerta.tipo}

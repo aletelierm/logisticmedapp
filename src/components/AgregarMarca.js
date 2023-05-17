@@ -4,7 +4,7 @@ import AgregarMarcaDb from '../firebase/AgregarMarcaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -24,10 +24,29 @@ const AgregarMarca = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    const [preguntar, setPreguntar] = useState('')
 
     const handleChange = (e) => {
         setMarca(e.target.value);
     }
+
+    useEffect(() => {
+        const buscar = () => {
+            const marcaRef = (collection(db, 'marcas'));
+            const x = query(marcaRef, where('marca', '==', marca.toLocaleUpperCase().trim()));
+            // const datos = await getDocs(x);
+            onSnapshot(x, (snap) => {
+                if (snap.docs.length > 0) {
+                    // console.log('existe')
+                    setPreguntar(true)
+                } else {
+                    // console.log('no existe')
+                    setPreguntar(false)
+                }
+            })
+        }
+        buscar();
+    }, [preguntar, setPreguntar, marca])
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -35,7 +54,14 @@ const AgregarMarca = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (marca === '') {
+        if (preguntar) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ya existe esta Marca'
+            })
+
+        } else if (marca === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -43,7 +69,7 @@ const AgregarMarca = () => {
             })
 
         } else {
-            const mar = marca.toLocaleUpperCase()
+            const mar = marca.toLocaleUpperCase().trim()
             AgregarMarcaDb({
                 marca: mar,
                 userAdd: user.email,
@@ -65,8 +91,7 @@ const AgregarMarca = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "marcas"));
-        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }))
-        setLeer(leido.filter(mar => mar.marca !== 'Selecciona Opción'));
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     const filtroMarca = () => {
@@ -156,6 +181,7 @@ const AgregarMarca = () => {
                                     marca={item.marca}
                                     userAdd={item.userAdd}
                                     userMod={item.userMod}
+                                    setMarca={setMarca}
                                 />
                             )
                         })}

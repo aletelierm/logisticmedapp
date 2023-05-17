@@ -4,7 +4,7 @@ import AgregarTipoDb from '../firebase/AgregarTipoDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -24,10 +24,29 @@ const AgregarTipo = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    const [preguntar, setPreguntar] = useState('')
 
     const handleChange = (e) => {
         setTipo(e.target.value);
     }
+
+    useEffect(() => {
+        const buscar = () => {
+            const tipoRef = (collection(db, 'tipos'));
+            const x = query(tipoRef, where('tipo', '==', tipo.toLocaleUpperCase().trim));
+            onSnapshot(x, (snap) => {
+                if (snap.docs.length > 0) {
+                    // console.log('existe')
+                    setPreguntar(true)
+                } else {
+                    // console.log('no existe')
+                    setPreguntar(false)
+                }
+            })
+        }
+        buscar();
+    }, [preguntar, setPreguntar, tipo])
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -35,7 +54,13 @@ const AgregarTipo = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (tipo === '') {
+        if (preguntar) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ya existe este Tipo de Equipamiento'
+            })
+        } else if (tipo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -43,7 +68,7 @@ const AgregarTipo = () => {
             })
 
         } else {
-            const tip = tipo.toLocaleUpperCase()
+            const tip = tipo.toLocaleUpperCase().trim();
             AgregarTipoDb({
                 tipo: tip,
                 userAdd: user.email,
@@ -65,8 +90,7 @@ const AgregarTipo = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "tipos"));
-        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }));
-        setLeer(leido.filter(tip => tip.tipo !== 'Selecciona Opción'));
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     const filtroTipo = () => {
@@ -155,6 +179,7 @@ const AgregarTipo = () => {
                                     tipo={item.tipo}
                                     userAdd={item.userAdd}
                                     userMod={item.userMod}
+                                    setTipo={setTipo}
                                 />
                             )
                         })}

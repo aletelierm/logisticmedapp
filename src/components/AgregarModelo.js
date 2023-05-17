@@ -4,7 +4,7 @@ import AgregarModeloDb from '../firebase/AgregarModeloDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
-import { getDocs, collection, query, where } from 'firebase/firestore';
+import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -24,10 +24,37 @@ const AgregarModelo = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    const [preguntar, setPreguntar] = useState('')
 
     const handleChange = (e) => {
         setModelo(e.target.value);
+        // console.log('desde handle',modelo.toLocaleUpperCase());
     }
+
+    useEffect(() => {
+        const buscar = () => {
+            // console.log('se ejecuta effect')
+            // console.log('modelo',modelo);
+            const modeloRef = (collection(db, 'modelos'));
+            const x = query(modeloRef, where('modelo', '==', modelo.toLocaleUpperCase().trim()));
+            // const datos = await getDocs(x);
+            onSnapshot(x, (snap) => {
+                // console.log('snap:', snap.docs.length)
+                if (snap.docs.length > 0) {
+                    // console.log(snap.docs);
+                    // console.log('existe')
+                    setPreguntar(true)
+                    // console.log('se ejecuta setpreguntar');
+                } else {
+                    // console.log('no existe')
+                    setPreguntar(false)
+                }
+            })
+        }
+        buscar();
+    }, [preguntar, setPreguntar, modelo])
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,25 +62,23 @@ const AgregarModelo = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        // const modeloRef = (collection(db, 'modelos'));
-        // const x = query(modeloRef, where('modelo', '==', 'FREGGO'));
-        // const datos = await getDocs(x);
-        // console.log(datos);
-        // datos.forEach((d) => {
-        //     console.log(d.id);
-        // })
-        // console.log(x.length());
-        if (modelo === '') {
+        // console.log('valor de preguntar en hs', preguntar);
+        if (preguntar) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'No ha ingresado una Modelo'
+                mensaje: 'Ya existe este Modelo'
+            })
+            
+        } else if (modelo === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha ingresado un Modelo'
             })
 
-        // } else if (query(modeloRef, where('modelo', '==', modelo))) {
-            
         } else {
-            const mod = modelo.toLocaleUpperCase()
+            const mod = modelo.toLocaleUpperCase().trim();
             AgregarModeloDb({
                 modelo: mod,
                 userAdd: user.email,
@@ -75,8 +100,7 @@ const AgregarModelo = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "modelos"));
-        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }))
-        setLeer(leido.filter(mod => mod.modelo !== 'Selecciona Opción'));
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     const filtroModelo = () => {
@@ -113,14 +137,14 @@ const AgregarModelo = () => {
 
             <ContenedorFormulario>
                 <Formulario action='' onSubmit={handleSubmit}>
-                        <Input
-                            style={{ width: '100%' }}
-                            type='text'
-                            placeholder='Ingrese Modelo Equipamiento Médico'
-                            name='modelo'
-                            value={modelo}
-                            onChange={handleChange}
-                        />
+                    <Input
+                        style={{ width: '100%' }}
+                        type='text'
+                        placeholder='Ingrese Modelo Equipamiento Médico'
+                        name='modelo'
+                        value={modelo}
+                        onChange={handleChange}
+                    />
                     <Boton>
                         <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
                     </Boton>
@@ -128,12 +152,12 @@ const AgregarModelo = () => {
             </ContenedorFormulario>
 
             <ListarProveedor>
-            <ContentElemen>
+                <ContentElemen>
                     <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
-                    <Titulo>Listado de Familias</Titulo>
+                    <Titulo>Listado de Modelos</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
-                
+
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
                     <Input style={{ width: '100%' }}
@@ -158,19 +182,20 @@ const AgregarModelo = () => {
                     <Table.Body>
                         {filtroModelo().map((item) => {
                             return (
-                                <EditarModelo 
-                                key={item.id}
-                                id={item.id}
-                                id2={item.id2}
-                                modelo={item.modelo}
-                                userAdd={item.userAdd}
-                                userMod={item.userMod}
+                                <EditarModelo
+                                    key={item.id}
+                                    id={item.id}
+                                    id2={item.id2}
+                                    modelo={item.modelo}
+                                    userAdd={item.userAdd}
+                                    userMod={item.userMod}
+                                    setModelo={setModelo}
                                 />
                             )
                         })}
                     </Table.Body>
                 </Table>
-                
+
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}

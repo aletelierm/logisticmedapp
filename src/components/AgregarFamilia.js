@@ -4,7 +4,7 @@ import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -24,10 +24,29 @@ const AgregarFamilia = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    const [preguntar, setPreguntar] = useState('');
 
     const handleChange = (e) => {
         setFamilia(e.target.value);
     }
+
+    useEffect(() => {
+        const buscar = () => {
+            const familiaRef = (collection(db, 'familias'));
+            const x = query(familiaRef, where('familia', '==', familia.toLocaleUpperCase().trim()));
+            // const datos = await getDocs(x);
+            onSnapshot(x, (snap) => {
+                if (snap.docs.length > 0) {
+                    // console.log('existe')
+                    setPreguntar(true)
+                } else {
+                    // console.log('no existe')
+                    setPreguntar(false)
+                }
+            })
+        }
+        buscar();
+    }, [preguntar, setPreguntar, familia])
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -35,7 +54,14 @@ const AgregarFamilia = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (familia === '') {
+        if (preguntar) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ya existe esta Familia'
+            })
+            
+        } else if (familia === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -43,7 +69,7 @@ const AgregarFamilia = () => {
             })
 
         } else {
-            const fam = familia.toLocaleUpperCase()
+            const fam = familia.toLocaleUpperCase().trim()
             console.log(fam);
             AgregarFamiliaDb({
                 familia: fam,
@@ -65,8 +91,7 @@ const AgregarFamilia = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "familias"));
-        const leido = data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index }));
-        setLeer(leido.filter(fam => fam.familia !== 'Selecciona Opción'));
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     const filtroFamilia = () => {
@@ -138,8 +163,8 @@ const AgregarFamilia = () => {
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Familia</Table.HeaderCell>
+                            <Table.HeaderCell width={16}>N°</Table.HeaderCell>
+                            <Table.HeaderCell width='six'>Familia</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
@@ -157,6 +182,7 @@ const AgregarFamilia = () => {
                                     familia={item.familia}
                                     userAdd={item.userAdd}
                                     userMod={item.userMod}
+                                    setFamilia={setFamilia}
                                 />
                             )
                         })}

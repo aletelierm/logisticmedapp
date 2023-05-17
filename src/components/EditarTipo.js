@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components';
 import ActualizarTipoDb from '../firebase/ActualizarTipoDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
 import { FaRegEdit } from "react-icons/fa";
-import { GoChecklist } from "react-icons/go";
-// import { doc, updateDoc } from "firebase/firestore";
+import { GoChecklist } from "react-icons/go"
 
 
-const EditarTipo = ({ id, id2, tipo, userAdd, userMod }) => {
+const EditarTipo = ({ id, id2, tipo, userAdd, userMod, setTipo }) => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
@@ -20,14 +19,6 @@ const EditarTipo = ({ id, id2, tipo, userAdd, userMod }) => {
     }
 
     const actualizarCampo = async () => {
-
-        // const actualizar = doc(db, 'familias', id);
-        // await updateDoc(actualizar, {
-        //     familia: 'azul',
-        //     userMod: user.email,
-        //     fechaMod: fechaMod
-        // })
-
         const tip = nuevoCampo.toLocaleUpperCase();
         ActualizarTipoDb({
             id: id,
@@ -36,17 +27,13 @@ const EditarTipo = ({ id, id2, tipo, userAdd, userMod }) => {
             fechaMod: fechaMod
         })
         setEditando(false)
+        setTipo(nuevoCampo)
         alert('se Actualizo!')
     }
 
 
-    useEffect(() => {
-        
-    }, [])
-
-
     return (
-
+        
         < Table.Row>
             <Table.Cell>{id2}</Table.Cell>
             <Table.Cell>
