@@ -169,11 +169,11 @@ const AgregarEmpresa = () => {
                                 return(
                                     
                                     <Table.Row key={item.id2}>
-                                    <Table.Cell>{item.id2}</Table.Cell>
-                                    <Table.Cell>{item.empresa}</Table.Cell>
-                                    <Table.Cell>{item.userAdd}</Table.Cell>
-                                    <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
+                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.empresa}</Table.Cell>
+                                        <Table.Cell>{item.userAdd}</Table.Cell>
+                                        <Table.Cell>{item.userMod}</Table.Cell>
+                                        <Table.Cell><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
                                     </Table.Row>
                                 )
 

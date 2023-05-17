@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { Table } from 'semantic-ui-react'
-import { useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection } from 'firebase/firestore';
 import Alerta from '../components/Alertas';
@@ -13,7 +13,7 @@ import { FaRegEdit } from "react-icons/fa";
 const Proveedores = () => {
 
     
-    const navigate = useNavigate();
+    /* const navigate = useNavigate(); */
     const user = auth.currentUser;
     let fechaAdd = new Date();
     let fechaMod = new Date();
@@ -30,9 +30,9 @@ const Proveedores = () => {
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
 
-    const volver = ()=>{
+   /*  const volver = ()=>{
         navigate('/home/actualizaproveedor')
-    }
+    } */
 
     //Leer data
     const getData = async () => {
@@ -286,7 +286,7 @@ const Proveedores = () => {
                                                 <Table.Cell>{item.id}</Table.Cell>       
                                                 <Table.Cell>{item.direccion}</Table.Cell>       
                                                 <Table.Cell>{item.telefono}</Table.Cell>       
-                                                <Table.Cell><Boton onClick={volver}><FaRegEdit style={{fontSize:'20px', color: 'green'}}/></Boton></Table.Cell>       
+                                                <Table.Cell><Link to={`/home/actualizaproveedor/${item.id}`}><FaRegEdit style={{fontSize:'20px', color: 'green'}}/></Link></Table.Cell>       
                                             </Table.Row> 
 
                                         )

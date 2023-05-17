@@ -57,8 +57,8 @@ export const Home = () => {
             <Route path="/serviciotecnico/mantencion" element={<Mantenimiento/>}/>
             <Route path="/clientes" element={<Clientes/>}/>
             <Route path="/proveedores" element={<Proveedores/>}/>
-            <Route path="/actualizaproveedor" element={<ActualizaProveedor/>}/>
-            <Route path="/actualizacliente" element={<ActualizaCliente/>}/>
+            <Route path="/actualizaproveedor/:id" element={<ActualizaProveedor/>}/>
+            <Route path="/actualizacliente/:id" element={<ActualizaCliente/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>        
             <Route path="/configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="/configuracion/asignaroles" element={<AsignarRoles/>}/>

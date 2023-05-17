@@ -77,7 +77,7 @@ export const DataMenu = [
     ]
   },
  
-  {
+  /* {
     title: 'Servicio Tecnico',
     path: '/home/serviciotecnico',
     icon: <MdIcons.MdMedicalServices />,
@@ -107,7 +107,7 @@ export const DataMenu = [
         icon: <IoIcons.IoIosPlay />
       }
     ]
-  },
+  }, */
   {
     title: 'Configuracion',
     path: '/home/configuracion',
@@ -130,12 +130,12 @@ export const DataMenu = [
         title: 'Registrar Empresa',
         path: '/home/configuracion/agregarempresa',
         icon: <FaIcons.FaDeezer />
-      },
+      }/* ,
       {
         title: 'Parametro Global',
         path: '/home/configuracion/global',
         icon: <RiIcons.RiGlobalLine />
-      }
+      } */
     ]
   }
   
