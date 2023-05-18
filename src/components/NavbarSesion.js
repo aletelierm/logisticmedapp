@@ -19,8 +19,8 @@ const NavbarSesion = () => {
     const {usuario, setUsuario} = useContext(UserContext);
     const [nombre, setNombre] = useState('')
     const [apellido, setApellido] = useState('');
-    const [rol, setRol] = useState('');
-    const [empresa, setEmpresa] = useState('');
+    /* const [rol, setRol] = useState('');
+    const [empresa, setEmpresa] = useState(''); */
 
     const navigate = useNavigate();
 
@@ -30,14 +30,14 @@ const NavbarSesion = () => {
         if(usuarios){
             setNombre(usuarios.nombre);
             setApellido(usuarios.apellido);
-            setRol(usuarios.ROL);
-            setEmpresa(usuarios.empresa);
-            console.log('de useffect:',nombre)
+            /* setRol(usuarios.ROL); */
+            /* setEmpresa(usuarios.empresa); */
+            console.log('ejecuta useffect:',nombre)
             setUsuario(usuarios);
         }else{
             navigate('/home/misequipos');
         }
-    },[setUsuario,usuarios,  nombre, navigate])
+    },[setUsuario, usuarios, nombre, navigate])
     
     
  
@@ -72,7 +72,7 @@ const NavbarSesion = () => {
                         {/*  <h4>{user.email}</h4> */}
                         <h4>{nombre +' '+ apellido}</h4>               
                         {/* <h6>{rol}</h6>               
-                        <h6>{empresa}</h6>    */} 
+                        <h6>{empresa}</h6>  */}   
                     </div>
                               
                 </div>
