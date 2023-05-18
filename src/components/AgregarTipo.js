@@ -4,7 +4,7 @@ import AgregarTipoDb from '../firebase/AgregarTipoDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
-import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -24,28 +24,28 @@ const AgregarTipo = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
-    const [preguntar, setPreguntar] = useState('')
+    
 
     const handleChange = (e) => {
         setTipo(e.target.value);
     }
 
-    useEffect(() => {
-        const buscar = () => {
-            const tipoRef = (collection(db, 'tipos'));
-            const x = query(tipoRef, where('tipo', '==', tipo.toLocaleUpperCase().trim));
-            onSnapshot(x, (snap) => {
-                if (snap.docs.length > 0) {
-                    // console.log('existe')
-                    setPreguntar(true)
-                } else {
-                    // console.log('no existe')
-                    setPreguntar(false)
-                }
-            })
-        }
-        buscar();
-    }, [preguntar, setPreguntar, tipo])
+    // useEffect(() => {
+    //     const buscar = () => {
+    //         const tipoRef = (collection(db, 'tipos'));
+    //         const x = query(tipoRef, where('tipo', '==', tipo.toLocaleUpperCase().trim));
+    //         onSnapshot(x, (snap) => {
+    //             if (snap.docs.length > 0) {
+    //                 // console.log('existe')
+    //                 setPreguntar(true)
+    //             } else {
+    //                 // console.log('no existe')
+    //                 setPreguntar(false)
+    //             }
+    //         })
+    //     }
+    //     buscar();
+    // }, [preguntar, setPreguntar, tipo])
 
 
     const handleSubmit = (e) => {
@@ -54,7 +54,9 @@ const AgregarTipo = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (preguntar) {
+        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
+        if ((leer.filter(tip => tip.tipo.includes(tipo).length > 0 )) ) {
+            console.log(leer.filter(tip => tip.tipo.includes(tipo).length));
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -117,7 +119,7 @@ const AgregarTipo = () => {
 
     useEffect(() => {
         getData();
-    }, [setTipo, tipo])
+    }, [])
 
     return (
         <ContenedorProveedor>

@@ -4,7 +4,7 @@ import AgregarModeloDb from '../firebase/AgregarModeloDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
-import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -24,36 +24,35 @@ const AgregarModelo = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
-    const [preguntar, setPreguntar] = useState('')
+
 
     const handleChange = (e) => {
         setModelo(e.target.value);
-        // console.log('desde handle',modelo.toLocaleUpperCase());
     }
 
-    useEffect(() => {
-        const buscar = () => {
-            // console.log('se ejecuta effect')
-            // console.log('modelo',modelo);
-            const modeloRef = (collection(db, 'modelos'));
-            const x = query(modeloRef, where('modelo', '==', modelo.toLocaleUpperCase().trim()));
-            // const datos = await getDocs(x);
-            onSnapshot(x, (snap) => {
-                // console.log('snap:', snap.docs.length)
-                if (snap.docs.length > 0) {
-                    // console.log(snap.docs);
-                    // console.log('existe')
-                    setPreguntar(true)
-                    // console.log('se ejecuta setpreguntar');
-                } else {
-                    // console.log('no existe')
-                    setPreguntar(false)
-                }
-            })
-        }
-        buscar();
-    }, [preguntar, setPreguntar, modelo])
 
+    // useEffect(() => {
+    //     const buscar = () => {
+    //         // console.log('se ejecuta effect')
+    //         // console.log('modelo',modelo);
+    //         const modeloRef = (collection(db, 'modelos'));
+    //         const x = query(modeloRef, where('modelo', '==', modelo.toLocaleUpperCase().trim()));
+    //         // const datos = await getDocs(x);
+    //         onSnapshot(x, (snap) => {
+    //             // console.log('snap:', snap.docs.length)
+    //             if (snap.docs.length > 0) {
+    //                 // console.log(snap.docs);
+    //                 // console.log('existe')
+    //                 setPreguntar(true)
+    //                 // console.log('se ejecuta setpreguntar');
+    //             } else {
+    //                 // console.log('no existe')
+    //                 setPreguntar(false)
+    //             }
+    //         })
+    //     }
+    //     buscar();
+    // }, [preguntar, setPreguntar, modelo])
 
 
     const handleSubmit = async (e) => {
@@ -62,8 +61,9 @@ const AgregarModelo = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        // console.log('valor de preguntar en hs', preguntar);
-        if (preguntar) {
+        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
+        if ((leer.filter(mod => mod.modelo.includes(modelo).length > 0 )) ) {
+            console.log(leer.filter(mod => mod.modelo.includes(modelo).length));
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -127,7 +127,7 @@ const AgregarModelo = () => {
 
     useEffect(() => {
         getData();
-    }, [setModelo, modelo])
+    }, [])
 
     return (
         <ContenedorProveedor>

@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
 import AgregarEmpresaDb from '../firebase/AgregarEmpresaDb';
-import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import Alerta from './Alertas';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
 import EditarEmpresa from './EditarEmpresa';
-
 
 
 const AgregarEmpresa = () => {
@@ -25,30 +24,30 @@ const AgregarEmpresa = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
-    const [preguntar, setPreguntar] = useState('')
 
 
     const handleChange = (e) => {
         setEmpresa(e.target.value);
     }
 
-    useEffect(() => {
-        const buscar = () => {
-            const empresaRef = (collection(db, 'empresas'));
-            const x = query(empresaRef, where('empresa', '==', empresa.toLocaleUpperCase().trim()));
-            // const datos = await getDocs(x);
-            onSnapshot(x, (snap) => {
-                if (snap.docs.length > 0) {
-                    // console.log('existe')
-                    setPreguntar(true)
-                } else {
-                    // console.log('no existe')
-                    setPreguntar(false)
-                }
-            })
-        }
-        buscar();
-    }, [preguntar, setPreguntar, empresa])
+    // useEffect(() => {
+    //     const buscar = () => {
+    //         const empresaRef = (collection(db, 'empresas'));
+    //         const x = query(empresaRef, where('empresa', '==', empresa.toLocaleUpperCase().trim()));
+    //         // const datos = await getDocs(x);
+    //         onSnapshot(x, (snap) => {
+    //             if (snap.docs.length > 0) {
+    //                 // console.log('existe')
+    //                 setPreguntar(true)
+    //             } else {
+    //                 // console.log('no existe')
+    //                 setPreguntar(false)
+    //             }
+    //         })
+    //     }
+    //     buscar();
+    // }, [preguntar, setPreguntar, empresa])
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -56,7 +55,9 @@ const AgregarEmpresa = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (preguntar) {
+        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
+        if ((leer.filter(emp => emp.empresa.includes(empresa).length > 0 )) ) {
+            console.log(leer.filter(emp => emp.empresa.includes(empresa).length));
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -118,7 +119,7 @@ const AgregarEmpresa = () => {
 
     useEffect(() => {
         getData();
-    }, [setEmpresa, empresa])
+    }, [])
 
     return (
         <ContenedorProveedor>

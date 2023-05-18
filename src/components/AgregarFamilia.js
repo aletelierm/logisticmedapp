@@ -4,7 +4,7 @@ import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
-import { getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -15,6 +15,7 @@ import Editar from './Editar';
 const AgregarFamilia = () => {
     // const navigate = useNavigate();
     const user = auth.currentUser;
+    // const id = user.uid
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -24,29 +25,34 @@ const AgregarFamilia = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
-    const [preguntar, setPreguntar] = useState('');
+    const [flag, setFlag] = useState(false);
+
 
     const handleChange = (e) => {
         setFamilia(e.target.value);
     }
 
-    useEffect(() => {
-        const buscar = () => {
-            const familiaRef = (collection(db, 'familias'));
-            const x = query(familiaRef, where('familia', '==', familia.toLocaleUpperCase().trim()));
-            // const datos = await getDocs(x);
-            onSnapshot(x, (snap) => {
-                if (snap.docs.length > 0) {
-                    // console.log('existe')
-                    setPreguntar(true)
-                } else {
-                    // console.log('no existe')
-                    setPreguntar(false)
-                }
-            })
-        }
-        buscar();
-    }, [preguntar, setPreguntar, familia])
+
+    // Busca si el nombre de familia ya existe
+    // useEffect(() => {
+    //     const buscar = () => {
+    //         // const familiaRef = (collection(db, 'familias'));
+    //         // const x = query(familiaRef, where('familia', '==', familia.toLocaleUpperCase().trim()), limit(1));
+    //         // const datos = await getDocs(x);
+    //         console.log('Mostrar x en onsnapshot', x);
+    //         onSnapshot(x, (snap) => {
+    //             if (snap.docs.length > 0) {
+    //                 console.log('existe')
+    //                 setPreguntar(true)
+    //             } else {
+    //                 console.log('no existe')
+    //                 setPreguntar(false)
+    //             }
+    //         })
+    //     }
+    //     buscar();
+    // }, [preguntar, setPreguntar, familia])
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -54,13 +60,23 @@ const AgregarFamilia = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (preguntar) {
+        console.log('mostrar familia', familia.toLocaleUpperCase().trim());
+        console.log('leer filter', leer.filter(fam => fam.familia.includes(familia.toLocaleUpperCase().trim())));
+        console.log('mostrar leer', leer);
+
+        // Consulta si exite campo en el arreglo
+        const existe = leer.filter(fam => fam.familia.includes(familia.toLocaleUpperCase().trim())).length > 0;
+        console.log(existe);
+
+        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
+        if (existe) {
+            
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ya existe esta Familia'
             })
-            
+
         } else if (familia === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -85,6 +101,7 @@ const AgregarFamilia = () => {
                         mensaje: 'Familia Ingresada Correctamente'
                     })
                     setFamilia('');
+                    setFlag(true)
                 })
         }
     }
@@ -92,7 +109,9 @@ const AgregarFamilia = () => {
     const getData = async () => {
         const data = await getDocs(collection(db, "familias"));
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+
     }
+    console.log('leer getdata', leer);
 
     const filtroFamilia = () => {
 
@@ -117,8 +136,11 @@ const AgregarFamilia = () => {
     }
 
     useEffect(() => {
-        getData();
-    }, [setFamilia, familia])
+        
+            getData();
+            console.log('Se ejecuto useEffect');
+
+    }, [setFlag, flag])
 
 
     return (
