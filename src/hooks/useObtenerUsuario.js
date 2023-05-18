@@ -22,7 +22,7 @@ const useObtenerUsuario = (id)=>{
         }
         obtenerUsuario();
 
-    },[id, navigate, setUsuarios]);
+    },[]);
 
     return [usuarios];
 

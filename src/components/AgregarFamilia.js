@@ -229,6 +229,7 @@ const ContenedorFormulario = styled.div`
     border: 2px solid #d1d1d1;
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+    background-color: #ffff;
 `
 
 const Titulo = styled.h2`
@@ -250,6 +251,7 @@ const ListarProveedor = styled.div`
     border: 2px solid #d1d1d1;
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+    background-color: #ffff;
 `
 const Formulario = styled.form`
     display: flex;
