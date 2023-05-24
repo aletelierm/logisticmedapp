@@ -72,7 +72,7 @@ const NavbarSesion = () => {
                         {/*  <h4>{user.email}</h4> */}
                         <h4>{nombre +' '+ apellido}</h4>               
                         {/* <h6>{rol}</h6>               
-                        <h6>{empresa}</h6>    */} 
+                        <h6>{empresa}</h6>  */}   
                     </div>
                               
                 </div>

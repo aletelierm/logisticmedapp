@@ -3,12 +3,16 @@ import { FaBars } from 'react-icons/fa'
 import { DataMenu } from './DataMenu'
 import SubMenu from './SubMenu';
 import '../styles/sideBar.css'
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 const SideBar = ({ children }) => {
 
     const [isOpen, setIsOpen] = useState(true);
     const toggle = () => setIsOpen(!isOpen);
+    const {usuario} = useContext(UserContext);
 
+    console.log('datos del usuario global:',usuario)
 
     return (
         <div className='container'>
@@ -23,9 +27,11 @@ const SideBar = ({ children }) => {
                 {DataMenu.map((item, index) => {
                     return                     < div className='link' key={index}>
                         <div className='link_text'>
+                            {/* {usuario.ROL ==='DADMIN' && <SubMenu item={item} key={index} isopen={isOpen} />} */}
                             <SubMenu item={item} key={index} isopen={isOpen} />
+                            
                         </div>
-                    </div>;
+                    </div>
                 })}
             </div>
             <main className='main'>{children}</main>

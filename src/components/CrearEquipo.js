@@ -106,26 +106,26 @@ const Proveedores = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (nomFamilia.length === 0 || nomFamilia==='Selecciona Opción') {
+        if (nomFamilia.length === 0 || nomFamilia==='Selecciona Opción:') {
             console.log(nomFamilia);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Familia'
             })
-        } else if (nomTipo.length === 0 || nomTipo==='Selecciona Opción') {
+        } else if (nomTipo.length === 0 || nomTipo==='Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Tipo Equipamiento'
             })
-        } else if (nomMarca.length === 0 || nomMarca==='Selecciona Opción') {
+        } else if (nomMarca.length === 0 || nomMarca==='Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Marca'
             })
-        } else if (nomModelo.length === 0 || nomModelo==='Selecciona Opción') {
+        } else if (nomModelo.length === 0 || nomModelo==='Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -187,6 +187,7 @@ const Proveedores = () => {
                             <Label>Familias</Label>
                             <Select value={nomFamilia} onChange={e => setNomFamilia(e.target.value)}>
                                 console.log(nomFamilia);
+                                <option>Selecciona Opción:</option>
                                 {familia.map((d) => {
                                     return (<option key={d.id}>{d.familia}</option>)
                                 })}
@@ -196,6 +197,7 @@ const Proveedores = () => {
                         <ContentElemenSelect>
                             <Label>Tipo Equipamiento</Label>
                             <Select value={nomTipo} onChange={e => setNomTipo(e.target.value)}>
+                                <option>Selecciona Opción:</option> 
                                 {tipo.map((d) => {
                                     return (<option key={d.id}>{d.tipo}</option>)
                                 })}
@@ -205,6 +207,7 @@ const Proveedores = () => {
                         <ContentElemenSelect>
                             <Label>Marca</Label>
                             <Select value={nomMarca} onChange={e => setNomMarca(e.target.value)}>
+                                <option>Selecciona Opción:</option>
                                 {marca.map((d) => {
                                     return (<option key={d.id}>{d.marca}</option>)
                                 })}
@@ -214,6 +217,7 @@ const Proveedores = () => {
                         <ContentElemenSelect>
                             <Label>Modelo</Label>
                             <Select value={nomModelo} onChange={e => setNomModelo(e.target.value)}>
+                                <option>Selecciona Opción:</option>
                                 {modelo.map((d) => {
                                     return (<option key={d.id}>{d.modelo}</option>)
                                 })}
@@ -226,7 +230,7 @@ const Proveedores = () => {
                         <Input
                             type='text'
                             placeholder='Ingrese N° Serie'
-                            name='serie'
+                            name='serie'h
                             value={serie}
                             onChange={handleChange}
                         />
