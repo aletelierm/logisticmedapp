@@ -5,9 +5,12 @@
     text-align: center;
     height: auto;
     min-height: 80vh;
+    margin-left: 265px;
+    /* margin-top: 20px; */
 }
 
 .container {
     height: 100%;
+    margin-top: 70px;
 }
 

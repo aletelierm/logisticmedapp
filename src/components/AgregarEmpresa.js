@@ -24,29 +24,12 @@ const AgregarEmpresa = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    const [flag, setFlag] = useState(false);
 
 
     const handleChange = (e) => {
         setEmpresa(e.target.value);
     }
-
-    // useEffect(() => {
-    //     const buscar = () => {
-    //         const empresaRef = (collection(db, 'empresas'));
-    //         const x = query(empresaRef, where('empresa', '==', empresa.toLocaleUpperCase().trim()));
-    //         // const datos = await getDocs(x);
-    //         onSnapshot(x, (snap) => {
-    //             if (snap.docs.length > 0) {
-    //                 // console.log('existe')
-    //                 setPreguntar(true)
-    //             } else {
-    //                 // console.log('no existe')
-    //                 setPreguntar(false)
-    //             }
-    //         })
-    //     }
-    //     buscar();
-    // }, [preguntar, setPreguntar, empresa])
 
 
     const handleSubmit = (e) => {
@@ -55,14 +38,19 @@ const AgregarEmpresa = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
+        // Consulta si exite campo en el arreglo
+        const existe = leer.filter(emp => emp.empresa.includes(empresa.toLocaleUpperCase().trim())).length > 0;
+        console.log(existe);
+
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
-        if ((leer.filter(emp => emp.empresa.includes(empresa).length > 0 )) ) {
-            console.log(leer.filter(emp => emp.empresa.includes(empresa).length));
+        if (existe) {
+
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ya existe esta Empresa'
             })
+
         } else if (empresa === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -86,6 +74,7 @@ const AgregarEmpresa = () => {
                         mensaje: 'Empresa Registrada Correctamente'
                     })
                     setEmpresa('');
+                    setFlag(!flag)
                 })
         }
     }
@@ -119,7 +108,7 @@ const AgregarEmpresa = () => {
 
     useEffect(() => {
         getData();
-    }, [])
+    }, [setFlag, flag])
 
     return (
         <ContenedorProveedor>

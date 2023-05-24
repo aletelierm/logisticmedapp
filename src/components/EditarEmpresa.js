@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
+import Alertas from './Alertas';
 import ActualizarEmpresaDb from '../firebase/ActualizarEmpresaDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
@@ -13,13 +14,16 @@ const EditarEmpresa = ({ id, id2, empresa, userAdd, userMod, setEmpresa }) => {
 
     const [editando, setEditando] = useState(false)
     const [nuevoCampo, setNuevoCampo] = useState(empresa);
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+
 
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
 
     const actualizarCampo = async () => {
-        const emp = nuevoCampo.toLocaleUpperCase();
+        const emp = nuevoCampo.toLocaleUpperCase().trim();
         ActualizarEmpresaDb({
             id: id,
             empresa: emp,
@@ -27,8 +31,12 @@ const EditarEmpresa = ({ id, id2, empresa, userAdd, userMod, setEmpresa }) => {
             fechaMod: fechaMod
         })
         setEditando(false)
-        setEmpresa(nuevoCampo)
-        alert('se Actualizo!')
+        setEmpresa('')
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Empresa Modificada Correctamente'
+        })
     }
 
 
@@ -46,7 +54,7 @@ const EditarEmpresa = ({ id, id2, empresa, userAdd, userMod, setEmpresa }) => {
                             onChange={handleChange}
                         />
                     </Formulario>
-                    : empresa
+                    : nuevoCampo.toLocaleUpperCase()
                 }
             </Table.Cell>
             <Table.Cell>{userAdd}</Table.Cell>
@@ -62,6 +70,13 @@ const EditarEmpresa = ({ id, id2, empresa, userAdd, userMod, setEmpresa }) => {
                         <GoChecklist style={{ fontSize: '23px', color: 'green', marginTop: '5px' }} />
                     </Boton>}
             </Table.Cell>
+
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+
         </Table.Row>
     )
 }
