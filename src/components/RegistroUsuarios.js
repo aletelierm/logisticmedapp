@@ -256,13 +256,15 @@ export const RegistroUsuarios = () => {
             
                 <Label>Empresas</Label>
                 <Select value={nomEmpresa}  onChange={e =>setNomEmpresa(e.target.value)}>
+                <option>Selecciona Opción:</option>
                 {empresa.map((d)=>{
                     return(<option key={d.id}>{d.empresa}</option>)
                  })}
                 </Select>
                        
                 <Label>Roles</Label>
-                <Select value={rol} onChange={ev => setRol(ev.target.value)}>                    
+                <Select value={rol} onChange={ev => setRol(ev.target.value)}>    
+                <option>Selecciona Opción:</option>                
                     {Roles.map((d)=>{
                         return(<option key={d.key}>{d.text}</option>)
                     })}

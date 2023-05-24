@@ -17,12 +17,12 @@ const useObtenerUsuario = (id)=>{
                 setUsuarios(docum.data());
                 
             }else{
-                navigate('/home')
+                navigate('/misequipos')
             }
         }
         obtenerUsuario();
 
-    },[]);
+    },[id, navigate]);
 
     return [usuarios];
 

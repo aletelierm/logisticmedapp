@@ -8,6 +8,9 @@ import AgregarClientesDb from '../firebase/AgregarClientesDb';
 import { getDocs, collection } from 'firebase/firestore';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
+import validarRut from '../funciones/validarRut';
+
+
 
 const Clientes = () => {
     
@@ -16,6 +19,7 @@ const Clientes = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
+  
     const [rut, setRut] = useState('')
     const [nombre, setNombre] = useState('')
     const [direccion, setDireccion] = useState('')
@@ -73,7 +77,7 @@ const Clientes = () => {
     const handleChange = (e)=>{
         switch(e.target.name){
             case 'rut':
-                setRut(e.target.value);
+                setRut(e.target.value)
                 break;
                 case 'nombre':
                 setNombre(e.target.value);
@@ -104,13 +108,28 @@ const Clientes = () => {
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
        
-		if(!expresionRegularRut.test(rut)){
+       /*  console.log(validarRut(rut)); */
+        const temp = rut.split('-');
+        let digito = temp[1];
+
+        if(digito ==='k' || digito ==='K') digito = -1;
+
+        const validaR = validarRut(rut);       
+		if(!expresionRegularRut.test(rut)){          
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Rut no es valido'
+                mensaje: 'Formato incorrecto de rut'
             })
             return;
+        }else if(validaR !== parseInt(digito)){ 
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;       
+
         }else if(rut ===''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -168,7 +187,7 @@ const Clientes = () => {
                     fechaMod: fechaMod
 
                 })
-                setRut('');
+                /* setRut(''); */
                 setNombre('');
                 setDireccion('');
                 setTelefono('');
@@ -203,6 +222,7 @@ const Clientes = () => {
                     <ContentElemen>
                         <Label>Rut</Label>
                         <Input
+                            maxLength='10'
                             type='text'
                             name = 'rut'
                             placeholder = 'Ingrese Rut'

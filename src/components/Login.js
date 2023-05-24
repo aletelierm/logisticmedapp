@@ -34,6 +34,7 @@ export default function Login() {
     
     try {
       let loginResponse = await signInUser(email, password);
+      console.log('login de usuario:',loginResponse.user.uid)
       startSession(loginResponse.user);     
       navigate("/home/misequipos");      
     } catch (error) {

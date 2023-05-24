@@ -104,8 +104,17 @@ const Proveedores = () => {
 
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+        //Comprobar que rut tenga formato correcto
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
 
-        if(rut ===''){
+        if(!expresionRegularRut.test(rut)){          
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Formato incorrecto de rut'
+            })
+            return;
+        }else if(rut ===''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',

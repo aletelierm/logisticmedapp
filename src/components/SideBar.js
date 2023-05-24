@@ -12,7 +12,7 @@ const SideBar = ({ children }) => {
     const toggle = () => setIsOpen(!isOpen);
     const {usuario} = useContext(UserContext);
 
-    console.log('datos del usuario global:',usuario)
+    console.log('obtengo datos del usuario global:',usuario)
 
     return (
         <div className='container'>

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { signOut } from "firebase/auth";
 import format from 'date-fns/format'
-import { es } from 'date-fns/locale';
+/* import { es } from 'date-fns/locale'; */
 import './../styles/navbarSession.css'
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -15,33 +15,36 @@ const NavbarSesion = () => {
     
     const user = auth.currentUser;
     const id = user.uid;
-    // const [usuarios] = useObtenerUsuario(id);
+    console.log('id de aut:', id)
+    const [usuarios] = useObtenerUsuario(id);
     const {usuario, setUsuario} = useContext(UserContext);
-    const [nombre, setNombre] = useState('Catalina')
-    const [apellido, setApellido] = useState('Astudillo');
-    const [rol, setRol] = useState('DADMIN');
-    const [empresa, setEmpresa] = useState('ALLCOMPANY');
-
-    const navigate = useNavigate();
-
-   console.log('id de aut', id)
+    console.log('obtener usuario:',usuario);
+    //Varibals de estado para crear el contexto global
     
-    // useEffect(()=>{
-        // if(usuarios){
-            // setNombre(usuarios.nombre);
-            // setApellido(usuarios.apellido);
-            // setRol(usuarios.ROL);
-            // setEmpresa(usuarios.empresa);
-            // console.log('de useffect:',nombre)
-            // setUsuario(usuarios);
-        // }else{
-            // navigate('/home/misequipos');
-        // }
-    // },[setUsuario,usuarios,  nombre, navigate])
+    const [nombre, setNombre] = useState('')
+    const [apellido, setApellido] = useState('');
+    /* const [rol, setRol] = useState('');
+    const [empresa, setEmpresa] = useState(''); */
+    
+    const navigate = useNavigate();  
+    
+    useEffect(()=>{
+         if(usuarios){
+             setNombre(usuarios.nombre);
+             setApellido(usuarios.apellido);
+             /* setRol(usuarios.ROL);
+             setEmpresa(usuarios.empresa); */
+             console.log('de useffect navbarsesion:',nombre)
+             setUsuario(usuarios);
+         }else{
+            console.log('ejecuta else de useeffect')
+            navigate('/misequipos');
+         }
+     },[setUsuario,usuarios,  nombre, navigate])
     
     
  
-    let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`, {locale: es});
+    let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`);
    /*  let horaActual = format (new Date(), `k ':' m`) */
     
    
@@ -69,10 +72,8 @@ const NavbarSesion = () => {
                         <FaUserAlt style={{color:'green', marginRight:'10px'}}/>
                     </div>
                     <div>
-                        {/*  <h4>{user.email}</h4> */}
-                        <h4>{nombre +' '+ apellido}</h4>               
-                        {/* <h6>{rol}</h6>               
-                        <h6>{empresa}</h6>  */}   
+                        {/*  <h4>{user.email}</h4> * */}
+                         <h4>{nombre +' '+ apellido}</h4>
                     </div>
                               
                 </div>
