@@ -24,30 +24,12 @@ const AgregarMarca = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    const [flag, setFlag] = useState(false);
 
 
     const handleChange = (e) => {
         setMarca(e.target.value);
     }
-
-
-    // useEffect(() => {
-    //     const buscar = () => {
-    //         const marcaRef = (collection(db, 'marcas'));
-    //         const x = query(marcaRef, where('marca', '==', marca.toLocaleUpperCase().trim()));
-    //         // const datos = await getDocs(x);
-    //         onSnapshot(x, (snap) => {
-    //             if (snap.docs.length > 0) {
-    //                 // console.log('existe')
-    //                 setPreguntar(true)
-    //             } else {
-    //                 // console.log('no existe')
-    //                 setPreguntar(false)
-    //             }
-    //         })
-    //     }
-    //     buscar();
-    // }, [preguntar, setPreguntar, marca])
 
 
     const handleSubmit = (e) => {
@@ -56,9 +38,13 @@ const AgregarMarca = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
+        // Consulta si exite campo en el arreglo
+        const existe = leer.filter(mar => mar.marca.includes(marca.toLocaleUpperCase().trim())).length > 0;
+        console.log(existe);
+
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
-        if ((leer.filter(mar => mar.marca.includes(marca).length > 0 )) ) {
-            console.log(leer.filter(mar => mar.marca.includes(marca).length));
+        if (existe) {
+
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -88,6 +74,7 @@ const AgregarMarca = () => {
                         mensaje: 'Marca Ingresada Correctamente'
                     })
                     setMarca('');
+                    setFlag(!flag)
                 })
         }
     }
@@ -122,7 +109,7 @@ const AgregarMarca = () => {
 
     useEffect(() => {
         getData();
-    }, [])
+    }, [flag, setFlag])
 
     return (
         <ContenedorProveedor>

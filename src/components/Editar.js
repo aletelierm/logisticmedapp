@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
+import Alertas from './Alertas';
 import ActualizarFamiliaDb from '../firebase/ActualizarFamiliaDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
@@ -13,10 +14,14 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
 
     const [editando, setEditando] = useState(false)
     const [nuevoCampo, setNuevoCampo] = useState(familia);
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+
 
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
+
 
     const actualizarCampo = async () => {
         const fam = nuevoCampo.toLocaleUpperCase();
@@ -27,9 +32,14 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
             fechaMod: fechaMod
         })
         setEditando(false)
-        setFamilia(nuevoCampo)
-        alert('se Actualizo!', familia)
+        setFamilia('')
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Familia Modificada Correctamente'
+        })
     }
+
 
     return (
 
@@ -45,7 +55,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
                             onChange={handleChange}
                         />
                     </Formulario>
-                    : familia
+                    : nuevoCampo.toLocaleUpperCase()
                 }
             </Table.Cell>
             <Table.Cell>{userAdd}</Table.Cell>
@@ -57,10 +67,17 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
             </Table.Cell>
             <Table.Cell>
                 {editando &&
-                    <Boton onClick={actualizarCampo}>
+                    <Boton onClick={() => { actualizarCampo() }}>
                         <GoChecklist style={{ fontSize: '23px', color: 'green', marginTop: '5px' }} />
                     </Boton>}
             </Table.Cell>
+
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+            
         </Table.Row>
     )
 }

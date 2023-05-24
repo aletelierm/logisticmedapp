@@ -15,7 +15,6 @@ import Editar from './Editar';
 const AgregarFamilia = () => {
     // const navigate = useNavigate();
     const user = auth.currentUser;
-    // const id = user.uid
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -70,7 +69,7 @@ const AgregarFamilia = () => {
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (existe) {
-            
+
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -95,16 +94,26 @@ const AgregarFamilia = () => {
                 fechaMod: fechaMod
             })
                 .then(() => {
+                    /* ver si se puede agregar item al arreglo de obejetos
+                    setLeer(leer.map((doc, index) => ({ ...doc,
+                        id: 11,
+                        familia: fam,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod  })));   */
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
                         mensaje: 'Familia Ingresada Correctamente'
                     })
                     setFamilia('');
-                    setFlag(true)
+                    setFlag(!flag)
+                    console.log('consulta Flag', flag);
                 })
         }
     }
+    
 
     const getData = async () => {
         const data = await getDocs(collection(db, "familias"));
@@ -136,9 +145,9 @@ const AgregarFamilia = () => {
     }
 
     useEffect(() => {
-        
-            getData();
-            console.log('Se ejecuto useEffect');
+
+        getData();
+        console.log('Se ejecuto useEffect');
 
     }, [setFlag, flag])
 
@@ -197,6 +206,7 @@ const AgregarFamilia = () => {
                     <Table.Body>
                         {filtroFamilia().map((item) => {
                             return (
+
                                 <Editar
                                     key={item.id}
                                     id={item.id}

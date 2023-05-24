@@ -24,28 +24,12 @@ const AgregarTipo = () => {
     const [leer, setLeer] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
+    const [flag, setFlag] = useState(false);
     
 
     const handleChange = (e) => {
         setTipo(e.target.value);
     }
-
-    // useEffect(() => {
-    //     const buscar = () => {
-    //         const tipoRef = (collection(db, 'tipos'));
-    //         const x = query(tipoRef, where('tipo', '==', tipo.toLocaleUpperCase().trim));
-    //         onSnapshot(x, (snap) => {
-    //             if (snap.docs.length > 0) {
-    //                 // console.log('existe')
-    //                 setPreguntar(true)
-    //             } else {
-    //                 // console.log('no existe')
-    //                 setPreguntar(false)
-    //             }
-    //         })
-    //     }
-    //     buscar();
-    // }, [preguntar, setPreguntar, tipo])
 
 
     const handleSubmit = (e) => {
@@ -54,14 +38,19 @@ const AgregarTipo = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
+        // Consulta si exite campo en el arreglo
+        const existe = leer.filter(tip => tip.tipo.includes(tipo.toLocaleUpperCase().trim())).length > 0;
+        console.log(existe);
+
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
-        if ((leer.filter(tip => tip.tipo.includes(tipo).length > 0 )) ) {
-            console.log(leer.filter(tip => tip.tipo.includes(tipo).length));
+        if (existe) {
+
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ya existe este Tipo de Equipamiento'
             })
+
         } else if (tipo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -85,6 +74,7 @@ const AgregarTipo = () => {
                         mensaje: 'Familia Ingresada Correctamente'
                     })
                     setTipo('');
+                    setFlag(!flag)
                 })
         }
     }
@@ -119,7 +109,7 @@ const AgregarTipo = () => {
 
     useEffect(() => {
         getData();
-    }, [])
+    }, [setFlag, flag])
 
     return (
         <ContenedorProveedor>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
+import Alertas from './Alertas';
 import ActualizarMarcaDb from '../firebase/ActualizarMarcaDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
@@ -13,6 +14,9 @@ const EditarMarca = ({ id, id2, marca, userAdd, userMod, setMarca }) => {
 
     const [editando, setEditando] = useState(false)
     const [nuevoCampo, setNuevoCampo] = useState(marca);
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+
 
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
@@ -27,8 +31,12 @@ const EditarMarca = ({ id, id2, marca, userAdd, userMod, setMarca }) => {
             fechaMod: fechaMod
         })
         setEditando(false)
-        setMarca(nuevoCampo)
-        alert('se Actualizo!')
+        setMarca('')
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Marca Modificada Correctamente'
+        })
     }
 
 
@@ -46,7 +54,7 @@ const EditarMarca = ({ id, id2, marca, userAdd, userMod, setMarca }) => {
                             onChange={handleChange}
                         />
                     </Formulario>
-                    : marca
+                    : nuevoCampo.toLocaleUpperCase()
                 }
             </Table.Cell>
             <Table.Cell>{userAdd}</Table.Cell>
@@ -62,6 +70,13 @@ const EditarMarca = ({ id, id2, marca, userAdd, userMod, setMarca }) => {
                         <GoChecklist style={{ fontSize: '23px', color: 'green', marginTop: '5px' }} />
                     </Boton>}
             </Table.Cell>
+
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+            
         </Table.Row>
 
     )

@@ -67,7 +67,7 @@ export const Home = () => {
     </Routes>
     </SideBar>
     </UserProvider>
-    <Footer/>
+    {/* <Footer/> */}
     </div>
   )
 }

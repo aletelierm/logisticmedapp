@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
+import Alertas from './Alertas';
 import ActualizarModeloDb from '../firebase/ActualizarModeloDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
@@ -13,6 +14,9 @@ const EditarModelo = ({ id, id2, modelo, userAdd, userMod, setModelo }) => {
 
     const [editando, setEditando] = useState(false)
     const [nuevoCampo, setNuevoCampo] = useState(modelo);
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
+
 
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
@@ -27,8 +31,12 @@ const EditarModelo = ({ id, id2, modelo, userAdd, userMod, setModelo }) => {
             fechaMod: fechaMod
         })
         setEditando(false)
-        setModelo(nuevoCampo)
-        alert('se Actualizo!')
+        setModelo('')
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Modelo Modificado Correctamente'
+        })
     }
 
 
@@ -46,7 +54,7 @@ const EditarModelo = ({ id, id2, modelo, userAdd, userMod, setModelo }) => {
                             onChange={handleChange}
                         />
                     </Formulario>
-                    : modelo
+                    : nuevoCampo.toLocaleUpperCase()
                 }
             </Table.Cell>
             <Table.Cell>{userAdd}</Table.Cell>
@@ -62,6 +70,13 @@ const EditarModelo = ({ id, id2, modelo, userAdd, userMod, setModelo }) => {
                         <GoChecklist style={{ fontSize: '23px', color: 'green', marginTop: '5px' }} />
                     </Boton>}
             </Table.Cell>
+
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+
         </Table.Row>
 
     )

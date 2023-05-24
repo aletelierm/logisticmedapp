@@ -5,12 +5,15 @@
     text-align: center;
     height: auto;
     min-height: 80vh;
-    /* background-image: url('../../public/fondoLogin.jpg');
+    margin-left: 265px;
+    /* margin-top: 20px; */
+    background-image: url('../../public/fondoLogin.jpg');
     background-repeat: none;
     background-size:cover; */
 }
 
 .container {
     height: 100%;
+    margin-top: 70px;
 }
 
