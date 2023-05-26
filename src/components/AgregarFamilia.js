@@ -123,10 +123,10 @@ const AgregarFamilia = () => {
     console.log('leer getdata', leer);
 
     const filtroFamilia = () => {
-
-        if (buscador.length === 0)
+        const buscar = buscador.toLocaleUpperCase();
+        if (buscar.length === 0)
             return leer.slice(pagina, pagina + 5);
-        const nuevoFiltro = leer.filter(fam => fam.familia.includes(buscador));
+        const nuevoFiltro = leer.filter(fam => fam.familia.includes(buscar));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
 

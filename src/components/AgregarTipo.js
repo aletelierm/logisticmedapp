@@ -86,10 +86,10 @@ const AgregarTipo = () => {
     }
 
     const filtroTipo = () => {
-
-        if (buscador.length === 0)
+        const buscar = buscador.toLocaleUpperCase();
+        if (buscar.length === 0)
             return leer.slice(pagina, pagina + 5);
-        const nuevoFiltro = leer.filter(tip => tip.tipo.includes(buscador));
+        const nuevoFiltro = leer.filter(tip => tip.tipo.includes(buscar));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
 

@@ -86,10 +86,10 @@ const AgregarMarca = () => {
     }
 
     const filtroMarca = () => {
-
-        if (buscador.length === 0)
+        const buscar = buscador.toLocaleUpperCase();
+        if (buscar.length === 0)
             return leer.slice(pagina, pagina + 5);
-        const nuevoFiltro = leer.filter(mar => mar.marca.includes(buscador));
+        const nuevoFiltro = leer.filter(mar => mar.marca.includes(buscar));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
 
