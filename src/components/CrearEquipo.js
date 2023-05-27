@@ -30,7 +30,7 @@ const Proveedores = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [equipo, setEquipo] = useState([]);
-    const [leer, setLeer] = useState([])
+    /* const [leer, setLeer] = useState([]) */
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
@@ -322,7 +322,7 @@ const Proveedores = () => {
                         <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
                         <Input style={{ width: '100%' }}
                             type='text'
-                            placeholder='Buscar Familia'
+                            placeholder={`Buscar ${categoria}`}
                             value={buscador}
                             onChange={onBuscarCambios}
                         />

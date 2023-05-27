@@ -1,10 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate} from 'react-router-dom'
-
-
-import Footer from './Footer';
+/* import Footer from './Footer'; */
 import SideBar from './SideBar';
-
 import Equipos from './Equipos';
 import Entradas from './Entradas';
 import Salidas from './Salidas';
