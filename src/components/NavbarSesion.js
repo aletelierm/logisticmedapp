@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { BiExit } from "react-icons/bi";
 import { FaUserAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -9,53 +8,23 @@ import format from 'date-fns/format'
 import './../styles/navbarSession.css'
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import useObtenerUsuario from '../hooks/useObtenerUsuario';
+
 
 const NavbarSesion = () => { 
     
-    const user = auth.currentUser;
-    const id = user.uid;
-    console.log('id de aut:', id)
-    const [usuarios] = useObtenerUsuario(id);
-    const {usuario, setUsuario} = useContext(UserContext);
-    console.log('obtener usuario:',usuario);
-    //Varibals de estado para crear el contexto global
-    
-    const [nombre, setNombre] = useState('')
-    const [apellido, setApellido] = useState('');
-    /* const [rol, setRol] = useState('');
-    const [empresa, setEmpresa] = useState(''); */
-    
-    const navigate = useNavigate();  
-    
-    useEffect(()=>{
-         if(usuarios){
-             setNombre(usuarios.nombre);
-             setApellido(usuarios.apellido);
-             /* setRol(usuarios.ROL);
-             setEmpresa(usuarios.empresa); */
-             console.log('de useffect navbarsesion:',nombre)
-             setUsuario(usuarios);
-         }else{
-            console.log('ejecuta else de useeffect')
-            navigate('/misequipos');
-         }
-     },[setUsuario,usuarios,  nombre, navigate])
-    
+    const {users} = useContext(UserContext);
+    console.log('obtener usuario contexto global:',users);   
+   
+    const navigate = useNavigate();     
     
  
     let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`);
    /*  let horaActual = format (new Date(), `k ':' m`) */
-    
-   
-
 
     const cerrarSesion = () => {
         signOut(auth)
         navigate('/');
-
     }
-
 
     return (
         <>
@@ -72,8 +41,8 @@ const NavbarSesion = () => {
                         <FaUserAlt style={{color:'green', marginRight:'10px'}}/>
                     </div>
                     <div>
-                        {/*  <h4>{user.email}</h4> * */}
-                         <h4>{nombre +' '+ apellido}</h4>
+                         <h4>{users.nombre +' '+ users.apellido}</h4>
+                         {/* <h4>{nombre +' '+ apellido}</h4> */}
                     </div>
                               
                 </div>

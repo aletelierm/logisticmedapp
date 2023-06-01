@@ -5,7 +5,7 @@ import * as IoIcons from 'react-icons/io';
 import * as RiIcons from 'react-icons/ri';
 import * as MdIcons from 'react-icons/md';
 
-export const DataMenu = [
+export const DataMenuAdmin = [
   {
     title: 'Mis Equipos',
     path: '/home/misequipos',
@@ -75,68 +75,8 @@ export const DataMenu = [
       }
       
     ]
-  },
- 
-   {
-    title: 'Servicio Tecnico',
-    path: '/home/serviciotecnico',
-    icon: <MdIcons.MdMedicalServices />,
-
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
-
-    subNav: [
-      {
-        title: 'Protocolos',
-        path: '/home/serviciotecnico/protocolos',
-        icon: <IoIcons.IoIosAlbums />
-      },
-      {
-        title: 'Programas',
-        path: '/home/serviciotecnico/programas',
-        icon: <IoIcons.IoIosTimer />
-      },
-      {
-        title: 'Certificados',
-        path: '/home/serviciotecnico/certificados',
-        icon: <FaIcons.FaCertificate />
-      },
-      {
-        title: 'Ejecutar Mant.',
-        path: '/home/serviciotecnico/mantencion',
-        icon: <IoIcons.IoIosPlay />
-      }
-    ]
-  }, 
-  {
-    title: 'Configuracion',
-    path: '/home/configuracion',
-    icon: <MdIcons.MdManageAccounts />,
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
-
-    subNav: [
-      {
-        title: 'Usuarios y Roles',
-        path: '/home/configuracion/registrausuarios',
-        icon: <FaIcons.FaUserMd />
-      },
-      /* {
-        title: 'Asignar Roles',
-        path: '/home/configuracion/asignaroles',
-        icon: <RiIcons.RiProfileFill />
-      }, */
-      {
-        title: 'Registrar Empresa',
-        path: '/home/configuracion/agregarempresa',
-        icon: <FaIcons.FaDeezer />
-      }/* ,
-      {
-        title: 'Parametro Global',
-        path: '/home/configuracion/global',
-        icon: <RiIcons.RiGlobalLine />
-      } */
-    ]
   }
+ 
+   
   
 ];
