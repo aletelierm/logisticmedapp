@@ -111,7 +111,6 @@ const Clientes = () => {
        /*  console.log(validarRut(rut)); */
         const temp = rut.split('-');
         let digito = temp[1];
-
         if(digito ==='k' || digito ==='K') digito = -1;
 
         const validaR = validarRut(rut);       

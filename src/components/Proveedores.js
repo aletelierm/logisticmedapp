@@ -9,6 +9,7 @@ import AgregarProveedorDb from '../firebase/AgregarProveedorDb';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { FaRegEdit } from "react-icons/fa";
+import validarRut from '../funciones/validarRut';
 
 const Proveedores = () => {
 
@@ -107,6 +108,13 @@ const Proveedores = () => {
         //Comprobar que rut tenga formato correcto
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
 
+        /*  console.log(validarRut(rut)); */
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if(digito ==='k' || digito ==='K') digito = -1;
+
+        const validaR = validarRut(rut); 
+
         if(!expresionRegularRut.test(rut)){          
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -114,6 +122,13 @@ const Proveedores = () => {
                 mensaje: 'Formato incorrecto de rut'
             })
             return;
+            }else if(validaR !== parseInt(digito)){ 
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Rut no válido'
+                })
+                return; 
         }else if(rut ===''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -204,8 +219,9 @@ const Proveedores = () => {
                 <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
                         <Label>Rut</Label>
-                        <Input 
-                            type='number'
+                        <Input
+                            maxLength='10'
+                            type='text'
                             name = 'rut'
                             placeholder = 'Ingrese Rut'
                             value = { rut }
