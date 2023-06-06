@@ -1,49 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { Select } from 'semantic-ui-react'
 import { Table } from 'semantic-ui-react'
 /* import { useNavigate } from 'react-router-dom'; */
 import { auth } from '../firebase/firebaseConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { TipDoc } from './TipDoc'
 
 const Entradas = () => {
 
-    const [nomTipDoc, setNomTipDoc] = useState([]);
-    const [numDoc, setNumDoc] = useState('');
-    const [proveedor, setProveedor] = useState([]);
-    const [nomProveedor, setNomProveedor] = useState([]);
-    const [equipo, setEquipo] = useState([]);
-    const [nomEquipo, setNomEquipo] = useState([]);
+    const proveedores = [
+        { key: '1', value: '1', text: 'BOMY SPA' },
+        { key: 'ax', value: 'ax', text: 'BOMY CHILE' }
+    ]
 
-    // //Lee datos de Proveedores
-    // const getProveedor = async () => {
-    //     const dataProveedor = await getDocs(collection(db, "proveedores"));
-    //     setProveedor(dataProveedor.docs.map((prov) => ({ ...prov.data(), id: prov.id })))
-    // }
+    const equipo = [
+        { key: '1', value: '1', text: 'DISPOSITIVOS DE INFUSION' },
+        { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
+    ]
 
-    // //Lee datos de Proveedores
-    // const getEquipo = async () => {
-    //     const dataEquipo = await getDocs(collection(db, "crearequipos"));
-    //     setEquipo(dataEquipo.docs.map((eq) => ({ ...eq.data(), id: eq.id })))
-    // }
-
-    // useEffect(()=>{
-    //     getProveedor();
-    //     getEquipo();
-    // },[])
-
-    // const equipo = [
-    //     { key: '1', value: '1', text: 'DISPOSITIVOS DE INFUSION' },
-    //     { key: 'ax', value: 'ax', text: 'MOTOR DE ASPIRACION' }
-    // ]
-
-    /*  const navigate = useNavigate(); */
+   /*  const navigate = useNavigate(); */
     const user = auth.currentUser;
 
-    /*  const volver = () => {
-         navigate('/home/actualiza')
-     } */
+   /*  const volver = () => {
+        navigate('/home/actualiza')
+    } */
 
     return (
         <ContenedorProveedor>
@@ -53,29 +34,18 @@ const Entradas = () => {
 
                     <ContentElemen>
                         <ContentElemenSelect>
-                            <Label>Tipo de Documento</Label>
-                            <Select value={nomTipDoc} onChange={ev => setNomTipDoc(ev.target.value)}>
-                                <option>Selecciona Opción:</option>
-                                {TipDoc.map((d) => {
-                                    return (<option key={d.key}>{d.text}</option>)
-                                })}
-                            </Select>
+                            <Label>N° de Documento</Label>
+                            <Input type='text' />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Label>N° de Documento</Label>
-                            <Input
-                                type='text'
-                                name='NumDoc'
-                                placeholder='Ingrese N° Documento'
-                                value={numDoc}
-                                // onChange={handleChange}
-                            />
+                            <Label>Tipo de Documento</Label>
+                            <Input />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
                             <Label >Proveedor</Label>
-                            {/* <Select placeholder='Seleccione Proveedor' options={proveedores} /> */}
+                            <Select placeholder='Seleccione Proveedor' options={proveedores} />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
@@ -132,7 +102,7 @@ const Entradas = () => {
                 </Formulario>
             </ContenedorFormulario>
 
-
+            
 
             <ListarProveedor>
                 <h2>Listado Equipos Recepcionados</h2>
@@ -191,13 +161,6 @@ const ContentElemen = styled.div`
 
 const ContentElemenSelect = styled.div`
     padding: 20px;
-`
-
-const Select = styled.select`
-border: 2px solid #d1d1d1;
-border-radius: 10px;
-padding: 5px;
-width: 200px;
 `
 
 const Icon = styled.div`
