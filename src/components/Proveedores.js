@@ -140,7 +140,7 @@ const Proveedores = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Campo Nombre no puede estar vacio'
+                mensaje: 'Campo Razon Social no puede estar vacio'
             })
             return;
         }else if(direccion ===''){
@@ -223,7 +223,7 @@ const Proveedores = () => {
                             maxLength='10'
                             type='text'
                             name = 'rut'
-                            placeholder = 'Ingrese Rut'
+                            placeholder = 'Ingrese Rut sin puntos'
                             value = { rut }
                             onChange = { handleChange }
                         

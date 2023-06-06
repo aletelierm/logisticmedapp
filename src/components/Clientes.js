@@ -224,7 +224,7 @@ const Clientes = () => {
                             maxLength='10'
                             type='text'
                             name = 'rut'
-                            placeholder = 'Ingrese Rut'
+                            placeholder = 'Ingrese Rut sin puntos'
                             value = { rut }
                             onChange = { handleChange }
                              
