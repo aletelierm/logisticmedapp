@@ -32,41 +32,18 @@ const AgregarFamilia = () => {
     }
 
 
-    // Busca si el nombre de familia ya existe
-    // useEffect(() => {
-    //     const buscar = () => {
-    //         // const familiaRef = (collection(db, 'familias'));
-    //         // const x = query(familiaRef, where('familia', '==', familia.toLocaleUpperCase().trim()), limit(1));
-    //         // const datos = await getDocs(x);
-    //         console.log('Mostrar x en onsnapshot', x);
-    //         onSnapshot(x, (snap) => {
-    //             if (snap.docs.length > 0) {
-    //                 console.log('existe')
-    //                 setPreguntar(true)
-    //             } else {
-    //                 console.log('no existe')
-    //                 setPreguntar(false)
-    //             }
-    //         })
-    //     }
-    //     buscar();
-    // }, [preguntar, setPreguntar, familia])
-
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        console.log('mostrar familia', familia.toLocaleUpperCase().trim());
-        // console.log('leer filter', leer.filter(fam => fam.familia.includes(familia.toLocaleUpperCase().trim())));
+        console.log('mostrar familia', familia.toLocaleUpperCase().trim());        
         console.log('mostrar leer', leer);
 
         // Consulta si exite campo en el arreglo
-        // const existe = leer.filter(fam => fam.familia.includes(familia.toLocaleUpperCase().trim())).length > 0;
-        const existe = leer.filter(fam => fam.familia.includes(familia.toLocaleUpperCase().trim())).length > 0;
-        console.log('mostrar existe', existe);
+        const existe = leer.filter(fams => fams.familia.includes(familia.toLocaleUpperCase().trim())).length > 0;
+        console.log('ver si existe:',existe);
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (existe) {
@@ -120,7 +97,7 @@ const AgregarFamilia = () => {
         const data = await getDocs(collection(db, "familias"));
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-    console.log('leer getdata', leer);
+    
 
     const filtroFamilia = () => {
         const buscar = buscador.toLocaleUpperCase();
@@ -145,11 +122,9 @@ const AgregarFamilia = () => {
     }
 
     useEffect(() => {
-        console.log('Se ejecuto useEffect');
-        getData();
-        
+        getData();    
 
-    }, [setFlag, flag])
+    }, [flag, setFlag])
 
 
     return (

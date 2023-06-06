@@ -1,8 +1,9 @@
 import { Alert, Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-import { signInUser} from "../firebase/firebaseConfig";
+import { signInUser, db} from "../firebase/firebaseConfig";
 import { startSession } from "../components/session";
+import { doc, getDoc} from 'firebase/firestore';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -10,12 +11,15 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Styled from 'styled-components';
 
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
+
 export default function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const {setUsers} = useContext(UserContext);
   
 
   const onSubmit = async (event) => {
@@ -34,8 +38,19 @@ export default function Login() {
     
     try {
       let loginResponse = await signInUser(email, password);
+      let id = loginResponse.user.uid;
       console.log('login de usuario:',loginResponse.user.uid)
-      startSession(loginResponse.user);     
+      startSession(loginResponse.user);
+      try {
+        const docum = await getDoc(doc(db,'usuarios', id));
+        if(docum.exists){
+          setUsers(docum.data())
+          
+        }
+      } catch (error) {
+        console.log('Error de usuario', error)
+      }
+         
       navigate("/home/misequipos");      
     } catch (error) {
       console.error(error.message);

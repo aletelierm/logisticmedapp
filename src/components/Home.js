@@ -26,15 +26,13 @@ import ActualizaProveedor from './ActualizaProveedor';
 import AsignarRoles from './AsignarRoles';
 import { RegistroUsuarios } from './RegistroUsuarios';
 import ActualizaCliente from './ActualizaCliente';
-import { UserProvider } from '../context/UseProvider';
 
-  // ingresando al home => erivas
 export const Home = () => {
   
   
   return (
     <div>  
-    <UserProvider>    
+      
     <NavbarSesion />
     <SideBar>    
     <Routes>
@@ -63,7 +61,7 @@ export const Home = () => {
             <Route path="/*" element={<Navigate to="/login"/>}/>
     </Routes>
     </SideBar>
-    </UserProvider>
+    
     {/* <Footer/> */}
     </div>
   )
