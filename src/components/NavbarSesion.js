@@ -33,6 +33,9 @@ const NavbarSesion = () => {
                     <img src='../logo.png' alt='Logo' />
                 </div>
                 <div>
+                    <h4>Empresa : {'   ' + users.empresa}</h4>
+                </div>
+                <div>
                     <h4>Hoy : {fechaActual}</h4>
                 </div>
 

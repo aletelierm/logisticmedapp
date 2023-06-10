@@ -75,6 +75,8 @@ const Clientes = () => {
     }, [setNombre, nombre])
 
     const handleChange = (e)=>{
+        if(e.keycode===13) e.preventDefault();
+
         switch(e.target.name){
             case 'rut':
                 setRut(e.target.value)

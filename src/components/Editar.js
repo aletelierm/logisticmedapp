@@ -8,7 +8,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { GoChecklist } from "react-icons/go";
 
 
-const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
+const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia, cambioFlag }) => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
@@ -16,7 +16,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
     const [nuevoCampo, setNuevoCampo] = useState(familia);
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
-
+ 
 
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
@@ -24,6 +24,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
 
 
     const actualizarCampo = async () => {
+        
         const fam = nuevoCampo.toLocaleUpperCase();
         ActualizarFamiliaDb({
             id: id,
@@ -38,8 +39,9 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
             tipo: 'exito',
             mensaje: 'Familia Modificada Correctamente'
         })
+       
     }
-
+    
 
     return (
 
@@ -67,7 +69,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
             </Table.Cell>
             <Table.Cell>
                 {editando &&
-                    <Boton onClick={() => { actualizarCampo() }}>
+                    <Boton onClick={() => { actualizarCampo();cambioFlag(false) }}>
                         <GoChecklist style={{ fontSize: '23px', color: 'green', marginTop: '5px' }} />
                     </Boton>}
             </Table.Cell>
