@@ -1,116 +1,248 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Select } from 'semantic-ui-react'
 import { Table } from 'semantic-ui-react'
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase/firebaseConfig';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+/* import { useNavigate } from 'react-router-dom'; */
+import { auth, db } from '../firebase/firebaseConfig';
+import { getDocs, collection } from 'firebase/firestore';
+import * as FaIcons from 'react-icons/fa';
+import { IoMdAdd } from "react-icons/io";
+import { TipDoc, TipoOut } from './TipDoc'
 
 
-const Salidas = () => {
-
-    const equipo = [
-        { key: '1', value: '1', text: 'RESPIRADOR ELECTRICO' },
-        { key: 'ax', value: 'ax', text: '' }
-    ]
-
-    const navigate = useNavigate();
+const Entradas = () => {
     const user = auth.currentUser;
 
-    const volver = () => {
-        navigate('/home/actualiza')
+    const [nomTipDoc, setNomTipDoc] = useState([]);
+    const [numDoc, setNumDoc] = useState('');
+    const [proveedor, setProveedor] = useState([]);
+    const [nomProveedor, setNomProveedor] = useState([]);
+    // const [nomTipTrans, setNomTipTrans] = useState([]);
+    const [nomTipoInOut, setNomTipoInOut] = useState([]);
+    const [equipo, setEquipo] = useState([]);
+    const [nomEquipo, setNomEquipo] = useState([]);
+
+    //Lee datos de Proveedores
+    const getProveedor = async () => {
+        const dataProveedor = await getDocs(collection(db, "proveedores"));
+        setProveedor(dataProveedor.docs.map((prov) => ({ ...prov.data(), id: prov.id })))
     }
+
+    //Lee datos de Equipos
+    const getEquipo = async () => {
+        const dataEquipo = await getDocs(collection(db, "crearequipos"));
+        setEquipo(dataEquipo.docs.map((eq) => ({ ...eq.data(), id: eq.id })))
+    }
+
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+
+    //     // Consulta si exite campo en el arreglo
+    //     const existe = proveedor.filter(prov => prov.proveedor.includes());
+    //     console.log('ver si existe:',existe);
+
+    //     // Realiza consulta al arreglo Proveedor si 
+    //     if (existe) {
+
+
+    //     } else {
+    //         alert('No existe Proveedor')
+    //     }
+    // }
+
+    useEffect(() => {
+        getProveedor();
+        getEquipo();
+    }, [])
+
+
+
 
     return (
         <ContenedorProveedor>
-            <h1>Salida de Equipos</h1>
+            <ContenedorFormulario>
+                <h1>Salida de Equipos</h1>
+            </ContenedorFormulario>
+
             <ContenedorFormulario>
                 <Formulario action=''>
 
                     <ContentElemen>
                         <ContentElemenSelect>
-                            <Label>Cilente</Label>
-                            <Input type='text' />
+                            <Label>Tipo de Documento</Label>
+                            <Select value={nomTipDoc} onChange={ev => setNomTipDoc(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {TipDoc.map((d) => {
+                                    return (<option key={d.key}>{d.text}</option>)
+                                })}
+                            </Select>
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Label>Destino</Label>
-                            <Input type='text' />
+                            <Label>N° de Documento</Label>
+                            <Input
+                                type='text'
+                                name='NumDoc'
+                                placeholder='Ingrese N° Documento'
+                                value={numDoc}
+                                onChange={e => setNumDoc(e.target.value)}
+                            />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Label>Fecha Salida</Label>
-                            <Input type='date' />
-                        </ContentElemenSelect>
-
-                        <ContentElemenSelect>
-                            <Label >Status</Label>
-                            <Input type='text' />
+                            <Label >Entidad</Label>
+                            <Input
+                                type='text'
+                                name='Proveedor'
+                                onChange={e => setNomProveedor(e.target.value)} />
                         </ContentElemenSelect>
                     </ContentElemen>
 
                     <ContentElemen>
                         <ContentElemenSelect>
-                            <Label>Equipo</Label>
-                            <Select placeholder='Seleccione Familia' options={equipo} />
-                            <Icon><FontAwesomeIcon icon={faPlus} /></Icon>
+                            <Label>Fecha Egreso</Label>
+                            <Input type='date' />
                         </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>Tipo Salida</Label>
+                            <Select value={nomTipoInOut} onChange={e => setNomTipoInOut(e.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {TipoOut.map((d) => {
+                                    return (<option key={d.id}>{d.text}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Boton>Guardar</Boton>
+                        </ContentElemenSelect>
+
                     </ContentElemen>
-                    <Boton>Guardar</Boton>
                 </Formulario>
             </ContenedorFormulario>
 
+            <ContenedorFormulario>
+                <Formulario>
+                    <ContentElemen >
+
+                        <ContentElemenSelect>
+                            <Label style={{ marginRight: '10px' }} >Equipo</Label>
+                            <Input style={{ width: '700px' }} onChange={e => setNomEquipo(e.target.value)}
+                                placeholder='Escanee o ingrese Equipo'
+                            />
+                        </ContentElemenSelect>
+
+                        <Icon style={{ marginLeft: '0' }}>
+                            <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '16px' }} />
+                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }} />
+                        </Icon>
+
+                    </ContentElemen>
+
+                </Formulario>
+
+                <ListarEquipos>
+                    <Table singleLine>
+
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Familia</Table.HeaderCell>
+                                <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                                <Table.HeaderCell>Marca</Table.HeaderCell>
+                                <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            <Table.Row>
+                                <Table.Cell>1</Table.Cell>
+                                <Table.Cell>DISPOSITIVOS DE INFUSION</Table.Cell>
+                                <Table.Cell>BOMBA ENTERAL</Table.Cell>
+                                <Table.Cell>ABBOTT</Table.Cell>
+                                <Table.Cell>FREEGO</Table.Cell>
+                            </Table.Row>
+
+                            <Table.Row>
+                                <Table.Cell>2</Table.Cell>
+                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
+                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
+                                <Table.Cell>SUSED</Table.Cell>
+                                <Table.Cell>TRX-800</Table.Cell>
+                            </Table.Row>
+                        </Table.Body>
+
+                    </Table>
+                </ListarEquipos>
+
+                <Boton>Guardar</Boton>
+            </ContenedorFormulario>
+
+            <ContenedorFormulario>
+                <Formulario>
+
+                    <ContentElemen >
+                        <ContentElemenSelect>
+                            <Label style={{ marginRight: '10px' }} >Correo Transportista</Label>
+                            <Input style={{ width: '220px' }} placeholder='Ingrese Correo Transportista' />
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label style={{ marginRight: '10px' }} >Patente Vehiculo Transportista</Label>
+                            <Input style={{ width: '260px' }} placeholder='Ingrese Patente Vehiculo Transportista' />
+                        </ContentElemenSelect>
+                    </ContentElemen>
+                    
+                    <ContentElemen >
+                        <Boton>Guardar</Boton>
+                    </ContentElemen>
+                </Formulario>
+            </ContenedorFormulario>
+
+
             <ListarProveedor>
-                <h2>Listado Salidas</h2>
+                <h2>Cabecera de Documentos</h2>
                 <Table singleLine>
 
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>Cliente</Table.HeaderCell>
-                            <Table.HeaderCell>Destino</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Salida</Table.HeaderCell>
-                            <Table.HeaderCell>Status</Table.HeaderCell>
+                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
+                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Salida</Table.HeaderCell>
+                            <Table.HeaderCell>Transportista</Table.HeaderCell>
+                            <Table.HeaderCell>Vehículo</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
                         <Table.Row>
-                            <Table.Cell>MANUEL BALMACEDA</Table.Cell>
-                            <Table.Cell>AV. BEAUCHEFF #938</Table.Cell>
-                            <Table.Cell>30-04-2023</Table.Cell>
-                            <Table.Cell>BODEGA</Table.Cell>
-                            <Table.Cell><Boton onClick={volver}>Modif</Boton></Table.Cell>
+                            <Table.Cell>127</Table.Cell>
+                            <Table.Cell>FACTURA</Table.Cell>
+                            <Table.Cell>416509</Table.Cell>
+                            <Table.Cell>9.345.654-6 </Table.Cell>
+                            <Table.Cell>ARQUIMED </Table.Cell>
+                            <Table.Cell>07-06-2023</Table.Cell>
+                            <Table.Cell>COMPRA</Table.Cell>
+                            <Table.Cell>Jose Miguel Aburto</Table.Cell>
+                            <Table.Cell>LJXU-90</Table.Cell>
                         </Table.Row>
-                    </Table.Body>
-
-                </Table>
-            </ListarProveedor>
-
-            <ListarProveedor>
-                <h2>Listado Salidas de Equipos</h2>
-                <Table singleLine>
-
-                    <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Familia</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-                            <Table.HeaderCell>Marca</Table.HeaderCell>
-                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.Cell>486</Table.Cell>
+                            <Table.Cell>FACTURA</Table.Cell>
+                            <Table.Cell>218745</Table.Cell>
+                            <Table.Cell>6.140.830-4 </Table.Cell>
+                            <Table.Cell>OXIMED</Table.Cell>
+                            <Table.Cell>07-06-2023</Table.Cell>
+                            <Table.Cell>COMPRA</Table.Cell>
+                            <Table.Cell>Jose Miguel Aburto</Table.Cell>
+                            <Table.Cell>LJXU-90</Table.Cell>
                         </Table.Row>
-                    </Table.Header>
 
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>1</Table.Cell>
-                            <Table.Cell>DISPOSITIVOS DE INFUSION</Table.Cell>
-                            <Table.Cell>BOMBA ENTERAL</Table.Cell>
-                            <Table.Cell>ABBOTT</Table.Cell>
-                            <Table.Cell>FREEGO</Table.Cell>
-                        </Table.Row>
                     </Table.Body>
-
                 </Table>
             </ListarProveedor>
 
@@ -131,16 +263,24 @@ const ContenedorFormulario = styled.div`
 
 const ContentElemen = styled.div`
     display: flex;
-    justify-content: space-between;
-    padding: 5px 20px;
+    justify-content: space-evenly;
+    padding: 5px 10px;
 `
 
 const ContentElemenSelect = styled.div`
     padding: 20px;
 `
 
+const Select = styled.select`
+    border: 2px solid #d1d1d1;
+    border-radius: 10px;
+    padding: 5px;
+    width: 200px;
+`
+
 const Icon = styled.div`
-    display: inline-block;
+    display: flex;
+    // justify-content: space-between;
     margin-left: 20px;
 `
 
@@ -152,6 +292,14 @@ const ListarProveedor = styled.div`
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
 
+const ListarEquipos = styled.div`
+    margin: 20px 0;
+    padding: 20px;
+    border: 2px solid #d1d1d1;
+    border-radius: 10px;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);;
+`
+
 const Formulario = styled.form``
 
 const Input = styled.input`
@@ -161,15 +309,15 @@ const Input = styled.input`
 `
 
 const Label = styled.label`
-        padding: 5px;
-        font-size: 20px;
+    padding: 5px;
+    font-size: 20px;
 `
 
 const Boton = styled.button`
-        background-color: #83d394;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
+    background-color: #83d394;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
 `
 
-export default Salidas;
+export default Entradas;

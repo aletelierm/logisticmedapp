@@ -158,6 +158,7 @@ const AgregarTipo = () => {
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import ActualizarFamiliaDb from '../firebase/ActualizarFamiliaDb';
@@ -8,7 +8,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { GoChecklist } from "react-icons/go";
 
 
-const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
+const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia}) => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
@@ -22,8 +22,8 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
         setNuevoCampo(e.target.value)
     }
 
-
     const actualizarCampo = async () => {
+        // setFlag(false)
         const fam = nuevoCampo.toLocaleUpperCase();
         ActualizarFamiliaDb({
             id: id,
@@ -33,13 +33,13 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia }) => {
         })
         setEditando(false)
         setFamilia('')
+        // setFlag(!flag)
         cambiarEstadoAlerta(true);
         cambiarAlerta({
             tipo: 'exito',
             mensaje: 'Familia Modificada Correctamente'
         })
     }
-
 
     return (
 
