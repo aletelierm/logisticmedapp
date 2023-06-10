@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import ActualizarFamiliaDb from '../firebase/ActualizarFamiliaDb';
@@ -8,7 +8,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { GoChecklist } from "react-icons/go";
 
 
-const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia, cambioFlag }) => {
+const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia}) => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
@@ -22,9 +22,8 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia, cambioFlag }) 
         setNuevoCampo(e.target.value)
     }
 
-
     const actualizarCampo = async () => {
-        
+        // setFlag(false)
         const fam = nuevoCampo.toLocaleUpperCase();
         ActualizarFamiliaDb({
             id: id,
@@ -34,6 +33,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia, cambioFlag }) 
         })
         setEditando(false)
         setFamilia('')
+        // setFlag(!flag)
         cambiarEstadoAlerta(true);
         cambiarAlerta({
             tipo: 'exito',
@@ -41,7 +41,6 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia, cambioFlag }) 
         })
        
     }
-    
 
     return (
 
@@ -69,7 +68,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia, cambioFlag }) 
             </Table.Cell>
             <Table.Cell>
                 {editando &&
-                    <Boton onClick={() => { actualizarCampo();cambioFlag(false) }}>
+                    <Boton onClick={() => { actualizarCampo() }}>
                         <GoChecklist style={{ fontSize: '23px', color: 'green', marginTop: '5px' }} />
                     </Boton>}
             </Table.Cell>
