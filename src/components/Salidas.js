@@ -93,16 +93,17 @@ const Entradas = () => {
                             <Input
                                 type='text'
                                 name='Proveedor'
+                                placeholder='Ingrese Entidad'
                                 onChange={e => setNomProveedor(e.target.value)} />
                         </ContentElemenSelect>
-                    </ContentElemen>
 
-                    <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Fecha Egreso</Label>
                             <Input type='date' />
                         </ContentElemenSelect>
+                    </ContentElemen>
 
+                    <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo Salida</Label>
                             <Select value={nomTipoInOut} onChange={e => setNomTipoInOut(e.target.value)}>
@@ -114,17 +115,24 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Boton>Guardar</Boton>
+                            <Label  >Correo Transportista</Label>
+                            <Input placeholder='Ingrese Correo' />
                         </ContentElemenSelect>
 
+                        <ContentElemenSelect>
+                            <Label >Patente Vehiculo</Label>
+                            <Input placeholder='Ingrese Vehiculo' />
+                        </ContentElemenSelect>
                     </ContentElemen>
+
                 </Formulario>
+
+                <Boton >Guardar</Boton>
             </ContenedorFormulario>
 
             <ContenedorFormulario>
                 <Formulario>
                     <ContentElemen >
-
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
                             <Input style={{ width: '700px' }} onChange={e => setNomEquipo(e.target.value)}
@@ -138,7 +146,6 @@ const Entradas = () => {
                         </Icon>
 
                     </ContentElemen>
-
                 </Formulario>
 
                 <ListarEquipos>
@@ -176,27 +183,6 @@ const Entradas = () => {
                 </ListarEquipos>
 
                 <Boton>Guardar</Boton>
-            </ContenedorFormulario>
-
-            <ContenedorFormulario>
-                <Formulario>
-
-                    <ContentElemen >
-                        <ContentElemenSelect>
-                            <Label style={{ marginRight: '10px' }} >Correo Transportista</Label>
-                            <Input style={{ width: '220px' }} placeholder='Ingrese Correo Transportista' />
-                        </ContentElemenSelect>
-
-                        <ContentElemenSelect>
-                            <Label style={{ marginRight: '10px' }} >Patente Vehiculo Transportista</Label>
-                            <Input style={{ width: '260px' }} placeholder='Ingrese Patente Vehiculo Transportista' />
-                        </ContentElemenSelect>
-                    </ContentElemen>
-                    
-                    <ContentElemen >
-                        <Boton>Guardar</Boton>
-                    </ContentElemen>
-                </Formulario>
             </ContenedorFormulario>
 
 
@@ -263,6 +249,7 @@ const ContenedorFormulario = styled.div`
 
 const ContentElemen = styled.div`
     display: flex;
+    
     justify-content: space-evenly;
     padding: 5px 10px;
 `
