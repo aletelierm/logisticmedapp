@@ -26,7 +26,8 @@ import ActualizaProveedor from './ActualizaProveedor';
 import AsignarRoles from './AsignarRoles';
 import { RegistroUsuarios } from './RegistroUsuarios';
 import ActualizaCliente from './ActualizaCliente';
-import Editar from './Editar';
+import ActualizaFamilia from './ActualizaFamilia';
+import ActualizaTipo from './ActualizaTipo';
 
 export const Home = () => {
   
@@ -39,8 +40,9 @@ export const Home = () => {
     <Routes>
             <Route path="/misequipos" element={<Equipos/>}/>
             <Route path="/misequipos/agregarfamilia" element={<AgregarFamilia/>}/>
-            <Route path="/editar/:id" element={<Editar/>}/>
+            <Route path="/actualizafamilia/:id" element={<ActualizaFamilia/>}/>
             <Route path="/misequipos/agregartipo" element={<AgregarTipo/>}/>
+            <Route path="/actualizatipo/:id" element={<ActualizaTipo/>}/>
             <Route path="/misequipos/agregarmarca" element={<AgregraMarca/>}/>
             <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>
             <Route path="/misequipos/crearequipo" element={<CrearEquipo/>}/>

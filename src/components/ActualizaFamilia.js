@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { auth } from '../firebase/firebaseConfig';
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components';
-import Alertas from '../components/Alertas';
+import Alertas from './Alertas';
 import ActualizarFamiliaDb from '../firebase/ActualizarFamiliaDb';
 import useObtenerFamilia from '../hooks/useObtenerFamilia';
 
 
-const Editar = () => {
+const ActualizaFamilia = () => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
@@ -166,4 +166,4 @@ const BotonGuardar = styled.button`
 `
 
 
-export default Editar
+export default ActualizaFamilia;

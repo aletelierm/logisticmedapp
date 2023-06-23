@@ -4,12 +4,14 @@ import AgregarTipoDb from '../firebase/AgregarTipoDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
-import EditarTipo from './EditarTipo';
+// import EditarTipo from './EditarTipo';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -181,17 +183,25 @@ const AgregarTipo = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {filtroTipo().map((item) => {
+                        {filtroTipo().map((item, index) => {
                             return (
-                                <EditarTipo
-                                    key={item.id}
-                                    id={item.id}
-                                    id2={item.id2}
-                                    tipo={item.tipo}
-                                    userAdd={item.userAdd}
-                                    userMod={item.userMod}
-                                    setTipo={setTipo}
-                                />
+                                // <EditarTipo
+                                //     key={item.id}
+                                //     id={item.id}
+                                //     id2={item.id2}
+                                //     tipo={item.tipo}
+                                //     userAdd={item.userAdd}
+                                //     userMod={item.userMod}
+                                //     setTipo={setTipo}
+                                // />
+
+                                <Table.Row key={index}>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell><Link to={`/home/actualizatipo/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                </Table.Row>
                             )
                         })}
                     </Table.Body>
