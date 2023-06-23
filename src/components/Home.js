@@ -26,6 +26,7 @@ import ActualizaProveedor from './ActualizaProveedor';
 import AsignarRoles from './AsignarRoles';
 import { RegistroUsuarios } from './RegistroUsuarios';
 import ActualizaCliente from './ActualizaCliente';
+import Editar from './Editar';
 
 export const Home = () => {
   
@@ -38,6 +39,7 @@ export const Home = () => {
     <Routes>
             <Route path="/misequipos" element={<Equipos/>}/>
             <Route path="/misequipos/agregarfamilia" element={<AgregarFamilia/>}/>
+            <Route path="/editar/:id" element={<Editar/>}/>
             <Route path="/misequipos/agregartipo" element={<AgregarTipo/>}/>
             <Route path="/misequipos/agregarmarca" element={<AgregraMarca/>}/>
             <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>

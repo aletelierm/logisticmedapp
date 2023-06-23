@@ -26,7 +26,6 @@ const AgregarModelo = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [modelo, setModelo] = useState('');
     const [leer, setLeer] = useState([]);
-    const [leer2, setLeer2] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);

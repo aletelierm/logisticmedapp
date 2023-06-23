@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
-import { Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
-import Editar from './Editar';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -27,7 +28,6 @@ const AgregarFamilia = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [familia, setFamilia] = useState('');
     const [leer, setLeer] = useState([]);
-    const [leer2, setLeer2] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
@@ -37,11 +37,11 @@ const AgregarFamilia = () => {
         setFamilia(e.target.value);
     }
 
-   const cambioFlag =(mensaje)=>{
-    console.log('desde  hijo', mensaje)
-    setFlag(!mensaje);
-   }
-    
+    const cambioFlag = (mensaje) => {
+        console.log('desde  hijo', mensaje)
+        setFlag(!mensaje);
+    }
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -118,13 +118,10 @@ const AgregarFamilia = () => {
     const getData = async () => {
         const traerFam = collection(db, 'familias');
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
-        // setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
-        const data = await getDocs(dato)       
+        const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
-    // const lee = leer2.filter(emp => emp.emp_id == users.emp_id);
 
     const filtroFamilia = () => {
         const buscar = buscador.toLocaleUpperCase();
@@ -201,24 +198,31 @@ const AgregarFamilia = () => {
                             <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
                             <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        {filtroFamilia().map((item) => {
+                        {filtroFamilia().map((item, index) => {
                             return (
 
-                                <Editar
-                                    key={item.id}
-                                    id={item.id}
-                                    id2={item.id2}
-                                    familia={item.familia}
-                                    userAdd={item.userAdd}
-                                    userMod={item.userMod}
-                                    setFamilia={setFamilia}
-                                    cambioflag={cambioFlag}
-                                />
+                                // <Editar
+                                //     key={item.id}
+                                //     id={item.id}
+                                //     id2={item.id2}
+                                //     familia={item.familia}
+                                //     userAdd={item.userAdd}
+                                //     userMod={item.userMod}
+                                //     setFamilia={setFamilia}
+                                //     cambioflag={cambioFlag}
+                                // />
+
+                                <Table.Row key={index}>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.familia}</Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell><Link to={`/home/editar/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                </Table.Row>
                             )
                         })}
                     </Table.Body>

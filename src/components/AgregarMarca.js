@@ -26,7 +26,6 @@ const AgregarMarca = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [marca, setMarca] = useState('');
     const [leer, setLeer] = useState([]);
-    const [leer2, setLeer2] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
