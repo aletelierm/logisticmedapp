@@ -13,6 +13,7 @@ import { UserContext } from '../context/UserContext';
 const NavbarSesion = () => { 
     
     const {users} = useContext(UserContext);
+    
     console.log('obtener usuario contexto global:',users);   
    
     const navigate = useNavigate();     
