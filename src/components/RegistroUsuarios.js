@@ -31,7 +31,7 @@ export const RegistroUsuarios = () => {
     const getEmpresa = async ()=>{
         const dataEmpresa = await getDocs(collection(db, "empresas"));
         setEmpresa(dataEmpresa.docs.map((emp)=>({...emp.data(),id: emp.id})))
-        
+       
     }
     
     
@@ -39,7 +39,6 @@ export const RegistroUsuarios = () => {
 
         getEmpresa();
         
-
     },[])
 
    
@@ -73,6 +72,12 @@ export const RegistroUsuarios = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
+       const indice = empresa.findIndex((elemento)=>elemento.empresa === nomEmpresa)
+       const id_emp = empresa[indice].id
+        /*  console.log(indice)
+         console.log("el id de la empresa",empresa[indice].id) */
+        
+        
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         
@@ -138,6 +143,7 @@ export const RegistroUsuarios = () => {
                            nombre: nombre,
                            apellido: apellido,
                            empresa: nomEmpresa,
+                           emp_id: id_emp,
                            rol: rol,
                            user_add: useradd,
                            user_mod: usermod,

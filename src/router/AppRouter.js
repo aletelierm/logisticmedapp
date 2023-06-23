@@ -4,18 +4,24 @@ import Landing from '../components/Landing'
 import {Home} from '../components/Home'
 import Login from '../components/Login'
 import Recover from '../components/ForgotPasswordForm'
+import { PrivateRoutes } from './PrivateRoutes'
 
 
 export const AppRouter = () => {
   return (
     <>
     
-    <Routes>  
-        <Route path="/home/*" element={<Home/>}/>
+    <Routes>        
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/recover" element={<Recover />} />
         <Route path="/*" element={<Navigate to="/login"/>}/>
+        <Route path="/home/*" element={
+            <PrivateRoutes>
+                <Home/>
+            </PrivateRoutes>               
+                
+                }/>
     </Routes>
    
     </>

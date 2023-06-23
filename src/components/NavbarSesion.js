@@ -13,6 +13,7 @@ import { UserContext } from '../context/UserContext';
 const NavbarSesion = () => { 
     
     const {users} = useContext(UserContext);
+    
     console.log('obtener usuario contexto global:',users);   
    
     const navigate = useNavigate();     
@@ -31,6 +32,9 @@ const NavbarSesion = () => {
             <div className='navbar'>
                 <div className='imageLogo'>
                     <img src='../logo.png' alt='Logo' />
+                </div>
+                <div>
+                    <h4>Empresa : {'   ' + users.empresa}</h4>
                 </div>
                 <div>
                     <h4>Hoy : {fechaActual}</h4>

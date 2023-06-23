@@ -35,8 +35,9 @@ const Proveedores = () => {
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
 
+    const [fami, setFami] = useState(sessionStorage.getItem('familia'));
 
-
+    
     //Leer los datos de Familia
     const getFamila = async () => {
         const dataFamilia = await getDocs(collection(db, 'familias'));
@@ -235,9 +236,10 @@ const Proveedores = () => {
                         <ContentElemen>
                             <ContentElemenSelect>
                                 <Label>Familias</Label>
-                                <Select value={nomFamilia} onChange={e => setNomFamilia(e.target.value)}>
+                                <Select value={nomFamilia} onChange={e =>{setNomFamilia(e.target.value); sessionStorage.setItem('familia',e.target.value)}}>
                                     console.log(nomFamilia);
-                                    <option>Selecciona Opción:</option>
+                                    {fami ? <option>{fami}</option>: <option>Selecciona Opción:</option>}
+                                    {/* <option>Selecciona Opción:</option> */}
                                     {familia.map((d) => {
                                         return (<option key={d.id}>{d.familia}</option>)
                                     })}

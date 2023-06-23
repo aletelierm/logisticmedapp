@@ -5,21 +5,17 @@ import {  Link } from 'react-router-dom';
 import { auth , db} from '../firebase/firebaseConfig';
 import  Alerta from '../components/Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
-import { getDocs, collection, where, query } from 'firebase/firestore';
+import { getDocs, collection,doc,runTransaction, where, query } from 'firebase/firestore';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import validarRut from '../funciones/validarRut';
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
 
 
 
 const Clientes = () => {
     
     /* const navigate = useNavigate(); */
-    const user = auth.currentUser;
-    const {users} = useContext(UserContext);
-    console.log('obtener usuario contexto global:',users);   
+    const user = auth.currentUser;   
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -39,7 +35,28 @@ const Clientes = () => {
     /* const volver = ()=>{
         navigate('/home/actualizacliente')
     } */
-
+    //Prueba folio
+    const generarCorrelativo = async ()=>{
+        const docRef = doc(db,'correlativos','folio')
+        try {
+            await runTransaction(db, async(t)=>{
+                const f = await t.get(docRef);
+                if(!f.exists()){
+                    console.log('no existe document')
+                }else{
+                    const nuevoFolio = f.data().corr + 1;
+                    t.update(docRef, { corr: nuevoFolio});
+                    console.log('folio es:', nuevoFolio)
+                    return nuevoFolio;
+                } 
+               
+            })
+            
+        } catch (error) {
+            console.log('error de folio', error);
+        }
+    }
+   
     //Leer data
     // const getData = async () => {
     //     const data = await getDocs(collection(db, "clientes"));
@@ -92,7 +109,14 @@ const Clientes = () => {
         getData();
     }, [setNombre, nombre])
 
+    useEffect(()=>{
+         generarCorrelativo();
+        
+    },[])
+
     const handleChange = (e)=>{
+        
+
         switch(e.target.name){
             case 'rut':
                 setRut(e.target.value)
@@ -117,6 +141,9 @@ const Clientes = () => {
         }
     }
 
+    const detectar = (e)=>{
+        if(e.key==='Enter' || e.key==='Tab') alert('enter detectado')
+    }
     const handleSubmit =(e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -192,7 +219,9 @@ const Clientes = () => {
         }else{
             try {
                 AgregarClientesDb({
+                    emp_id: users.emp_id,
                     rut:rut,
+                    empresa: users.empresa,
                     nombre:nombre,
                     direccion:direccion,
                     telefono:telefono,
@@ -245,7 +274,7 @@ const Clientes = () => {
                             placeholder = 'Ingrese Rut sin puntos'
                             value = { rut }
                             onChange = { handleChange }
-                             
+                             onKeyDown={detectar}
                         />
                         <Label>Nombre</Label>
                         <Input
@@ -292,8 +321,9 @@ const Clientes = () => {
                         
                         />  
                     </ContentElemen>
-                    <BotonGuardar >Guardar</BotonGuardar>              
+                                 
                 </Formulario>
+                <BotonGuardar onClick={handleSubmit}>Guardars</BotonGuardar> 
             </ContenedorFormulario>
             <ListarProveedor>
             <ContentElemen>

@@ -1,11 +1,12 @@
 import { db } from './firebaseConfig';
-import { collection, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 
-const AgregarClientesDb = async  ({rut,nombre,direccion,telefono,correo,contacto,userAdd,userMod,fechaAdd, fechaMod}) => {
+const AgregarClientesDb = async  ({rut,empresa,nombre,direccion,telefono,correo,contacto,userAdd,userMod,fechaAdd, fechaMod}) => {
   
-    const clientes = collection(db,"clientes");
-    return await setDoc(doc(clientes, rut),{
+    return await addDoc(collection(db,"clientes"),{
+        rut:rut,
+        emp_id:empresa,
         nombre: nombre,
         direccion: direccion,
         telefono: telefono,
@@ -16,7 +17,7 @@ const AgregarClientesDb = async  ({rut,nombre,direccion,telefono,correo,contacto
         fechaAdd: fechaAdd,
         fechaMod: fechaMod
         
-    });
+    })
 }
  
 export default AgregarClientesDb;

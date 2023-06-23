@@ -16,7 +16,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia}) => {
     const [nuevoCampo, setNuevoCampo] = useState(familia);
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
-
+ 
 
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
@@ -39,6 +39,7 @@ const Editar = ({ id, id2, familia, userAdd, userMod, setFamilia}) => {
             tipo: 'exito',
             mensaje: 'Familia Modificada Correctamente'
         })
+       
     }
 
     return (
