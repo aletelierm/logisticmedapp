@@ -10,11 +10,15 @@ import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import EditarModelo from './EditarModelo';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const AgregarModelo = () => {
     // const navigate = useNavigate();
     const user = auth.currentUser;
+    const {users} = useContext(UserContext);
+    console.log('obtener usuario contexto global:',users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -22,6 +26,7 @@ const AgregarModelo = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [modelo, setModelo] = useState('');
     const [leer, setLeer] = useState([]);
+    const [leer2, setLeer2] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
@@ -65,7 +70,8 @@ const AgregarModelo = () => {
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
-                fechaMod: fechaMod
+                fechaMod: fechaMod,
+                emp_id: users.emp_id
             })
                 .then(() => {
                     cambiarEstadoAlerta(true);
@@ -82,7 +88,8 @@ const AgregarModelo = () => {
 
     const getData = async () => {
         const data = await getDocs(collection(db, "modelos"));
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
     }
 
     const filtroModelo = () => {

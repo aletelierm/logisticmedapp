@@ -4,24 +4,30 @@ import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import Editar from './Editar';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const AgregarFamilia = () => {
     // const navigate = useNavigate();
     const user = auth.currentUser;
+    const {users} = useContext(UserContext);
+    console.log('obtener usuario contexto global:',users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
+
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [familia, setFamilia] = useState('');
     const [leer, setLeer] = useState([]);
+    const [leer2, setLeer2] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
@@ -69,7 +75,8 @@ const AgregarFamilia = () => {
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
-                fechaMod: fechaMod
+                fechaMod: fechaMod,
+                emp_id: users.emp_id
             })
                 .then(() => {
                     /* ver si se puede agregar item al arreglo de obejetos
@@ -93,17 +100,37 @@ const AgregarFamilia = () => {
     }
     
 
+    // const getData = async () => {
+    //     const data = await getDocs(collection(db, "familias"));
+    //     setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    //     setLeer(leer2.filter(emp => emp.includes(users.emp_id)));
+        
+    //     // setFlag(!flag)
+    //     console.log('Mostrar leer', leer.emp_id);
+    //     console.log('mostrar leer2', leer2);
+    // }
+
     const getData = async () => {
-        const data = await getDocs(collection(db, "familias"));
+        const traerFam = collection(db, 'familias');
+        const dato = query(traerFam, where('emp_id', '==', users.emp_id));
+        // setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+
+        const data = await getDocs(dato)
+        data.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+          });
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        
     }
-    
+
+    // const lee = leer2.filter(emp => emp.emp_id == users.emp_id);
 
     const filtroFamilia = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
             return leer.slice(pagina, pagina + 5);
-        const nuevoFiltro = leer.filter(fam => fam.familia.includes(buscar));
+        const nuevoFiltro = leer.filter(fam => fam.familia.includes(buscar ));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
 
