@@ -4,7 +4,7 @@ import AgregarTipoDb from '../firebase/AgregarTipoDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -86,10 +86,22 @@ const AgregarTipo = () => {
     }
 
 
+    // const getData = async () => {
+    //     const data = await getDocs(collection(db, "tipos"));
+    //     setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    //     setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
+    // }
+
     const getData = async () => {
-        const data = await getDocs(collection(db, "tipos"));
-        setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
+        const traerTipo = collection(db, 'tipos');
+        const dato = query(traerTipo, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        data.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     const filtroTipo = () => {

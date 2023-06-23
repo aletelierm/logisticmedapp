@@ -3,19 +3,24 @@ import styled from 'styled-components';
 import { Table } from 'semantic-ui-react'
 import { Link} from 'react-router-dom';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import Alerta from '../components/Alertas';
 import AgregarProveedorDb from '../firebase/AgregarProveedorDb';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { FaRegEdit } from "react-icons/fa";
 import validarRut from '../funciones/validarRut';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
+
 
 const Proveedores = () => {
 
     
     /* const navigate = useNavigate(); */
     const user = auth.currentUser;
+    const {users} = useContext(UserContext);
+    console.log('obtener usuario contexto global:',users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -36,11 +41,25 @@ const Proveedores = () => {
     } */
 
     //Leer data
-    const getData = async () => {
-        const data = await getDocs(collection(db, "proveedores"));
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    // const getData = async () => {
+    //     const data = await getDocs(collection(db, "proveedores"));
+    //     setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    
+    // }
 
+    const getData = async () => {
+        const traerProv = collection(db, 'proveedores');
+        const dato = query(traerProv, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        data.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        console.log('Mostrar Leer', leer);
     }
+
     //filtrar para paginacion
     const filtroProveedor = () => {
 
@@ -183,8 +202,8 @@ const Proveedores = () => {
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
-                    fechaMod: fechaMod
-
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
                 })
                 setRut('');
                 setEntidad('');

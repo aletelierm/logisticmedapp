@@ -4,7 +4,7 @@ import AgregarMarcaDb from '../firebase/AgregarMarcaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
@@ -86,11 +86,23 @@ const AgregarMarca = () => {
     }
     
 
+    // const getData = async () => {
+    //     const data = await getDocs(collection(db, "marcas"));
+    //     setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    //     setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
+    //     console.log('mstrar leer 2', leer2);
+    // }
+
     const getData = async () => {
-        const data = await getDocs(collection(db, "marcas"));
-        setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
-        console.log('mstrar leer 2', leer2);
+        const traerMar = collection(db, 'marcas');
+        const dato = query(traerMar, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        data.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     const filtroMarca = () => {
