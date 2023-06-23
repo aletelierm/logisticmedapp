@@ -26,7 +26,6 @@ const AgregarTipo = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [tipo, setTipo] = useState('');
     const [leer, setLeer] = useState([]);
-    const [leer2, setLeer2] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
@@ -97,10 +96,10 @@ const AgregarTipo = () => {
         const dato = query(traerTipo, where('emp_id', '==', users.emp_id));
 
         const data = await getDocs(dato)
-        data.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-        });
+        // data.forEach((doc) => {
+        //     // doc.data() is never undefined for query doc snapshots
+        //     console.log(doc.id, " => ", doc.data());
+        // });
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
