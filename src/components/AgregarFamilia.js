@@ -120,11 +120,7 @@ const AgregarFamilia = () => {
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
         // setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
-        const data = await getDocs(dato)
-        data.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-        });
+        const data = await getDocs(dato)       
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 

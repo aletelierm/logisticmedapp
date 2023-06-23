@@ -5,20 +5,24 @@ import {  Link } from 'react-router-dom';
 import { auth , db} from '../firebase/firebaseConfig';
 import  Alerta from '../components/Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
-import { getDocs, collection,doc,runTransaction, where, query } from 'firebase/firestore';
+import { getDocs, collection, where, query } from 'firebase/firestore';
+/* import { doc,runTransaction } from 'firebase/firestore'; */
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import validarRut from '../funciones/validarRut';
-
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const Clientes = () => {
     
-    /* const navigate = useNavigate(); */
+    //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;   
     let fechaAdd = new Date();
     let fechaMod = new Date();
-
+    
+    //Obtener datos de contexto global
+    const {users} = useContext(UserContext);   
   
     const [rut, setRut] = useState('')
     const [nombre, setNombre] = useState('')
@@ -32,11 +36,9 @@ const Clientes = () => {
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
 
-    /* const volver = ()=>{
-        navigate('/home/actualizacliente')
-    } */
-    //Prueba folio
-    const generarCorrelativo = async ()=>{
+   
+    //Prueba generacion de folios unicos
+    /* const generarCorrelativo = async ()=>{
         const docRef = doc(db,'correlativos','folio')
         try {
             await runTransaction(db, async(t)=>{
@@ -55,7 +57,7 @@ const Clientes = () => {
         } catch (error) {
             console.log('error de folio', error);
         }
-    }
+    } */
    
     //Leer data
     // const getData = async () => {
@@ -64,29 +66,21 @@ const Clientes = () => {
 
     // }
 
+    //Lectura de datots filtrados por empresa
     const getData = async () => {
         const traerClientes = collection(db, 'clientes');
         const dato = query(traerClientes, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
-        data.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-        });
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        console.log('Mostrar Leer', leer);
+       console.log('LECTURA DE DB AL ARREGLO',leer)
     }
 
     //filtrar para paginacion
     const filtroCliente = () => {
-
         if (buscador.length === 0)
-
             return leer.slice(pagina, pagina + 5);
-
-        const nuevoFiltro = leer.filter(cli => cli.nombre.includes(buscador));
-        return nuevoFiltro.slice(pagina, pagina + 5);
-
+            const nuevoFiltro = leer.filter(cli => cli.nombre.includes(buscador));
+            return nuevoFiltro.slice(pagina, pagina + 5);
     }
 
     const siguientePag = () => {
@@ -107,15 +101,14 @@ const Clientes = () => {
 
     useEffect(() => {
         getData();
-    }, [setNombre, nombre])
+    }, [])
 
-    useEffect(()=>{
+    /* useEffect(()=>{
          generarCorrelativo();
         
-    },[])
+    },[]) */
 
-    const handleChange = (e)=>{
-        
+    const handleChange = (e)=>{        
 
         switch(e.target.name){
             case 'rut':
@@ -142,7 +135,19 @@ const Clientes = () => {
     }
 
     const detectar = (e)=>{
-        if(e.key==='Enter' || e.key==='Tab') alert('enter detectado')
+        if(e.key==='Enter' || e.key==='Tab'){
+            // Consulta si exite rut en el arreglo
+        const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0;
+        if(existe){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut ya existe'
+            })
+            return;
+        }
+        
+        }
     }
     const handleSubmit =(e)=>{
         e.preventDefault();
@@ -221,7 +226,6 @@ const Clientes = () => {
                 AgregarClientesDb({
                     emp_id: users.emp_id,
                     rut:rut,
-                    empresa: users.empresa,
                     nombre:nombre,
                     direccion:direccion,
                     telefono:telefono,
@@ -230,8 +234,7 @@ const Clientes = () => {
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    emp_id: users.emp_id
+                    fechaMod: fechaMod                    
                 })
                 /* setRut(''); */
                 setNombre('');
@@ -274,7 +277,7 @@ const Clientes = () => {
                             placeholder = 'Ingrese Rut sin puntos'
                             value = { rut }
                             onChange = { handleChange }
-                             onKeyDown={detectar}
+                            onKeyDown={detectar}
                         />
                         <Label>Nombre</Label>
                         <Input
@@ -323,7 +326,7 @@ const Clientes = () => {
                     </ContentElemen>
                                  
                 </Formulario>
-                <BotonGuardar onClick={handleSubmit}>Guardars</BotonGuardar> 
+                <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar> 
             </ContenedorFormulario>
             <ListarProveedor>
             <ContentElemen>
@@ -357,7 +360,7 @@ const Clientes = () => {
                                         return(
                                             <Table.Row key={index}>
                                                 <Table.Cell>{item.nombre}</Table.Cell>
-                                                <Table.Cell>{item.id}</Table.Cell>       
+                                                <Table.Cell>{item.rut}</Table.Cell>       
                                                 <Table.Cell>{item.direccion}</Table.Cell>       
                                                 <Table.Cell>{item.telefono}</Table.Cell>       
                                                 <Table.Cell><Link to={`/home/actualizacliente/${item.id}`}><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
