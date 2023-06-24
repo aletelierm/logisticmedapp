@@ -29,6 +29,7 @@ import ActualizaCliente from './ActualizaCliente';
 import ActualizaFamilia from './ActualizaFamilia';
 import ActualizaTipo from './ActualizaTipo';
 import ActualizaMarca from './ActualizaMarca';
+import ActualizaModelo from './ActualizaModelo';
 
 export const Home = () => {
   
@@ -47,6 +48,7 @@ export const Home = () => {
             <Route path="/misequipos/agregarmarca" element={<AgregraMarca/>}/>
             <Route path="/actualizamarca/:id" element={<ActualizaMarca/>}/>
             <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>
+            <Route path="/actualizamodelo/:id" element={<ActualizaModelo/>}/>
             <Route path="/misequipos/crearequipo" element={<CrearEquipo/>}/>
             <Route path="/transacciones" element={<Transaccion/>}/>
             <Route path="/transacciones/entradas" element={<Entradas/>}/>

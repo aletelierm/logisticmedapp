@@ -4,12 +4,13 @@ import AgregarModeloDb from '../firebase/AgregarModeloDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
+import { Link } from 'react-router-dom';
+import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
-import EditarModelo from './EditarModelo';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -181,17 +182,25 @@ const AgregarModelo = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {filtroModelo().map((item) => {
+                        {filtroModelo().map((item, index) => {
                             return (
-                                <EditarModelo
-                                    key={item.id}
-                                    id={item.id}
-                                    id2={item.id2}
-                                    modelo={item.modelo}
-                                    userAdd={item.userAdd}
-                                    userMod={item.userMod}
-                                    setModelo={setModelo}
-                                />
+                                // <EditarModelo
+                                //     key={item.id}
+                                //     id={item.id}
+                                //     id2={item.id2}
+                                //     modelo={item.modelo}
+                                //     userAdd={item.userAdd}
+                                //     userMod={item.userMod}
+                                //     setModelo={setModelo}
+                                // />
+
+                                <Table.Row key={index}>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.modelo}</Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell><Link to={`/home/actualizamodelo/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                </Table.Row>
                             )
                         })}
                     </Table.Body>
