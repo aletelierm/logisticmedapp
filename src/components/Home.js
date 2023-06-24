@@ -28,6 +28,7 @@ import { RegistroUsuarios } from './RegistroUsuarios';
 import ActualizaCliente from './ActualizaCliente';
 import ActualizaFamilia from './ActualizaFamilia';
 import ActualizaTipo from './ActualizaTipo';
+import ActualizaMarca from './ActualizaMarca';
 
 export const Home = () => {
   
@@ -44,6 +45,7 @@ export const Home = () => {
             <Route path="/misequipos/agregartipo" element={<AgregarTipo/>}/>
             <Route path="/actualizatipo/:id" element={<ActualizaTipo/>}/>
             <Route path="/misequipos/agregarmarca" element={<AgregraMarca/>}/>
+            <Route path="/actualizamarca/:id" element={<ActualizaMarca/>}/>
             <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>
             <Route path="/misequipos/crearequipo" element={<CrearEquipo/>}/>
             <Route path="/transacciones" element={<Transaccion/>}/>

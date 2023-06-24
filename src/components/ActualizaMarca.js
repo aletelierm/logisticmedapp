@@ -3,24 +3,24 @@ import { auth } from '../firebase/firebaseConfig';
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components';
 import Alertas from './Alertas';
-import ActualizarFamiliaDb from '../firebase/ActualizarFamiliaDb';
-import useObtenerFamilia from '../hooks/useObtenerFamilia';
+import ActualizarMarcaDb from '../firebase/ActualizarMarcaDb';
+import useObtenerMarca from '../hooks/useObtenerMarca';
 
 
-const ActualizaFamilia = () => {
+const ActualizaMarca = () => {
     const user = auth.currentUser;
     let fechaMod = new Date();
 
     const navigate = useNavigate();
     const { id } = useParams();
-    const [familia] = useObtenerFamilia(id);
+    const [marca] = useObtenerMarca(id);
 
     const [nuevoCampo, setNuevoCampo] = useState();
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
     const volver = () => {
-        navigate('/home/misequipos/agregarfamilia')
+        navigate('/home/misequipos/agregarmarca')
     }
 
 
@@ -43,10 +43,10 @@ const ActualizaFamilia = () => {
             return;
         } else {
             try {
-                const fam = nuevoCampo.toLocaleUpperCase();
-                ActualizarFamiliaDb({
+                const mar = nuevoCampo.toLocaleUpperCase();
+                ActualizarMarcaDb({
                     id: id,
-                    familia: fam,
+                    marca: mar,
                     userMod: user.email,
                     fechaMod: fechaMod,
                 })
@@ -54,7 +54,7 @@ const ActualizaFamilia = () => {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
-                    mensaje: 'Familia Actualizada exitosamente'
+                    mensaje: 'Marca Actualizada exitosamente'
                 })
                 return;
 
@@ -70,20 +70,20 @@ const ActualizaFamilia = () => {
     }
 
     useEffect(() => {
-        if (familia) {
-            setNuevoCampo(familia.familia)
+        if (marca) {
+            setNuevoCampo(marca.marca)
         } else {
             navigate('/')
         }
         console.log('useeffeect', );
-    }, [familia, navigate])
+    }, [marca, navigate])
 
 
     return (
 
         <ContenedorCliente>
             <ContenedorFormulario>
-                <Titulo>Actualiazar Familia</Titulo>
+                <Titulo>Actualiazar Marca</Titulo>
             </ContenedorFormulario>
 
             <ContenedorFormulario>
@@ -91,8 +91,8 @@ const ActualizaFamilia = () => {
                     <ContentElemen>
                         <Input
                             type='text'
-                            name='familia'
-                            placeholder='Ingrese Familia Equipamiento Médico'
+                            name='marca'
+                            placeholder='Ingrese Marca Equipamiento Médico'
                             value={nuevoCampo}
                             onChange={handleChange}
                         />
@@ -166,4 +166,4 @@ const BotonGuardar = styled.button`
 `
 
 
-export default ActualizaFamilia;
+export default ActualizaMarca;

@@ -4,12 +4,13 @@ import AgregarMarcaDb from '../firebase/AgregarMarcaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react'
+import { Link } from 'react-router-dom';
+import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
-import EditarMarca from './EditarMarca';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -97,10 +98,6 @@ const AgregarMarca = () => {
         const dato = query(traerMar, where('emp_id', '==', users.emp_id));
 
         const data = await getDocs(dato)
-        // data.forEach((doc) => {
-        //     // doc.data() is never undefined for query doc snapshots
-        //     console.log(doc.id, " => ", doc.data());
-        // });
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
@@ -182,17 +179,25 @@ const AgregarMarca = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {filtroMarca().map((item) => {
+                        {filtroMarca().map((item, index) => {
                             return (
-                                <EditarMarca
-                                    key={item.id}
-                                    id={item.id}
-                                    id2={item.id2}
-                                    marca={item.marca}
-                                    userAdd={item.userAdd}
-                                    userMod={item.userMod}
-                                    setMarca={setMarca}
-                                />
+                                // <EditarMarca
+                                //     key={item.id}
+                                //     id={item.id}
+                                //     id2={item.id2}
+                                //     marca={item.marca}
+                                //     userAdd={item.userAdd}
+                                //     userMod={item.userMod}
+                                //     setMarca={setMarca}
+                                // />
+
+                                <Table.Row key={index}>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.marca}</Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell><Link to={`/home/actualizamarca/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                </Table.Row>
                             )
                         })}
                     </Table.Body>
