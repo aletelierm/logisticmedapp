@@ -31,12 +31,12 @@ import { auth } from '../firebase/firebaseConfig';
 
     useEffect(()=>{
         if(cliente){
-           setRut(cliente.id)
+           setRut(cliente.rut)
            setNombre(cliente.nombre);
            setDireccion(cliente.direccion);
            setTelefono(cliente.telefono);
            setCorreo(cliente.correo);
-           setNomContacto(cliente.contaco)
+           setNomContacto(cliente.contacto)
        }else{
        navigate('/')
    }
@@ -97,16 +97,21 @@ import { auth } from '../firebase/firebaseConfig';
         return;
     }else{
         try {
+            const nom = nombre.toLocaleUpperCase().trim()
+            const dir = direccion.toLocaleUpperCase().trim()
+            const nomC = nomContacto.toLocaleUpperCase().trim()
+            const corr = correo.toLocaleLowerCase().trim()
+            console.log('este es el id',id)
             EditarCliente({
-                id:id,
-                nombre:nombre,
-                direccion:direccion,
+                id: id,
+                nombre:nom,
+                direccion:dir,
                 telefono:telefono,
-                correo:correo,
-                contacto:nomContacto,
+                correo:corr,
+                contacto:nomC,
                 userMod: user.email,               
                 fechaMod: fechaActual
-            })
+            }) 
             .catch((error)=>{console.log(error)})
             /* setRut('');
             setEntidad('');
@@ -170,7 +175,7 @@ import { auth } from '../firebase/firebaseConfig';
                 <Input
                     type='text'
                     name = 'rut'
-                    value = { id }                   
+                    value = { rut }                   
                     disabled
                 />
                 <Label>Nombre</Label>

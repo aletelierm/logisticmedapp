@@ -15,14 +15,14 @@ import { UserContext } from '../context/UserContext';
 
 
 const Proveedores = () => {
-
     
-    /* const navigate = useNavigate(); */
-    const user = auth.currentUser;
-    const {users} = useContext(UserContext);
-    console.log('obtener usuario contexto global:',users);
+    //lee usuario de autenticado y obtiene fecha actual
+    const user = auth.currentUser;     
     let fechaAdd = new Date();
     let fechaMod = new Date();
+
+     //Obtener datos de contexto global
+    const {users} = useContext(UserContext);  
 
     const [rut, setRut] = useState('')
     const [entidad, setEntidad] = useState('')
@@ -35,41 +35,22 @@ const Proveedores = () => {
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
+    const [flag,setFlag] = useState(false)
 
-   /*  const volver = ()=>{
-        navigate('/home/actualizaproveedor')
-    } */
-
-    //Leer data
-    // const getData = async () => {
-    //     const data = await getDocs(collection(db, "proveedores"));
-    //     setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    
-    // }
-
+    //Lectura de datos filtrados por empresa
     const getData = async () => {
-        const traerProv = collection(db, 'proveedores');
-        const dato = query(traerProv, where('emp_id', '==', users.emp_id));
-
+        const traerProveedor = collection(db, 'proveedores');
+        const dato = query(traerProveedor, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        // data.forEach((doc) => {
-        //     // doc.data() is never undefined for query doc snapshots
-        //     console.log(doc.id, " => ", doc.data());
-        // });
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        console.log('Mostrar Leer', leer);
     }
-
+    
     //filtrar para paginacion
     const filtroProveedor = () => {
-
         if (buscador.length === 0)
-
             return leer.slice(pagina, pagina + 5);
-
         const nuevoFiltro = leer.filter(prov => prov.nombre.includes(buscador));
         return nuevoFiltro.slice(pagina, pagina + 5);
-
     }
 
     const siguientePag = () => {
@@ -85,12 +66,12 @@ const Proveedores = () => {
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
-
     }
 
     useEffect(() => {
         getData();
-    }, [setEntidad, entidad])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag, setFlag])
 
     const handleChange = (e)=>{
         switch(e.target.name){
@@ -117,11 +98,28 @@ const Proveedores = () => {
         } 
     }
 
+    const detectar = (e)=>{
+        if(e.key==='Enter' || e.key==='Tab'){
+            // Consulta si exite rut en el arreglo
+        const existe = leer.filter(pro => pro.rut.includes(rut.toLocaleUpperCase().trim())).length > 0;
+        if(existe){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut ya existe'
+            })
+            return;
+        }        
+        }
+    }
+
     const handleSubmit =(e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
+        //Comprobar que existe el rut en DB
+        const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0;
+        
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         //Comprobar que rut tenga formato correcto
@@ -190,15 +188,26 @@ const Proveedores = () => {
                 mensaje: 'Campo Contacto no puede estar vacio'
             })
             return;
+        }else if(existe){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut ya existe'
+            })
+            return;
         }else{
+                const nom = entidad.toLocaleUpperCase().trim()
+                const dir = direccion.toLocaleUpperCase().trim()
+                const nomC = nomContacto.toLocaleUpperCase().trim()
+                const corr = correo.toLocaleLowerCase().trim()
             try {
                 AgregarProveedorDb({
                     rut:rut,
-                    nombre:entidad,
-                    direccion:direccion,
+                    nombre:nom,
+                    direccion:dir,
                     telefono:telefono,
-                    correo:correo,
-                    contacto:nomContacto,
+                    correo:corr,
+                    contacto:nomC,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -216,6 +225,7 @@ const Proveedores = () => {
                 tipo: 'exito',
                 mensaje: 'Proveedor registrado exitosamente'
                 })
+                setFlag(!flag)
                 return;
                 
             } catch (error) {
@@ -245,7 +255,7 @@ const Proveedores = () => {
                             placeholder = 'Ingrese Rut sin puntos'
                             value = { rut }
                             onChange = { handleChange }
-                        
+                            onKeyDown={detectar}
                         />
                         <Label>Razon Social</Label>
                         <Input
@@ -292,7 +302,7 @@ const Proveedores = () => {
                             onChange = { handleChange }                        
                         />  
                     </ContentElemen>
-                     <BotonGuardar>Guardar</BotonGuardar>              
+                     <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>              
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
@@ -327,7 +337,7 @@ const Proveedores = () => {
                                         return (
                                             <Table.Row key={index}>
                                                 <Table.Cell>{item.nombre}</Table.Cell>
-                                                <Table.Cell>{item.id}</Table.Cell>       
+                                                <Table.Cell>{item.rut}</Table.Cell>       
                                                 <Table.Cell>{item.direccion}</Table.Cell>       
                                                 <Table.Cell>{item.telefono}</Table.Cell>       
                                                 <Table.Cell><Link to={`/home/actualizaproveedor/${item.id}`}><FaRegEdit style={{fontSize:'20px', color: 'green'}}/></Link></Table.Cell>       

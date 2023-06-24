@@ -1,21 +1,22 @@
 import { db } from './firebaseConfig';
-import { collection, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc} from "firebase/firestore";
 
 
-const AgregarProveedorDb = async  ({rut,nombre,direccion,telefono,correo,contacto,userAdd,userMod,fechaAdd, fechaMod, emp_id}) => {
+const AgregarProveedorDb = async  ({emp_id,rut,nombre,direccion,telefono,correo,contacto,userAdd,userMod,fechaAdd, fechaMod}) => {
   
-    const proveedores = collection(db,"proveedores");
-    return await setDoc(doc(proveedores, rut),{
+    
+    return await addDoc(collection(db,"proveedores"),{
+        emp_id: emp_id,
+        rut: rut,
         nombre: nombre,
         direccion: direccion,
         telefono: telefono,
         correo: correo,
-        contaco: contacto,
+        contacto: contacto,
         userAdd: userAdd,
         userMod: userMod,
         fechaAdd: fechaAdd,
-        fechaMod: fechaMod,
-        emp_id: emp_id
+        fechaMod: fechaMod        
     });
 }
  

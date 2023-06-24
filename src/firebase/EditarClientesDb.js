@@ -5,7 +5,7 @@ const EditarCliente = async ({id,nombre,direccion,telefono,correo, contacto,user
     
     const docum = doc(db,'clientes', id);
     return await updateDoc(docum, { 
-        contaco: contacto,
+        contacto: contacto,
         correo: correo,
         direccion: direccion,
         telefono: telefono,

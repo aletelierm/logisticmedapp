@@ -35,7 +35,7 @@ const Clientes = () => {
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
-
+    const [flag, setFlag] = useState(false)
    
     //Prueba generacion de folios unicos
     /* const generarCorrelativo = async ()=>{
@@ -59,20 +59,12 @@ const Clientes = () => {
         }
     } */
    
-    //Leer data
-    // const getData = async () => {
-    //     const data = await getDocs(collection(db, "clientes"));
-    //     setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-
-    // }
-
     //Lectura de datots filtrados por empresa
     const getData = async () => {
         const traerClientes = collection(db, 'clientes');
         const dato = query(traerClientes, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-       console.log('LECTURA DE DB AL ARREGLO',leer)
     }
 
     //filtrar para paginacion
@@ -101,7 +93,8 @@ const Clientes = () => {
 
     useEffect(() => {
         getData();
-    }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag, setFlag])
 
     /* useEffect(()=>{
          generarCorrelativo();
@@ -145,14 +138,17 @@ const Clientes = () => {
                 mensaje: 'Rut ya existe'
             })
             return;
-        }
-        
+        }        
         }
     }
+
     const handleSubmit =(e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+
+        //Comprobar que existe el rut en DB
+        const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0;
 
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
@@ -221,16 +217,28 @@ const Clientes = () => {
                 mensaje: 'Campo Contacto no puede estar vacio'
             })
             return;
-        }else{
+        }else if(existe){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut ya existe'
+            })
+            return;
+
+        }else{            
             try {
+                const nom = nombre.toLocaleUpperCase().trim()
+                const dir = direccion.toLocaleUpperCase().trim()
+                const nomC = nomContacto.toLocaleUpperCase().trim()
+                const corr = correo.toLocaleLowerCase().trim()
                 AgregarClientesDb({
                     emp_id: users.emp_id,
                     rut:rut,
-                    nombre:nombre,
-                    direccion:direccion,
+                    nombre:nom,
+                    direccion:dir,
                     telefono:telefono,
-                    correo:correo,
-                    contacto:nomContacto,
+                    correo:corr,
+                    contacto:nomC,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -247,8 +255,9 @@ const Clientes = () => {
                 tipo: 'exito',
                 mensaje: 'Cliente registrado exitosamente'
                 })
+                setFlag(!flag);
                 return;
-                
+               
             } catch (error) {
                 console.log('se produjo un error al guardar',error);
                 cambiarEstadoAlerta(true);

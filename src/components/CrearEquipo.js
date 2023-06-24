@@ -29,14 +29,15 @@ const Proveedores = () => {
     const [rfid, setRfid] = useState('');
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [equipo, setEquipo] = useState([]);
-    /* const [leer, setLeer] = useState([]) */
+    const [equipo, setEquipo] = useState([]);   
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
 
-    const [fami, setFami] = useState(sessionStorage.getItem('familia'));
-
+    const [fami] = useState(sessionStorage.getItem('familia'));
+    const [tip] = useState(sessionStorage.getItem('tipo'));
+    const [marc] = useState(sessionStorage.getItem('marca'));
+    const [mod,] = useState(sessionStorage.getItem('modelo'));
     
     //Leer los datos de Familia
     const getFamila = async () => {
@@ -141,7 +142,7 @@ const Proveedores = () => {
         const handleChange = (e) => {
             switch (e.target.name) {
                 case 'serie':
-                    setSerie(e.target.value);
+                    setSerie(e.target.value);                    
                     break;
                 case 'rfid':
                     setRfid(e.target.value);
@@ -236,10 +237,8 @@ const Proveedores = () => {
                         <ContentElemen>
                             <ContentElemenSelect>
                                 <Label>Familias</Label>
-                                <Select value={nomFamilia} onChange={e =>{setNomFamilia(e.target.value); sessionStorage.setItem('familia',e.target.value)}}>
-                                    console.log(nomFamilia);
-                                    {fami ? <option>{fami}</option>: <option>Selecciona Opción:</option>}
-                                    {/* <option>Selecciona Opción:</option> */}
+                                <Select value={nomFamilia} onChange={e =>{setNomFamilia(e.target.value); sessionStorage.setItem('familia',e.target.value)}}>                                    
+                                    {fami ? <option>{fami}</option>: <option>Selecciona Opción:</option>}                                   
                                     {familia.map((d) => {
                                         return (<option key={d.id}>{d.familia}</option>)
                                     })}
@@ -248,8 +247,8 @@ const Proveedores = () => {
 
                             <ContentElemenSelect>
                                 <Label>Tipo Equipamiento</Label>
-                                <Select value={nomTipo} onChange={e => setNomTipo(e.target.value)}>
-                                    <option>Selecciona Opción:</option>
+                                <Select value={nomTipo} onChange={e => {setNomTipo(e.target.value); sessionStorage.setItem('tipo',e.target.value)}}>
+                                    {tip ? <option>{tip}</option>: <option>Selecciona Opción:</option>}   
                                     {tipo.map((d) => {
                                         return (<option key={d.id}>{d.tipo}</option>)
                                     })}
@@ -258,8 +257,8 @@ const Proveedores = () => {
 
                             <ContentElemenSelect>
                                 <Label>Marca</Label>
-                                <Select value={nomMarca} onChange={e => setNomMarca(e.target.value)}>
-                                    <option>Selecciona Opción:</option>
+                                <Select value={nomMarca} onChange={e => {setNomMarca(e.target.value);sessionStorage.setItem('marca',e.target.value)}}>
+                                {marc ? <option>{marc}</option>: <option>Selecciona Opción:</option>}  
                                     {marca.map((d) => {
                                         return (<option key={d.id}>{d.marca}</option>)
                                     })}
@@ -268,8 +267,8 @@ const Proveedores = () => {
 
                             <ContentElemenSelect>
                                 <Label>Modelo</Label>
-                                <Select value={nomModelo} onChange={e => setNomModelo(e.target.value)}>
-                                    <option>Selecciona Opción:</option>
+                                <Select value={nomModelo} onChange={e => {setNomModelo(e.target.value);sessionStorage.setItem('modelo',e.target.value)}}>
+                                    {mod ? <option>{mod}</option>: <option>Selecciona Opción:</option>}  
                                     {modelo.map((d) => {
                                         return (<option key={d.id}>{d.modelo}</option>)
                                     })}

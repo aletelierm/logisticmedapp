@@ -5,7 +5,7 @@ const EditarProveedor = async ({id,nombre,direccion,telefono,correo, contacto,us
     
     const docum = doc(db,'proveedores', id);
     return await updateDoc(docum, { 
-        contaco: contacto,
+        contacto: contacto,
         correo: correo,
         direccion: direccion,
         telefono: telefono,

@@ -37,12 +37,6 @@ const AgregarFamilia = () => {
         setFamilia(e.target.value);
     }
 
-    const cambioFlag = (mensaje) => {
-        console.log('desde  hijo', mensaje)
-        setFlag(!mensaje);
-    }
-
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -148,6 +142,7 @@ const AgregarFamilia = () => {
     useEffect(() => {
         getData();
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
 
