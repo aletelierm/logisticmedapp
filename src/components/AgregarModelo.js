@@ -127,6 +127,7 @@ const AgregarModelo = () => {
 
     useEffect(() => {
         getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setFlag, flag])
 
     return (
