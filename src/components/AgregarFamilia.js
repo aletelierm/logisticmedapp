@@ -27,7 +27,6 @@ const AgregarFamilia = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [familia, setFamilia] = useState('');
     const [leer, setLeer] = useState([]);
-    const [leer2, setLeer2] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
@@ -151,6 +150,7 @@ const AgregarFamilia = () => {
     useEffect(() => {
         getData();
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
 

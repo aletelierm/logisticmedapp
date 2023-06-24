@@ -33,12 +33,12 @@ import { auth } from '../firebase/firebaseConfig';
 
      useEffect(()=>{
          if(proveedor){
-            setRut(proveedor.id)
+            setRut(proveedor.rut)
             setEntidad(proveedor.nombre);
             setDireccion(proveedor.direccion);
             setTelefono(proveedor.telefono);
             setCorreo(proveedor.correo);
-            setNomContacto(proveedor.contaco)
+            setNomContacto(proveedor.contacto)
         }else{
         navigate('/')
     }
@@ -98,13 +98,17 @@ import { auth } from '../firebase/firebaseConfig';
         return;
     }else{
         try {
+            const nom = entidad.toLocaleUpperCase().trim()
+            const dir = direccion.toLocaleUpperCase().trim()
+            const nomC = nomContacto.toLocaleUpperCase().trim()
+            const corr = correo.toLocaleLowerCase().trim()
             EditarProveedor({
-                id:id,
-                nombre:entidad,
-                direccion:direccion,
+                id: id,
+                nombre:nom,
+                direccion:dir,
                 telefono:telefono,
-                correo:correo,
-                contacto:nomContacto,
+                correo:corr,
+                contacto:nomC,
                 userMod: user.email,               
                 fechaMod: fechaActual
             })
@@ -169,7 +173,7 @@ import { auth } from '../firebase/firebaseConfig';
                 <Input
                     type='text'
                     name = 'rut'
-                    value = { id }                   
+                    value = { rut }                   
                     disabled
                 />
                 <Label>Nombre</Label>
