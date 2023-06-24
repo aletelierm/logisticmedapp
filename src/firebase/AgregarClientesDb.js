@@ -15,7 +15,7 @@ const AgregarClientesDb = async  ({rut,emp_id,nombre,direccion,telefono,correo,c
         userAdd: userAdd,
         userMod: userMod,
         fechaAdd: fechaAdd,
-        fechaMod: fechaMod
+        fechaMod: fechaMod        
         
     })
 }

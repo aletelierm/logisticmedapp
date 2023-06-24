@@ -117,7 +117,6 @@ const Proveedores = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         //Comprobar que existe el rut en DB
         const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0;
         
