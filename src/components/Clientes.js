@@ -127,7 +127,7 @@ const Clientes = () => {
         }
     }
 
-    const detectar = (e)=>{
+    /* const detectar = (e)=>{
         if(e.key==='Enter' || e.key==='Tab'){
             // Consulta si exite rut en el arreglo            
             const existe = leer.filter(cli => cli.rut === rut).length === 0      
@@ -141,7 +141,7 @@ const Clientes = () => {
             return;
         }        
         }
-    }
+    } */
 
     const handleSubmit =(e)=>{
         e.preventDefault();
@@ -149,7 +149,8 @@ const Clientes = () => {
         cambiarAlerta({});
 
         //Comprobar que existe el rut en DB
-        const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0;
+        const existe = leer.filter(cli => cli.rut === rut).length === 0  
+        /* const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0; */
 
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
@@ -159,9 +160,16 @@ const Clientes = () => {
         const temp = rut.split('-');
         let digito = temp[1];
         if(digito ==='k' || digito ==='K') digito = -1;
+        const validaR = validarRut(rut);
 
-        const validaR = validarRut(rut);       
-		if(!expresionRegularRut.test(rut)){          
+        if(rut ===''){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Rut no puede estar vacio'
+            })
+            return;
+        }else if(!expresionRegularRut.test(rut)){          
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -173,14 +181,6 @@ const Clientes = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Rut no válido'
-            })
-            return;       
-
-        }else if(rut ===''){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Campo Rut no puede estar vacio'
             })
             return;
         }else if(nombre ===''){
@@ -218,7 +218,7 @@ const Clientes = () => {
                 mensaje: 'Campo Contacto no puede estar vacio'
             })
             return;
-        }else if(existe){
+        }else if(!existe){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -287,7 +287,7 @@ const Clientes = () => {
                             placeholder = 'Ingrese Rut sin puntos'
                             value = { rut }
                             onChange = { handleChange }
-                            onKeyDown={detectar}
+                            /* onKeyDown={detectar} */
                         />
                         <Label>Nombre</Label>
                         <Input
