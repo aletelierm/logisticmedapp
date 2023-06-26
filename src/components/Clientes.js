@@ -129,14 +129,15 @@ const Clientes = () => {
 
     const detectar = (e)=>{
         if(e.key==='Enter' || e.key==='Tab'){
-            // Consulta si exite rut en el arreglo
-        const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0;
-        if(existe){
+            // Consulta si exite rut en el arreglo            
+            const existe = leer.filter(cli => cli.rut === rut).length === 0      
+             
+        if(!existe){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Rut ya existe'
-            })
+            })            
             return;
         }        
         }
@@ -276,7 +277,7 @@ const Clientes = () => {
             </ContenedorFormulario>
            
             <ContenedorFormulario>
-                <Formulario action='' onSubmit={handleSubmit}>
+                <Formulario action='' >
                     <ContentElemen>
                         <Label>Rut</Label>
                         <Input
