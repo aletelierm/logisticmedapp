@@ -9,8 +9,8 @@ import Alerta from './Alertas';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
-import EditarEmpresa from './EditarEmpresa';
-
+import { Link } from 'react-router-dom';
+import { FaRegEdit } from "react-icons/fa";
 
 const AgregarEmpresa = () => {
     /* const navigate = useNavigate(); */
@@ -39,12 +39,10 @@ const AgregarEmpresa = () => {
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
-        const existe = leer.filter(emp => emp.empresa.includes(empresa.toLocaleUpperCase().trim())).length > 0;
-        console.log(existe);
-
-        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
-        if (existe) {
-
+        const existe = leer.filter(emp => emp.empresa === empresa.toLocaleUpperCase().trim()).length === 0;
+       
+        // Realiza comprobaciono
+        if (!existe) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -164,20 +162,17 @@ const AgregarEmpresa = () => {
                     <Table.Body>
                         {filtroEmpresa().map((item) => {
                             return (
-                                <EditarEmpresa
-                                    key={item.id}
-                                    id={item.id}
-                                    id2={item.id2}
-                                    empresa={item.empresa}
-                                    userAdd={item.userAdd}
-                                    userMod={item.userMod}
-                                    setEmpresa={setEmpresa}
-                                />
-                            )
+                                < Table.Row key={item.i2}>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.empresa}</Table.Cell>
+                                    <Table.Cell>{item.userAdd}</Table.Cell>
+                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell><Link to={`/home/configuracion/actualizaempresa/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                </Table.Row>
+                                    )
                         })}
                     </Table.Body>
                 </Table>
-
             </ListarProveedor>
             <Alerta
                 tipo={alerta.tipo}

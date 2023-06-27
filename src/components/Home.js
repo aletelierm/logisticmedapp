@@ -30,6 +30,7 @@ import ActualizaFamilia from './ActualizaFamilia';
 import ActualizaTipo from './ActualizaTipo';
 import ActualizaMarca from './ActualizaMarca';
 import ActualizaModelo from './ActualizaModelo';
+import ActualizaEmpresa from './ActualizaEmpresa';
 
 export const Home = () => {
   
@@ -66,6 +67,7 @@ export const Home = () => {
             <Route path="/configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="/configuracion/asignaroles" element={<AsignarRoles/>}/>
             <Route path="/configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
+            <Route path="/configuracion/actualizaempresa/:id" element={<ActualizaEmpresa/>}/>
             <Route path="/*" element={<Navigate to="/login"/>}/>
     </Routes>
     </SideBar>

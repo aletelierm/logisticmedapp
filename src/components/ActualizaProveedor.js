@@ -294,12 +294,14 @@ const Label = styled.label`
 
 const BotonGuardar = styled.button`
         cursor: pointer;
-        background-color: green;        
-        border-radius: 5px;
-        border: none;
-        margin-left: 5px;
-        padding: 5px;
-        &:hover{
-            background-color: #83d310;
+    background-color: green;
+    color: #ffffff;
+    border-radius: 5px;
+    border: none;
+    margin: 0px 10px;
+    padding: 5px 10px;
+
+    &:hover{
+        background-color: #83d310;
         }
 `

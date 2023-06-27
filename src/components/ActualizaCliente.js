@@ -17,7 +17,6 @@ import { auth } from '../firebase/firebaseConfig';
 
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-
     const [rut, setRut] = useState('')
     const [nombre, setNombre] = useState('')
     const [direccion, setDireccion] = useState('')
@@ -36,15 +35,12 @@ import { auth } from '../firebase/firebaseConfig';
            setDireccion(cliente.direccion);
            setTelefono(cliente.telefono);
            setCorreo(cliente.correo);
-           setNomContacto(cliente.contacto)
-           console.log('Nostrar Contacto', cliente.contacto);
+           setNomContacto(cliente.contacto)           
        }else{
        navigate('/')
    }
 
  },[cliente,navigate])
-
-
 
     const handleSubmit =(e)=>{
         e.preventDefault();
@@ -101,8 +97,7 @@ import { auth } from '../firebase/firebaseConfig';
             const nom = nombre.toLocaleUpperCase().trim()
             const dir = direccion.toLocaleUpperCase().trim()
             const nomC = nomContacto.toLocaleUpperCase().trim()
-            const corr = correo.toLocaleLowerCase().trim()
-            console.log('este es el id',id)
+            const corr = correo.toLocaleLowerCase().trim()            
             EditarCliente({
                 id: id,
                 nombre:nom,
@@ -113,13 +108,7 @@ import { auth } from '../firebase/firebaseConfig';
                 userMod: user.email,               
                 fechaMod: fechaActual
             }) 
-            .catch((error)=>{console.log(error)})
-            /* setRut('');
-            setEntidad('');
-            setDireccion('');
-            setTelefono('');
-            setCorreo('');
-            setNomContacto('') */
+            .catch((error)=>{console.log(error)})            
             cambiarEstadoAlerta(true);
             cambiarAlerta({
             tipo: 'exito',
@@ -136,10 +125,7 @@ import { auth } from '../firebase/firebaseConfig';
             })
         }
     }
-    }
-  
-  
-   
+    }    
 
     const handleChange = (e)=>{
         switch(e.target.name){
@@ -297,12 +283,14 @@ const Label = styled.label`
 
 const BotonGuardar = styled.button`
         cursor: pointer;
-        background-color: green;        
-        border-radius: 5px;
-        border: none;
-        margin-left: 5px;
-        padding: 5px;
-        &:hover{
-            background-color: #83d310;
+    background-color: green;
+    color: #ffffff;
+    border-radius: 5px;
+    border: none;
+    margin: 0px 10px;
+    padding: 5px 10px;
+
+    &:hover{
+        background-color: #83d310;
         }
 `

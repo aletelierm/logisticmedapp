@@ -339,7 +339,8 @@ const Label = styled.label`
         
 `
 const Boton = styled.button`
-        background-color: #83d394;
+        background-color:green;
+        color: #ffff;
         padding: 10px;
         border-radius: 5px;
         border: none;

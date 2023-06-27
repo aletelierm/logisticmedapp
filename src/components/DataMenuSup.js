@@ -6,7 +6,7 @@ import * as MdIcons from 'react-icons/md';
 export const DataMenuSup = [
   
   {
-    title: 'Transacciones',
+    title: 'Movimientos',
     path: '/home/transacciones',
     icon: <IoIcons.IoIosPaper />,
     iconClosed: <RiIcons.RiArrowDownSFill />,

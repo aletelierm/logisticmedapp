@@ -54,7 +54,7 @@ export const DataMenuAdmin = [
     iconOpened: <RiIcons.RiArrowUpSFill />,
   },
   {
-    title: 'Transacciones',
+    title: 'Movimientos',
     path: '/home/transacciones',
     icon: <IoIcons.IoIosPaper />,
     iconClosed: <RiIcons.RiArrowDownSFill />,

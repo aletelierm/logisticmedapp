@@ -228,13 +228,14 @@ const Clientes = () => {
 
         }else{            
             try {
-                const nom = nombre.toLocaleUpperCase().trim()
-                const dir = direccion.toLocaleUpperCase().trim()
-                const nomC = nomContacto.toLocaleUpperCase().trim()
-                const corr = correo.toLocaleLowerCase().trim()
+                const nom = nombre.toLocaleUpperCase().trim();
+                const dir = direccion.toLocaleUpperCase().trim();
+                const nomC = nomContacto.toLocaleUpperCase().trim();
+                const corr = correo.toLocaleLowerCase().trim();
+                const ruts = rut.toLocaleUpperCase().trim();
                 AgregarClientesDb({
                     emp_id: users.emp_id,
-                    rut:rut,
+                    rut:ruts,
                     nombre:nom,
                     direccion:dir,
                     telefono:telefono,
@@ -457,11 +458,14 @@ const Boton = styled.button`
 
 const BotonGuardar = styled.button`
         cursor: pointer;
-        background-color: green;        
-        border-radius: 5px;
-        border: none;
-        padding: 5px;
-        &:hover{
-            background-color: #83d310;
+    background-color: green;
+    color: #ffffff;
+    border-radius: 5px;
+    border: none;
+    margin: 0px 10px;
+    padding: 5px 10px;
+
+    &:hover{
+        background-color: #83d310;
         }
 `

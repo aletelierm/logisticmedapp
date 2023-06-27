@@ -50,7 +50,7 @@ const ActualizaFamilia = () => {
                     userMod: user.email,
                     fechaMod: fechaMod,
                 })
-                    .catch((error) => { console.log(error) })
+                .catch((error) => { console.log(error) })
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -135,7 +135,9 @@ const ContentElemen = styled.div`
     padding: 20px;
 `
 
-const Formulario = styled.form``
+const Formulario = styled.form`
+   
+`
 
 const Input = styled.input`
     border: 2px solid #d1d1d1;
@@ -161,7 +163,7 @@ const BotonGuardar = styled.button`
     padding: 5px 10px;
 
     &:hover{
-        background - color: #83d310;
+        background-color: #83d310;
     }
 `
 
