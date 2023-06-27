@@ -36,6 +36,7 @@ const Clientes = () => {
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
     const [flag, setFlag] = useState(false)
+    const [checked, setChecked] = useState();
    
     //Prueba generacion de folios unicos
     /* const generarCorrelativo = async ()=>{
@@ -142,12 +143,13 @@ const Clientes = () => {
         }        
         }
     } */
-
+    const handleChek = (e)=>{
+        setChecked(e.target.checked)
+    }
     const handleSubmit =(e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-
+        cambiarAlerta({});       
         //Comprobar que existe el rut en DB
         const existe = leer.filter(cli => cli.rut === rut).length === 0  
         /* const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0; */
@@ -325,7 +327,7 @@ const Clientes = () => {
                             onChange = { handleChange }
                         
                         />
-                        <Label>Nombre Contacto</Label>
+                       {/*  <Label>Nombre Contacto</Label>
                         <Input
                             type='text'
                             name = 'contacto'
@@ -333,9 +335,37 @@ const Clientes = () => {
                             value = { nomContacto }
                             onChange = { handleChange }
                         
-                        />  
+                        />  */} 
+                        <Label>Responsable financiero?</Label>
+                        <Input 
+                            style={{width:"3%",color:"green"}}
+                            type="checkbox"
+                            checked={checked}                          
+                            onChange={handleChek}
+                            />                      
                     </ContentElemen>
-                                 
+                    { checked ? 
+                        <>
+                            <Label>Nombre</Label>
+                            <Input
+                                type="text"
+                            />
+                            <Label>Dirección</Label>
+                            <Input
+                                type="text"
+                            />
+                            <Label>Telefono</Label>
+                            <Input
+                                type="number"
+                            />
+                        </>
+                        :
+                        ''
+                
+                }
+                    <ContentElemen>
+                        
+                    </ContentElemen>         
                 </Formulario>
                 <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar> 
             </ContenedorFormulario>
