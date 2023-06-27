@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import EntradasDB from '../firebase/EntradasDB'
+import Alertas from './Alertas';
 import { Table } from 'semantic-ui-react'
 /* import { useNavigate } from 'react-router-dom'; */
 import { auth, db } from '../firebase/firebaseConfig';
@@ -7,19 +9,31 @@ import { getDocs, collection } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const Entradas = () => {
+    //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
 
+    //Obtener datos de contexto global
+    const { users } = useContext(UserContext);
+    console.log('obtener usuario contexto global:', users);
+    
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
     const [nomTipDoc, setNomTipDoc] = useState([]);
     const [numDoc, setNumDoc] = useState('');
     const [proveedor, setProveedor] = useState([]);
     const [nomProveedor, setNomProveedor] = useState([]);
-    // const [nomTipTrans, setNomTipTrans] = useState([]);
-    const [nomTipoInOut, setNomTipoInOut] = useState([]);
+    const [nomTipoIn, setNomTipoIn] = useState([]);
     const [equipo, setEquipo] = useState([]);
     const [nomEquipo, setNomEquipo] = useState([]);
+    const [date, setDate] = useState([]);
+    const [flag, setFlag] = useState(false)
 
     //Lee datos de Proveedores
     const getProveedor = async () => {
@@ -33,21 +47,86 @@ const Entradas = () => {
         setEquipo(dataEquipo.docs.map((eq) => ({ ...eq.data(), id: eq.id })))
     }
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
 
-    //     // Consulta si exite campo en el arreglo
-    //     const existe = proveedor.filter(prov => prov.proveedor.includes());
-    //     console.log('ver si existe:',existe);
-
-    //     // Realiza consulta al arreglo Proveedor si 
-    //     if (existe) {
+    const handleSubmit =(e)=>{
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
 
 
-    //     } else {
-    //         alert('No existe Proveedor')
-    //     }
-    // }
+        if( nomTipDoc === '' ){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Tipo Documento'
+            })
+            return;
+        }else if( numDoc === '' ){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese N° Documento'
+            })
+            return;
+        }else if( nomProveedor === '' ){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Entidad'
+            })
+            return;
+        }else if( date === '' ){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Fecha'
+            })
+            return;
+        }else if( nomTipoIn === '' ){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Tipo de Entrada'
+            })
+            return;
+            
+
+        }else{            
+            try {
+                EntradasDB({
+                    emp_id: users.emp_id,
+                    tipDoc: nomTipDoc,
+                    numDoc: numDoc,
+                    proveedor: nomProveedor,
+                    date: date,
+                    TipoIn: nomTipoIn,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod
+                })
+                setNomTipDoc('');
+                setNumDoc('');
+                setNomProveedor('');
+                setDate('');
+                setNomTipoIn('')
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Ingreso realizado exitosamente'
+                })
+                setFlag(!flag);
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
+        }
+    }
+
 
     useEffect(() => {
         getProveedor();
@@ -64,7 +143,7 @@ const Entradas = () => {
             </ContenedorFormulario>
 
             <ContenedorFormulario>
-                <Formulario action=''>
+                <Formulario action='handleSubmit'>
 
                     <ContentElemen>
                         <ContentElemenSelect>
@@ -90,22 +169,34 @@ const Entradas = () => {
 
                         <ContentElemenSelect>
                             <Label >Entidad</Label>
-                            <Input
+                            {/* <Input
                                 type='text'
                                 name='Proveedor'
-                                onChange={e => setNomProveedor(e.target.value)} />
+                                onChange={e => setNomProveedor(e.target.value)} /> */}
+                            <Select value={nomProveedor} onChange={ev => setNomProveedor(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {proveedor.map((d) => {
+                                    return (<option key={d.key}>{d.nombre}</option>)
+                                })}
+                            </Select>
                         </ContentElemenSelect>
                     </ContentElemen>
 
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Fecha Ingreso</Label>
-                            <Input type='date' />
+                            <Input
+                                type='date'
+                                placeholder='Seleccione Fecha'
+                                name='date'
+                                value={date}
+                                onChange={ev => setDate(ev.target.value)}
+                            />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
                             <Label>Tipo Entrada</Label>
-                            <Select value={nomTipoInOut} onChange={e => setNomTipoInOut(e.target.value)}>
+                            <Select value={nomTipoIn} onChange={e => setNomTipoIn(e.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipoIn.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
@@ -114,7 +205,7 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Boton>Guardar</Boton>
+                            <Boton onClick={handleSubmit}>Guardar</Boton>
                         </ContentElemenSelect>
 
                     </ContentElemen>
@@ -127,15 +218,22 @@ const Entradas = () => {
 
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Precio</Label>
-                            <Input placeholder='Ingrese Valor'
+                            <Input
+                                placeholder='Ingrese Valor'
                             />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            <Input onChange={e => setNomEquipo(e.target.value)}
+                            <Select value={nomEquipo} onChange={e => setNomEquipo(e.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {equipo.map((d) => {
+                                    return (<option key={d.id}>{d.tipo}</option>)
+                                })}
+                            </Select>
+                            {/* <Input onChange={e => setNomEquipo(e.target.value)}
                                 placeholder='Escanee o ingrese Equipo'
-                            />
+                            /> */}
                         </ContentElemenSelect>
 
                         <Icon>
@@ -223,6 +321,12 @@ const Entradas = () => {
                     </Table.Body>
                 </Table>
             </ListarProveedor>
+
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
 
             {console.log(user.uid)}
         </ContenedorProveedor>
