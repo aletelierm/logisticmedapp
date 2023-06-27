@@ -48,7 +48,7 @@ const AgregarFamilia = () => {
 
         // Consulta si exite campo en el arreglo
         /* const existe = leer.filter(fam => fam.familia.includes(familia.toLocaleUpperCase().trim())).length === 0; */
-        const existe = leer.filter(fam => fam.familia === familia).length === 0  
+        const existe = leer.filter(fam => fam.familia === familia.toLocaleUpperCase().trim()).length === 0  
         console.log('ver si existe:', existe);
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo

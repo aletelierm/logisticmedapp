@@ -37,6 +37,7 @@ import { auth } from '../firebase/firebaseConfig';
            setTelefono(cliente.telefono);
            setCorreo(cliente.correo);
            setNomContacto(cliente.contacto)
+           console.log('Nostrar Contacto', cliente.contacto);
        }else{
        navigate('/')
    }

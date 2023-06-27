@@ -45,11 +45,12 @@ const AgregarTipo = () => {
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
-        const existe = leer.filter(tip => tip.tipo.includes(tipo.toLocaleUpperCase().trim())).length > 0;
-        console.log(existe);
+        // const existe = leer.filter(tip => tip.tipo.includes(tipo.toLocaleUpperCase().trim())).length > 0;
+        const existe = leer.filter(tip => tipo.tipo === tipo.toLocaleUpperCase().trim()).length === 0
+        console.log('ver si existe:', existe);
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
-        if (existe) {
+        if (!existe) {
 
             cambiarEstadoAlerta(true);
             cambiarAlerta({

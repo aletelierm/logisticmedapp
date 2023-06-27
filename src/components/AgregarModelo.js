@@ -44,11 +44,12 @@ const AgregarModelo = () => {
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
-        const existe = leer.filter(mod => mod.modelo.includes(modelo.toLocaleUpperCase().trim())).length > 0;
-        console.log(existe);
+        // const existe = leer.filter(mod => mod.modelo.includes(modelo.toLocaleUpperCase().trim())).length > 0;
+        const existe = leer.filter(mod => mod.modelo === modelo.toLocaleUpperCase().trim()).length === 0
+        console.log('ver si existe:', existe);
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
-        if (existe) {
+        if (!existe) {
 
             cambiarEstadoAlerta(true);
             cambiarAlerta({
