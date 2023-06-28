@@ -79,7 +79,7 @@ const ActualizaEmpresa = () => {
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                <Titulo>Registrar Empresas</Titulo>
+                <Titulo>Actulizar Empresas</Titulo>
             </ContenedorFormulario>
 
             <ContenedorFormulario>

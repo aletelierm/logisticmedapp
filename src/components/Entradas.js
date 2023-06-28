@@ -283,7 +283,7 @@ const Entradas = () => {
 
 
             <ListarProveedor>
-                <h2>Cabecera de Documentos</h2>
+                <h2>Listado de Documentos</h2>
                 <Table singleLine>
 
                     <Table.Header>

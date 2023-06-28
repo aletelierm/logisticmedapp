@@ -308,7 +308,7 @@ const Proveedores = () => {
                     </ContentElemen>
 
                     <ContentElemenSelect>
-                        <Label>Seleccione Categoria</Label>
+                        <Label>Buscar Por</Label>
                         <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
                             {/* <option>Selecciona Opción:</option> */}
                             <option>Familia</option>
