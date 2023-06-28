@@ -5,7 +5,7 @@ import EquipoDb from '../firebase/EquipoDb';
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
 import { collection, getDocs, where, query } from 'firebase/firestore';
-import { FaRegEdit } from "react-icons/fa";
+// import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
@@ -148,7 +148,7 @@ const Proveedores = () => {
 
     // Lee input de formulario
     const handleChange = (e) => {
-        switch (e.target.name) {
+        switch (e.target.name) { 
             case 'serie':
                 setSerie(e.target.value);
                 break;
@@ -201,30 +201,20 @@ const Proveedores = () => {
                 mensaje: 'Favor Ingresar N° Serie'
             })
 
-        } else if (rfid === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Favor Ingresar RFID'
-            })
+        // } else if (rfid === '') {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Favor Ingresar RFID'
+        //     })
 
         } else {
             try {
-                const existeFam = familia.filter(fam => fam.familia === nomFamilia);
-                const idFam = existeFam[0].id;
-                // const nomFam = existeFam[0].familia
-                const existeTip = tipo.filter(tip => tip.tipo === nomTipo);
-                const idTip = existeTip[0].id;
-                const existeMar = marca.filter(mar => mar.marca === nomMarca);
-                const idMar = existeMar[0].id;
-                const existeMod = modelo.filter(mod => mod.modelo === nomModelo);
-                const idMod = existeMod[0].id
                 EquipoDb({
-                    familia: idFam,
-                    // familia: nomFamilia,
-                    tipo: idTip,
-                    marca: idMar,
-                    modelo: idMod,
+                    familia: nomFamilia,
+                    tipo: nomTipo,
+                    marca: nomMarca,
+                    modelo: nomModelo,
                     serie: serie,
                     rfid: rfid,
                     userAdd: user.email,
@@ -321,10 +311,11 @@ const Proveedores = () => {
                         <Label >RFID</Label>
                         <Input
                             type='text'
-                            placeholder='Ingrese RFID'
+                            placeholder='RFID'
                             name='rfid'
                             value={rfid}
                             onChange={handleChange}
+                            disabled
                         />
                     </ContentElemen>
                     <BotonGuardar>Crear</BotonGuardar>
@@ -389,17 +380,17 @@ const Proveedores = () => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{item.id2}</Table.Cell>
-                                        <Table.Cell>{item.idFam}</Table.Cell>
+                                        <Table.Cell>{item.familia}</Table.Cell>
                                         <Table.Cell>{item.tipo}</Table.Cell>
                                         <Table.Cell>{item.marca}</Table.Cell>
                                         <Table.Cell>{item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.rfid}</Table.Cell>
-                                        <Table.Cell>
+                                        {/* <Table.Cell>
                                             <Boton>
                                                 <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
                                             </Boton>
-                                        </Table.Cell>
+                                        </Table.Cell> */}
                                     </Table.Row>
                                 )
                             })
