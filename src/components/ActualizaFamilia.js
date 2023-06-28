@@ -11,6 +11,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
 
+
 const ActualizaFamilia = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
@@ -77,7 +78,6 @@ const ActualizaFamilia = () => {
                     mensaje: 'Familia Actualizada exitosamente'
                 })
                 return;
-
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
