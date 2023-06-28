@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase/firebaseConfig';
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom';
+import { db } from '../firebase/firebaseConfig';
+import { collection, getDocs, where, query } from 'firebase/firestore';
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import ActualizarTipoDb from '../firebase/ActualizarTipoDb';
 import useObtenerTipo from '../hooks/useObtenerTipo';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const ActualizaTipo = () => {
     const user = auth.currentUser;
+    const { users } = useContext(UserContext);
     let fechaMod = new Date();
 
     const navigate = useNavigate();
@@ -16,6 +21,7 @@ const ActualizaTipo = () => {
     const [tipo] = useObtenerTipo(id);
 
     const [nuevoCampo, setNuevoCampo] = useState();
+    const [leer, setLeer] = useState([]);
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
@@ -23,24 +29,38 @@ const ActualizaTipo = () => {
         navigate('/home/misequipos/agregartipo')
     }
 
-
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
 
+    const getData = async () => {
+        const traerMar = collection(db, 'tipos');
+        const dato = query(traerMar, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (nuevoCampo === '') {
+        const existe = leer.filter(tip => tip.tipo === nuevoCampo.toLocaleUpperCase().trim()).length === 0
+        if (!existe) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ya existe esta Tipo de Equipamiento'
+            })
+
+        } else if (nuevoCampo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo no puede estar vacio'
             })
             return;
+
         } else {
             try {
                 const tip = nuevoCampo.toLocaleUpperCase();
@@ -59,7 +79,6 @@ const ActualizaTipo = () => {
                 return;
 
             } catch (error) {
-                console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -75,12 +94,14 @@ const ActualizaTipo = () => {
         } else {
             navigate('/')
         }
-        console.log('useeffeect', );
+        console.log('useeffeect',);
     }, [tipo, navigate])
 
+    useEffect(() => {
+        getData();
+    }, [])
 
     return (
-
         <ContenedorCliente>
             <ContenedorFormulario>
                 <Titulo>Actualiazar Tipo Equipamiento</Titulo>
@@ -111,7 +132,6 @@ const ActualizaTipo = () => {
         </ContenedorCliente >
     )
 }
-
 
 const Titulo = styled.h2`
     color:  #83d394;
@@ -164,6 +184,5 @@ const BotonGuardar = styled.button`
         background - color: #83d310;
     }
 `
-
 
 export default ActualizaTipo;

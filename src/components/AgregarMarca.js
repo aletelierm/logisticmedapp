@@ -16,10 +16,8 @@ import { UserContext } from '../context/UserContext';
 
 
 const AgregarMarca = () => {
-    // const navigate = useNavigate();
     const user = auth.currentUser;
     const {users} = useContext(UserContext);
-    console.log('obtener usuario contexto global:',users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -31,26 +29,20 @@ const AgregarMarca = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
-
     const handleChange = (e) => {
         setMarca(e.target.value);
     }
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
-        // const existe = leer.filter(mar => mar.marca.includes(marca.toLocaleUpperCase().trim())).length > 0;
         const existe = leer.filter(mar => mar.marca === marca.toLocaleUpperCase().trim()).length === 0
-        console.log('ver si existe:', existe);
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
-
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -85,19 +77,10 @@ const AgregarMarca = () => {
                 })
         }
     }
-    
-
-    // const getData = async () => {
-    //     const data = await getDocs(collection(db, "marcas"));
-    //     setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-    //     setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
-    //     console.log('mstrar leer 2', leer2);
-    // }
 
     const getData = async () => {
         const traerMar = collection(db, 'marcas');
         const dato = query(traerMar, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
@@ -183,16 +166,6 @@ const AgregarMarca = () => {
                     <Table.Body>
                         {filtroMarca().map((item, index) => {
                             return (
-                                // <EditarMarca
-                                //     key={item.id}
-                                //     id={item.id}
-                                //     id2={item.id2}
-                                //     marca={item.marca}
-                                //     userAdd={item.userAdd}
-                                //     userMod={item.userMod}
-                                //     setMarca={setMarca}
-                                // />
-
                                 <Table.Row key={index}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.marca}</Table.Cell>

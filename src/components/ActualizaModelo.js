@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase/firebaseConfig';
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom';
+import { db } from '../firebase/firebaseConfig';
+import { collection, getDocs, where, query } from 'firebase/firestore';
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import ActualizarModeloDb from '../firebase/ActualizarModeloDb';
 import useObtenerModelo from '../hooks/useObtenerModelo';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const ActualizaModelo = () => {
     const user = auth.currentUser;
+    const { users } = useContext(UserContext);
     let fechaMod = new Date();
 
     const navigate = useNavigate();
@@ -16,6 +21,7 @@ const ActualizaModelo = () => {
     const [modelo] = useObtenerModelo(id);
 
     const [nuevoCampo, setNuevoCampo] = useState();
+    const [leer, setLeer] = useState([]);
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
@@ -23,18 +29,31 @@ const ActualizaModelo = () => {
         navigate('/home/misequipos/agregarmodelo')
     }
 
-
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
 
+    const getData = async () => {
+        const traerMar = collection(db, 'modelos');
+        const dato = query(traerMar, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (nuevoCampo === '') {
+        const existe = leer.filter(mod => mod.modelo === nuevoCampo.toLocaleUpperCase().trim()).length === 0
+        if (!existe) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ya existe esta Modelo'
+            })
+
+        } else if (nuevoCampo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -59,7 +78,6 @@ const ActualizaModelo = () => {
                 return;
 
             } catch (error) {
-                console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -75,12 +93,14 @@ const ActualizaModelo = () => {
         } else {
             navigate('/')
         }
-        console.log('useeffeect', );
+        console.log('useeffeect',);
     }, [modelo, navigate])
 
+    useEffect(() => {
+        getData();
+    }, [])
 
     return (
-
         <ContenedorCliente>
             <ContenedorFormulario>
                 <Titulo>Actualiazar Modelo</Titulo>
@@ -164,6 +184,5 @@ const BotonGuardar = styled.button`
         background - color: #83d310;
     }
 `
-
 
 export default ActualizaModelo;
