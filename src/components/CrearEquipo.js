@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Alerta from './Alertas'
-import CrearEquipoDb from '../firebase/CrearEquipoDb';
+import EquipoDb from '../firebase/EquipoDb';
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, where, query } from 'firebase/firestore';
 import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const Proveedores = () => {
-    const userAuth = auth.currentUser.email;
-    const userAdd = userAuth;
-    const userMod = userAuth;
+    const user = auth.currentUser;
+    const { users } = useContext(UserContext);
+    console.log('obtener usuario contexto global:', users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -29,7 +31,7 @@ const Proveedores = () => {
     const [rfid, setRfid] = useState('');
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [equipo, setEquipo] = useState([]);   
+    const [equipo, setEquipo] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
@@ -38,35 +40,70 @@ const Proveedores = () => {
     const [tip] = useState(sessionStorage.getItem('tipo'));
     const [marc] = useState(sessionStorage.getItem('marca'));
     const [mod,] = useState(sessionStorage.getItem('modelo'));
-    
+
     //Leer los datos de Familia
-    const getFamila = async () => {
-        const dataFamilia = await getDocs(collection(db, 'familias'));
-        setFamilia(dataFamilia.docs.map((fam) => ({ ...fam.data(), id: fam.id })));
+    // const getFamilia = async () => {
+    //     const dataFamilia = await getDocs(collection(db, 'familias'));
+    //     setFamilia(dataFamilia.docs.map((fam) => ({ ...fam.data(), id: fam.id })));
+    // }
+    const getFamilia = async () => {
+        const traerFam = collection(db, 'familias');
+        const dato = query(traerFam, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Tipos
+    // const getTipo = async () => {
+    //     const dataTipo = await getDocs(collection(db, 'tipos'));
+    //     setTipo(dataTipo.docs.map((tip) => ({ ...tip.data(), id: tip.id })));
+    // }
     const getTipo = async () => {
-        const dataTipo = await getDocs(collection(db, 'tipos'));
-        setTipo(dataTipo.docs.map((tip) => ({ ...tip.data(), id: tip.id })));
+        const traerTip = collection(db, 'tipos');
+        const dato = query(traerTip, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Marcas
+    // const getMarca = async () => {
+    //     const dataMarca = await getDocs(collection(db, 'marcas'));
+    //     setMarca(dataMarca.docs.map((mar) => ({ ...mar.data(), id: mar.id })));
+    // }
     const getMarca = async () => {
-        const dataMarca = await getDocs(collection(db, 'marcas'));
-        setMarca(dataMarca.docs.map((mar) => ({ ...mar.data(), id: mar.id })));
+        const traerMar = collection(db, 'marcas');
+        const dato = query(traerMar, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        setMarca(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Modelos
+    // const getModelo = async () => {
+    //     const dataModelo = await getDocs(collection(db, 'modelos'));
+    //     setModelo(dataModelo.docs.map((mod) => ({ ...mod.data(), id: mod.id })));
+    // }
     const getModelo = async () => {
-        const dataModelo = await getDocs(collection(db, 'modelos'));
-        setModelo(dataModelo.docs.map((mod) => ({ ...mod.data(), id: mod.id })));
+        const traerMod = collection(db, 'modelos');
+        const dato = query(traerMod, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        setModelo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Equipos
+    // const getEquipo = async () => {
+    //     const dataEquipo = await getDocs(collection(db, 'crearequipos'));
+    //     setEquipo(dataEquipo.docs.map((eq, index) => ({ ...eq.data(), id: eq.id, id2: index + 1 })));
+    // }
     const getEquipo = async () => {
-        const dataEquipo = await getDocs(collection(db, 'crearequipos'));
-        setEquipo(dataEquipo.docs.map((eq, index) => ({ ...eq.data(), id: eq.id, id2: index + 1 })));
+        const traerEq = collection(db, 'equipos');
+        const dato = query(traerEq, where('emp_id', '==', users.emp_id));
+
+        const data = await getDocs(dato)
+        setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
 
@@ -113,198 +150,192 @@ const Proveedores = () => {
         }
     }
 
-        const paginaAnterior = () => {
-            if (pagina > 0) setPagina(pagina - 5)
+    const paginaAnterior = () => {
+        if (pagina > 0) setPagina(pagina - 5)
+    }
+
+    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
+        setPagina(0);
+        setBuscardor(target.value)
+    }
+
+
+
+
+    useEffect(() => {
+        getFamilia();
+        getTipo();
+        getMarca();
+        getModelo();
+        console.log('Se ejecuto useEffect de getFamilia, getMarca...');
+    }, [])
+
+    useEffect(() => {
+        getEquipo();
+        console.log('Se ejecuto useEffect de getEquipo...');
+    }, [])
+
+    // Lee input de formulario
+    const handleChange = (e) => {
+        switch (e.target.name) {
+            case 'serie':
+                setSerie(e.target.value);
+                break;
+            case 'rfid':
+                setRfid(e.target.value);
+                break;
+            default:
+                break;
         }
+    }
 
-        const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-            setPagina(0);
-            setBuscardor(target.value)
-        }
+    const handleSubmit = async (e) => {
 
+        const existeFam = familia.filter(fam => fam.familia === nomFamilia)
+        const idFam = existeFam[0].id
+        console.log('existe familia', existeFam[0].id);
+        console.log(existeFam);
+        const existeTip = tipo.filter(tip => tip.tipo === nomTipo)
+        console.log('existe tipo', existeTip[0].id);
+        console.log(existeTip);
+        const existeMar = marca.filter(mar => mar.marca === nomMarca)
+        console.log('existe Marca', existeMar[0].id);
+        console.log(existeMar);
+        const existeMod = modelo.filter(mod => mod.modelo === nomModelo)
+        console.log('existe Modelo', existeMod[0].id);
+        console.log(existeMod);
+        
 
+        // console.log(nomFamilia);
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
 
+        if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+            console.log(nomFamilia);
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Familia'
+            })
+        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Tipo Equipamiento'
+            })
+        } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Marca'
+            })
+        } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Modelo'
+            })
 
-        useEffect(() => {
-            getFamila();
-            getTipo();
-            getMarca();
-            getModelo();
-            console.log('Se ejecuto useEffect de getFamilia, getMarca...');
-        }, [])
+        } else if (serie === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Ingresar N° Serie'
+            })
 
-        useEffect(() => {
-            getEquipo();
-            console.log('Se ejecuto useEffect de getEquipo...');
-        }, [])
+        } else if (rfid === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Ingresar RFID'
+            })
 
-        // Lee input de formulario
-        const handleChange = (e) => {
-            switch (e.target.name) {
-                case 'serie':
-                    setSerie(e.target.value);                    
-                    break;
-                case 'rfid':
-                    setRfid(e.target.value);
-                    break;
-                default:
-                    break;
+        } else {
+            try {
+                // const existeFam = familia.filter(fam => fam.familia === nomFamilia)
+                // const idFam = existeFam[0].id
+                // console.log('existe familia', existeFam[0].id);
+                // console.log(existeFam);
+                EquipoDb({
+                    familia: nomFamilia,
+                    tipo: nomTipo,
+                    marca: nomMarca,
+                    modelo: nomModelo,
+                    serie: serie,
+                    rfid: rfid,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
+                })
+                setSerie('');
+                setRfid('');
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Equipo creado correctamente'
+                })
+            } catch (error) {
+                console.log(error);
             }
         }
-
-        const handleSubmit = async (e) => {
-            // console.log(nomFamilia);
-            e.preventDefault();
-            cambiarEstadoAlerta(false);
-            cambiarAlerta({});
-
-            if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
-                console.log(nomFamilia);
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Favor Seleccionar Familia'
-                })
-            } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Favor Seleccionar Tipo Equipamiento'
-                })
-            } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Favor Seleccionar Marca'
-                })
-            } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Favor Seleccionar Modelo'
-                })
-
-            } else if (serie === '') {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Favor Ingresar N° Serie'
-                })
-
-            } else if (rfid === '') {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Favor Ingresar RFID'
-                })
-
-            } else {
-                try {
-                    CrearEquipoDb({
-                        familia: nomFamilia,
-                        tipo: nomTipo,
-                        marca: nomMarca,
-                        modelo: nomModelo,
-                        serie: serie,
-                        rfid: rfid,
-                        userAdd: userAdd,
-                        userMod: userMod,
-                        fechaAdd: fechaAdd,
-                        fechaMod: fechaMod
-                    })
-                    setSerie('');
-                    setRfid('');
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Equipo creado correctamente'
-                    })
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        }
+    }
 
 
-        return (
-            <ContenedorFormulario>
-                <Contenedor>
-                    <Titulo>Crear Dispositivos Médicos</Titulo>
-                </Contenedor>
+    return (
+        <ContenedorFormulario>
+            <Contenedor>
+                <Titulo>Crear Dispositivos Médicos</Titulo>
+            </Contenedor>
 
-                <Contenedor>
-                    <Formulario action='' onSubmit={handleSubmit}>
-                        <ContentElemen>
-                            <ContentElemenSelect>
-                                <Label>Familias</Label>
-                                <Select value={nomFamilia} onChange={e =>{setNomFamilia(e.target.value); sessionStorage.setItem('familia',e.target.value)}}>                                    
-                                    {fami ? <option>{fami}</option>: <option>Selecciona Opción:</option>}                                   
-                                    {familia.map((d) => {
-                                        return (<option key={d.id}>{d.familia}</option>)
-                                    })}
-                                </Select>
-                            </ContentElemenSelect>
-
-                            <ContentElemenSelect>
-                                <Label>Tipo Equipamiento</Label>
-                                <Select value={nomTipo} onChange={e => {setNomTipo(e.target.value); sessionStorage.setItem('tipo',e.target.value)}}>
-                                    {tip ? <option>{tip}</option>: <option>Selecciona Opción:</option>}   
-                                    {tipo.map((d) => {
-                                        return (<option key={d.id}>{d.tipo}</option>)
-                                    })}
-                                </Select>
-                            </ContentElemenSelect>
-
-                            <ContentElemenSelect>
-                                <Label>Marca</Label>
-                                <Select value={nomMarca} onChange={e => {setNomMarca(e.target.value);sessionStorage.setItem('marca',e.target.value)}}>
-                                {marc ? <option>{marc}</option>: <option>Selecciona Opción:</option>}  
-                                    {marca.map((d) => {
-                                        return (<option key={d.id}>{d.marca}</option>)
-                                    })}
-                                </Select>
-                            </ContentElemenSelect>
-
-                            <ContentElemenSelect>
-                                <Label>Modelo</Label>
-                                <Select value={nomModelo} onChange={e => {setNomModelo(e.target.value);sessionStorage.setItem('modelo',e.target.value)}}>
-                                    {mod ? <option>{mod}</option>: <option>Selecciona Opción:</option>}  
-                                    {modelo.map((d) => {
-                                        return (<option key={d.id}>{d.modelo}</option>)
-                                    })}
-                                </Select>
-                            </ContentElemenSelect>
-                        </ContentElemen>
-
-                        <ContentElemen>
-                            <Label >N° Serie</Label>
-                            <Input
-                                type='text'
-                                placeholder='Ingrese N° Serie'
-                                name='serie' h
-                                value={serie}
-                                onChange={handleChange}
-                            />
-                            <Label >RFID</Label>
-                            <Input
-                                type='text'
-                                placeholder='Ingrese RFID'
-                                name='rfid'
-                                value={rfid}
-                                onChange={handleChange}
-                            />
-                        </ContentElemen>
-                        <BotonGuardar>Crear</BotonGuardar>
-
-
-                    </Formulario>
-                </Contenedor>
-
-                <ListarProveedor>
+            <Contenedor>
+                <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
-                        <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
-                        <Titulo>Listado de Dispositivos Médicos</Titulo>
-                        <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                        <ContentElemenSelect>
+                            <Label>Familias</Label>
+                            <Select value={nomFamilia} onChange={e => { setNomFamilia(e.target.value); sessionStorage.setItem('familia', e.target.value) }}>
+                                {fami ? <option>{fami}</option> : <option>Selecciona Opción:</option>}
+                                {/* <option>Selecciona Opción:</option> */}
+                                {familia.map((d) => {
+                                    return (<option key={d.id}>{d.familia}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>Tipo Equipamiento</Label>
+                            <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value); sessionStorage.setItem('tipo', e.target.value) }}>
+                                {/* {tip ? <option>{tip}</option> : <option>Selecciona Opción:</option>} */}
+                                <option>Selecciona Opción:</option>
+                                {tipo.map((d) => {
+                                    return (<option key={d.id}>{d.tipo}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>Marca</Label>
+                            <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value); sessionStorage.setItem('marca', e.target.value) }}>
+                                {/* {marc ? <option>{marc}</option> : <option>Selecciona Opción:</option>} */}
+                                <option>Selecciona Opción:</option>
+                                {marca.map((d) => {
+                                    return (<option key={d.id}>{d.marca}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>Modelo</Label>
+                            <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value); sessionStorage.setItem('modelo', e.target.value) }}>
+                                {/* {mod ? <option>{mod}</option> : <option>Selecciona Opción:</option>} */}
+                                <option>Selecciona Opción:</option>
+                                {modelo.map((d) => {
+                                    return (<option key={d.id}>{d.modelo}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
                     </ContentElemen>
 
                     <ContentElemenSelect>
@@ -320,70 +351,124 @@ const Proveedores = () => {
                     </ContentElemenSelect>
 
                     <ContentElemen>
-                        <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
-                        <Input style={{ width: '100%' }}
+                        <Label >N° Serie</Label>
+                        <Input
                             type='text'
-                            placeholder={`Buscar ${categoria}`}
-                            value={buscador}
-                            onChange={onBuscarCambios}
+                            placeholder='Ingrese N° Serie'
+                            name='serie'
+                            value={serie}
+                            onChange={handleChange}
+                        />
+                        <Label >RFID</Label>
+                        <Input
+                            type='text'
+                            placeholder='Ingrese RFID'
+                            name='rfid'
+                            value={rfid}
+                            onChange={handleChange}
                         />
                     </ContentElemen>
-
-                    <Table singleLine>
-
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>N°</Table.HeaderCell>
-                                <Table.HeaderCell>Familia</Table.HeaderCell>
-                                <Table.HeaderCell>Tipo</Table.HeaderCell>
-                                <Table.HeaderCell>Marca</Table.HeaderCell>
-                                <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                <Table.HeaderCell>N° Serie</Table.HeaderCell>
-                                <Table.HeaderCell>RFID</Table.HeaderCell>
-                                <Table.HeaderCell>Acción</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-
-                        <Table.Body>
-                            {
-                                filtro().map((item) => {
-                                    return (
-                                        <Table.Row key={item.id2}>
-                                            <Table.Cell>{item.id2}</Table.Cell>
-                                            <Table.Cell>{item.familia}</Table.Cell>
-                                            <Table.Cell>{item.tipo}</Table.Cell>
-                                            <Table.Cell>{item.marca}</Table.Cell>
-                                            <Table.Cell>{item.modelo}</Table.Cell>
-                                            <Table.Cell>{item.serie}</Table.Cell>
-                                            <Table.Cell>{item.rfid}</Table.Cell>
-                                            <Table.Cell>
-                                                <Boton>
-                                                    <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
-                                                </Boton>
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    )
-                                })
-                            }
-                        </Table.Body>
-
-                    </Table>
-                </ListarProveedor>
-                <Alerta
-                    tipo={alerta.tipo}
-                    mensaje={alerta.mensaje}
-                    estadoAlerta={estadoAlerta}
-                    cambiarEstadoAlerta={cambiarEstadoAlerta}
-                />
-            </ContenedorFormulario>
-        );
-    };
+                    <BotonGuardar>Crear</BotonGuardar>
 
 
-    const ContenedorFormulario = styled.div`
+                </Formulario>
+            </Contenedor>
+
+            <ListarProveedor>
+                <ContentElemen>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                    <Titulo>Listado de Dispositivos Médicos</Titulo>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                </ContentElemen>
+
+                <ContentElemenSelect>
+                    <Label>Seleccione Categoria</Label>
+                    <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
+                        {/* <option>Selecciona Opción:</option> */}
+                        <option>Familia</option>
+                        <option>Tipo</option>
+                        <option>Marca</option>
+                        <option>Modelo</option>
+                        {console.log(categoria)}
+                    </Select>
+                </ContentElemenSelect>
+                    <ContentElemenSelect>
+                        <Label>Buscar Por</Label>
+                        <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
+                            {/* <option>Selecciona Opción:</option> */}
+                            <option>Familia</option>
+                            <option>Tipo</option>
+                            <option>Marca</option>
+                            <option>Modelo</option>
+                            {console.log(categoria)}
+                        </Select>
+                    </ContentElemenSelect>
+
+                <ContentElemen>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
+                    <Input style={{ width: '100%' }}
+                        type='text'
+                        placeholder={`Buscar ${categoria}`}
+                        value={buscador}
+                        onChange={onBuscarCambios}
+                    />
+                </ContentElemen>
+
+                <Table singleLine>
+
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Familia</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo</Table.HeaderCell>
+                            <Table.HeaderCell>Marca</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N° Serie</Table.HeaderCell>
+                            <Table.HeaderCell>RFID</Table.HeaderCell>
+                            <Table.HeaderCell>Acción</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        {
+                            filtro().map((item) => {
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.familia}</Table.Cell>
+                                        <Table.Cell>{item.tipo}</Table.Cell>
+                                        <Table.Cell>{item.marca}</Table.Cell>
+                                        <Table.Cell>{item.modelo}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell>{item.rfid}</Table.Cell>
+                                        <Table.Cell>
+                                            <Boton>
+                                                <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                            </Boton>
+                                        </Table.Cell>
+                                    </Table.Row>
+                                )
+                            })
+                        }
+                    </Table.Body>
+
+                </Table>
+            </ListarProveedor>
+            <Alerta
+                tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+        </ContenedorFormulario>
+    );
+};
+
+
+const ContenedorFormulario = styled.div`
 `
 
-    const Contenedor = styled.div`
+const Contenedor = styled.div`
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
@@ -392,11 +477,11 @@ const Proveedores = () => {
     font-size: 15px;
 `
 
-    const Titulo = styled.h2`
+const Titulo = styled.h2`
     color:  #83d394;
 `
 
-    const ContentElemen = styled.div`
+const ContentElemen = styled.div`
     display: flex;
     text-align: center;
     padding: 7px;
@@ -405,10 +490,10 @@ const Proveedores = () => {
     justify-content: space-between;
 `
 
-    const ContentElemenSelect = styled.div`
+const ContentElemenSelect = styled.div`
     padding: 20px;
 `
-    const Select = styled.select`
+const Select = styled.select`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px;
@@ -416,7 +501,7 @@ const Proveedores = () => {
 `
 
 
-    const ListarProveedor = styled.div`
+const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
@@ -424,20 +509,20 @@ const Proveedores = () => {
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
 
-    const Formulario = styled.form``
+const Formulario = styled.form``
 
-    const Input = styled.input`
+const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px;
 `
 
-    const Label = styled.label`
+const Label = styled.label`
         padding: 5px;
         font-size: 20px;
 `
 
-    const Boton = styled.button`
+const Boton = styled.button`
     background-color: #ffffff;
     color: green;
     padding: 10px;
@@ -446,7 +531,7 @@ const Proveedores = () => {
     margin: 0 10px;
     cursor: pointer;
 `
-    const BotonGuardar = styled.button`
+const BotonGuardar = styled.button`
     background-color: #83d394;
     color: green;
     padding: 10px;
@@ -459,4 +544,4 @@ const Proveedores = () => {
         }
 `
 
-    export default Proveedores;
+export default Proveedores;
