@@ -11,16 +11,13 @@ import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
-// import EditarTipo from './EditarTipo';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
 
 const AgregarTipo = () => {
-    // const navigate = useNavigate();
     const user = auth.currentUser;
     const {users} = useContext(UserContext);
-    console.log('obtener usuario contexto global:',users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -32,26 +29,20 @@ const AgregarTipo = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
     
-
     const handleChange = (e) => {
         setTipo(e.target.value);
     }
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
-        // const existe = leer.filter(tip => tip.tipo.includes(tipo.toLocaleUpperCase().trim())).length > 0;
         const existe = leer.filter(tip => tipo.tipo === tipo.toLocaleUpperCase().trim()).length === 0
-        console.log('ver si existe:', existe);
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
-
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -87,22 +78,10 @@ const AgregarTipo = () => {
         }
     }
 
-
-    // const getData = async () => {
-    //     const data = await getDocs(collection(db, "tipos"));
-    //     setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-    //     setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
-    // }
-
     const getData = async () => {
         const traerTipo = collection(db, 'tipos');
         const dato = query(traerTipo, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
-        // data.forEach((doc) => {
-        //     // doc.data() is never undefined for query doc snapshots
-        //     console.log(doc.id, " => ", doc.data());
-        // });
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
@@ -187,16 +166,6 @@ const AgregarTipo = () => {
                     <Table.Body>
                         {filtroTipo().map((item, index) => {
                             return (
-                                // <EditarTipo
-                                //     key={item.id}
-                                //     id={item.id}
-                                //     id2={item.id2}
-                                //     tipo={item.tipo}
-                                //     userAdd={item.userAdd}
-                                //     userMod={item.userMod}
-                                //     setTipo={setTipo}
-                                // />
-
                                 <Table.Row key={index}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.tipo}</Table.Cell>

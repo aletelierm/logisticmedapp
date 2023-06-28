@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { auth } from '../firebase/firebaseConfig';
 import { useNavigate, useParams } from 'react-router-dom'
+import { db } from '../firebase/firebaseConfig';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import ActualizarFamiliaDb from '../firebase/ActualizarFamiliaDb';
 import useObtenerFamilia from '../hooks/useObtenerFamilia';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
 const ActualizaFamilia = () => {
     const user = auth.currentUser;
+    const { users } = useContext(UserContext);
     let fechaMod = new Date();
 
     const navigate = useNavigate();
@@ -16,6 +21,7 @@ const ActualizaFamilia = () => {
     const [familia] = useObtenerFamilia(id);
 
     const [nuevoCampo, setNuevoCampo] = useState();
+    const [leer, setLeer] = useState([]);
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
@@ -23,24 +29,38 @@ const ActualizaFamilia = () => {
         navigate('/home/misequipos/agregarfamilia')
     }
 
-
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
 
+    const getData = async () => {
+        const traerFam = collection(db, 'familias');
+        const dato = query(traerFam, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (nuevoCampo === '') {
+        const existe = leer.filter(fam => fam.familia === nuevoCampo.toLocaleUpperCase().trim()).length === 0;        
+        if (!existe) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ya existe esta Familia'
+            })
+
+        } else if (nuevoCampo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo no puede estar vacio'
             })
             return;
+
         } else {
             try {
                 const fam = nuevoCampo.toLocaleUpperCase();
@@ -59,7 +79,6 @@ const ActualizaFamilia = () => {
                 return;
 
             } catch (error) {
-                console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -78,9 +97,11 @@ const ActualizaFamilia = () => {
         console.log('useeffeect', );
     }, [familia, navigate])
 
+    useEffect(() => {
+        getData();
+    }, [])
 
     return (
-
         <ContenedorCliente>
             <ContenedorFormulario>
                 <Titulo>Actualiazar Familia</Titulo>
@@ -112,7 +133,6 @@ const ActualizaFamilia = () => {
     )
 }
 
-
 const Titulo = styled.h2`
     color:  #83d394;
 `
@@ -135,9 +155,7 @@ const ContentElemen = styled.div`
     padding: 20px;
 `
 
-const Formulario = styled.form`
-   
-`
+const Formulario = styled.form``
 
 const Input = styled.input`
     border: 2px solid #d1d1d1;
@@ -166,6 +184,5 @@ const BotonGuardar = styled.button`
         background-color: #83d310;
     }
 `
-
 
 export default ActualizaFamilia;

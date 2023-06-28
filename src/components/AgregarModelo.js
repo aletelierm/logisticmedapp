@@ -16,10 +16,8 @@ import { UserContext } from '../context/UserContext';
 
 
 const AgregarModelo = () => {
-    // const navigate = useNavigate();
     const user = auth.currentUser;
-    const {users} = useContext(UserContext);
-    console.log('obtener usuario contexto global:',users);
+    const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -31,32 +29,26 @@ const AgregarModelo = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
-
     const handleChange = (e) => {
         setModelo(e.target.value);
     }
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
-        // const existe = leer.filter(mod => mod.modelo.includes(modelo.toLocaleUpperCase().trim())).length > 0;
         const existe = leer.filter(mod => mod.modelo === modelo.toLocaleUpperCase().trim()).length === 0
-        console.log('ver si existe:', existe);
 
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
-
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ya existe este Modelo'
             })
-            
+
         } else if (modelo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -86,22 +78,10 @@ const AgregarModelo = () => {
         }
     }
 
-
-    // const getData = async () => {
-    //     const data = await getDocs(collection(db, "modelos"));
-    //     setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-    //     setLeer(leer2.filter(emp => emp.emp_id == users.emp_id));
-    // }
-
     const getData = async () => {
         const traerMod = collection(db, 'modelos');
         const dato = query(traerMod, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
-        // data.forEach((doc) => {
-        //     // doc.data() is never undefined for query doc snapshots
-        //     console.log(doc.id, " => ", doc.data());
-        // });
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
@@ -129,7 +109,7 @@ const AgregarModelo = () => {
 
     useEffect(() => {
         getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setFlag, flag])
 
     return (
@@ -186,16 +166,6 @@ const AgregarModelo = () => {
                     <Table.Body>
                         {filtroModelo().map((item, index) => {
                             return (
-                                // <EditarModelo
-                                //     key={item.id}
-                                //     id={item.id}
-                                //     id2={item.id2}
-                                //     modelo={item.modelo}
-                                //     userAdd={item.userAdd}
-                                //     userMod={item.userMod}
-                                //     setModelo={setModelo}
-                                // />
-
                                 <Table.Row key={index}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.modelo}</Table.Cell>

@@ -16,13 +16,10 @@ import { UserContext } from '../context/UserContext';
 
 
 const AgregarFamilia = () => {
-    // const navigate = useNavigate();
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
-    console.log('obtener usuario contexto global:', users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
-
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
@@ -32,27 +29,20 @@ const AgregarFamilia = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
-
     const handleChange = (e) => {
         setFamilia(e.target.value);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        console.log('mostrar familia', familia.toLocaleUpperCase().trim());
-        console.log('mostrar leer', leer);
-
         // Consulta si exite campo en el arreglo
-        /* const existe = leer.filter(fam => fam.familia.includes(familia.toLocaleUpperCase().trim())).length === 0; */
-        const existe = leer.filter(fam => fam.familia === familia.toLocaleUpperCase().trim()).length === 0  
-        console.log('ver si existe:', existe);
+        const existe = leer.filter(fam => fam.familia === familia.toLocaleUpperCase().trim()).length === 0
         
+        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
-
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -78,14 +68,6 @@ const AgregarFamilia = () => {
                 emp_id: users.emp_id
             })
                 .then(() => {
-                    /* ver si se puede agregar item al arreglo de obejetos
-                    setLeer(leer.map((doc, index) => ({ ...doc,
-                        id: 11,
-                        familia: fam,
-                        userAdd: user.email,
-                        userMod: user.email,
-                        fechaAdd: fechaAdd,
-                        fechaMod: fechaMod  })));   */
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -98,21 +80,9 @@ const AgregarFamilia = () => {
         }
     }
 
-
-    // const getData = async () => {
-    //     const data = await getDocs(collection(db, "familias"));
-    //     setLeer2(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-    //     setLeer(leer2.filter(emp => emp.includes(users.emp_id)));
-
-    //     // setFlag(!flag)
-    //     console.log('Mostrar leer', leer.emp_id);
-    //     console.log('mostrar leer2', leer2);
-    // }
-
     const getData = async () => {
         const traerFam = collection(db, 'familias');
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
@@ -141,10 +111,8 @@ const AgregarFamilia = () => {
 
     useEffect(() => {
         getData();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-
 
     return (
         <ContenedorProveedor>
@@ -199,18 +167,6 @@ const AgregarFamilia = () => {
                     <Table.Body>
                         {filtroFamilia().map((item, index) => {
                             return (
-
-                                // <Editar
-                                //     key={item.id}
-                                //     id={item.id}
-                                //     id2={item.id2}
-                                //     familia={item.familia}
-                                //     userAdd={item.userAdd}
-                                //     userMod={item.userMod}
-                                //     setFamilia={setFamilia}
-                                //     cambioflag={cambioFlag}
-                                // />
-
                                 <Table.Row key={index}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.familia}</Table.Cell>

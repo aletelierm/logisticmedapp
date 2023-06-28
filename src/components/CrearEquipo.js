@@ -15,7 +15,6 @@ import { UserContext } from '../context/UserContext';
 const Proveedores = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
-    console.log('obtener usuario contexto global:', users);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -42,76 +41,51 @@ const Proveedores = () => {
     const [mod,] = useState(sessionStorage.getItem('modelo'));
 
     //Leer los datos de Familia
-    // const getFamilia = async () => {
-    //     const dataFamilia = await getDocs(collection(db, 'familias'));
-    //     setFamilia(dataFamilia.docs.map((fam) => ({ ...fam.data(), id: fam.id })));
-    // }
     const getFamilia = async () => {
         const traerFam = collection(db, 'familias');
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
         setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Tipos
-    // const getTipo = async () => {
-    //     const dataTipo = await getDocs(collection(db, 'tipos'));
-    //     setTipo(dataTipo.docs.map((tip) => ({ ...tip.data(), id: tip.id })));
-    // }
     const getTipo = async () => {
         const traerTip = collection(db, 'tipos');
         const dato = query(traerTip, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
         setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Marcas
-    // const getMarca = async () => {
-    //     const dataMarca = await getDocs(collection(db, 'marcas'));
-    //     setMarca(dataMarca.docs.map((mar) => ({ ...mar.data(), id: mar.id })));
-    // }
     const getMarca = async () => {
         const traerMar = collection(db, 'marcas');
         const dato = query(traerMar, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
         setMarca(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Modelos
-    // const getModelo = async () => {
-    //     const dataModelo = await getDocs(collection(db, 'modelos'));
-    //     setModelo(dataModelo.docs.map((mod) => ({ ...mod.data(), id: mod.id })));
-    // }
     const getModelo = async () => {
         const traerMod = collection(db, 'modelos');
         const dato = query(traerMod, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
         setModelo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Leer los datos de Equipos
-    // const getEquipo = async () => {
-    //     const dataEquipo = await getDocs(collection(db, 'crearequipos'));
-    //     setEquipo(dataEquipo.docs.map((eq, index) => ({ ...eq.data(), id: eq.id, id2: index + 1 })));
-    // }
     const getEquipo = async () => {
         const traerEq = collection(db, 'equipos');
         const dato = query(traerEq, where('emp_id', '==', users.emp_id));
-
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
 
     // Buscador de equipos
     const filtro = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
             return equipo.slice(pagina, pagina + 5);
+
         if (categoria === 'Familia') {
             const nuevoFiltro = equipo.filter(eq => eq.familia.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
@@ -159,20 +133,15 @@ const Proveedores = () => {
         setBuscardor(target.value)
     }
 
-
-
-
     useEffect(() => {
         getFamilia();
         getTipo();
         getMarca();
         getModelo();
-        console.log('Se ejecuto useEffect de getFamilia, getMarca...');
     }, [])
 
     useEffect(() => {
         getEquipo();
-        console.log('Se ejecuto useEffect de getEquipo...');
     }, [])
 
     // Lee input de formulario
@@ -190,23 +159,6 @@ const Proveedores = () => {
     }
 
     const handleSubmit = async (e) => {
-
-        const existeFam = familia.filter(fam => fam.familia === nomFamilia)
-        const idFam = existeFam[0].id
-        console.log('existe familia', existeFam[0].id);
-        console.log(existeFam);
-        const existeTip = tipo.filter(tip => tip.tipo === nomTipo)
-        console.log('existe tipo', existeTip[0].id);
-        console.log(existeTip);
-        const existeMar = marca.filter(mar => mar.marca === nomMarca)
-        console.log('existe Marca', existeMar[0].id);
-        console.log(existeMar);
-        const existeMod = modelo.filter(mod => mod.modelo === nomModelo)
-        console.log('existe Modelo', existeMod[0].id);
-        console.log(existeMod);
-        
-
-        // console.log(nomFamilia);
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -218,18 +170,21 @@ const Proveedores = () => {
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Familia'
             })
+
         } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Tipo Equipamiento'
             })
+
         } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Marca'
             })
+
         } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -253,15 +208,21 @@ const Proveedores = () => {
 
         } else {
             try {
-                // const existeFam = familia.filter(fam => fam.familia === nomFamilia)
-                // const idFam = existeFam[0].id
-                // console.log('existe familia', existeFam[0].id);
-                // console.log(existeFam);
+                const existeFam = familia.filter(fam => fam.familia === nomFamilia);
+                const idFam = existeFam[0].id;
+                // const nomFam = existeFam[0].familia
+                const existeTip = tipo.filter(tip => tip.tipo === nomTipo);
+                const idTip = existeTip[0].id;
+                const existeMar = marca.filter(mar => mar.marca === nomMarca);
+                const idMar = existeMar[0].id;
+                const existeMod = modelo.filter(mod => mod.modelo === nomModelo);
+                const idMod = existeMod[0].id
                 EquipoDb({
-                    familia: nomFamilia,
-                    tipo: nomTipo,
-                    marca: nomMarca,
-                    modelo: nomModelo,
+                    familia: idFam,
+                    // familia: nomFamilia,
+                    tipo: idTip,
+                    marca: idMar,
+                    modelo: idMod,
                     serie: serie,
                     rfid: rfid,
                     userAdd: user.email,
@@ -283,7 +244,6 @@ const Proveedores = () => {
         }
     }
 
-
     return (
         <ContenedorFormulario>
             <Contenedor>
@@ -293,11 +253,11 @@ const Proveedores = () => {
             <Contenedor>
                 <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
+
                         <ContentElemenSelect>
                             <Label>Familias</Label>
                             <Select value={nomFamilia} onChange={e => { setNomFamilia(e.target.value); sessionStorage.setItem('familia', e.target.value) }}>
                                 {fami ? <option>{fami}</option> : <option>Selecciona Opción:</option>}
-                                {/* <option>Selecciona Opción:</option> */}
                                 {familia.map((d) => {
                                     return (<option key={d.id}>{d.familia}</option>)
                                 })}
@@ -307,8 +267,7 @@ const Proveedores = () => {
                         <ContentElemenSelect>
                             <Label>Tipo Equipamiento</Label>
                             <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value); sessionStorage.setItem('tipo', e.target.value) }}>
-                                {/* {tip ? <option>{tip}</option> : <option>Selecciona Opción:</option>} */}
-                                <option>Selecciona Opción:</option>
+                                {tip ? <option>{tip}</option> : <option>Selecciona Opción:</option>}
                                 {tipo.map((d) => {
                                     return (<option key={d.id}>{d.tipo}</option>)
                                 })}
@@ -318,8 +277,7 @@ const Proveedores = () => {
                         <ContentElemenSelect>
                             <Label>Marca</Label>
                             <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value); sessionStorage.setItem('marca', e.target.value) }}>
-                                {/* {marc ? <option>{marc}</option> : <option>Selecciona Opción:</option>} */}
-                                <option>Selecciona Opción:</option>
+                                {marc ? <option>{marc}</option> : <option>Selecciona Opción:</option>}
                                 {marca.map((d) => {
                                     return (<option key={d.id}>{d.marca}</option>)
                                 })}
@@ -329,8 +287,7 @@ const Proveedores = () => {
                         <ContentElemenSelect>
                             <Label>Modelo</Label>
                             <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value); sessionStorage.setItem('modelo', e.target.value) }}>
-                                {/* {mod ? <option>{mod}</option> : <option>Selecciona Opción:</option>} */}
-                                <option>Selecciona Opción:</option>
+                                {mod ? <option>{mod}</option> : <option>Selecciona Opción:</option>}
                                 {modelo.map((d) => {
                                     return (<option key={d.id}>{d.modelo}</option>)
                                 })}
@@ -357,8 +314,6 @@ const Proveedores = () => {
                         />
                     </ContentElemen>
                     <BotonGuardar>Crear</BotonGuardar>
-
-
                 </Formulario>
             </Contenedor>
 
@@ -377,7 +332,6 @@ const Proveedores = () => {
                         <option>Tipo</option>
                         <option>Marca</option>
                         <option>Modelo</option>
-                        {console.log(categoria)}
                     </Select>
                 </ContentElemenSelect>
 
@@ -392,7 +346,6 @@ const Proveedores = () => {
                 </ContentElemen>
 
                 <Table singleLine>
-
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
@@ -402,7 +355,6 @@ const Proveedores = () => {
                             <Table.HeaderCell>Modelo</Table.HeaderCell>
                             <Table.HeaderCell>N° Serie</Table.HeaderCell>
                             <Table.HeaderCell>RFID</Table.HeaderCell>
-                            <Table.HeaderCell>Acción</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -412,7 +364,7 @@ const Proveedores = () => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{item.id2}</Table.Cell>
-                                        <Table.Cell>{item.familia}</Table.Cell>
+                                        <Table.Cell>{item.idFam}</Table.Cell>
                                         <Table.Cell>{item.tipo}</Table.Cell>
                                         <Table.Cell>{item.marca}</Table.Cell>
                                         <Table.Cell>{item.modelo}</Table.Cell>
@@ -441,9 +393,7 @@ const Proveedores = () => {
     );
 };
 
-
-const ContenedorFormulario = styled.div`
-`
+const ContenedorFormulario = styled.div``
 
 const Contenedor = styled.div`
     margin-top: 20px;
@@ -476,7 +426,6 @@ const Select = styled.select`
     padding: 5px;
     width: 200px;
 `
-
 
 const ListarProveedor = styled.div`
     margin-top: 20px;
@@ -517,8 +466,8 @@ const BotonGuardar = styled.button`
     margin: 0 10px;
     cursor: pointer;
     &:hover{
-            background-color: #83d310;
-        }
+        background-color: #83d310;
+    }
 `
 
 export default Proveedores;
