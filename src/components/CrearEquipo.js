@@ -19,7 +19,7 @@ const Proveedores = () => {
     let fechaMod = new Date();
 
     const [familia, setFamilia] = useState([]);
-    const [nomFamilia, setNomFamilia] = useState([]);
+    const [nomFamilia, setNomFamilia] = useState(sessionStorage.getItem('familia'));
     const [tipo, setTipo] = useState([]);
     const [nomTipo, setNomTipo] = useState([]);
     const [marca, setMarca] = useState([]);
