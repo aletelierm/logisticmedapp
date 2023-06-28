@@ -55,7 +55,7 @@ import { auth } from '../firebase/firebaseConfig';
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Rut no puede estar vacio'
-            })
+            })             
          return;
         }else if(nombre ===''){
             cambiarEstadoAlerta(true);

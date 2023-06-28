@@ -138,10 +138,12 @@ const Proveedores = () => {
         getTipo();
         getMarca();
         getModelo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         getEquipo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Lee input de formulario
