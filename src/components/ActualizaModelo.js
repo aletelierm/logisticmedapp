@@ -10,7 +10,6 @@ import useObtenerModelo from '../hooks/useObtenerModelo';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
 const ActualizaModelo = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
@@ -98,6 +97,7 @@ const ActualizaModelo = () => {
 
     useEffect(() => {
         getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

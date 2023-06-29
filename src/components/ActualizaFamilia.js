@@ -10,13 +10,11 @@ import useObtenerFamilia from '../hooks/useObtenerFamilia';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
-
 const ActualizaFamilia = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
     let fechaMod = new Date();
-
+    
     const navigate = useNavigate();
     const { id } = useParams();
     const [familia] = useObtenerFamilia(id);
@@ -99,6 +97,7 @@ const ActualizaFamilia = () => {
 
     useEffect(() => {
         getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

@@ -55,7 +55,6 @@ const AgregarFamilia = () => {
                 tipo: 'error',
                 mensaje: 'No ha ingresado una Familia'
             })
-
         } else {
             const fam = familia.toLocaleUpperCase().trim()
             console.log(fam);

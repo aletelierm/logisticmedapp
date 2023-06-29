@@ -26,36 +26,31 @@ const AgregarEmpresa = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
-
     const handleChange = (e) => {
         setEmpresa(e.target.value);
     }
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
         const existe = leer.filter(emp => emp.empresa === empresa.toLocaleUpperCase().trim()).length === 0;
        
-        // Realiza comprobaciono
+        // Realiza comprobacion
         if (!existe) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ya existe esta Empresa'
             })
-
         } else if (empresa === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No ha ingresado una Empresa.'
             })
-
         } else {
             const emp = empresa.toLocaleUpperCase().trim()
             AgregarEmpresaDb({

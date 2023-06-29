@@ -17,34 +17,27 @@ const ActualizaEmpresa = () => {
 
     const [nuevaEmpresa, setNuevaEmpresa] = useState();   
     const [alerta, cambiarAlerta] = useState({});
-    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-   
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);   
 
     const volver = () => {
         navigate('/home/configuracion/agregarempresa')
     }
     const handleChange = (e) => {
         setNuevaEmpresa(e.target.value);
-    }
-
+     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
-        // Consulta si exite campo en el arreglo
-       
-
-        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
+        
         if (nuevaEmpresa ==='') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo no puede estar vacio'
             })
-
         } else{
             try {
                 const emp = nuevaEmpresa.toLocaleUpperCase();
@@ -64,8 +57,7 @@ const ActualizaEmpresa = () => {
             } catch (error) {
                 
             }
-        }   
-    
+        }    
     }
 
     useEffect(() => {
@@ -144,11 +136,6 @@ const ContentElemen = styled.div`
     justify-content: space-between;
     padding: 20px;
 `
-/* const Label = styled.label`
-        padding: 10px;
-        font-size: 15px;
-` */
-
 const BotonGuardar = styled.button`
     cursor: pointer;
     background-color: green;

@@ -16,16 +16,13 @@ import { auth } from '../firebase/firebaseConfig';
     const [proveedor] = useObtenerProveedor(id);
 
     const [alerta, cambiarAlerta] = useState({});
-    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-
-  
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);  
     const [rut, setRut] = useState('')
     const [entidad, setEntidad] = useState('')
     const [direccion, setDireccion] = useState('')
     const [telefono, setTelefono] = useState('')
     const [correo, setCorreo] = useState('')
     const [nomContacto, setNomContacto] = useState('')
-
 
     const volver = ()=>{
       navigate('/home/proveedores') 
@@ -43,8 +40,7 @@ import { auth } from '../firebase/firebaseConfig';
         navigate('/')
     }
 
-  },[proveedor,navigate])
-  
+  },[proveedor,navigate])  
   
   const handleSubmit =(e)=>{
         e.preventDefault();
@@ -112,13 +108,7 @@ import { auth } from '../firebase/firebaseConfig';
                 userMod: user.email,               
                 fechaMod: fechaActual
             })
-            .catch((error)=>{console.log(error)})
-            /* setRut('');
-            setEntidad('');
-            setDireccion('');
-            setTelefono('');
-            setCorreo('');
-            setNomContacto('') */
+            .catch((error)=>{console.log(error)})            
             cambiarEstadoAlerta(true);
             cambiarAlerta({
             tipo: 'exito',

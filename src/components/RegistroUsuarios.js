@@ -33,16 +33,11 @@ export const RegistroUsuarios = () => {
         setEmpresa(dataEmpresa.docs.map((emp)=>({...emp.data(),id: emp.id})))
        
     }
-    
-    
-    useEffect(()=>{
-
-        getEmpresa();
         
+    useEffect(()=>{
+        getEmpresa();        
     },[])
 
-   
-  
     //Lee input de formulario
     const handleChange = (e)=>{
             switch(e.target.name){
@@ -180,21 +175,15 @@ export const RegistroUsuarios = () => {
                             default:
                             mensaje = 'Error al crear la cuenta';
                             break;
-                    }
-    
+                    }    
                    cambiarAlerta({
                                 tipo: 'error',
                                 mensaje:mensaje
                    });
             }
-
-            }
-           
-           
+            }          
     }
-
     
-        
   return (
     <ContenedorFormulario>
         <Contenedor>

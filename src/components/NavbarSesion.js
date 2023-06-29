@@ -31,7 +31,7 @@ const NavbarSesion = () => {
         <>
             <div className='navbar'>
                 <div className='imageLogo'>
-                    <img src='../logo.png' alt='Logo' />
+                    <img src='../../logo.png' alt='Logo' />
                 </div>
                 <div>
                     <h4>Empresa : {'   ' + users.empresa}</h4>

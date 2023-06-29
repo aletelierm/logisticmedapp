@@ -22,9 +22,7 @@ const SideBar = ({ children }) => {
                 if(users.rol==='ADMIN') setMenu(DataMenuAdmin)
                 if(users.rol==='SUPERVISOR') setMenu(DataMenuSup)
                 
-    },[users])
-    
-     
+    },[users])  
 
     return (
         <div className='container'>

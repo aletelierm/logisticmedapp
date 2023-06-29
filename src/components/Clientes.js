@@ -248,7 +248,6 @@ const Clientes = () => {
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod                    
                 })
-                /* setRut(''); */
                 setNombre('');
                 setDireccion('');
                 setTelefono('');
@@ -327,15 +326,6 @@ const Clientes = () => {
                             onChange = { handleChange }
                         
                         />
-                       {/*  <Label>Nombre Contacto</Label>
-                        <Input
-                            type='text'
-                            name = 'contacto'
-                            placeholder = 'Ingrese Nombre Contacto'
-                            value = { nomContacto }
-                            onChange = { handleChange }
-                        
-                        />  */} 
                         <Label>Responsable financiero?</Label>
                         <Input 
                             style={{width:"3%",color:"green"}}
