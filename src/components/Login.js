@@ -4,10 +4,8 @@ import { useState } from "react";
 import { signInUser, db} from "../firebase/firebaseConfig";
 import { startSession } from "../components/session";
 import { doc, getDoc} from 'firebase/firestore';
-
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-
 import Grid from '@mui/material/Grid';
 import Styled from 'styled-components';
 

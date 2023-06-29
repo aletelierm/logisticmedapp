@@ -3,24 +3,6 @@ import React from 'react'
 
 const ListaFamilias = ({ familias, setFamilias }) => {
 
-    // const editarFamilia = (id, nuevoTexto) => {
-    //     setFamilias(familias.map((familia) => {
-    //         if (familia.id === id) {
-    //             return { ...familia, texto: nuevoTexto }
-    //         }
-    //         return familia;
-    //     }))
-    // }
-
-    // const borrarFamilia = (id) => {
-    //     setFamilias(familias.filter((familia) => {
-    //         if (familia.id !== id) {
-    //             return familia;
-    //         }
-    //         return '';
-    //     }))
-    // }
-
     return (
         <ul className='lista-tareas'>
             <tr className='crearLista-tareas__tarea encabezado'>

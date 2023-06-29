@@ -23,7 +23,6 @@ import Configuracion from './Configuracion';
 import NavbarSesion from './NavbarSesion';
 import AgregarEmpresa from './AgregarEmpresa';
 import ActualizaProveedor from './ActualizaProveedor';
-import AsignarRoles from './AsignarRoles';
 import { RegistroUsuarios } from './RegistroUsuarios';
 import ActualizaCliente from './ActualizaCliente';
 import ActualizaFamilia from './ActualizaFamilia';
@@ -65,7 +64,6 @@ export const Home = () => {
             <Route path="/actualizacliente/:id" element={<ActualizaCliente/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>        
             <Route path="/configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
-            <Route path="/configuracion/asignaroles" element={<AsignarRoles/>}/>
             <Route path="/configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
             <Route path="/configuracion/actualizaempresa/:id" element={<ActualizaEmpresa/>}/>
             <Route path="/*" element={<Navigate to="/login"/>}/>
