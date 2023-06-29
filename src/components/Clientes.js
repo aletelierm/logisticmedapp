@@ -6,7 +6,6 @@ import { auth , db} from '../firebase/firebaseConfig';
 import  Alerta from '../components/Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
 import { getDocs, collection, where, query } from 'firebase/firestore';
-/* import { doc,runTransaction } from 'firebase/firestore'; */
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import validarRut from '../funciones/validarRut';
@@ -38,27 +37,7 @@ const Clientes = () => {
     const [flag, setFlag] = useState(false)
     const [checked, setChecked] = useState();
    
-    //Prueba generacion de folios unicos
-    /* const generarCorrelativo = async ()=>{
-        const docRef = doc(db,'correlativos','folio')
-        try {
-            await runTransaction(db, async(t)=>{
-                const f = await t.get(docRef);
-                if(!f.exists()){
-                    console.log('no existe document')
-                }else{
-                    const nuevoFolio = f.data().corr + 1;
-                    t.update(docRef, { corr: nuevoFolio});
-                    console.log('folio es:', nuevoFolio)
-                    return nuevoFolio;
-                } 
-               
-            })
-            
-        } catch (error) {
-            console.log('error de folio', error);
-        }
-    } */
+   
    
     //Lectura de datots filtrados por empresa
     const getData = async () => {
