@@ -27,8 +27,7 @@ const Clientes = () => {
     const [nombre, setNombre] = useState('')
     const [direccion, setDireccion] = useState('')
     const [telefono, setTelefono] = useState('')
-    const [correo, setCorreo] = useState('')
-    const [nomContacto, setNomContacto] = useState('')
+    const [correo, setCorreo] = useState('')    
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [pagina, setPagina] = useState(0);
@@ -36,6 +35,10 @@ const Clientes = () => {
     const [leer, setLeer] = useState([]);
     const [flag, setFlag] = useState(false)
     const [checked, setChecked] = useState();
+    const [nomRsf, setNomRsf] = useState('')
+    const [dirRsf, setDirRsf] = useState('')
+    const [telRsf, setTelRsf] = useState('')
+
    
    
    
@@ -99,11 +102,26 @@ const Clientes = () => {
                 case 'correo':
                 setCorreo(e.target.value);
                 break;
-                case 'contacto':
-                setNomContacto(e.target.value);
-                break;
                 default:
                 break;
+        }
+
+        if(checked){
+            switch(e.target.name){
+                case 'nombrersf':
+                    setNomRsf(e.target.value)
+                    break;
+                    case 'direccionrsf':
+                    setDirRsf(e.target.value);
+                    break;
+                    case 'telefonorsf':
+                    setTelRsf(e.target.value);
+                    break;
+                    default:
+                    break;
+            }
+    
+
         }
     }
 
@@ -125,6 +143,7 @@ const Clientes = () => {
     const handleChek = (e)=>{
         setChecked(e.target.checked)
     }
+
     const handleSubmit =(e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -192,13 +211,13 @@ const Clientes = () => {
                 mensaje: 'favor ingresar un correo valido'
             })
             return;
-        }else if(nomContacto ===''){
+        /* }else if(nomContacto ===''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Contacto no puede estar vacio'
             })
-            return;
+            return; */
         }else if(!existe){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -206,51 +225,79 @@ const Clientes = () => {
                 mensaje: 'Rut ya existe'
             })
             return;
-
-        }else{            
-            try {
-                const nom = nombre.toLocaleUpperCase().trim();
-                const dir = direccion.toLocaleUpperCase().trim();
-                const nomC = nomContacto.toLocaleUpperCase().trim();
-                const corr = correo.toLocaleLowerCase().trim();
-                const ruts = rut.toLocaleUpperCase().trim();
-                AgregarClientesDb({
-                    emp_id: users.emp_id,
-                    rut:ruts,
-                    nombre:nom,
-                    direccion:dir,
-                    telefono:telefono,
-                    correo:corr,
-                    contacto:nomC,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod                    
-                })
-                setNombre('');
-                setDireccion('');
-                setTelefono('');
-                setCorreo('');
-                setNomContacto('')
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Cliente registrado exitosamente'
-                })
-                setFlag(!flag);
-                return;
-               
-            } catch (error) {
-                console.log('se produjo un error al guardar',error);
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
+        }else if(checked && nomRsf==='' ){           
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
                     tipo: 'error',
-                    mensaje: error
-                })
+                    mensaje: 'Campo nombre RSF no puede estar vacio'
+                    })
+                    return;
+        }else if( checked && dirRsf ===''){
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Campo Dirección no puede estar vacio'
+                    })
+                    return;
+        }else if(checked && telRsf===''){
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Campo telefono no puede estar vacio'
+                    })
+                    return;
+        }else{         
+                try {
+                    const nom = nombre.toLocaleUpperCase().trim();
+                    const dir = direccion.toLocaleUpperCase().trim();
+                    const nomrsf = nomRsf.toLocaleUpperCase().trim();
+                    const dirrsf = dirRsf.toLocaleUpperCase().trim();
+                    const telrsf = telRsf.toLocaleUpperCase().trim();
+                    const corr = correo.toLocaleLowerCase().trim();
+                    const ruts = rut.toLocaleUpperCase().trim();
+                    AgregarClientesDb({
+                        emp_id: users.emp_id,
+                        rut:ruts,
+                        nombre:nom,
+                        direccion:dir,
+                        telefono:telefono,
+                        correo:corr,
+                        nomrsf:nomrsf,
+                        dirrsf:dirrsf,
+                        telrsf:telrsf,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod                    
+                    })
+                        setRut('');
+                        setNombre('');
+                        setDireccion('');
+                        setTelefono('');
+                        setCorreo('');                        
+                        setNomRsf('');
+                        setDirRsf('');
+                        setTelRsf('');
+                        setChecked(false)
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Cliente registrado exitosamente'
+                         })
+                        setFlag(!flag);
+                        return;
+               
+                 } catch (error) {
+                        console.log('se produjo un error al guardar',error);
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                         tipo: 'error',
+                            mensaje: error
+                        })
+                }
             }
         }
-    }
-
+    
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
@@ -312,29 +359,40 @@ const Clientes = () => {
                             checked={checked}                          
                             onChange={handleChek}
                             />                      
-                    </ContentElemen>
-                    { checked ? 
-                        <>
-                            <Label>Nombre</Label>
-                            <Input
-                                type="text"
-                            />
-                            <Label>Dirección</Label>
-                            <Input
-                                type="text"
-                            />
-                            <Label>Telefono</Label>
-                            <Input
-                                type="number"
-                            />
-                        </>
-                        :
-                        ''
+                    </ContentElemen>                    
+                    
+                        { checked ? 
+                            <ContentElemen>
+                                <Label>Nombre</Label>
+                                <Input
+                                    name="nombrersf"
+                                    type="text"
+                                    placeholder='Responsable financiero'
+                                    value={nomRsf}
+                                    onChange={handleChange}
+                                />
+                                <Label>Dirección</Label>
+                                <Input
+                                name="direccionrsf"
+                                    type="text"
+                                    placeholder='Ingres dirección'
+                                    value={dirRsf}
+                                    onChange={handleChange}
+                                />
+                                <Label>Telefono</Label>
+                                <Input
+                                     name="telefonorsf"
+                                     type="number"
+                                     placeholder='Ingrese telefono'
+                                     value={telRsf}
+                                     onChange={handleChange}
+                                />
+                             </ContentElemen>
+                                     :
+                                 ''
                 
-                }
-                    <ContentElemen>
-                        
-                    </ContentElemen>         
+                         }
+                            
                 </Formulario>
                 <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar> 
             </ContenedorFormulario>

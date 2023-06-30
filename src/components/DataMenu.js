@@ -38,6 +38,11 @@ export const DataMenu = [
         title: 'Crear Equipos',
         path: '/home/misequipos/crearequipo',
         icon: <IoIcons.IoIosCreate />
+      },
+      {
+        title: 'Asignar RFID',
+        path: '/home/misequipos/asignarfid',
+        icon: <IoIcons.IoIosCreate />
       }
     ]
   },

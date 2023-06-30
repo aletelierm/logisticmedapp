@@ -22,7 +22,10 @@ import { auth } from '../firebase/firebaseConfig';
     const [direccion, setDireccion] = useState('')
     const [telefono, setTelefono] = useState('')
     const [correo, setCorreo] = useState('')
-    const [nomContacto, setNomContacto] = useState('')
+    const [checked, setChecked] = useState(true);
+    const [nomRsf, setNomRsf] = useState('')
+    const [dirRsf, setDirRsf] = useState('')
+    const [telRsf, setTelRsf] = useState('')
 
     const volver = ()=>{
       navigate('/home/clientes')
@@ -35,12 +38,18 @@ import { auth } from '../firebase/firebaseConfig';
            setDireccion(cliente.direccion);
            setTelefono(cliente.telefono);
            setCorreo(cliente.correo);
-           setNomContacto(cliente.contacto)           
+           setNomRsf(cliente.nomrfs);
+           setDirRsf(cliente.dirrsf);
+           setTelRsf(cliente.telrsf);                  
        }else{
        navigate('/')
    }
 
  },[cliente,navigate])
+
+ const handleChek = (e)=>{
+    setChecked(e.target.checked)
+}
 
     const handleSubmit =(e)=>{
         e.preventDefault();
@@ -85,26 +94,24 @@ import { auth } from '../firebase/firebaseConfig';
             mensaje: 'favor ingresar un correo valido'
         })
         return;
-    }else if(nomContacto ===''){
-        cambiarEstadoAlerta(true);
-        cambiarAlerta({
-            tipo: 'error',
-            mensaje: 'Campo Contacto no puede estar vacio'
-        })
-        return;
+    
     }else{
         try {
-            const nom = nombre.toLocaleUpperCase().trim()
-            const dir = direccion.toLocaleUpperCase().trim()
-            const nomC = nomContacto.toLocaleUpperCase().trim()
-            const corr = correo.toLocaleLowerCase().trim()            
+            const nom = nombre.toLocaleUpperCase().trim();
+            const dir = direccion.toLocaleUpperCase().trim();
+            const corr = correo.toLocaleUpperCase().trim();
+            const nomrsf = nomRsf.toLocaleUpperCase().trim();
+            const dirrsf = dirRsf.toLocaleUpperCase().trim();
+            const telrsf = telRsf.toLocaleLowerCase().trim();                       
             EditarCliente({
                 id: id,
                 nombre:nom,
                 direccion:dir,
                 telefono:telefono,
                 correo:corr,
-                contacto:nomC,
+                nomrsf:nomrsf,
+                dirrsf:dirrsf,
+                telrsf:telrsf,                
                 userMod: user.email,               
                 fechaMod: fechaActual
             }) 
@@ -140,9 +147,6 @@ import { auth } from '../firebase/firebaseConfig';
             break;
             case 'correo':
             setCorreo(e.target.value);
-            break;
-            case 'contacto':
-            setNomContacto(e.target.value);
             break;
             default:
             break;
@@ -200,16 +204,45 @@ import { auth } from '../firebase/firebaseConfig';
                     onChange = { handleChange }
                 
                 />
-                <Label>Nombre Contacto</Label>
-                <Input
-                    type='text'
-                    name = 'contacto'
-                    placeholder = 'Modifica Nombre Contacto'
-                    value = { nomContacto}
-                    onChange = { handleChange }
-                
-                />  
+                <Label>Responsable financiero?</Label>
+                        <Input 
+                            style={{width:"3%",color:"green"}}
+                            type="checkbox"
+                            checked={checked}                          
+                            onChange={handleChek}
+                            />          
             </ContentElemen>
+            { checked ? 
+                            <ContentElemen>
+                                <Label>Nombre</Label>
+                                <Input
+                                    name="nombrersf"
+                                    type="text"
+                                    placeholder='Responsable financiero'
+                                    value={nomRsf}
+                                    onChange={handleChange}
+                                />
+                                <Label>Dirección</Label>
+                                <Input
+                                name="direccionrsf"
+                                    type="text"
+                                    placeholder='Ingres dirección'
+                                    value={dirRsf}
+                                    onChange={handleChange}
+                                />
+                                <Label>Telefono</Label>
+                                <Input
+                                     name="telefonorsf"
+                                     type="number"
+                                     placeholder='Ingrese telefono'
+                                     value={telRsf}
+                                     onChange={handleChange}
+                                />
+                             </ContentElemen>
+                                     :
+                                 ''
+                
+                         }
             <BotonGuardar >Actualizar</BotonGuardar>  
             <BotonGuardar onClick={volver}>Volver</BotonGuardar>            
         </Formulario>

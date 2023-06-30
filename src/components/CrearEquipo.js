@@ -75,6 +75,9 @@ const Proveedores = () => {
         setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
+   
+    
+
     // Buscador de equipos
     const filtro = () => {
         const buscar = buscador.toLocaleUpperCase();
@@ -160,7 +163,10 @@ const Proveedores = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+        const existeSerie = equipo.filter(equi => equi.serie === serie).length > 0
+        console.log('existe serie:', existeSerie)
+
+        if (nomFamilia ==='' || nomFamilia === 'Selecciona Opción:') {
             console.log(nomFamilia);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -168,21 +174,21 @@ const Proveedores = () => {
                 mensaje: 'Favor Seleccionar Familia'
             })
 
-        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
+        } else if (nomTipo ==='' || nomTipo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Tipo Equipamiento'
             })
 
-        } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
+        } else if (nomMarca ==='' || nomMarca === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Marca'
             })
 
-        } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
+        } else if (nomModelo ==='' || nomModelo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -203,7 +209,13 @@ const Proveedores = () => {
         //         mensaje: 'Favor Ingresar RFID'
         //     })
 
-        } else {
+        } else if(existeSerie){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra registrado'
+            })
+        }else{
             try {
                 EquipoDb({
                     familia: nomFamilia,
@@ -218,6 +230,10 @@ const Proveedores = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
+                setNomFamilia('');
+                setNomMarca('');
+                setNomModelo('');
+                setNomTipo('');
                 setSerie('');
                 setRfid('');
                 cambiarEstadoAlerta(true);
@@ -225,6 +241,7 @@ const Proveedores = () => {
                     tipo: 'exito',
                     mensaje: 'Equipo creado correctamente'
                 })
+                Storage.clear()
             } catch (error) {
                 console.log(error);
             }
@@ -240,7 +257,6 @@ const Proveedores = () => {
             <Contenedor>
                 <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
-
                         <ContentElemenSelect>
                             <Label>Familias</Label>
                             <Select defaultValue='' value={nomFamilia} onChange={e => { setNomFamilia(e.target.value); sessionStorage.setItem('familia', e.target.value) }}>
@@ -251,7 +267,6 @@ const Proveedores = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Tipo Equipamiento</Label>
                             <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value); sessionStorage.setItem('tipo', e.target.value) }}>
@@ -261,7 +276,6 @@ const Proveedores = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Marca</Label>
                             <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value); sessionStorage.setItem('marca', e.target.value) }}>
@@ -271,7 +285,6 @@ const Proveedores = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Modelo</Label>
                             <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value); sessionStorage.setItem('modelo', e.target.value) }}>
@@ -281,20 +294,7 @@ const Proveedores = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-                    </ContentElemen>
-
-                    <ContentElemenSelect>
-                        <Label>Buscar Por</Label>
-                        <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
-                            {/* <option>Selecciona Opción:</option> */}
-                            <option>Familia</option>
-                            <option>Tipo</option>
-                            <option>Marca</option>
-                            <option>Modelo</option>
-                            {console.log(categoria)}
-                        </Select>
-                    </ContentElemenSelect>
-
+                    </ContentElemen>                    
                     <ContentElemen>
                         <Label >N° Serie</Label>
                         <Input
@@ -324,29 +324,16 @@ const Proveedores = () => {
                     <Titulo>Listado de Dispositivos Médicos</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
-
                 <ContentElemenSelect>
-                    <Label>Seleccione Categoria</Label>
-                    <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
-                        {/* <option>Selecciona Opción:</option> */}
-                        <option>Familia</option>
-                        <option>Tipo</option>
-                        <option>Marca</option>
-                        <option>Modelo</option>
-                    </Select>
-                </ContentElemenSelect>
-                    <ContentElemenSelect>
                         <Label>Buscar Por</Label>
                         <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
                             {/* <option>Selecciona Opción:</option> */}
                             <option>Familia</option>
                             <option>Tipo</option>
                             <option>Marca</option>
-                            <option>Modelo</option>
-                            {console.log(categoria)}
+                            <option>Modelo</option>                           
                         </Select>
-                    </ContentElemenSelect>
-
+                </ContentElemenSelect>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
                     <Input style={{ width: '100%' }}
