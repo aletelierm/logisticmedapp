@@ -12,16 +12,15 @@ export const TipTransaccion = [
 export const TipoIn= [
     { key: '1', value: '1', text: 'COMPRA' },
     { key: '2', value: '2', text: 'ARRIENDO' },
-    { key: '2', value: '2', text: 'COMODATO' },
-    { key: '2', value: '2', text: 'CLIENTE' },
-    { key: '2', value: '2', text: 'SERVICIO TECNICO' },
-    { key: '2', value: '2', text: 'ERROR DESPACHO' },
+    { key: '3', value: '3', text: 'COMODATO' },
+    { key: '4', value: '4', text: 'DEVOLUCION CLIENTE' },
+    { key: '5', value: '5', text: 'SERVICIO TECNICO' }
 ];
 
 
 export const TipoOut= [
-    { key: '2', value: '2', text: 'CLIENTE' },
+    { key: '1', value: '1', text: 'CLIENTE' },
     { key: '2', value: '2', text: 'SERVICIO TECNICO' },
-    { key: '2', value: '2', text: 'DADO DE BAJA' },
+    { key: '3', value: '3', text: 'DADO DE BAJA' },
 ];
 
