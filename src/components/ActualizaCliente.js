@@ -38,7 +38,7 @@ import { auth } from '../firebase/firebaseConfig';
            setDireccion(cliente.direccion);
            setTelefono(cliente.telefono);
            setCorreo(cliente.correo);
-           setNomRsf(cliente.nomrfs);
+           setNomRsf(cliente.nomrsf);
            setDirRsf(cliente.dirrsf);
            setTelRsf(cliente.telrsf);                  
        }else{
@@ -151,6 +151,24 @@ import { auth } from '../firebase/firebaseConfig';
             default:
             break;
     } 
+
+    if(checked){
+        switch(e.target.name){
+            case 'nombrersf':
+                setNomRsf(e.target.value)
+                break;
+                case 'direccionrsf':
+                setDirRsf(e.target.value);
+                break;
+                case 'telefonorsf':
+                setTelRsf(e.target.value);
+                break;
+                default:
+                break;
+        }
+
+
+    }
     }
 
   return (
