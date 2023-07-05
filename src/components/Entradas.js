@@ -20,6 +20,7 @@ const Entradas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
+
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [nomTipDoc, setNomTipDoc] = useState([]);
@@ -325,9 +326,9 @@ const Entradas = () => {
                 </ContenedorFormulario>
 
 
-                <ListarProveedor>
-                    <h2>Cabecera de Documentos</h2>
-                    <Table singleLine>
+            <ListarProveedor>
+                <h2>Listado de Documentos</h2>
+                <Table singleLine>
 
                         <Table.Header>
                             <Table.Row>
