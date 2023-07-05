@@ -5,7 +5,7 @@ import Alertas from './Alertas';
 import { Table } from 'semantic-ui-react'
 /* import { useNavigate } from 'react-router-dom'; */
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
@@ -16,104 +16,214 @@ import { UserContext } from '../context/UserContext';
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
+    const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
-    //Obtener datos de contexto global
-    const { users } = useContext(UserContext);
-    console.log('obtener usuario contexto global:', users);
-    
+
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
-    const [nomTipDoc, setNomTipDoc] = useState([]);
+    const [nomTipDoc, setNomTipDoc] = useState('');
     const [numDoc, setNumDoc] = useState('');
     const [proveedor, setProveedor] = useState([]);
-    const [nomProveedor, setNomProveedor] = useState([]);
-    const [nomTipoIn, setNomTipoIn] = useState([]);
+    const [cliente, setCliente] = useState([]);
+    const [rut, setRut] = useState('');
+    const [entidad, setEntidad] = useState('');
+    const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
-    const [nomEquipo, setNomEquipo] = useState([]);
-    const [date, setDate] = useState([]);
-    const [flag, setFlag] = useState(false)
+    const [idEquipo, setIDEquipo] = useState('');
+    // const [nomEquipo, setNomEquipo] = useState([]);
+    const [familia, setFamilia] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [marca, setMarca] = useState('');
+    const [modelo, setModelo] = useState('');
+    const [numSerie, setNumSerie] = useState('');
+    const [rfid, setRfid] = useState('');
+    const [date, setDate] = useState('');
+    const [price, setPrice] = useState('');
+    const [flag, setFlag] = useState(false);
+    const [dataEntrada, setDataEntrada] = useState([]);
 
-    //Lee datos de Proveedores
+
+    //Lectura de datos filtrados por empresa
     const getProveedor = async () => {
-        const dataProveedor = await getDocs(collection(db, "proveedores"));
-        setProveedor(dataProveedor.docs.map((prov) => ({ ...prov.data(), id: prov.id })))
+        const traerProveedor = collection(db, 'proveedores');
+        const dato = query(traerProveedor, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        console.log('proveedor', proveedor)
     }
 
-    //Lee datos de Equipos
+    //Lectura de datos filtrados por empresa
+    const getCliente = async () => {
+        const traerCliente = collection(db, 'clientes');
+        const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        console.log('cliente', cliente)
+    }
+
+    //Leer los datos de Equipos
     const getEquipo = async () => {
-        const dataEquipo = await getDocs(collection(db, "crearequipos"));
-        setEquipo(dataEquipo.docs.map((eq) => ({ ...eq.data(), id: eq.id })))
+        const traerEq = collection(db, 'equipos');
+        const dato = query(traerEq, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        console.log("EQUIPOS", equipo)
+        // console.log('nombre de equipo', equipo[0].tipo + ' ' + equipo[0].marca + ' ' + equipo[0].modelo)
+    }
+
+    const getEntrada = async () => {
+        const traerEntrada = collection(db, 'entradas');
+        const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setDataEntrada(data.docs.map((doc, index) => ({...doc.data(), id: doc.id, id2: index + 1 })))
+        console.log('data entrada', dataEntrada)
+    }
+
+    const documento = dataEntrada.filter(de => de.numdoc === numDoc)
+    console.log('documento dataEntrada', documento)
+
+    // Validar N°serie
+    const detectar = (e) => {
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            // Consulta si exite serie en el arreglo            
+            const existe = equipo.filter(eq => eq.serie === numSerie);
+            console.log('N° serie', existe)
+            if (existe[0].serie === numSerie) {
+                console.log('existe', existe)
+                console.log('nombre equipo', existe[0].tipo + ' ' + existe[0].marca + ' ' + existe[0].modelo)
+                setFamilia(existe[0].familia)
+                setTipo(existe[0].tipo)
+                setMarca(existe[0].marca)
+                setModelo(existe[0].modelo)
+                setIDEquipo(existe[0].id)
+                console.log('id equipo', existe[0].id)
+                setNumSerie(existe[0].serie)
+                setRfid(existe[0].rfid)
+                console.log('sere', existe[0].serie)
+            
+            } else {
+                console.log('no existe')
+            }
+        }
+    }
+
+    // Validar rut
+    const detectarCli = (e) => {
+        if (e.key === 'Enter' || e.key === 'Tab') {
+
+            if (nomTipoIn === 'DEVOLUCION CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                console.log('cliente', existeCli)
+                console.log('tipo entrada', nomTipoIn)
+                setEntidad(existeCli[0].nombre)
+
+            } else {
+                const existeProv = proveedor.filter(prov => prov.rut === rut);
+                console.log('proveedor', existeProv)
+                setEntidad(existeProv[0].nombre)
+            }
+            // Consulta si exite serie en el arreglo     
+            // if (!existe) {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Serie ya existe'
+            //     })
+            //     return 
+            // }
+        }
     }
 
 
-    const handleSubmit =(e)=>{
+    const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-
-        if( nomTipDoc === '' ){
+        if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Seleccione Tipo Documento'
             })
             return;
-        }else if( numDoc === '' ){
+
+        } else if (numDoc.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ingrese N° Documento'
             })
             return;
-        }else if( nomProveedor === '' ){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione una Entidad'
-            })
-            return;
-        }else if( date === '' ){
+
+        } else if (date === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Seleccione una Fecha'
             })
             return;
-        }else if( nomTipoIn === '' ){
+
+        } else if (nomTipoIn.length === 0 || nomTipoIn === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Seleccione un Tipo de Entrada'
             })
             return;
-            
 
-        }else{            
+        } else if (entidad.length === 0 || entidad === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Entidad'
+            })
+            return;
+
+        } else if (price.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Tipo de Entrada'
+            })
+            return;
+
+        } else {
             try {
                 EntradasDB({
                     emp_id: users.emp_id,
                     tipDoc: nomTipDoc,
                     numDoc: numDoc,
-                    proveedor: nomProveedor,
                     date: date,
-                    TipoIn: nomTipoIn,
+                    tipoIn: nomTipoIn,
+                    rut: rut,
+                    entidad: entidad,
+                    eq_id: idEquipo,
+                    familia: familia,
+                    tipo: tipo,
+                    marca: marca,
+                    modelo: modelo,
+                    serie: numSerie,
+                    rfid: rfid,
+                    price: price,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod
                 })
-                setNomTipDoc('');
-                setNumDoc('');
-                setNomProveedor('');
-                setDate('');
-                setNomTipoIn('')
+                // setNomTipDoc('');
+                // setNumDoc('');
+                // setEntidad('');
+                // setDate('');
+                // setNomTipoIn('')
+                setPrice('')
+                setNumSerie('')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Ingreso realizado exitosamente'
+                    tipo: 'exito',
+                    mensaje: 'Ingreso realizado exitosamente'
                 })
                 setFlag(!flag);
                 return;
@@ -127,13 +237,16 @@ const Entradas = () => {
         }
     }
 
-
     useEffect(() => {
         getProveedor();
+        getCliente();
         getEquipo();
+        getEntrada();
     }, [])
-
-
+    
+    useEffect(() => {
+        
+    }, [])
 
 
     return (
@@ -143,7 +256,7 @@ const Entradas = () => {
             </ContenedorFormulario>
 
             <ContenedorFormulario>
-                <Formulario action='handleSubmit'>
+                <Formulario action='' onSubmit={handleSubmit}>
 
                     <ContentElemen>
                         <ContentElemenSelect>
@@ -168,22 +281,6 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Label >Entidad</Label>
-                            {/* <Input
-                                type='text'
-                                name='Proveedor'
-                                onChange={e => setNomProveedor(e.target.value)} /> */}
-                            <Select value={nomProveedor} onChange={ev => setNomProveedor(ev.target.value)}>
-                                <option>Selecciona Opción:</option>
-                                {proveedor.map((d) => {
-                                    return (<option key={d.key}>{d.nombre}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                    </ContentElemen>
-
-                    <ContentElemen>
-                        <ContentElemenSelect>
                             <Label>Fecha Ingreso</Label>
                             <Input
                                 type='date'
@@ -193,7 +290,9 @@ const Entradas = () => {
                                 onChange={ev => setDate(ev.target.value)}
                             />
                         </ContentElemenSelect>
+                    </ContentElemen>
 
+                    <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo Entrada</Label>
                             <Select value={nomTipoIn} onChange={e => setNomTipoIn(e.target.value)}>
@@ -203,10 +302,29 @@ const Entradas = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label >Rut</Label>
+                            <Input
+                                type='numero'
+                                placeholder='Ingrese Rut'
+                                name='rut'
+                                value={rut}
+                                onChange={e => setRut(e.target.value)}
+                                onKeyDown={detectarCli}
+                            />
+                        </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Boton onClick={handleSubmit}>Guardar</Boton>
+                            <Label >Nombre</Label>
+                            <Input
+                                value={entidad}
+                                disabled
+                            />
                         </ContentElemenSelect>
+
+                        {/* <ContentElemenSelect>
+                            <Boton onClick={handleSubmit}>Guardar</Boton>
+                        </ContentElemenSelect> */}
 
                     </ContentElemen>
                 </Formulario>
@@ -219,26 +337,38 @@ const Entradas = () => {
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Precio</Label>
                             <Input
+                                type='number'
+                                name='precio'
                                 placeholder='Ingrese Valor'
+                                value={price}
+                                onChange={e => setPrice(e.target.value)}
+
                             />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            <Select value={nomEquipo} onChange={e => setNomEquipo(e.target.value)}>
-                                <option>Selecciona Opción:</option>
-                                {equipo.map((d) => {
-                                    return (<option key={d.id}>{d.tipo}</option>)
-                                })}
-                            </Select>
-                            {/* <Input onChange={e => setNomEquipo(e.target.value)}
-                                placeholder='Escanee o ingrese Equipo'
-                            /> */}
+                            {/* <Select value={nomEquipo} onChange={e => setNomEquipo(e.target.value)}>
+                                    <option>Selecciona Opción:</option>
+                                    {equipo.map((d) => {
+                                        // return (<option key={d.id}>{d.tipo + ' ' + d.marca + ' ' + d.modelo}</option>)
+                                        return (<option key={d.id}>{d.serie}</option>)
+                                    })}
+                                </Select> */}
+                            <Input
+                                type='text'
+                                name='serie'
+                                placeholder='Ingrese N° Serie'
+                                value={numSerie}
+                                onChange={e => setNumSerie(e.target.value)}
+                                onKeyDown={detectar}
+                            />
                         </ContentElemenSelect>
 
                         <Icon>
-                            <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '16px' }} />
-                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }} />
+                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }} 
+                            onClick={handleSubmit}
+                            />
                         </Icon>
 
                     </ContentElemen>
@@ -250,29 +380,40 @@ const Entradas = () => {
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
-                                <Table.HeaderCell>Familia</Table.HeaderCell>
-                                <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                                {/* <Table.HeaderCell>Familia</Table.HeaderCell> */}
+                                <Table.HeaderCell>Nombre de equipo</Table.HeaderCell>
+                                {/* <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
                                 <Table.HeaderCell>Marca</Table.HeaderCell>
-                                <Table.HeaderCell>Modelo</Table.HeaderCell>
+                                <Table.HeaderCell>Modelo</Table.HeaderCell> */}
+                                <Table.HeaderCell>serie</Table.HeaderCell>
+                                <Table.HeaderCell>precio</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
 
                         <Table.Body>
-                            <Table.Row>
-                                <Table.Cell>1</Table.Cell>
-                                <Table.Cell>DISPOSITIVOS DE INFUSION</Table.Cell>
-                                <Table.Cell>BOMBA ENTERAL</Table.Cell>
-                                <Table.Cell>ABBOTT</Table.Cell>
-                                <Table.Cell>FREEGO</Table.Cell>
+                            {documento.map((item) =>{
+                                return(
+                                    <Table.Row key={item.id2}> 
+                                <Table.Cell>{item.id2}</Table.Cell>
+                                {/* <Table.Cell>{item.familia}</Table.Cell> */}
+                                <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
+                                {/* <Table.Cell>{item.tipo}</Table.Cell> */}
+                                {/* <Table.Cell>{item.marca}</Table.Cell> */}
+                                {/* <Table.Cell>{item.modelo}</Table.Cell> */}
+                                <Table.Cell>{item.serie}</Table.Cell>
+                                <Table.Cell>{item.p}</Table.Cell>
                             </Table.Row>
+                                )
+                            })}
+                            
 
-                            <Table.Row>
+                            {/* <Table.Row>
                                 <Table.Cell>2</Table.Cell>
                                 <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
                                 <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
                                 <Table.Cell>SUSED</Table.Cell>
                                 <Table.Cell>TRX-800</Table.Cell>
-                            </Table.Row>
+                            </Table.Row> */}
                         </Table.Body>
 
                     </Table>
