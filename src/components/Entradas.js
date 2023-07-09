@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import EntradasDB from '../firebase/EntradasDB'
 import Alertas from './Alertas';
+import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 /* import { useNavigate } from 'react-router-dom'; */
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
-import * as FaIcons from 'react-icons/fa';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import { useContext } from 'react';
@@ -20,7 +20,6 @@ const Entradas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
-
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [nomTipDoc, setNomTipDoc] = useState('');
@@ -32,7 +31,6 @@ const Entradas = () => {
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
     const [idEquipo, setIDEquipo] = useState('');
-    // const [nomEquipo, setNomEquipo] = useState([]);
     const [familia, setFamilia] = useState('');
     const [tipo, setTipo] = useState('');
     const [marca, setMarca] = useState('');
@@ -77,70 +75,68 @@ const Entradas = () => {
         const traerEntrada = collection(db, 'entradas');
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setDataEntrada(data.docs.map((doc, index) => ({...doc.data(), id: doc.id, id2: index + 1 })))
+        setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         console.log('data entrada', dataEntrada)
     }
 
     const documento = dataEntrada.filter(de => de.numdoc === numDoc)
     console.log('documento dataEntrada', documento)
 
-    // Validar N°serie
-    const detectar = (e) => {
-        if (e.key === 'Enter' || e.key === 'Tab') {
-            // Consulta si exite serie en el arreglo            
-            const existe = equipo.filter(eq => eq.serie === numSerie);
-            console.log('N° serie', existe)
-            if (existe[0].serie === numSerie) {
-                console.log('existe', existe)
-                console.log('nombre equipo', existe[0].tipo + ' ' + existe[0].marca + ' ' + existe[0].modelo)
-                setFamilia(existe[0].familia)
-                setTipo(existe[0].tipo)
-                setMarca(existe[0].marca)
-                setModelo(existe[0].modelo)
-                setIDEquipo(existe[0].id)
-                console.log('id equipo', existe[0].id)
-                setNumSerie(existe[0].serie)
-                setRfid(existe[0].rfid)
-                console.log('sere', existe[0].serie)
-            
-            } else {
-                console.log('no existe')
-            }
-        }
-    }
-
     // Validar rut
     const detectarCli = (e) => {
         if (e.key === 'Enter' || e.key === 'Tab') {
-
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
                 console.log('cliente', existeCli)
                 console.log('tipo entrada', nomTipoIn)
                 setEntidad(existeCli[0].nombre)
-
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 console.log('proveedor', existeProv)
                 setEntidad(existeProv[0].nombre)
             }
-            // Consulta si exite serie en el arreglo     
-            // if (!existe) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'Serie ya existe'
-            //     })
-            //     return 
-            // }
         }
     }
 
+    // Validar N°serie
+    const detectar = (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            // Consulta si exite serie en el arreglo            
+            const existe = equipo.filter(eq => eq.serie === numSerie);
+            console.log('existe serie', existe)
+            if (existe[0].serie === numSerie) {
+                setFamilia(existe[0].familia)
+                setTipo(existe[0].tipo)
+                setMarca(existe[0].marca)
+                setModelo(existe[0].modelo)
+                setIDEquipo(existe[0].id)
+                setNumSerie(existe[0].serie)
+                setRfid(existe[0].rfid)
+            } else {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe N° Serie'
+                })
+                console.log('no existe')
+            }
+        }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+
+        // Validar Rut
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if (digito === 'k' || digito === 'K') digito = -1;
+        const validaR = validarRut(rut);
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -174,21 +170,53 @@ const Entradas = () => {
             })
             return;
 
-        } else if (entidad.length === 0 || entidad === 'Selecciona Opción:') {
+            // Validacion Rut
+        } else if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Seleccione una Entidad'
+                mensaje: 'Campo Rut no puede estar vacio'
             })
             return;
+
+        } else if (!expresionRegularRut.test(rut)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Formato incorrecto de rut'
+            })
+            return;
+        } else if (validaR !== parseInt(digito)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;
+            // } else if (entidad.length === 0 || entidad === 'Selecciona Opción:') {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Seleccione una Entidad'
+            //     })
+            //     return;
 
         } else if (price.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Seleccione un Tipo de Entrada'
+                mensaje: 'Ingrese Precio de Equipo'
             })
             return;
+
+        } else if (numSerie.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese o Scaneé N° Serie'
+            })
+            return;
+
 
         } else {
             try {
@@ -243,9 +271,9 @@ const Entradas = () => {
         getEquipo();
         getEntrada();
     }, [])
-    
+
     useEffect(() => {
-        
+
     }, [])
 
 
@@ -348,13 +376,6 @@ const Entradas = () => {
 
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            {/* <Select value={nomEquipo} onChange={e => setNomEquipo(e.target.value)}>
-                                    <option>Selecciona Opción:</option>
-                                    {equipo.map((d) => {
-                                        // return (<option key={d.id}>{d.tipo + ' ' + d.marca + ' ' + d.modelo}</option>)
-                                        return (<option key={d.id}>{d.serie}</option>)
-                                    })}
-                                </Select> */}
                             <Input
                                 type='text'
                                 name='serie'
@@ -366,8 +387,8 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <Icon>
-                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }} 
-                            onClick={handleSubmit}
+                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }}
+                                onClick={handleSubmit}
                             />
                         </Icon>
 
@@ -391,21 +412,21 @@ const Entradas = () => {
                         </Table.Header>
 
                         <Table.Body>
-                            {documento.map((item) =>{
-                                return(
-                                    <Table.Row key={item.id2}> 
-                                <Table.Cell>{item.id2}</Table.Cell>
-                                {/* <Table.Cell>{item.familia}</Table.Cell> */}
-                                <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
-                                {/* <Table.Cell>{item.tipo}</Table.Cell> */}
-                                {/* <Table.Cell>{item.marca}</Table.Cell> */}
-                                {/* <Table.Cell>{item.modelo}</Table.Cell> */}
-                                <Table.Cell>{item.serie}</Table.Cell>
-                                <Table.Cell>{item.p}</Table.Cell>
-                            </Table.Row>
+                            {documento.map((item) => {
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        {/* <Table.Cell>{item.familia}</Table.Cell> */}
+                                        <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
+                                        {/* <Table.Cell>{item.tipo}</Table.Cell> */}
+                                        {/* <Table.Cell>{item.marca}</Table.Cell> */}
+                                        {/* <Table.Cell>{item.modelo}</Table.Cell> */}
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell>${item.price}.-</Table.Cell>
+                                    </Table.Row>
                                 )
                             })}
-                            
+
 
                             {/* <Table.Row>
                                 <Table.Cell>2</Table.Cell>
@@ -473,6 +494,7 @@ const Entradas = () => {
         </ContenedorProveedor>
     );
 };
+
 
 const ContenedorProveedor = styled.div``
 
