@@ -4,7 +4,6 @@ import EntradasDB from '../firebase/EntradasDB'
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
-/* import { useNavigate } from 'react-router-dom'; */
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
@@ -27,7 +26,7 @@ const Entradas = () => {
     const [proveedor, setProveedor] = useState([]);
     const [cliente, setCliente] = useState([]);
     const [rut, setRut] = useState('');
-    const [entidad, setEntidad] = useState('');
+    const [entidad, setEntidad] = useState([]);
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
     const [idEquipo, setIDEquipo] = useState('');
@@ -41,6 +40,7 @@ const Entradas = () => {
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
+    const [nomEntidad, setNomEntidad] = useState('')
 
 
     //Lectura de datos filtrados por empresa
@@ -49,7 +49,6 @@ const Entradas = () => {
         const dato = query(traerProveedor, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log('proveedor', proveedor)
     }
 
     //Lectura de datos filtrados por empresa
@@ -58,7 +57,6 @@ const Entradas = () => {
         const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log('cliente', cliente)
     }
 
     //Leer los datos de Equipos
@@ -67,8 +65,6 @@ const Entradas = () => {
         const dato = query(traerEq, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log("EQUIPOS", equipo)
-        // console.log('nombre de equipo', equipo[0].tipo + ' ' + equipo[0].marca + ' ' + equipo[0].modelo)
     }
 
     const getEntrada = async () => {
@@ -76,24 +72,41 @@ const Entradas = () => {
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        console.log('data entrada', dataEntrada)
     }
 
     const documento = dataEntrada.filter(de => de.numdoc === numDoc)
-    console.log('documento dataEntrada', documento)
 
     // Validar rut
     const detectarCli = (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
         if (e.key === 'Enter' || e.key === 'Tab') {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
                 console.log('cliente', existeCli)
                 console.log('tipo entrada', nomTipoIn)
-                setEntidad(existeCli[0].nombre)
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                }
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 console.log('proveedor', existeProv)
-                setEntidad(existeProv[0].nombre)
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+                }
             }
         }
     }
@@ -107,7 +120,14 @@ const Entradas = () => {
             // Consulta si exite serie en el arreglo            
             const existe = equipo.filter(eq => eq.serie === numSerie);
             console.log('existe serie', existe)
-            if (existe[0].serie === numSerie) {
+            if (existe.length === 0) {
+                console.log('No exite en equipo')
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe un Equipo con este N° Serie'
+                })
+            } else {
                 setFamilia(existe[0].familia)
                 setTipo(existe[0].tipo)
                 setMarca(existe[0].marca)
@@ -115,13 +135,6 @@ const Entradas = () => {
                 setIDEquipo(existe[0].id)
                 setNumSerie(existe[0].serie)
                 setRfid(existe[0].rfid)
-            } else {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'No existe N° Serie'
-                })
-                console.log('no existe')
             }
         }
     }
@@ -138,6 +151,13 @@ const Entradas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
 
+        // Validar N° Serie en equipo
+        const existe = equipo.filter(eq => eq.serie === numSerie);
+        console.log('existe', existe)
+
+        // Validar en N° Serie en Entradas
+        const existeIn = documento.filter(doc => doc.serie === numSerie)
+
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -146,7 +166,7 @@ const Entradas = () => {
             })
             return;
 
-        } else if (numDoc.length === 0) {
+        } else if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -193,15 +213,8 @@ const Entradas = () => {
                 mensaje: 'Rut no válido'
             })
             return;
-            // } else if (entidad.length === 0 || entidad === 'Selecciona Opción:') {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'Seleccione una Entidad'
-            //     })
-            //     return;
 
-        } else if (price.length === 0) {
+        } else if (price === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -209,7 +222,7 @@ const Entradas = () => {
             })
             return;
 
-        } else if (numSerie.length === 0) {
+        } else if (numSerie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -217,50 +230,127 @@ const Entradas = () => {
             })
             return;
 
+        } else if (existe.length === 0) {
+            console.log('No exite en equipo')
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No existe un Equipo con este N° Serie'
+            })
+
+        } else if (existeIn.length > 0) {
+            console.log('Ya existe este equipo')
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra en este documento'
+            })
 
         } else {
-            try {
-                EntradasDB({
-                    emp_id: users.emp_id,
-                    tipDoc: nomTipDoc,
-                    numDoc: numDoc,
-                    date: date,
-                    tipoIn: nomTipoIn,
-                    rut: rut,
-                    entidad: entidad,
-                    eq_id: idEquipo,
-                    familia: familia,
-                    tipo: tipo,
-                    marca: marca,
-                    modelo: modelo,
-                    serie: numSerie,
-                    rfid: rfid,
-                    price: price,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod
-                })
-                // setNomTipDoc('');
-                // setNumDoc('');
-                // setEntidad('');
-                // setDate('');
-                // setNomTipoIn('')
-                setPrice('')
-                setNumSerie('')
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Ingreso realizado exitosamente'
-                })
-                setFlag(!flag);
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
+
+            if (nomTipoIn === 'DEVOLUCION CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                console.log('cliente', existeCli)
+                console.log('tipo entrada', nomTipoIn)
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+
+                    try {
+                        EntradasDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoIn: nomTipoIn,
+                            rut: rut,
+                            entidad: entidad,
+                            eq_id: existe[0].id,
+                            familia: existe[0].familia,
+                            tipo: existe[0].tipo,
+                            marca: existe[0].marca,
+                            modelo: existe[0].modelo,
+                            serie: existe[0].serie,
+                            rfid: existe[0].rfid,
+                            price: price,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod
+                        })
+                        setPrice('')
+                        setNumSerie('')
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
+            } else {
+                const existeProv = proveedor.filter(prov => prov.rut === rut);
+                console.log('proveedor', existeProv)
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+
+                    try {
+                        EntradasDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoIn: nomTipoIn,
+                            rut: rut,
+                            entidad: entidad,
+                            eq_id: existe[0].id,
+                            familia: existe[0].familia,
+                            tipo: existe[0].tipo,
+                            marca: existe[0].marca,
+                            modelo: existe[0].modelo,
+                            serie: existe[0].serie,
+                            rfid: existe[0].rfid,
+                            price: price,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod
+                        })
+                        setPrice('')
+                        setNumSerie('')
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
             }
         }
     }
@@ -269,12 +359,11 @@ const Entradas = () => {
         getProveedor();
         getCliente();
         getEquipo();
-        getEntrada();
     }, [])
 
     useEffect(() => {
-
-    }, [])
+        getEntrada();
+    }, [flag, setFlag])
 
 
     return (
@@ -350,10 +439,6 @@ const Entradas = () => {
                             />
                         </ContentElemenSelect>
 
-                        {/* <ContentElemenSelect>
-                            <Boton onClick={handleSubmit}>Guardar</Boton>
-                        </ContentElemenSelect> */}
-
                     </ContentElemen>
                 </Formulario>
             </ContenedorFormulario>
@@ -412,10 +497,10 @@ const Entradas = () => {
                         </Table.Header>
 
                         <Table.Body>
-                            {documento.map((item) => {
+                            {documento.map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         {/* <Table.Cell>{item.familia}</Table.Cell> */}
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         {/* <Table.Cell>{item.tipo}</Table.Cell> */}
