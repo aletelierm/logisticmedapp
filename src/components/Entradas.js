@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import EntradasDB from '../firebase/EntradasDB'
 import Alertas from './Alertas';
+import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
-/* import { useNavigate } from 'react-router-dom'; */
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
-import * as FaIcons from 'react-icons/fa';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import { useContext } from 'react';
@@ -20,7 +19,6 @@ const Entradas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
-
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [nomTipDoc, setNomTipDoc] = useState('');
@@ -28,17 +26,16 @@ const Entradas = () => {
     const [proveedor, setProveedor] = useState([]);
     const [cliente, setCliente] = useState([]);
     const [rut, setRut] = useState('');
-    const [entidad, setEntidad] = useState('');
+    const [entidad, setEntidad] = useState([]);
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
-    const [idEquipo, setIDEquipo] = useState('');
-    // const [nomEquipo, setNomEquipo] = useState([]);
-    const [familia, setFamilia] = useState('');
-    const [tipo, setTipo] = useState('');
-    const [marca, setMarca] = useState('');
-    const [modelo, setModelo] = useState('');
+    // const [idEquipo, setIDEquipo] = useState('');
+    // const [familia, setFamilia] = useState('');
+    // const [tipo, setTipo] = useState('');
+    // const [marca, setMarca] = useState('');
+    // const [modelo, setModelo] = useState('');
     const [numSerie, setNumSerie] = useState('');
-    const [rfid, setRfid] = useState('');
+    // const [rfid, setRfid] = useState('');
     const [date, setDate] = useState('');
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
@@ -51,7 +48,6 @@ const Entradas = () => {
         const dato = query(traerProveedor, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log('proveedor', proveedor)
     }
 
     //Lectura de datos filtrados por empresa
@@ -60,7 +56,6 @@ const Entradas = () => {
         const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log('cliente', cliente)
     }
 
     //Leer los datos de Equipos
@@ -69,78 +64,98 @@ const Entradas = () => {
         const dato = query(traerEq, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log("EQUIPOS", equipo)
-        // console.log('nombre de equipo', equipo[0].tipo + ' ' + equipo[0].marca + ' ' + equipo[0].modelo)
     }
 
     const getEntrada = async () => {
         const traerEntrada = collection(db, 'entradas');
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setDataEntrada(data.docs.map((doc, index) => ({...doc.data(), id: doc.id, id2: index + 1 })))
-        console.log('data entrada', dataEntrada)
+        setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     const documento = dataEntrada.filter(de => de.numdoc === numDoc)
-    console.log('documento dataEntrada', documento)
-
-    // Validar N°serie
-    const detectar = (e) => {
-        if (e.key === 'Enter' || e.key === 'Tab') {
-            // Consulta si exite serie en el arreglo            
-            const existe = equipo.filter(eq => eq.serie === numSerie);
-            console.log('N° serie', existe)
-            if (existe[0].serie === numSerie) {
-                console.log('existe', existe)
-                console.log('nombre equipo', existe[0].tipo + ' ' + existe[0].marca + ' ' + existe[0].modelo)
-                setFamilia(existe[0].familia)
-                setTipo(existe[0].tipo)
-                setMarca(existe[0].marca)
-                setModelo(existe[0].modelo)
-                setIDEquipo(existe[0].id)
-                console.log('id equipo', existe[0].id)
-                setNumSerie(existe[0].serie)
-                setRfid(existe[0].rfid)
-                console.log('sere', existe[0].serie)
-            
-            } else {
-                console.log('no existe')
-            }
-        }
-    }
 
     // Validar rut
     const detectarCli = (e) => {
-        if (e.key === 'Enter' || e.key === 'Tab') {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
 
+        if (e.key === 'Enter' || e.key === 'Tab') {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
-                console.log('cliente', existeCli)
-                console.log('tipo entrada', nomTipoIn)
-                setEntidad(existeCli[0].nombre)
-
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                }
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
-                console.log('proveedor', existeProv)
-                setEntidad(existeProv[0].nombre)
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+                }
             }
-            // Consulta si exite serie en el arreglo     
-            // if (!existe) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'Serie ya existe'
-            //     })
-            //     return 
-            // }
         }
     }
 
+    // Validar N°serie
+    const detectar = (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            // Consulta si exite serie en el arreglo            
+            const existe = equipo.filter(eq => eq.serie === numSerie);
+            const existeIn = documento.filter(doc => doc.serie === numSerie)
+            if (existe.length === 0) {
+                console.log('No exite en equipo')
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe un Equipo con este N° Serie'
+                })
+            } else if (existeIn.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra en este documento'
+                })
+                // setFamilia(existe[0].familia)
+                // setTipo(existe[0].tipo)
+                // setMarca(existe[0].marca)
+                // setModelo(existe[0].modelo)
+                // setIDEquipo(existe[0].id)
+                // setNumSerie(existe[0].serie)
+                // setRfid(existe[0].rfid)
+            }
+        }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+
+        // Validar Rut
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if (digito === 'k' || digito === 'K') digito = -1;
+        const validaR = validarRut(rut);
+
+        // Validar N° Serie en equipo
+        const existe = equipo.filter(eq => eq.serie === numSerie);
+
+        // Validar en N° Serie en Entradas
+        const existeIn = documento.filter(doc => doc.serie === numSerie)
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -150,7 +165,7 @@ const Entradas = () => {
             })
             return;
 
-        } else if (numDoc.length === 0) {
+        } else if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -174,65 +189,160 @@ const Entradas = () => {
             })
             return;
 
-        } else if (entidad.length === 0 || entidad === 'Selecciona Opción:') {
+            // Validacion Rut
+        } else if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Seleccione una Entidad'
+                mensaje: 'Campo Rut no puede estar vacio'
             })
             return;
 
-        } else if (price.length === 0) {
+        } else if (!expresionRegularRut.test(rut)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Seleccione un Tipo de Entrada'
+                mensaje: 'Formato incorrecto de rut'
             })
             return;
+
+        } else if (validaR !== parseInt(digito)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;
+
+        } else if (price === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese Precio de Equipo'
+            })
+            return;
+
+        } else if (numSerie === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese o Scaneé N° Serie'
+            })
+            return;
+
+        } else if (existe.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No existe un Equipo con este N° Serie'
+            })
+
+        } else if (existeIn.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra en este documento'
+            })
 
         } else {
-            try {
-                EntradasDB({
-                    emp_id: users.emp_id,
-                    tipDoc: nomTipDoc,
-                    numDoc: numDoc,
-                    date: date,
-                    tipoIn: nomTipoIn,
-                    rut: rut,
-                    entidad: entidad,
-                    eq_id: idEquipo,
-                    familia: familia,
-                    tipo: tipo,
-                    marca: marca,
-                    modelo: modelo,
-                    serie: numSerie,
-                    rfid: rfid,
-                    price: price,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod
-                })
-                // setNomTipDoc('');
-                // setNumDoc('');
-                // setEntidad('');
-                // setDate('');
-                // setNomTipoIn('')
-                setPrice('')
-                setNumSerie('')
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Ingreso realizado exitosamente'
-                })
-                setFlag(!flag);
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
+            if (nomTipoIn === 'DEVOLUCION CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                    try {
+                        EntradasDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoIn: nomTipoIn,
+                            rut: rut,
+                            entidad: entidad,
+                            eq_id: existe[0].id,
+                            familia: existe[0].familia,
+                            tipo: existe[0].tipo,
+                            marca: existe[0].marca,
+                            modelo: existe[0].modelo,
+                            serie: existe[0].serie,
+                            rfid: existe[0].rfid,
+                            price: price,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod
+                        })
+                        setPrice('')
+                        setNumSerie('')
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
+            } else {
+                const existeProv = proveedor.filter(prov => prov.rut === rut);
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+                    try {
+                        EntradasDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoIn: nomTipoIn,
+                            rut: rut,
+                            entidad: entidad,
+                            eq_id: existe[0].id,
+                            familia: existe[0].familia,
+                            tipo: existe[0].tipo,
+                            marca: existe[0].marca,
+                            modelo: existe[0].modelo,
+                            serie: existe[0].serie,
+                            rfid: existe[0].rfid,
+                            price: price,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod
+                        })
+                        setPrice('')
+                        setNumSerie('')
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
             }
         }
     }
@@ -241,12 +351,11 @@ const Entradas = () => {
         getProveedor();
         getCliente();
         getEquipo();
-        getEntrada();
     }, [])
-    
+
     useEffect(() => {
-        
-    }, [])
+        getEntrada();
+    }, [flag, setFlag])
 
 
     return (
@@ -316,15 +425,8 @@ const Entradas = () => {
 
                         <ContentElemenSelect>
                             <Label >Nombre</Label>
-                            <Input
-                                value={entidad}
-                                disabled
-                            />
+                            <Input value={entidad} disabled />
                         </ContentElemenSelect>
-
-                        {/* <ContentElemenSelect>
-                            <Boton onClick={handleSubmit}>Guardar</Boton>
-                        </ContentElemenSelect> */}
 
                     </ContentElemen>
                 </Formulario>
@@ -333,7 +435,6 @@ const Entradas = () => {
             <ContenedorFormulario>
                 <Formulario>
                     <ContentElemen >
-
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Precio</Label>
                             <Input
@@ -342,19 +443,11 @@ const Entradas = () => {
                                 placeholder='Ingrese Valor'
                                 value={price}
                                 onChange={e => setPrice(e.target.value)}
-
                             />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            {/* <Select value={nomEquipo} onChange={e => setNomEquipo(e.target.value)}>
-                                    <option>Selecciona Opción:</option>
-                                    {equipo.map((d) => {
-                                        // return (<option key={d.id}>{d.tipo + ' ' + d.marca + ' ' + d.modelo}</option>)
-                                        return (<option key={d.id}>{d.serie}</option>)
-                                    })}
-                                </Select> */}
                             <Input
                                 type='text'
                                 name='serie'
@@ -366,8 +459,9 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <Icon>
-                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }} 
-                            onClick={handleSubmit}
+                            <IoMdAdd
+                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }}
+                                onClick={handleSubmit}
                             />
                         </Icon>
 
@@ -391,34 +485,24 @@ const Entradas = () => {
                         </Table.Header>
 
                         <Table.Body>
-                            {documento.map((item) =>{
-                                return(
-                                    <Table.Row key={item.id2}> 
-                                <Table.Cell>{item.id2}</Table.Cell>
-                                {/* <Table.Cell>{item.familia}</Table.Cell> */}
-                                <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
-                                {/* <Table.Cell>{item.tipo}</Table.Cell> */}
-                                {/* <Table.Cell>{item.marca}</Table.Cell> */}
-                                {/* <Table.Cell>{item.modelo}</Table.Cell> */}
-                                <Table.Cell>{item.serie}</Table.Cell>
-                                <Table.Cell>{item.p}</Table.Cell>
-                            </Table.Row>
+                            {documento.map((item, index) => {
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        {/* <Table.Cell>{item.familia}</Table.Cell> */}
+                                        <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
+                                        {/* <Table.Cell>{item.tipo}</Table.Cell> */}
+                                        {/* <Table.Cell>{item.marca}</Table.Cell> */}
+                                        {/* <Table.Cell>{item.modelo}</Table.Cell> */}
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell>${item.price}.-</Table.Cell>
+                                    </Table.Row>
                                 )
                             })}
-                            
-
-                            {/* <Table.Row>
-                                <Table.Cell>2</Table.Cell>
-                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                                <Table.Cell>SUSED</Table.Cell>
-                                <Table.Cell>TRX-800</Table.Cell>
-                            </Table.Row> */}
                         </Table.Body>
 
                     </Table>
                 </ListarEquipos>
-
                 <Boton>Guardar</Boton>
             </ContenedorFormulario>
 
@@ -429,7 +513,7 @@ const Entradas = () => {
 
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
                             <Table.HeaderCell>N° Documento</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
@@ -440,24 +524,22 @@ const Entradas = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>127</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>416509</Table.Cell>
-                            <Table.Cell>9.345.654-6 </Table.Cell>
-                            <Table.Cell>ARQUIMED </Table.Cell>
-                            <Table.Cell>07-06-2023</Table.Cell>
-                            <Table.Cell>COMPRA</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>486</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>218745</Table.Cell>
-                            <Table.Cell>6.140.830-4 </Table.Cell>
-                            <Table.Cell>OXIMED</Table.Cell>
-                            <Table.Cell>07-06-2023</Table.Cell>
-                            <Table.Cell>COMPRA</Table.Cell>
-                        </Table.Row>
+                        {dataEntrada.map((item, index) => {
+                            return (
+                                
+                                <Table.Row key={item.id2}>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell>{item.date}</Table.Cell>
+                                    <Table.Cell>{item.tipoin}</Table.Cell>
+                                    {/* <Table.Cell>${item.price}.-</Table.Cell> */}
+                                </Table.Row>
+                            )
+                        })}
+
 
                     </Table.Body>
                 </Table>
