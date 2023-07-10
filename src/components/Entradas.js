@@ -29,18 +29,17 @@ const Entradas = () => {
     const [entidad, setEntidad] = useState([]);
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
-    const [idEquipo, setIDEquipo] = useState('');
-    const [familia, setFamilia] = useState('');
-    const [tipo, setTipo] = useState('');
-    const [marca, setMarca] = useState('');
-    const [modelo, setModelo] = useState('');
+    // const [idEquipo, setIDEquipo] = useState('');
+    // const [familia, setFamilia] = useState('');
+    // const [tipo, setTipo] = useState('');
+    // const [marca, setMarca] = useState('');
+    // const [modelo, setModelo] = useState('');
     const [numSerie, setNumSerie] = useState('');
-    const [rfid, setRfid] = useState('');
+    // const [rfid, setRfid] = useState('');
     const [date, setDate] = useState('');
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
-    const [nomEntidad, setNomEntidad] = useState('')
 
 
     //Lectura de datos filtrados por empresa
@@ -73,7 +72,6 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     const documento = dataEntrada.filter(de => de.numdoc === numDoc)
 
     // Validar rut
@@ -84,8 +82,6 @@ const Entradas = () => {
         if (e.key === 'Enter' || e.key === 'Tab') {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
-                console.log('cliente', existeCli)
-                console.log('tipo entrada', nomTipoIn)
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -97,7 +93,6 @@ const Entradas = () => {
                 }
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
-                console.log('proveedor', existeProv)
                 if (existeProv.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -119,7 +114,7 @@ const Entradas = () => {
         if (e.key === 'Enter' || e.key === 'Tab') {
             // Consulta si exite serie en el arreglo            
             const existe = equipo.filter(eq => eq.serie === numSerie);
-            console.log('existe serie', existe)
+            const existeIn = documento.filter(doc => doc.serie === numSerie)
             if (existe.length === 0) {
                 console.log('No exite en equipo')
                 cambiarEstadoAlerta(true);
@@ -127,14 +122,19 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: 'No existe un Equipo con este N° Serie'
                 })
-            } else {
-                setFamilia(existe[0].familia)
-                setTipo(existe[0].tipo)
-                setMarca(existe[0].marca)
-                setModelo(existe[0].modelo)
-                setIDEquipo(existe[0].id)
-                setNumSerie(existe[0].serie)
-                setRfid(existe[0].rfid)
+            } else if (existeIn.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra en este documento'
+                })
+                // setFamilia(existe[0].familia)
+                // setTipo(existe[0].tipo)
+                // setMarca(existe[0].marca)
+                // setModelo(existe[0].modelo)
+                // setIDEquipo(existe[0].id)
+                // setNumSerie(existe[0].serie)
+                // setRfid(existe[0].rfid)
             }
         }
     }
@@ -153,7 +153,6 @@ const Entradas = () => {
 
         // Validar N° Serie en equipo
         const existe = equipo.filter(eq => eq.serie === numSerie);
-        console.log('existe', existe)
 
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie)
@@ -206,6 +205,7 @@ const Entradas = () => {
                 mensaje: 'Formato incorrecto de rut'
             })
             return;
+
         } else if (validaR !== parseInt(digito)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -231,7 +231,6 @@ const Entradas = () => {
             return;
 
         } else if (existe.length === 0) {
-            console.log('No exite en equipo')
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -239,7 +238,6 @@ const Entradas = () => {
             })
 
         } else if (existeIn.length > 0) {
-            console.log('Ya existe este equipo')
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -247,11 +245,8 @@ const Entradas = () => {
             })
 
         } else {
-
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
-                console.log('cliente', existeCli)
-                console.log('tipo entrada', nomTipoIn)
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -260,7 +255,6 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
-
                     try {
                         EntradasDB({
                             emp_id: users.emp_id,
@@ -302,7 +296,6 @@ const Entradas = () => {
                 }
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
-                console.log('proveedor', existeProv)
                 if (existeProv.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -311,7 +304,6 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeProv[0].nombre);
-
                     try {
                         EntradasDB({
                             emp_id: users.emp_id,
@@ -433,10 +425,7 @@ const Entradas = () => {
 
                         <ContentElemenSelect>
                             <Label >Nombre</Label>
-                            <Input
-                                value={entidad}
-                                disabled
-                            />
+                            <Input value={entidad} disabled />
                         </ContentElemenSelect>
 
                     </ContentElemen>
@@ -446,7 +435,6 @@ const Entradas = () => {
             <ContenedorFormulario>
                 <Formulario>
                     <ContentElemen >
-
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Precio</Label>
                             <Input
@@ -455,7 +443,6 @@ const Entradas = () => {
                                 placeholder='Ingrese Valor'
                                 value={price}
                                 onChange={e => setPrice(e.target.value)}
-
                             />
                         </ContentElemenSelect>
 
@@ -472,7 +459,8 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <Icon>
-                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }}
+                            <IoMdAdd
+                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }}
                                 onClick={handleSubmit}
                             />
                         </Icon>
@@ -511,20 +499,10 @@ const Entradas = () => {
                                     </Table.Row>
                                 )
                             })}
-
-
-                            {/* <Table.Row>
-                                <Table.Cell>2</Table.Cell>
-                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                                <Table.Cell>SUSED</Table.Cell>
-                                <Table.Cell>TRX-800</Table.Cell>
-                            </Table.Row> */}
                         </Table.Body>
 
                     </Table>
                 </ListarEquipos>
-
                 <Boton>Guardar</Boton>
             </ContenedorFormulario>
 
@@ -535,7 +513,7 @@ const Entradas = () => {
 
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
                             <Table.HeaderCell>N° Documento</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
@@ -546,24 +524,22 @@ const Entradas = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>127</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>416509</Table.Cell>
-                            <Table.Cell>9.345.654-6 </Table.Cell>
-                            <Table.Cell>ARQUIMED </Table.Cell>
-                            <Table.Cell>07-06-2023</Table.Cell>
-                            <Table.Cell>COMPRA</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>486</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>218745</Table.Cell>
-                            <Table.Cell>6.140.830-4 </Table.Cell>
-                            <Table.Cell>OXIMED</Table.Cell>
-                            <Table.Cell>07-06-2023</Table.Cell>
-                            <Table.Cell>COMPRA</Table.Cell>
-                        </Table.Row>
+                        {dataEntrada.map((item, index) => {
+                            return (
+                                
+                                <Table.Row key={item.id2}>
+                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell>{item.date}</Table.Cell>
+                                    <Table.Cell>{item.tipoin}</Table.Cell>
+                                    {/* <Table.Cell>${item.price}.-</Table.Cell> */}
+                                </Table.Row>
+                            )
+                        })}
+
 
                     </Table.Body>
                 </Table>
@@ -579,7 +555,6 @@ const Entradas = () => {
         </ContenedorProveedor>
     );
 };
-
 
 const ContenedorProveedor = styled.div``
 
