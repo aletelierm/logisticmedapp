@@ -351,10 +351,12 @@ const Entradas = () => {
         getProveedor();
         getCliente();
         getEquipo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         getEntrada();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
 
