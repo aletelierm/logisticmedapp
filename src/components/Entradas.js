@@ -338,7 +338,7 @@ const Entradas = () => {
                     } catch (error) {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
-                            tipo: 'error',
+                            tipo: 'Hubo un error con la conexion a DB',
                             mensaje: error
                         })
                     }
@@ -351,10 +351,12 @@ const Entradas = () => {
         getProveedor();
         getCliente();
         getEquipo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         getEntrada();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
 

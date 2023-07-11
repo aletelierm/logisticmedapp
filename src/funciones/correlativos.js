@@ -1,4 +1,4 @@
-import { auth , db} from '../firebase/firebaseConfig';
+import { db} from '../firebase/firebaseConfig';
 import { doc,runTransaction } from 'firebase/firestore';
 
 const correlativos = async ()=>{    
