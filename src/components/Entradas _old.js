@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import EntradasDB from '../firebase/EntradasDB'
-import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
@@ -27,11 +26,9 @@ const Entradas = () => {
     const [proveedor, setProveedor] = useState([]);
     const [cliente, setCliente] = useState([]);
     const [rut, setRut] = useState('');
-    const [entidad, setEntidad] = useState('');
+    const [entidad, setEntidad] = useState([]);
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
-    const [cabecera, setCabecera] = useState([]);
-    const [idCabecera, setIdCabecera] = useState();
     // const [idEquipo, setIDEquipo] = useState('');
     // const [familia, setFamilia] = useState('');
     // const [tipo, setTipo] = useState('');
@@ -43,7 +40,6 @@ const Entradas = () => {
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
-    // const [confirmar, setConfirmar] = useState(false)
 
 
     //Lectura de datos filtrados por empresa
@@ -68,17 +64,6 @@ const Entradas = () => {
         const dato = query(traerEq, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    }
-
-    // Leer datos de cabecera
-    const getCabecera = async () => {
-        const traerCabecera = collection(db, 'cabeceras');
-        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
-        const data = await getDocs(dato)
-        setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        console.log('Que trae Cabecera', cabecera)
-        const existe = cabecera.filter(cab => cab.tipDoc === nomTipDoc || cab.numdoc === numDoc || cab.rut === rut )
-        console.log('existe cabecera igual', existe)
     }
 
     const getEntrada = async () => {
@@ -154,9 +139,8 @@ const Entradas = () => {
         }
     }
 
-    // Guardar Cabecera de Documento en Coleccion CabeceraInDB
-    const addCabeceraIn = (ev) => {
-        ev.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
@@ -167,8 +151,11 @@ const Entradas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
 
-        const existe = cabecera.filter(cab => cab.tipDoc === nomTipDoc || cab.numdoc === numDoc || cab.rut === rut )
-        console.log('existe cabecera igual', existe)
+        // Validar N° Serie en equipo
+        const existe = equipo.filter(eq => eq.serie === numSerie);
+
+        // Validar en N° Serie en Entradas
+        const existeIn = documento.filter(doc => doc.serie === numSerie)
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -227,113 +214,7 @@ const Entradas = () => {
             })
             return;
 
-        } else if (existe.length > 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ya existe este documento'
-            })
-            return;
-
-        } else {
-            if (nomTipoIn === 'DEVOLUCION CLIENTE') {
-                const existeCli = cliente.filter(cli => cli.rut === rut);
-                if (existeCli.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
-                    })
-                } else {
-                    setEntidad(existeCli[0].nombre);
-                    try {
-                        CabeceraInDB({
-                            emp_id: users.emp_id,
-                            tipDoc: nomTipDoc,
-                            numDoc: numDoc,
-                            date: date,
-                            tipoIn: nomTipoIn,
-                            rut: rut,
-                            entidad: entidad,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente de Cabecera cliente'
-                        })
-                        console.log('Si se ingreso')
-                        setFlag(!flag);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                        console.log('No se ingreso')
-                    }
-                }
-            } else {
-                const existeProv = proveedor.filter(prov => prov.rut === rut);
-                if (existeProv.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut de proveedor'
-                    })
-                } else {
-                    setEntidad(existeProv[0].nombre);
-                    try {
-                        CabeceraInDB({
-                            emp_id: users.emp_id,
-                            tipDoc: nomTipDoc,
-                            numDoc: numDoc,
-                            date: date,
-                            tipoIn: nomTipoIn,
-                            rut: rut,
-                            entidad: entidad,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente de cabecera Proveedor'
-                        })
-                        console.log('Si se ingreso')
-                        setFlag(!flag);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                        console.log('No se ingreso')
-                    }
-                }
-            }
-        }
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-
-        // Validar N° Serie en equipo
-        const existe = equipo.filter(eq => eq.serie === numSerie);
-
-        // Validar en N° Serie en Entradas
-        const existeIn = documento.filter(doc => doc.serie === numSerie)
-
-        if (price === '') {
+        } else if (price === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -364,49 +245,107 @@ const Entradas = () => {
             })
 
         } else {
-            try {
-                console.log('cabecera id', cabecera[0].id)
-                EntradasDB({
-                    emp_id: users.emp_id,
-                    tipDoc: nomTipDoc,
-                    numDoc: numDoc,
-                    date: date,
-                    tipoIn: nomTipoIn,
-                    rut: rut,
-                    entidad: entidad,
-                    eq_id: existe[0].id,
-                    familia: existe[0].familia,
-                    tipo: existe[0].tipo,
-                    marca: existe[0].marca,
-                    modelo: existe[0].modelo,
-                    serie: existe[0].serie,
-                    rfid: existe[0].rfid,
-                    price: price,
-                    cab_id: cabecera[0].id,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod
-                })
-                setPrice('')
-                setNumSerie('')
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Ingreso realizado exitosamente'
-                })
-                setFlag(!flag);
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
+            if (nomTipoIn === 'DEVOLUCION CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                    try {
+                        EntradasDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoIn: nomTipoIn,
+                            rut: rut,
+                            entidad: entidad,
+                            eq_id: existe[0].id,
+                            familia: existe[0].familia,
+                            tipo: existe[0].tipo,
+                            marca: existe[0].marca,
+                            modelo: existe[0].modelo,
+                            serie: existe[0].serie,
+                            rfid: existe[0].rfid,
+                            price: price,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod
+                        })
+                        setPrice('')
+                        setNumSerie('')
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
+            } else {
+                const existeProv = proveedor.filter(prov => prov.rut === rut);
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+                    try {
+                        EntradasDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoIn: nomTipoIn,
+                            rut: rut,
+                            entidad: entidad,
+                            eq_id: existe[0].id,
+                            familia: existe[0].familia,
+                            tipo: existe[0].tipo,
+                            marca: existe[0].marca,
+                            modelo: existe[0].modelo,
+                            serie: existe[0].serie,
+                            rfid: existe[0].rfid,
+                            price: price,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod
+                        })
+                        setPrice('')
+                        setNumSerie('')
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
             }
         }
     }
-
 
     useEffect(() => {
         getProveedor();
@@ -416,7 +355,6 @@ const Entradas = () => {
 
     useEffect(() => {
         getEntrada();
-        getCabecera();
     }, [flag, setFlag])
 
 
@@ -447,7 +385,7 @@ const Entradas = () => {
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
-                                onChange={ev => setNumDoc(ev.target.value)}
+                                onChange={e => setNumDoc(e.target.value)}
                             />
                         </ContentElemenSelect>
 
@@ -466,7 +404,7 @@ const Entradas = () => {
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo Entrada</Label>
-                            <Select value={nomTipoIn} onChange={ev => setNomTipoIn(ev.target.value)}>
+                            <Select value={nomTipoIn} onChange={e => setNomTipoIn(e.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipoIn.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
@@ -480,7 +418,7 @@ const Entradas = () => {
                                 placeholder='Ingrese Rut'
                                 name='rut'
                                 value={rut}
-                                onChange={ev => setRut(ev.target.value)}
+                                onChange={e => setRut(e.target.value)}
                                 onKeyDown={detectarCli}
                             />
                         </ContentElemenSelect>
@@ -489,8 +427,6 @@ const Entradas = () => {
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
-
-                        <Boton style={{ margin: '17px 0' }} onClick={addCabeceraIn} >Guardar</Boton>
 
                     </ContentElemen>
                 </Formulario>
@@ -543,8 +479,8 @@ const Entradas = () => {
                                 {/* <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
                                 <Table.HeaderCell>Marca</Table.HeaderCell>
                                 <Table.HeaderCell>Modelo</Table.HeaderCell> */}
-                                <Table.HeaderCell>N° Serie</Table.HeaderCell>
-                                <Table.HeaderCell>Precio</Table.HeaderCell>
+                                <Table.HeaderCell>serie</Table.HeaderCell>
+                                <Table.HeaderCell>precio</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
 
@@ -573,32 +509,32 @@ const Entradas = () => {
 
             <ListarProveedor>
                 <h2>Listado de Documentos</h2>
-                <Table singleLine style={{textAlign: 'center'}}>
+                <Table singleLine>
 
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
                             <Table.HeaderCell>N° Documento</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        {cabecera.map((item, index) => {
+                        {dataEntrada.map((item, index) => {
                             return (
-
+                                
                                 <Table.Row key={item.id2}>
-                                    <Table.Cell >{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
                                     <Table.Cell>{item.numdoc}</Table.Cell>
-                                    <Table.Cell>{item.date}</Table.Cell>
-                                    <Table.Cell>{item.tipoin}</Table.Cell>
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell>{item.date}</Table.Cell>
+                                    <Table.Cell>{item.tipoin}</Table.Cell>
                                     {/* <Table.Cell>${item.price}.-</Table.Cell> */}
                                 </Table.Row>
                             )
