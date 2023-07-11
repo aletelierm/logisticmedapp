@@ -338,7 +338,7 @@ const Entradas = () => {
                     } catch (error) {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
-                            tipo: 'error',
+                            tipo: 'Hubo un error con la conexion a DB',
                             mensaje: error
                         })
                     }
