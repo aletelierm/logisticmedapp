@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import EntradasDB from '../firebase/EntradasDB'
+// import EntradasDB from '../firebase/EntradasDB'
 import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query } from 'firebase/firestore';
+import { getDocs, collection, where, query, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import { useContext } from 'react';
@@ -31,19 +31,12 @@ const Entradas = () => {
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
-    const [idCabecera, setIdCabecera] = useState();
-    // const [idEquipo, setIDEquipo] = useState('');
-    // const [familia, setFamilia] = useState('');
-    // const [tipo, setTipo] = useState('');
-    // const [marca, setMarca] = useState('');
-    // const [modelo, setModelo] = useState('');
     const [numSerie, setNumSerie] = useState('');
-    // const [rfid, setRfid] = useState('');
     const [date, setDate] = useState('');
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
-    // const [confirmar, setConfirmar] = useState(false)
+    const [confirmar, setConfirmar] = useState(false);
 
 
     //Lectura de datos filtrados por empresa
@@ -76,9 +69,6 @@ const Entradas = () => {
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        console.log('Que trae Cabecera', cabecera)
-        // const existe = cabecera.filter(cab => cab.tipDoc === nomTipDoc || cab.numdoc === numDoc || cab.rut === rut )
-        // console.log('existe cabecera igual', existe)
     }
 
     const getEntrada = async () => {
@@ -88,6 +78,39 @@ const Entradas = () => {
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     const documento = dataEntrada.filter(de => de.numdoc === numDoc)
+
+    //Guardar los equipos creado
+    const EntradasDB = async ({ status, nomEntidad, tipDoc, numDoc, date, tipoIn, rut, entidad, eq_id, familia, tipo, marca, modelo, serie, rfid, price, cab_id, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+        await addDoc(collection(db, 'entradas'), {
+            tipdoc: tipDoc,
+            numdoc: numDoc,
+            date: date,
+            tipoin: tipoIn,
+            rut: rut,
+            entidad: entidad,
+            eq_id: eq_id,
+            familia: familia,
+            tipo: tipo,
+            marca: marca,
+            modelo: modelo,
+            serie: serie,
+            rfid: rfid,
+            price: price,
+            cab_id: cab_id,
+            useradd: userAdd,
+            usermod: userMod,
+            fechaadd: fechaAdd,
+            fechamod: fechaMod,
+            emp_id: emp_id,
+        });
+        console.log('este es el id del codigo al crear:', documento);
+        await updateDoc(doc(db, 'status', eq_id), {
+            status: status,
+            entidad: users.empresa,
+            usermod: userMod,
+            fechamod: fechaMod
+        });
+    }
 
     // Validar rut
     const detectarCli = (e) => {
@@ -131,7 +154,6 @@ const Entradas = () => {
             const existe = equipo.filter(eq => eq.serie === numSerie);
             const existeIn = documento.filter(doc => doc.serie === numSerie)
             if (existe.length === 0) {
-                console.log('No exite en equipo')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -143,16 +165,13 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-                // setFamilia(existe[0].familia)
-                // setTipo(existe[0].tipo)
-                // setMarca(existe[0].marca)
-                // setModelo(existe[0].modelo)
-                // setIDEquipo(existe[0].id)
-                // setNumSerie(existe[0].serie)
-                // setRfid(existe[0].rfid)
             }
         }
     }
+
+    const handleCheckboxChange = (event) => {
+        setConfirmar(event.target.checked);
+    };
 
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = (ev) => {
@@ -166,13 +185,8 @@ const Entradas = () => {
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
-        console.log('tipo documento', nomTipDoc)
-        console.log('numero documento', numDoc)
-        console.log('rut', rut)
 
-        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut )
-
-        console.log('existe cabecera igual', existe.length)
+        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -262,15 +276,16 @@ const Entradas = () => {
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
-                            fechaMod: fechaMod
+                            fechaMod: fechaMod,
+                            confirmado: false
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
                             mensaje: 'Ingreso realizado exitosamente'
                         })
-                        console.log('Si se ingreso')
                         setFlag(!flag);
+                        setConfirmar(true)
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -278,7 +293,6 @@ const Entradas = () => {
                             tipo: 'error',
                             mensaje: error
                         })
-                        console.log('No se ingreso')
                     }
                 }
             } else {
@@ -310,8 +324,8 @@ const Entradas = () => {
                             tipo: 'exito',
                             mensaje: 'Ingreso realizado exitosamente'
                         })
-                        console.log('Si se ingreso')
                         setFlag(!flag);
+                        setConfirmar(true)
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -319,7 +333,6 @@ const Entradas = () => {
                             tipo: 'error',
                             mensaje: error
                         })
-                        console.log('No se ingreso')
                     }
                 }
             }
@@ -389,8 +402,9 @@ const Entradas = () => {
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
-                    fechaMod: fechaMod
-                })
+                    fechaMod: fechaMod,
+                    status: 'BODEGA'
+                });
                 setPrice('')
                 setNumSerie('')
                 cambiarEstadoAlerta(true);
@@ -415,6 +429,7 @@ const Entradas = () => {
         getProveedor();
         getCliente();
         getEquipo();
+        getEntrada()
     }, [])
 
     useEffect(() => {
@@ -435,7 +450,10 @@ const Entradas = () => {
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo de Documento</Label>
-                            <Select value={nomTipDoc} onChange={ev => setNomTipDoc(ev.target.value)}>
+                            <Select
+                                disabled={confirmar}
+                                value={nomTipDoc}
+                                onChange={ev => setNomTipDoc(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipDoc.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
@@ -446,6 +464,7 @@ const Entradas = () => {
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
                             <Input
+                                disabled={confirmar}
                                 type='text'
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
@@ -457,6 +476,7 @@ const Entradas = () => {
                         <ContentElemenSelect>
                             <Label>Fecha Ingreso</Label>
                             <Input
+                                disabled={confirmar}
                                 type='date'
                                 placeholder='Seleccione Fecha'
                                 name='date'
@@ -469,16 +489,21 @@ const Entradas = () => {
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo Entrada</Label>
-                            <Select value={nomTipoIn} onChange={ev => setNomTipoIn(ev.target.value)}>
+                            <Select
+                                disabled={confirmar}
+                                value={nomTipoIn}
+                                onChange={ev => setNomTipoIn(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipoIn.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
                                 })}
                             </Select>
                         </ContentElemenSelect>
+
                         <ContentElemenSelect>
                             <Label >Rut</Label>
                             <Input
+                                disabled={confirmar}
                                 type='numero'
                                 placeholder='Ingrese Rut'
                                 name='rut'
@@ -493,7 +518,12 @@ const Entradas = () => {
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
 
-                        <Boton style={{ margin: '17px 0' }} onClick={addCabeceraIn} >Guardar</Boton>
+                        <Boton
+                            style={{ margin: '17px 0' }}
+                            onClick={addCabeceraIn}
+                            checked={confirmar}
+                            onChange={handleCheckboxChange}
+                        >Guardar</Boton>
 
                     </ContentElemen>
                 </Formulario>
@@ -541,11 +571,7 @@ const Entradas = () => {
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
-                                {/* <Table.HeaderCell>Familia</Table.HeaderCell> */}
                                 <Table.HeaderCell>Nombre de equipo</Table.HeaderCell>
-                                {/* <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-                                <Table.HeaderCell>Marca</Table.HeaderCell>
-                                <Table.HeaderCell>Modelo</Table.HeaderCell> */}
                                 <Table.HeaderCell>N° Serie</Table.HeaderCell>
                                 <Table.HeaderCell>Precio</Table.HeaderCell>
                             </Table.Row>
@@ -556,11 +582,7 @@ const Entradas = () => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{index + 1}</Table.Cell>
-                                        {/* <Table.Cell>{item.familia}</Table.Cell> */}
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
-                                        {/* <Table.Cell>{item.tipo}</Table.Cell> */}
-                                        {/* <Table.Cell>{item.marca}</Table.Cell> */}
-                                        {/* <Table.Cell>{item.modelo}</Table.Cell> */}
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>${item.price}.-</Table.Cell>
                                     </Table.Row>
@@ -570,13 +592,13 @@ const Entradas = () => {
 
                     </Table>
                 </ListarEquipos>
-                <Boton>Guardar</Boton>
+                <Boton>Confirmar</Boton>
             </ContenedorFormulario>
 
 
             <ListarProveedor>
                 <h2>Listado de Documentos</h2>
-                <Table singleLine style={{textAlign: 'center'}}>
+                <Table singleLine style={{ textAlign: 'center' }}>
 
                     <Table.Header>
                         <Table.Row>
@@ -591,9 +613,8 @@ const Entradas = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {cabecera.map((item, index) => {
+                        {cabecera.map((item) => {
                             return (
-
                                 <Table.Row key={item.id2}>
                                     <Table.Cell >{item.id2}</Table.Cell>
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
@@ -602,11 +623,9 @@ const Entradas = () => {
                                     <Table.Cell>{item.tipoin}</Table.Cell>
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
-                                    {/* <Table.Cell>${item.price}.-</Table.Cell> */}
                                 </Table.Row>
                             )
                         })}
-
 
                     </Table.Body>
                 </Table>
