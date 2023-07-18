@@ -1,5 +1,7 @@
 import React from 'react';
+/* import PiesChart from './DashboardEquipos'; */
 import PiesChart from './DashboardEquipos';
+
 import styled from 'styled-components';
 
 const Contenedor = styled.div`
@@ -13,13 +15,15 @@ const ContenedorElementos = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
-
+const Titulo = styled.h2`
+    color:  #83d394;
+`
 const Equipos = () => {
     return (
         
         <Contenedor>
             <ContenedorElementos>
-                <h2>Donde estan Mis Equipos</h2>
+                <Titulo>Donde estan Mis Equipos</Titulo>
             </ContenedorElementos>
             <ContenedorElementos>
             <div style={{width:"600px", height:"400px",padding:"20px"}}>

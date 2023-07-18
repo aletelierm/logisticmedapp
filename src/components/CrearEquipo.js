@@ -367,7 +367,7 @@ const Proveedores = () => {
                             placeholder='Ingrese N° Serie'
                             name='serie'
                             value={serie}
-                            onChange={handleChange}
+                            onChange={handleChange}                            
                         />
                         <Label >RFID</Label>
                         <Input
