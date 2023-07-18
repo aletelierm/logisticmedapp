@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Alerta from './Alertas'
-import EquipoDb from '../firebase/EquipoDb';
+/* import EquipoDb from '../firebase/EquipoDb'; */
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
-import { collection, getDocs, where, query } from 'firebase/firestore';
+import { collection, getDocs, where, query,addDoc,setDoc,doc } from 'firebase/firestore';
 // import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+
 
 
 const Proveedores = () => {
@@ -34,6 +35,7 @@ const Proveedores = () => {
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
+    /* const [documentoId, setDocumentoID]=useState(''); */
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -75,9 +77,53 @@ const Proveedores = () => {
         setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
-   
-    
+    //Guardar los equipos creado
+    const EquipoDb = async ({ status,nomEntidad,familia, tipo, marca, modelo, serie, rfid, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+        /* setDocumentoID('') */
+        const documento = await addDoc(collection(db, 'equipos'), {
+            familia: familia,
+            tipo: tipo,
+            marca: marca,
+            modelo: modelo,
+            serie: serie,
+            rfid: rfid,
+            useradd: userAdd,
+            usermod: userMod,
+            fechaadd: fechaAdd,
+            fechamod: fechaMod,
+            emp_id: emp_id
+        });        
+        console.log('este es el id del codigo al crear:', documento.id);
+       await setDoc(doc(db,'status', documento.id),{
+        emp_id: emp_id,
+        familia: familia,
+        tipo: tipo,
+        status: status,
+        entidad: users.empresa,
+        useradd: userAdd,
+        usermod: userMod,
+        fechaadd: fechaAdd,
+        fechamod: fechaMod
+       });
+        
+    }
 
+    /* const EquipoStatusDb = async ({id,emp_id,familia, tipo,status,nomEntidad,userAdd,userMod,fechaAdd,fechaMod })=>{
+        await setDoc(doc(db, 'status',id), {
+            emp_id: emp_id,
+            familia: familia,
+            tipo: tipo,
+            status: status,
+            entidad: nomEntidad,
+            useradd: userAdd,
+            usermod: userMod,
+            fechaadd: fechaAdd,
+            fechamod: fechaMod
+            
+        });} */
+
+    
+     
     // Buscador de equipos
     const filtro = () => {
         const buscar = buscador.toLocaleUpperCase();
@@ -215,7 +261,8 @@ const Proveedores = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra registrado'
             })
-        }else{
+        }else{           
+            
             try {
                 EquipoDb({
                     familia: nomFamilia,
@@ -228,8 +275,9 @@ const Proveedores = () => {
                     userMod: user.email,
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
-                    emp_id: users.emp_id
-                })
+                    emp_id: users.emp_id,
+                    status: 'PREPARACION'
+                })                
                 setNomFamilia('');
                 setNomMarca('');
                 setNomModelo('');
@@ -240,11 +288,28 @@ const Proveedores = () => {
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Equipo creado correctamente'
-                })
-                Storage.clear()
+                })              
             } catch (error) {
                 console.log(error);
             }
+
+           /*  try {
+                console.log('id documento seteado despues de creado:',documentoId)
+                EquipoStatusDb({
+                    id:documentoId,
+                    emp_id: users.emp_id,
+                    familia: familia,
+                    tipo: tipo,
+                    status: "PREPARACION",
+                    nomEntidad: users.empresa,
+                    userAdd: user.email,
+                    fechaAdd: fechaAdd,
+                    userMod: user.email,
+                    fechaMod: fechaMod
+                })
+            } catch (error) {
+                console.log(error);
+            } */
         }
     }
 
