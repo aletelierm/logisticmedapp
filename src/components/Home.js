@@ -1,13 +1,10 @@
 import React from 'react'
 import { Routes, Route, Navigate} from 'react-router-dom'
-/* import Footer from './Footer'; */
 import SideBar from './SideBar';
-import Equipos from './Equipos';
 import Entradas from './Entradas';
 import Salidas from './Salidas';
 import Clientes from './Clientes';
 import Proveedores from './Proveedores';
-/* import Usuarios from './Usuarios'; */
 import AgregarFamilia from './AgregarFamilia';
 import AgregarTipo from './AgregarTipo';
 import AgregraMarca from './AgregarMarca';
@@ -30,6 +27,7 @@ import ActualizaTipo from './ActualizaTipo';
 import ActualizaMarca from './ActualizaMarca';
 import ActualizaModelo from './ActualizaModelo';
 import ActualizaEmpresa from './ActualizaEmpresa';
+import DashboardEq from './DashboardEq';
 
 export const Home = () => {
   
@@ -40,7 +38,7 @@ export const Home = () => {
     <NavbarSesion />
     <SideBar>    
     <Routes>
-            <Route path="/misequipos" element={<Equipos/>}/>
+            <Route path="/misequipos" element={<DashboardEq/>}/>
             <Route path="/misequipos/agregarfamilia" element={<AgregarFamilia/>}/>
             <Route path="/actualizafamilia/:id" element={<ActualizaFamilia/>}/>
             <Route path="/misequipos/agregartipo" element={<AgregarTipo/>}/>
@@ -54,7 +52,7 @@ export const Home = () => {
             <Route path="/transacciones/entradas" element={<Entradas/>}/>
             <Route path="/transacciones/salidas" element={<Salidas/>}/>
             <Route path="/serviciotecnico" element={<ServicioTecnico/>}/>
-            <Route path="/serviciotecnico/protocolos" element={<Protocolos/>}/>
+            <Route path="/serviciotecnico/protocolos" element={<Protocolos/>}/>            
             <Route path="/serviciotecnico/programas" element={<Programas/>}/>
             <Route path="/serviciotecnico/certificados" element={<Certificados/>}/>
             <Route path="/serviciotecnico/mantencion" element={<Mantenimiento/>}/>
