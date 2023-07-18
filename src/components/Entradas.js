@@ -77,8 +77,8 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         console.log('Que trae Cabecera', cabecera)
-        const existe = cabecera.filter(cab => cab.tipDoc === nomTipDoc || cab.numdoc === numDoc || cab.rut === rut )
-        console.log('existe cabecera igual', existe)
+        // const existe = cabecera.filter(cab => cab.tipDoc === nomTipDoc || cab.numdoc === numDoc || cab.rut === rut )
+        // console.log('existe cabecera igual', existe)
     }
 
     const getEntrada = async () => {
@@ -166,9 +166,13 @@ const Entradas = () => {
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
+        console.log('tipo documento', nomTipDoc)
+        console.log('numero documento', numDoc)
+        console.log('rut', rut)
 
-        const existe = cabecera.filter(cab => cab.tipDoc === nomTipDoc || cab.numdoc === numDoc || cab.rut === rut )
-        console.log('existe cabecera igual', existe)
+        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut )
+
+        console.log('existe cabecera igual', existe.length)
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -263,7 +267,7 @@ const Entradas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente de Cabecera cliente'
+                            mensaje: 'Ingreso realizado exitosamente'
                         })
                         console.log('Si se ingreso')
                         setFlag(!flag);
@@ -304,7 +308,7 @@ const Entradas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente de cabecera Proveedor'
+                            mensaje: 'Ingreso realizado exitosamente'
                         })
                         console.log('Si se ingreso')
                         setFlag(!flag);
@@ -365,7 +369,6 @@ const Entradas = () => {
 
         } else {
             try {
-                console.log('cabecera id', cabecera[0].id)
                 EntradasDB({
                     emp_id: users.emp_id,
                     tipDoc: nomTipDoc,
