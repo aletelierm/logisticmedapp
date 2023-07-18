@@ -2,7 +2,7 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc } from "firebase/firestore";
 
-const CabeceraInDB = async ({ tipDoc, numDoc, date, tipoIn, rut, entidad, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+const CabeceraInDB = async ({ tipDoc, numDoc, date, tipoIn, rut, entidad, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
 
     return await addDoc(collection(db, 'cabeceras'), {
         tipdoc: tipDoc,
@@ -11,6 +11,7 @@ const CabeceraInDB = async ({ tipDoc, numDoc, date, tipoIn, rut, entidad, userAd
         tipoin: tipoIn,
         rut: rut,
         entidad: entidad,
+        confirmado: confirmado,
         userAdd: userAdd,
         userMod: userMod,
         fechaAdd: fechaAdd,

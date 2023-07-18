@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import EntradasDB from '../firebase/EntradasDB'
+// import EntradasDB from '../firebase/EntradasDB'
 import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, addDoc, updateDoc, doc, writeBatch} from 'firebase/firestore';
+import { getDocs, collection, where, query, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import { useContext } from 'react';
@@ -22,23 +22,21 @@ const Entradas = () => {
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
-    const [proveedor, setProveedor] = useState([]);
-    const [cliente, setCliente] = useState([]);
     const [nomTipDoc, setNomTipDoc] = useState('');
     const [numDoc, setNumDoc] = useState('');
-    const [date, setDate] = useState('');
-    const [nomTipoIn, setNomTipoIn] = useState('');
+    const [proveedor, setProveedor] = useState([]);
+    const [cliente, setCliente] = useState([]);
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
+    const [nomTipoIn, setNomTipoIn] = useState('');
     const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
     const [numSerie, setNumSerie] = useState('');
+    const [date, setDate] = useState('');
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [guardado, setGuardado] = useState(false);
-
 
 
     //Lectura de datos filtrados por empresa
@@ -71,8 +69,6 @@ const Entradas = () => {
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        console.log('cabecera', cabecera)
-        setConfirmar(cabecera[0].confirmado)
     }
 
     const getEntrada = async () => {
@@ -81,7 +77,40 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    const documento = dataEntrada.filter(de => de.numdoc === numDoc);
+    const documento = dataEntrada.filter(de => de.numdoc === numDoc)
+
+    //Guardar los equipos creado
+    const EntradasDB = async ({ status, nomEntidad, tipDoc, numDoc, date, tipoIn, rut, entidad, eq_id, familia, tipo, marca, modelo, serie, rfid, price, cab_id, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+        await addDoc(collection(db, 'entradas'), {
+            tipdoc: tipDoc,
+            numdoc: numDoc,
+            date: date,
+            tipoin: tipoIn,
+            rut: rut,
+            entidad: entidad,
+            eq_id: eq_id,
+            familia: familia,
+            tipo: tipo,
+            marca: marca,
+            modelo: modelo,
+            serie: serie,
+            rfid: rfid,
+            price: price,
+            cab_id: cab_id,
+            useradd: userAdd,
+            usermod: userMod,
+            fechaadd: fechaAdd,
+            fechamod: fechaMod,
+            emp_id: emp_id,
+        });
+        console.log('este es el id del codigo al crear:', documento);
+        await updateDoc(doc(db, 'status', eq_id), {
+            status: status,
+            entidad: users.empresa,
+            usermod: userMod,
+            fechamod: fechaMod
+        });
+    }
 
     // Validar rut
     const detectarCli = (e) => {
@@ -395,45 +424,7 @@ const Entradas = () => {
         }
     }
 
-    // Define una función para actualizar varios documentos por lotes
-    const actualizarDocs = async () => {
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
 
-        const batch = writeBatch(db);
-        console.log('documento batch', documento)
-
-        documento.forEach((docs) => {
-            const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, {status: 'BODEGA'});
-        });
-
-        try {
-            await batch.commit();
-            console.log('Documentos actualizados correctamente.');
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Documentos actualizados correctamente.'
-            })
-        } catch (error) {
-            console.error('Error al actualizar documentos:', error);
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al actualizar documentos:', error
-            })
-        }
-        setNomTipDoc('');
-        setNumDoc('');
-        setDate('');
-        setNomTipoIn('');
-        setRut('');
-        setEntidad('')
-        setConfirmar(false)
-    };
-
-    
     useEffect(() => {
         getProveedor();
         getCliente();
@@ -457,18 +448,6 @@ const Entradas = () => {
                 <Formulario action='' onSubmit={handleSubmit}>
 
                     <ContentElemen>
-                    <ContentElemenSelect>
-                            <Label>N° de Documento</Label>
-                            <Input
-                                disabled={confirmar}
-                                type='text'
-                                name='NumDoc'
-                                placeholder='Ingrese N° Documento'
-                                value={numDoc}
-                                onChange={ev => setNumDoc(ev.target.value)}
-                            />
-                        </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Tipo de Documento</Label>
                             <Select
@@ -480,6 +459,18 @@ const Entradas = () => {
                                     return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label>N° de Documento</Label>
+                            <Input
+                                disabled={confirmar}
+                                type='text'
+                                name='NumDoc'
+                                placeholder='Ingrese N° Documento'
+                                value={numDoc}
+                                onChange={ev => setNumDoc(ev.target.value)}
+                            />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
@@ -601,7 +592,7 @@ const Entradas = () => {
 
                     </Table>
                 </ListarEquipos>
-                <Boton onClick={actualizarDocs}>Confirmar</Boton>
+                <Boton>Confirmar</Boton>
             </ContenedorFormulario>
 
 
