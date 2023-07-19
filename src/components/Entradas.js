@@ -439,11 +439,13 @@ const Entradas = () => {
         getCliente();
         getEquipo();
         getEntrada()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         getEntrada();
         getCabecera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
 
