@@ -12,10 +12,10 @@ const CabeceraInDB = async ({ tipDoc, numDoc, date, tipoIn, rut, entidad, confir
         rut: rut,
         entidad: entidad,
         confirmado: confirmado,
-        userAdd: userAdd,
-        userMod: userMod,
-        fechaAdd: fechaAdd,
-        fechaMod: fechaMod,
+        useradd: userAdd,
+        usermod: userMod,
+        fechaadd: fechaAdd,
+        fechamod: fechaMod,
         emp_id: emp_id
     })
 }

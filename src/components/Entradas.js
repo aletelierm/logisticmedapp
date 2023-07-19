@@ -71,8 +71,6 @@ const Entradas = () => {
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        console.log('cabecera', cabecera)
-        // setConfirmar(cabecera[0].confirmado)
     }
 
     const getEntrada = async () => {
@@ -149,9 +147,6 @@ const Entradas = () => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        setConfirmar(false)
-
-        
 
         // Validar Rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
@@ -161,6 +156,8 @@ const Entradas = () => {
         const validaR = validarRut(rut);
 
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+        // console.log('esiste', existe[0].confirmado)
+        // console.log('existe id', existe[0].id)
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -220,12 +217,19 @@ const Entradas = () => {
             return;
 
         } else if (existe.length > 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ya existe este documento'
-            })
-            return;
+            if (existe[0].confirmado) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este documento y se encuentra confirmado'
+                })
+            } else {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este documento. Falta confirmar'
+                })
+            }
 
         } else {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
@@ -238,9 +242,7 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
-                    console.log('confirmar', confirmar)
                     try {
-                        
                         CabeceraInDB({
                             emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
@@ -327,6 +329,9 @@ const Entradas = () => {
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie)
 
+        // Validar Id de Cabecera en Entradas
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+
         if (price === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -375,7 +380,7 @@ const Entradas = () => {
                     serie: existe[0].serie,
                     rfid: existe[0].rfid,
                     price: price,
-                    cab_id: cabecera[0].id,
+                    cab_id: existeCab[0].id,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -406,8 +411,10 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+
         const batch = writeBatch(db);
-        console.log('documento batch', documento)
+        console.log('docuemnto dentro de batch', documento)
 
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
@@ -421,7 +428,13 @@ const Entradas = () => {
             cambiarAlerta({
                 tipo: 'exito',
                 mensaje: 'Documentos actualizados correctamente.'
-            })
+            });
+            await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
+                confirmado: true,
+                userMod: user.email,
+                fechaMod: fechaMod
+            });
+
         } catch (error) {
             console.error('Error al actualizar documentos:', error);
             cambiarEstadoAlerta(true);
@@ -430,6 +443,22 @@ const Entradas = () => {
                 mensaje: 'Error al actualizar documentos:', error
             })
         }
+
+        // try {
+        //     console.log('documento cab_ id dentro de confirmado', existeCab[0].id)
+        //     await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
+        //         confirmado: true,
+        //         userMod: userMod,
+        //         fechaMod: fechaMod
+        //     });
+            
+        // } catch (error) {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Error al actualizar documentos:', error
+        //     })
+        // }
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
