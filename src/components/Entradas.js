@@ -9,6 +9,8 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, addDoc, updateDoc, doc, writeBatch} from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
+import * as MdIcons from 'react-icons/md';
+import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -454,7 +456,7 @@ const Entradas = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-
+  
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
@@ -540,6 +542,7 @@ const Entradas = () => {
                             onClick={addCabeceraIn}
                             checked={confirmar}
                             onChange={handleCheckboxChange}
+                            disabled={confirmar}
                         >Guardar</Boton>
 
                     </ContentElemen>
@@ -626,6 +629,7 @@ const Entradas = () => {
                             <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Conf</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -640,6 +644,15 @@ const Entradas = () => {
                                     <Table.Cell>{item.tipoin}</Table.Cell>
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell onClick={()=>{setNumDoc(item.numdoc);
+                                                              setNomTipDoc(item.tipdoc);
+                                                              setNomTipoIn(item.tipoin);
+                                                              setRut(item.rut);
+                                                              setEntidad(item.entidad);
+                                                              setDate(item.date);
+                                                              setConfirmar(true);                        
+                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
+
                                 </Table.Row>
                             )
                         })}
