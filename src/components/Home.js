@@ -28,6 +28,7 @@ import ActualizaMarca from './ActualizaMarca';
 import ActualizaModelo from './ActualizaModelo';
 import ActualizaEmpresa from './ActualizaEmpresa';
 import DashboardEq from './DashboardEq';
+import AsignarRfid from './AsignarRfid';
 
 export const Home = () => {
   
@@ -48,6 +49,7 @@ export const Home = () => {
             <Route path="/misequipos/agregarmodelo" element={<AgregarModelo/>}/>
             <Route path="/actualizamodelo/:id" element={<ActualizaModelo/>}/>
             <Route path="/misequipos/crearequipo" element={<CrearEquipo/>}/>
+            <Route path="/misequipos/asignarfid" element={<AsignarRfid/>}/>
             <Route path="/transacciones" element={<Transaccion/>}/>
             <Route path="/transacciones/entradas" element={<Entradas/>}/>
             <Route path="/transacciones/salidas" element={<Salidas/>}/>

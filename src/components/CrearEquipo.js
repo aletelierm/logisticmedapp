@@ -35,6 +35,7 @@ const Proveedores = () => {
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
+    const [flag, setFlag] = useState(false);
     /* const [documentoId, setDocumentoID]=useState(''); */
 
     //Leer los datos de Familia
@@ -188,7 +189,7 @@ const Proveedores = () => {
     useEffect(() => {
         getEquipo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [flag])
 
     // Lee input de formulario
     const handleChange = (e) => {
@@ -208,6 +209,7 @@ const Proveedores = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        setFlag(false);
 
         const existeSerie = equipo.filter(equi => equi.serie === serie).length > 0
         console.log('existe serie:', existeSerie)
@@ -288,28 +290,12 @@ const Proveedores = () => {
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Equipo creado correctamente'
-                })              
+                })
+                setFlag(true);       
             } catch (error) {
                 console.log(error);
             }
-
-           /*  try {
-                console.log('id documento seteado despues de creado:',documentoId)
-                EquipoStatusDb({
-                    id:documentoId,
-                    emp_id: users.emp_id,
-                    familia: familia,
-                    tipo: tipo,
-                    status: "PREPARACION",
-                    nomEntidad: users.empresa,
-                    userAdd: user.email,
-                    fechaAdd: fechaAdd,
-                    userMod: user.email,
-                    fechaMod: fechaMod
-                })
-            } catch (error) {
-                console.log(error);
-            } */
+          
         }
     }
 
