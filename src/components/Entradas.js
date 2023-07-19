@@ -72,7 +72,7 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         console.log('cabecera', cabecera)
-        setConfirmar(cabecera[0].confirmado)
+        // setConfirmar(cabecera[0].confirmado)
     }
 
     const getEntrada = async () => {
@@ -149,6 +149,9 @@ const Entradas = () => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        setConfirmar(false)
+
+        
 
         // Validar Rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
@@ -235,7 +238,9 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
+                    console.log('confirmar', confirmar)
                     try {
+                        
                         CabeceraInDB({
                             emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
@@ -288,7 +293,8 @@ const Entradas = () => {
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
-                            fechaMod: fechaMod
+                            fechaMod: fechaMod,
+                            confirmado: false
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
