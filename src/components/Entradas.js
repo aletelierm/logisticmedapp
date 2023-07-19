@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, addDoc, updateDoc, doc, writeBatch} from 'firebase/firestore';
+import { getDocs, collection, where, query, addDoc, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import * as MdIcons from 'react-icons/md';
@@ -39,8 +39,7 @@ const Entradas = () => {
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [guardado, setGuardado] = useState(false);
-
+    // const [guardado, setGuardado] = useState(false);
 
 
     //Lectura de datos filtrados por empresa
@@ -420,7 +419,7 @@ const Entradas = () => {
 
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, {status: 'BODEGA'});
+            batch.update(docRef, { status: 'BODEGA' });
         });
 
         try {
@@ -436,6 +435,7 @@ const Entradas = () => {
                 userMod: user.email,
                 fechaMod: fechaMod
             });
+            setFlag(!flag)
 
         } catch (error) {
             console.error('Error al actualizar documentos:', error);
@@ -453,7 +453,7 @@ const Entradas = () => {
         //         userMod: userMod,
         //         fechaMod: fechaMod
         //     });
-            
+
         // } catch (error) {
         //     cambiarEstadoAlerta(true);
         //     cambiarAlerta({
@@ -470,22 +470,22 @@ const Entradas = () => {
         setConfirmar(false)
     };
 
-    
+
     useEffect(() => {
         getProveedor();
         getCliente();
         getEquipo();
         getEntrada()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         getEntrada();
         getCabecera();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-  
+
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
@@ -496,7 +496,7 @@ const Entradas = () => {
                 <Formulario action='' onSubmit={handleSubmit}>
 
                     <ContentElemen>
-                    <ContentElemenSelect>
+                        <ContentElemenSelect>
                             <Label>N° de Documento</Label>
                             <Input
                                 disabled={confirmar}
@@ -664,26 +664,30 @@ const Entradas = () => {
 
                     <Table.Body>
                         {cabecera.map((item) => {
-                            return (
-                                <Table.Row key={item.id2}>
-                                    <Table.Cell >{item.id2}</Table.Cell>
-                                    <Table.Cell>{item.tipdoc}</Table.Cell>
-                                    <Table.Cell>{item.numdoc}</Table.Cell>
-                                    <Table.Cell>{item.date}</Table.Cell>
-                                    <Table.Cell>{item.tipoin}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
-                                    <Table.Cell onClick={()=>{setNumDoc(item.numdoc);
-                                                              setNomTipDoc(item.tipdoc);
-                                                              setNomTipoIn(item.tipoin);
-                                                              setRut(item.rut);
-                                                              setEntidad(item.entidad);
-                                                              setDate(item.date);
-                                                              setConfirmar(true);                        
-                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
-
-                                </Table.Row>
-                            )
+                            if (item.confirmado === false){
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell >{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.tipdoc}</Table.Cell>
+                                        <Table.Cell>{item.numdoc}</Table.Cell>
+                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{item.tipoin}</Table.Cell>
+                                        <Table.Cell>{item.rut}</Table.Cell>
+                                        <Table.Cell>{item.entidad}</Table.Cell>
+                                        <Table.Cell onClick={() => {
+                                            setNumDoc(item.numdoc);
+                                            setNomTipDoc(item.tipdoc);
+                                            setNomTipoIn(item.tipoin);
+                                            setRut(item.rut);
+                                            setEntidad(item.entidad);
+                                            setDate(item.date);
+                                            setConfirmar(true);
+                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
+    
+                                    </Table.Row>
+                                )
+                                setFlag(!flag)
+                            } 
                         })}
 
                     </Table.Body>
