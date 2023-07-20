@@ -431,7 +431,7 @@ const Clientes = () => {
                                                 <Table.Cell>{item.rut}</Table.Cell>       
                                                 <Table.Cell>{item.direccion}</Table.Cell>       
                                                 <Table.Cell>{item.telefono}</Table.Cell>       
-                                                <Table.Cell><Link to={`/home/actualizacliente/${item.id}`}><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                                <Table.Cell><Link to={`/actualizacliente/${item.id}`}><FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
                                                 </Link></Table.Cell>       
                                             </Table.Row>
                                         )

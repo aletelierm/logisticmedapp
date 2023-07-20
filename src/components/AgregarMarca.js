@@ -171,7 +171,7 @@ const AgregarMarca = () => {
                                     <Table.Cell>{item.marca}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Link to={`/home/actualizamarca/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                    <Table.Cell><Link to={`/actualizamarca/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
                                 </Table.Row>
                             )
                         })}

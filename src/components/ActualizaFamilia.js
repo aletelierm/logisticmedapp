@@ -25,7 +25,7 @@ const ActualizaFamilia = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
     const volver = () => {
-        navigate('/home/misequipos/agregarfamilia')
+        navigate('/misequipos/agregarfamilia')
     }
 
     const handleChange = (e) => {

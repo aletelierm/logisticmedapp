@@ -171,7 +171,7 @@ const AgregarTipo = () => {
                                     <Table.Cell>{item.tipo}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Link to={`/home/actualizatipo/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                    <Table.Cell><Link to={`/actualizatipo/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
                                 </Table.Row>
                             )
                         })}

@@ -162,7 +162,7 @@ const AgregarEmpresa = () => {
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Link to={`/home/configuracion/actualizaempresa/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                    <Table.Cell><Link to={`/configuracion/actualizaempresa/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
                                 </Table.Row>
                                     )
                         })}

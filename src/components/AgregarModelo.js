@@ -171,7 +171,7 @@ const AgregarModelo = () => {
                                     <Table.Cell>{item.modelo}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Link to={`/home/actualizamodelo/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                    <Table.Cell><Link to={`/actualizamodelo/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
                                 </Table.Row>
                             )
                         })}

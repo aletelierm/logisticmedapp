@@ -6,10 +6,9 @@ import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, addDoc, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
-import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -686,7 +685,7 @@ const Entradas = () => {
     
                                     </Table.Row>
                                 )
-                                setFlag(!flag)
+                               
                             } 
                         })}
 

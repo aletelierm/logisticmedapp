@@ -28,7 +28,7 @@ import { auth } from '../firebase/firebaseConfig';
     const [telRsf, setTelRsf] = useState('')
 
     const volver = ()=>{
-      navigate('/home/clientes')
+      navigate('/clientes')
     }
 
     useEffect(()=>{

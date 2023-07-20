@@ -339,7 +339,7 @@ const Proveedores = () => {
                                                 <Table.Cell>{item.rut}</Table.Cell>       
                                                 <Table.Cell>{item.direccion}</Table.Cell>       
                                                 <Table.Cell>{item.telefono}</Table.Cell>       
-                                                <Table.Cell><Link to={`/home/actualizaproveedor/${item.id}`}><FaRegEdit style={{fontSize:'20px', color: 'green'}}/></Link></Table.Cell>       
+                                                <Table.Cell><Link to={`/actualizaproveedor/${item.id}`}><FaRegEdit style={{fontSize:'20px', color: 'green'}}/></Link></Table.Cell>       
                                             </Table.Row> 
 
                                         )

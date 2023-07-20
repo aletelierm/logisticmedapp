@@ -26,7 +26,7 @@ const ActualizaMarca = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
     const volver = () => {
-        navigate('/home/misequipos/agregarmarca')
+        navigate('/misequipos/agregarmarca')
     }
 
     const handleChange = (e) => {

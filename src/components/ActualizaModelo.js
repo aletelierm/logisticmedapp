@@ -25,7 +25,7 @@ const ActualizaModelo = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
     const volver = () => {
-        navigate('/home/misequipos/agregarmodelo')
+        navigate('/misequipos/agregarmodelo')
     }
 
     const handleChange = (e) => {

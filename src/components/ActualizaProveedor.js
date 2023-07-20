@@ -25,7 +25,7 @@ import { auth } from '../firebase/firebaseConfig';
     const [nomContacto, setNomContacto] = useState('')
 
     const volver = ()=>{
-      navigate('/home/proveedores') 
+      navigate('/proveedores') 
     }
 
      useEffect(()=>{

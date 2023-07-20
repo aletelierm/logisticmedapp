@@ -26,7 +26,7 @@ const ActualizaTipo = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
 
     const volver = () => {
-        navigate('/home/misequipos/agregartipo')
+        navigate('/misequipos/agregartipo')
     }
 
     const handleChange = (e) => {

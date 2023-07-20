@@ -20,7 +20,7 @@ const ActualizaEmpresa = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);   
 
     const volver = () => {
-        navigate('/home/configuracion/agregarempresa')
+        navigate('/configuracion/agregarempresa')
     }
     const handleChange = (e) => {
         setNuevaEmpresa(e.target.value);
