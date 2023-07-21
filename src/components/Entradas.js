@@ -40,7 +40,9 @@ const Entradas = () => {
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
     // const [guardado, setGuardado] = useState(false);
-
+    const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnAgregar, setBtnAgregar] = useState(true);
+    const [btnGuardar, setBtnGuardar] = useState(false);
 
     //Lectura de datos filtrados por empresa
     const getProveedor = async () => {
@@ -81,7 +83,8 @@ const Entradas = () => {
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     const documento = dataEntrada.filter(de => de.numdoc === numDoc);
-
+    console.log('datos en documento:',documento)
+    
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -261,10 +264,12 @@ const Entradas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente'
+                            mensaje: 'Cabecera Documento guadada exitosamente'
                         })
                         setFlag(!flag);
-                        setConfirmar(true)
+                        setConfirmar(true);
+                        setBtnAgregar(false);
+                        setBtnGuardar(true);
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -305,7 +310,9 @@ const Entradas = () => {
                             mensaje: 'Ingreso realizado exitosamente'
                         })
                         setFlag(!flag);
-                        setConfirmar(true)
+                        setConfirmar(false)
+                        setBtnAgregar(false)
+                        setBtnGuardar(true);
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -319,6 +326,7 @@ const Entradas = () => {
         }
     }
 
+    //Guardda detalles de documento en DB
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -364,6 +372,7 @@ const Entradas = () => {
             })
 
         } else {
+            setBtnConfirmar(false);
             try {
                 EntradasDB({
                     emp_id: users.emp_id,
@@ -390,12 +399,13 @@ const Entradas = () => {
                 });
                 setPrice('')
                 setNumSerie('')
-                cambiarEstadoAlerta(true);
+                cambiarEstadoAlerta(true);               
                 cambiarAlerta({
                     tipo: 'exito',
-                    mensaje: 'Ingreso realizado exitosamente'
+                    mensaje: 'Item guardado correctamente'
                 })
                 setFlag(!flag);
+                
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -407,7 +417,7 @@ const Entradas = () => {
         }
     }
 
-    // Define una función para actualizar varios documentos por lotes
+    // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -466,8 +476,10 @@ const Entradas = () => {
         setDate('');
         setNomTipoIn('');
         setRut('');
-        setEntidad('')
-        setConfirmar(false)
+        setEntidad('');
+        setBtnConfirmar(true);
+        setBtnAgregar(true);
+        setBtnGuardar(false)
     };
 
 
@@ -482,6 +494,8 @@ const Entradas = () => {
     useEffect(() => {
         getEntrada();
         getCabecera();
+        if(documento.length >0) setBtnConfirmar(false);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -571,7 +585,7 @@ const Entradas = () => {
                             onClick={addCabeceraIn}
                             checked={confirmar}
                             onChange={handleCheckboxChange}
-                            disabled={confirmar}
+                            disabled={btnGuardar}
                         >Guardar</Boton>
 
                     </ContentElemen>
@@ -604,10 +618,11 @@ const Entradas = () => {
                             />
                         </ContentElemenSelect>
 
-                        <Icon>
+                        <Icon disabled={btnAgregar} onClick={handleSubmit}>
                             <IoMdAdd
-                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }}
-                                onClick={handleSubmit}
+                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px',cursor:"pointer" }}
+                                
+                                
                             />
                         </Icon>
 
@@ -641,7 +656,7 @@ const Entradas = () => {
 
                     </Table>
                 </ListarEquipos>
-                <Boton onClick={actualizarDocs}>Confirmar</Boton>
+                <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
             </ContenedorFormulario>
 
 
@@ -681,7 +696,9 @@ const Entradas = () => {
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
                                             setDate(item.date);
-                                            setConfirmar(true);
+                                            setBtnGuardar(true);
+                                            setBtnAgregar(false)
+                                            setFlag(!flag)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
     
                                     </Table.Row>
@@ -734,10 +751,12 @@ const Select = styled.select`
     width: 200px;
 `
 
-const Icon = styled.div`
+const Icon = styled.button`
     display: flex;
     // justify-content: space-between;
     margin-left: 20px;
+    border: none;
+    background: none;
 `
 
 const ListarProveedor = styled.div`
@@ -774,6 +793,7 @@ const Boton = styled.button`
     padding: 10px;
     border-radius: 5px;
     border: none;
+    cursor: pointer;
 `
 
 export default Entradas;
