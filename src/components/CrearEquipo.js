@@ -8,6 +8,7 @@ import { collection, getDocs, where, query,addDoc,setDoc,doc } from 'firebase/fi
 // import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
+import Modal from './Modal';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -37,6 +38,9 @@ const Proveedores = () => {
     const [categoria, setCategoria] = useState('Tipo')
     const [flag, setFlag] = useState(false);
     /* const [documentoId, setDocumentoID]=useState(''); */
+    const [estadoModal, setEstadoModal] = useState(false);
+    const [status, setStatus] = useState([]);
+    const [mostrarSt, setMostrarSt] = useState([]);
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -76,6 +80,14 @@ const Proveedores = () => {
         const dato = query(traerEq, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+
+    //Leer los datos de Equipos
+    const getStatus = async () => {
+        const traerEq = collection(db, 'status');
+        const dato = query(traerEq, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
     //Guardar los equipos creado
@@ -183,6 +195,7 @@ const Proveedores = () => {
         getTipo();
         getMarca();
         getModelo();
+        getStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -299,6 +312,13 @@ const Proveedores = () => {
         }
     }
 
+    const leerStatus = (id)=>{
+            const existeStatus= status.filter(st => st.id === id);
+            setMostrarSt(existeStatus);
+            console.log(mostrarSt.status)
+            console.log(id)
+    }
+
     return (
         <ContenedorFormulario>
             <Contenedor>
@@ -405,6 +425,7 @@ const Proveedores = () => {
                             <Table.HeaderCell>Modelo</Table.HeaderCell>
                             <Table.HeaderCell>N° Serie</Table.HeaderCell>
                             <Table.HeaderCell>RFID</Table.HeaderCell>
+                            <Table.HeaderCell>UBICACION</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -420,6 +441,10 @@ const Proveedores = () => {
                                         <Table.Cell>{item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.rfid}</Table.Cell>
+                                        <Table.Cell onClick={()=>{
+                                            leerStatus(item.id)
+                                            setEstadoModal(!estadoModal)}
+                                            }><MdIcons.MdFactCheck  style={{ fontSize: '20px', color: 'green' }}/></Table.Cell>
                                         {/* <Table.Cell>
                                             <Boton>
                                                 <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
@@ -439,6 +464,15 @@ const Proveedores = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
+             <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
+                <Contenido>
+                    <h1>Ubicacion del Equipo</h1>
+                    {mostrarSt.map((st) =>{
+                        return <p key={st.id2}>El estado es en: {st.status}</p>
+                    })}
+                 <Boton2 onClick={()=>setEstadoModal(!estadoModal)}>Aceptar</Boton2>
+                </Contenido>
+            </Modal>
         </ContenedorFormulario>
     );
 };
@@ -518,6 +552,29 @@ const BotonGuardar = styled.button`
     &:hover{
         background-color: #83d310;
     }
+`
+const Boton2 = styled.button`
+	display: block;
+	padding: 10px 30px;
+	border-radius: 100px;
+	color: #fff;
+	border: none;
+	background: #1766DC;
+	cursor: pointer;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+	transition: .3s ease all;
+
+	&:hover {
+		background: #0066FF;
+	}
+`
+
+const Contenido = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 `
 
 export default Proveedores;

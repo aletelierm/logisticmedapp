@@ -1,8 +1,31 @@
-import React from 'react';
+/* eslint-disable array-callback-return */
+import React,{useEffect, useState} from 'react';
 import { Table } from 'semantic-ui-react'
 import styled from 'styled-components';
+import {  db } from '../firebase/firebaseConfig';
+import { getDocs, collection, where, query } from 'firebase/firestore';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 const Transaccion = () =>{
+
+    const { users } = useContext(UserContext);
+    const [cabecera, setCabecera] = useState([]);
+
+     // Leer datos de cabecera
+     const getCabecera = async () => {
+        const traerCabecera = collection(db, 'cabeceras');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
+
+    useEffect(()=>{
+        getCabecera();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
+
     return (
         <div>
             <h2>Ultimas Transacciones</h2>
@@ -12,22 +35,34 @@ const Transaccion = () =>{
 
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                        <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>Proveedor</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
-                           
+                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Entidad</Table.HeaderCell>                                         
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>0012984572</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>Bomy CHILE</Table.Cell>
-                            <Table.Cell>23-04-2023</Table.Cell>
-                           
-                        </Table.Row>
+                        {cabecera.map((item) => {
+                            if (item.confirmado === true){
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell >{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.tipdoc}</Table.Cell>
+                                        <Table.Cell>{item.numdoc}</Table.Cell>
+                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{item.tipoin}</Table.Cell>
+                                        <Table.Cell>{item.rut}</Table.Cell>
+                                        <Table.Cell>{item.entidad}</Table.Cell>                                 
+                                    </Table.Row>
+                                )
+                               
+                            } 
+                        })}
+
                     </Table.Body>
 
                 </Table>

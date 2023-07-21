@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import EntradasDB from '../firebase/EntradasDB'
@@ -72,7 +73,7 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
+    
     const getEntrada = async () => {
         const traerEntrada = collection(db, 'entradas');
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
@@ -687,7 +688,9 @@ const Entradas = () => {
                                 )
                                
                             } 
-                        })}
+                        }
+                    
+                        )}
 
                     </Table.Body>
                 </Table>
