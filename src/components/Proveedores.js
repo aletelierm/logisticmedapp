@@ -12,6 +12,7 @@ import { FaRegEdit } from "react-icons/fa";
 import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import * as XLSX from 'xlsx';
 
 
 const Proveedores = () => {
@@ -238,6 +239,13 @@ const Proveedores = () => {
         }
     }
 
+    const ExportarXls =()=>{
+        const worksheet = XLSX.utils.json_to_sheet(leer);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+        XLSX.writeFile(workbook, 'data.xlsx');
+    }
+
     return (
         <ContenedorProveedor>
              <ContenedorFormulario>
@@ -317,7 +325,8 @@ const Proveedores = () => {
                         placeholder='Buscar Empresa'
                         value={buscador}
                         onChange={onBuscarCambios}
-                    />,
+                    />
+                     <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green',marginLeft:'20px' }} title='Exportar Proveedores a Excel'/>
                 </ContentElemen>
                 <Table singleLine>
                             <Table.Header>

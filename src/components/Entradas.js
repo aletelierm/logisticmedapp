@@ -44,7 +44,7 @@ const Entradas = () => {
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
 
-    //Lectura de datos filtrados por empresa
+    //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
         const traerProveedor = collection(db, 'proveedores');
         const dato = query(traerProveedor, where('emp_id', '==', users.emp_id));
@@ -52,7 +52,7 @@ const Entradas = () => {
         setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    //Lectura de datos filtrados por empresa
+    //Lectura de clientes filtrados por empresa
     const getCliente = async () => {
         const traerCliente = collection(db, 'clientes');
         const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
@@ -60,7 +60,7 @@ const Entradas = () => {
         setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    //Leer los datos de Equipos
+    //Lectura de equipos filtrado por empresas
     const getEquipo = async () => {
         const traerEq = collection(db, 'equipos');
         const dato = query(traerEq, where('emp_id', '==', users.emp_id));
@@ -68,7 +68,7 @@ const Entradas = () => {
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    // Leer datos de cabecera
+    // Lectura cabecera de documentos
     const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
@@ -76,14 +76,17 @@ const Entradas = () => {
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     
+    //Lectura mivimientos de entrada
     const getEntrada = async () => {
         const traerEntrada = collection(db, 'entradas');
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+
+    //Almacena movimientos de entrada del documento
     const documento = dataEntrada.filter(de => de.numdoc === numDoc);
-    console.log('datos en documento:',documento)
+   
     
     // Validar rut
     const detectarCli = (e) => {
@@ -326,7 +329,7 @@ const Entradas = () => {
         }
     }
 
-    //Guardda detalles de documento en DB
+    //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);

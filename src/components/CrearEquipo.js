@@ -11,6 +11,8 @@ import * as FaIcons from 'react-icons/fa';
 import Modal from './Modal';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+/* import ExportarExcel from '../funciones/ExportarExcel'; */
+import * as XLSX from 'xlsx';
 
 
 
@@ -319,6 +321,14 @@ const Proveedores = () => {
             console.log(id)
     }
 
+    //Exportar a excel los equipos
+    const ExportarXls = ()=>{        
+        const worksheet = XLSX.utils.json_to_sheet(equipo);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+        XLSX.writeFile(workbook, 'data.xlsx');
+    }
+
     return (
         <ContenedorFormulario>
             <Contenedor>
@@ -405,6 +415,7 @@ const Proveedores = () => {
                             <option>Modelo</option>                           
                         </Select>
                 </ContentElemenSelect>
+                
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
                     <Input style={{ width: '100%' }}
@@ -413,8 +424,9 @@ const Proveedores = () => {
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green',marginLeft:'20px' }} title='Exportar Equipos a Excel'/>
                 </ContentElemen>
-
+                
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -441,10 +453,13 @@ const Proveedores = () => {
                                         <Table.Cell>{item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.rfid}</Table.Cell>
-                                        <Table.Cell onClick={()=>{
+                                        <Table.Cell 
+                                            title='Ver Satus del Equipo'
+                                            onClick={()=>{
                                             leerStatus(item.id)
                                             setEstadoModal(!estadoModal)}
-                                            }><MdIcons.MdFactCheck  style={{ fontSize: '20px', color: 'green' }}/></Table.Cell>
+                                            }><MdIcons.MdFactCheck  style={{ fontSize: '20px', color: 'green' }}/>
+                                        </Table.Cell>
                                         {/* <Table.Cell>
                                             <Boton>
                                                 <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
