@@ -20,7 +20,7 @@ const EntradasDB = async ({ tipDoc, numDoc, date, tipoIn, rut, entidad, eq_id, f
         rfid: rfid,
         price: price,
         cab_id: cab_id,
-        tipmov: tipMov,
+        // tipmov: tipMov,
         useradd: userAdd,
         usermod: userMod,
         fechaadd: fechaAdd,
