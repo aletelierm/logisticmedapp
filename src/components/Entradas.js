@@ -34,8 +34,10 @@ const Entradas = () => {
     const [entidad, setEntidad] = useState('');
     const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
+    const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
+    const [idEquipo, setIdEquipo] = useState([]);
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
@@ -82,6 +84,14 @@ const Entradas = () => {
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
+
+    //Lectura de status
+    const getStatus= async () => {
+        const traerEntrada = collection(db, 'status');
+        const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
 
     //Almacena movimientos de entrada del documento
@@ -338,11 +348,21 @@ const Entradas = () => {
         // Validar N° Serie en equipo
         const existe = equipo.filter(eq => eq.serie === numSerie);
 
+        //Validar que existe el id del equipo en status       
+        
+        if(existe.length === 1){           
+            setIdEquipo(status.filter(st => st.id === existe[0].id) );
+            console.log('estatus:',idEquipo[0].status)
+        } 
+              
+       
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie)
 
         // Validar Id de Cabecera en Entradas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+
+       
 
         if (price === '') {
             cambiarEstadoAlerta(true);
@@ -374,7 +394,13 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
 
-        } else {
+        } else if(idEquipo.length === 1 && idEquipo[0].status ==='BODEGA'){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra en Bodega'
+            })
+        }else {
             setBtnConfirmar(false);
             try {
                 EntradasDB({
@@ -474,6 +500,8 @@ const Entradas = () => {
         //         mensaje: 'Error al actualizar documentos:', error
         //     })
         // }
+        setNumSerie('');
+        setPrice('');
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
@@ -495,6 +523,7 @@ const Entradas = () => {
     }, [])
 
     useEffect(() => {
+        getStatus();
         getEntrada();
         getCabecera();
         if(documento.length >0) setBtnConfirmar(false);
@@ -722,7 +751,7 @@ const Entradas = () => {
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
 
-            {console.log(user.uid)}
+           
         </ContenedorProveedor>
     );
 };

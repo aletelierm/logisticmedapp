@@ -7,7 +7,7 @@ export const DataMenuSup = [
   
   {
     title: 'Movimientos',
-    path: '/home/transacciones',
+    path: 'transacciones',
     icon: <IoIcons.IoIosPaper />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
@@ -15,13 +15,13 @@ export const DataMenuSup = [
     subNav: [
       {
         title: 'Entradas',
-        path: '/home/transacciones/entradas',
+        path: 'transacciones/entradas',
         icon: <MdIcons.MdInput />,
         cName: 'sub-nav'
       },
       {
         title: 'Salidas',
-        path: '/home/transacciones/salidas',
+        path: 'transacciones/salidas',
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
       }

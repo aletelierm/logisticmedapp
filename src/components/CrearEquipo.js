@@ -12,7 +12,8 @@ import Modal from './Modal';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 /* import ExportarExcel from '../funciones/ExportarExcel'; */
-import * as XLSX from 'xlsx';
+/* import * as XLSX from 'xlsx'; */
+import ExportarExcel from '../funciones/ExportarExcel';
 
 
 
@@ -322,11 +323,17 @@ const Proveedores = () => {
     }
 
     //Exportar a excel los equipos
-    const ExportarXls = ()=>{        
-        const worksheet = XLSX.utils.json_to_sheet(equipo);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-        XLSX.writeFile(workbook, 'data.xlsx');
+    const ExportarXls = ()=>{    
+    //Campos a mostrar en el excel   
+    const columnsToShow = ['id','familia','tipo','marca','modelo','serie','rfid']
+    //Llamar a la funcion con props: array equipo y array columnas
+    const excelBlob = ExportarExcel ( equipo, columnsToShow );
+    // Crear un objeto URL para el Blob y crear un enlace de descarga
+    const excelURL = URL.createObjectURL(excelBlob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = excelURL;
+    downloadLink.download = 'data.xlsx';
+    downloadLink.click();
     }
 
     return (
@@ -417,7 +424,7 @@ const Proveedores = () => {
                 </ContentElemenSelect>
                 
                 <ContentElemen>
-                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} title='Buscar Equipos'/>
                     <Input style={{ width: '100%' }}
                         type='text'
                         placeholder={`Buscar ${categoria}`}

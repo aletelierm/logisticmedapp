@@ -10,7 +10,7 @@ import { UserContext } from '../context/UserContext';
 const Transaccion = () =>{
 
     const { users } = useContext(UserContext);
-    const [cabecera, setCabecera] = useState([]);
+    const [cabecera, setCabecera] = useState([]);   
 
      // Leer datos de cabecera
      const getCabecera = async () => {
@@ -25,6 +25,13 @@ const Transaccion = () =>{
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
+
+    const OrdenaPorNumDoc = (a,b)=>{
+        return a.numdoc - b.numdoc;
+    }
+
+    const ordenado = cabecera.sort(OrdenaPorNumDoc);
+    
 
     return (
         <div>
@@ -46,11 +53,11 @@ const Transaccion = () =>{
                     </Table.Header>
 
                     <Table.Body>
-                        {cabecera.map((item) => {
+                        {ordenado.map((item, index) => {
                             if (item.confirmado === true){
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell >{item.id2}</Table.Cell>
+                                        <Table.Cell >{index+1}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.date}</Table.Cell>

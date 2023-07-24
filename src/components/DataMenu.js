@@ -128,7 +128,7 @@ export const DataMenu = [
       },
       /* {
         title: 'Asignar Roles',
-        path: '/home/configuracion/asignaroles',
+        path: 'configuracion/asignaroles',
         icon: <RiIcons.RiProfileFill />
       }, */
       {
@@ -138,7 +138,7 @@ export const DataMenu = [
       }/* ,
       {
         title: 'Parametro Global',
-        path: '/home/configuracion/global',
+        path: 'configuracion/global',
         icon: <RiIcons.RiGlobalLine />
       } */
     ]
