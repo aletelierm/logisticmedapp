@@ -77,7 +77,7 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    
+
     //Lectura mivimientos de entrada
     const getEntrada = async () => {
         const traerEntrada = collection(db, 'entradas');
@@ -95,9 +95,9 @@ const Entradas = () => {
     }
 
     //Almacena movimientos de entrada del documento
-    const documento = dataEntrada.filter(de => de.numdoc === numDoc);
-   
-    
+    const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+
+
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -272,6 +272,7 @@ const Entradas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
+                            // tipMov: 1,
                             confirmado: false
                         })
                         cambiarEstadoAlerta(true);
@@ -315,6 +316,7 @@ const Entradas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
+                            // tipMov: 1,
                             confirmado: false
                         })
                         cambiarEstadoAlerta(true);
@@ -424,17 +426,18 @@ const Entradas = () => {
                     userMod: user.email,
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
+                    // tipMov: 1,
                     status: 'BODEGA'
                 });
                 setPrice('')
                 setNumSerie('')
-                cambiarEstadoAlerta(true);               
+                cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Item guardado correctamente'
                 })
                 setFlag(!flag);
-                
+
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -526,7 +529,7 @@ const Entradas = () => {
         getStatus();
         getEntrada();
         getCabecera();
-        if(documento.length >0) setBtnConfirmar(false);
+        if (documento.length > 0) setBtnConfirmar(false);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -652,9 +655,7 @@ const Entradas = () => {
 
                         <Icon disabled={btnAgregar} onClick={handleSubmit}>
                             <IoMdAdd
-                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px',cursor:"pointer" }}
-                                
-                                
+                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
                             />
                         </Icon>
 
@@ -711,7 +712,7 @@ const Entradas = () => {
 
                     <Table.Body>
                         {cabecera.map((item) => {
-                            if (item.confirmado === false){
+                            if (item.confirmado === false) {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell >{item.id2}</Table.Cell>
@@ -732,13 +733,13 @@ const Entradas = () => {
                                             setBtnAgregar(false)
                                             setFlag(!flag)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
-    
+
                                     </Table.Row>
                                 )
-                               
-                            } 
+
+                            }
                         }
-                    
+
                         )}
 
                     </Table.Body>

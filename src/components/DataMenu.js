@@ -17,7 +17,7 @@ export const DataMenu = [
       {
         title: 'Agregar Familia',
         path: 'misequipos/agregarfamilia',
-        icon: <IoIcons.IoMdAddCircleOutline/>
+        icon: <IoIcons.IoMdAddCircleOutline />
       },
       {
         title: 'Agregar Tipo',
@@ -49,7 +49,7 @@ export const DataMenu = [
   {
     title: 'Mis Clientes',
     path: 'clientes',
-    icon: <FaIcons.FaUserNurse />,    
+    icon: <FaIcons.FaUserNurse />,
   },
   {
     title: 'Mis Proveedores',
@@ -72,17 +72,17 @@ export const DataMenu = [
         icon: <MdIcons.MdInput />,
         cName: 'sub-nav'
       },
-     /*  {
+      {
         title: 'Salidas',
         path: 'transacciones/salidas',
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
-      } */
-      
+      }
+
     ]
   },
- 
-   {
+
+  {
     title: 'Servicio Tecnico',
     path: 'serviciotecnico',
     icon: <MdIcons.MdMedicalServices />,
@@ -112,7 +112,7 @@ export const DataMenu = [
         icon: <IoIcons.IoIosPlay />
       }
     ]
-  }, 
+  },
   {
     title: 'Configuracion',
     path: 'configuracion',
@@ -143,5 +143,5 @@ export const DataMenu = [
       } */
     ]
   }
-  
+
 ];
