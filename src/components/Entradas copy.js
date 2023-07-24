@@ -262,7 +262,6 @@ const Entradas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            // tipMov: 1,
                             confirmado: false
                         })
                         cambiarEstadoAlerta(true);
@@ -306,7 +305,6 @@ const Entradas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            // tipMov: 1,
                             confirmado: false
                         })
                         cambiarEstadoAlerta(true);
@@ -400,7 +398,6 @@ const Entradas = () => {
                     userMod: user.email,
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
-                    // tipMov: 1,
                     status: 'BODEGA'
                 });
                 setPrice('')
@@ -505,8 +502,6 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    // hasta aqui
-
 
     return (
         <ContenedorProveedor>
@@ -599,8 +594,6 @@ const Entradas = () => {
                     </ContentElemen>
                 </Formulario>
             </ContenedorFormulario>
-
-            {/* hasta aqui 24-07-2023 15:30*/}
 
             <ContenedorFormulario>
                 <Formulario>

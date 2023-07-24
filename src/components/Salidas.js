@@ -1,61 +1,501 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import SalidasDB from '../firebase/SalidasDB'
+import CabeceraOutDB from '../firebase/CabeceraOutDB'
+import Alertas from './Alertas';
+import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
-/* import { useNavigate } from 'react-router-dom'; */
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection } from 'firebase/firestore';
-import * as FaIcons from 'react-icons/fa';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoOut } from './TipDoc'
+import * as FaIcons from 'react-icons/fa';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 
-const Entradas = () => {
+
+const Salidas = () => {
+    //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
+    const { users } = useContext(UserContext);
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
 
-    const [nomTipDoc, setNomTipDoc] = useState([]);
-    const [numDoc, setNumDoc] = useState('');
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [alerta, cambiarAlerta] = useState({});
     const [proveedor, setProveedor] = useState([]);
-    const [nomProveedor, setNomProveedor] = useState([]);
-    // const [nomTipTrans, setNomTipTrans] = useState([]);
-    const [nomTipoInOut, setNomTipoInOut] = useState([]);
+    const [cliente, setCliente] = useState([]);
+    const [nomTipDoc, setNomTipDoc] = useState('');
+    const [numDoc, setNumDoc] = useState('');
+    const [date, setDate] = useState('');
+    const [nomTipoOut, setNomTipoOut] = useState('');
+    const [rut, setRut] = useState('');
+    const [entidad, setEntidad] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [patente, setPatente] = useState('');
     const [equipo, setEquipo] = useState([]);
-    const [nomEquipo, setNomEquipo] = useState([]);
+    const [cabecera, setCabecera] = useState([]);
+    const [numSerie, setNumSerie] = useState('');
+    const [price, setPrice] = useState('');
+    const [flag, setFlag] = useState(false);
+    const [dataSalida, setDataSalida] = useState([]);
+    const [confirmar, setConfirmar] = useState(false);
+    // const [guardado, setGuardado] = useState(false);
+    const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnAgregar, setBtnAgregar] = useState(true);
+    const [btnGuardar, setBtnGuardar] = useState(false);
 
-    //Lee datos de Proveedores
+    //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
-        const dataProveedor = await getDocs(collection(db, "proveedores"));
-        setProveedor(dataProveedor.docs.map((prov) => ({ ...prov.data(), id: prov.id })))
+        const traerProveedor = collection(db, 'proveedores');
+        const dato = query(traerProveedor, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    //Lee datos de Equipos
+    //Lectura de clientes filtrados por empresa
+    const getCliente = async () => {
+        const traerCliente = collection(db, 'clientes');
+        const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+
+    //Lectura de equipos filtrado por empresas
     const getEquipo = async () => {
-        const dataEquipo = await getDocs(collection(db, "crearequipos"));
-        setEquipo(dataEquipo.docs.map((eq) => ({ ...eq.data(), id: eq.id })))
+        const traerEq = collection(db, 'equipos');
+        const dato = query(traerEq, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
+    // Lectura cabecera de documentos
+    const getCabecera = async () => {
+        const traerCabecera = collection(db, 'cabeceras');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
 
-    //     // Consulta si exite campo en el arreglo
-    //     const existe = proveedor.filter(prov => prov.proveedor.includes());
-    //     console.log('ver si existe:',existe);
+    //Lectura mivimientos de Salida
+    const getSalida = async () => {
+        const traerSalida = collection(db, 'salidas');
+        const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
 
-    //     // Realiza consulta al arreglo Proveedor si 
-    //     if (existe) {
+    //Almacena movimientos de entrada del documento
+    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut && de.tipmov === 2 );
 
+    // Validar rut
+    const detectarCli = (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
 
-    //     } else {
-    //         alert('No existe Proveedor')
-    //     }
-    // }
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            if (nomTipoOut === 'CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                }
+            } else {
+                const existeProv = proveedor.filter(prov => prov.rut === rut);
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+                }
+            }
+        }
+    }
+
+    // Validar N°serie
+    const detectar = (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            // Consulta si exite serie en el arreglo            
+            const existe = equipo.filter(eq => eq.serie === numSerie);
+            const existeIn = documento.filter(doc => doc.serie === numSerie)
+            if (existe.length === 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe un Equipo con este N° Serie'
+                })
+            } else if (existeIn.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra en este documento'
+                })
+            }
+        }
+    }
+
+    const handleCheckboxChange = (event) => {
+        setConfirmar(event.target.checked);
+    };
+
+    // Guardar Cabecera de Documento en Coleccion CabeceraInDB
+    const addCabeceraIn = (ev) => {
+        ev.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        // Validar Rut
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if (digito === 'k' || digito === 'K') digito = -1;
+        const validaR = validarRut(rut);
+
+        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+
+        if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Tipo Documento'
+            })
+            return;
+
+        } else if (numDoc === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese N° Documento'
+            })
+            return;
+
+        } else if (date === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Fecha'
+            })
+            return;
+
+        } else if (nomTipoOut.length === 0 || nomTipoOut === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Tipo de Salida'
+            })
+            return;
+
+            // Validacion Rut
+        } else if (rut === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Rut no puede estar vacio'
+            })
+            return;
+
+        } else if (!expresionRegularRut.test(rut)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Formato incorrecto de rut'
+            })
+            return;
+
+        } else if (validaR !== parseInt(digito)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;
+
+        } else if (existe.length > 0) {
+            if (existe[0].confirmado) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este documento y se encuentra confirmado'
+                })
+            } else {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este documento. Falta confirmar'
+                })
+            }
+
+        } else {
+            if (nomTipoOut === 'CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                    try {
+                        CabeceraOutDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoIn: nomTipoOut,
+                            rut: rut,
+                            entidad: entidad,
+                            correo: correo,
+                            patente: patente,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod,
+                            // tipMov: 2,
+                            confirmado: false
+                        })
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Cabecera Documento guadada exitosamente'
+                        })
+                        setFlag(!flag);
+                        setConfirmar(true);
+                        setBtnAgregar(false);
+                        setBtnGuardar(true);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
+            } else {
+                const existeProv = proveedor.filter(prov => prov.rut === rut);
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+                    try {
+                        CabeceraOutDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: date,
+                            tipoOut: nomTipoOut,
+                            rut: rut,
+                            entidad: entidad,
+                            correo: correo,
+                            patente: patente,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod,
+                            // tipMov: 2,
+                            confirmado: false
+                        })
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        setConfirmar(false)
+                        setBtnAgregar(false)
+                        setBtnGuardar(true);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
+            }
+        }
+    }
+
+    // hasta aqui funcional 24-07-2023 16:36
+
+    //Valida y guarda los detalles del documento
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        // Validar N° Serie en equipo
+        const existe = equipo.filter(eq => eq.serie === numSerie);
+
+        // Validar en N° Serie en Entradas
+        const existeIn = documento.filter(doc => doc.serie === numSerie)
+
+        // Validar Id de Cabecera en Entradas
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut && cab.tipmov === 2)
+
+        if (price === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese Precio de Equipo'
+            })
+            return;
+
+        } else if (numSerie === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese o Scaneé N° Serie'
+            })
+            return;
+
+        } else if (existe.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No existe un Equipo con este N° Serie'
+            })
+
+        } else if (existeIn.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra en este documento'
+            })
+
+        } else {
+            setBtnConfirmar(false);
+            try {
+                SalidasDB({
+                    emp_id: users.emp_id,
+                    tipDoc: nomTipDoc,
+                    numDoc: numDoc,
+                    date: date,
+                    tipoIn: nomTipoOut,
+                    rut: rut,
+                    entidad: entidad,
+                    eq_id: existe[0].id,
+                    familia: existe[0].familia,
+                    tipo: existe[0].tipo,
+                    marca: existe[0].marca,
+                    modelo: existe[0].modelo,
+                    serie: existe[0].serie,
+                    rfid: existe[0].rfid,
+                    price: price,
+                    cab_id: existeCab[0].id,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    // tipMov: 2,
+                    status: 'Cliente'
+                });
+                setPrice('')
+                setNumSerie('')
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Item guardado correctamente'
+                })
+                setFlag(!flag);
+
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
+        }
+    }
+
+    // Función para actualizar varios documentos por lotes
+    const actualizarDocs = async () => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+
+        const batch = writeBatch(db);
+        console.log('docuemnto dentro de batch', documento)
+
+        documento.forEach((docs) => {
+            const docRef = doc(db, 'status', docs.eq_id);
+            batch.update(docRef, { status: 'Cliente' });
+        });
+
+        try {
+            await batch.commit();
+            console.log('Documentos actualizados correctamente.');
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Documentos actualizados correctamente.'
+            });
+            await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
+                confirmado: true,
+                userMod: user.email,
+                fechaMod: fechaMod
+            });
+            setFlag(!flag)
+
+        } catch (error) {
+            console.error('Error al actualizar documentos:', error);
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error al actualizar documentos:', error
+            })
+        }
+
+        setNomTipDoc('');
+        setNumDoc('');
+        setDate('');
+        setNomTipoOut('');
+        setRut('');
+        setEntidad('');
+        setBtnConfirmar(true);
+        setBtnAgregar(true);
+        setBtnGuardar(false)
+    };
+
 
     useEffect(() => {
         getProveedor();
+        getCliente();
         getEquipo();
+        getSalida()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    useEffect(() => {
+        getSalida();
+        getCabecera();
+        if (documento.length > 0) setBtnConfirmar(false);
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag, setFlag])
 
+    // hasta aqui
 
     return (
         <ContenedorProveedor>
@@ -64,12 +504,27 @@ const Entradas = () => {
             </ContenedorFormulario>
 
             <ContenedorFormulario>
-                <Formulario action=''>
+                <Formulario action='' onSubmit={handleSubmit}>
 
                     <ContentElemen>
                         <ContentElemenSelect>
+                            <Label>N° de Documento</Label>
+                            <Input
+                                disabled={confirmar}
+                                type='text'
+                                name='NumDoc'
+                                placeholder='Ingrese N° Documento'
+                                value={numDoc}
+                                onChange={ev => setNumDoc(ev.target.value)}
+                            />
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
                             <Label>Tipo de Documento</Label>
-                            <Select value={nomTipDoc} onChange={ev => setNomTipDoc(ev.target.value)}>
+                            <Select
+                                disabled={confirmar}
+                                value={nomTipDoc}
+                                onChange={ev => setNomTipDoc(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipDoc.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
@@ -78,35 +533,25 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
-                            <Label>N° de Documento</Label>
+                            <Label>Fecha Ingreso</Label>
                             <Input
-                                type='text'
-                                name='NumDoc'
-                                placeholder='Ingrese N° Documento'
-                                value={numDoc}
-                                onChange={e => setNumDoc(e.target.value)}
+                                disabled={confirmar}
+                                type='date'
+                                placeholder='Seleccione Fecha'
+                                name='date'
+                                value={date}
+                                onChange={ev => setDate(ev.target.value)}
                             />
-                        </ContentElemenSelect>
-
-                        <ContentElemenSelect>
-                            <Label >Entidad</Label>
-                            <Input
-                                type='text'
-                                name='Proveedor'
-                                placeholder='Ingrese Entidad'
-                                onChange={e => setNomProveedor(e.target.value)} />
-                        </ContentElemenSelect>
-
-                        <ContentElemenSelect>
-                            <Label>Fecha Egreso</Label>
-                            <Input type='date' />
                         </ContentElemenSelect>
                     </ContentElemen>
 
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo Salida</Label>
-                            <Select value={nomTipoInOut} onChange={e => setNomTipoInOut(e.target.value)}>
+                            <Select
+                                disabled={confirmar}
+                                value={nomTipoOut}
+                                onChange={ev => setNomTipoOut(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipoOut.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
@@ -115,27 +560,70 @@ const Entradas = () => {
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
+                            <Label >Rut</Label>
+                            <Input
+                                disabled={confirmar}
+                                type='numero'
+                                placeholder='Ingrese Rut'
+                                name='rut'
+                                value={rut}
+                                onChange={ev => setRut(ev.target.value)}
+                                onKeyDown={detectarCli}
+                            />
+                        </ContentElemenSelect>
+
+                        <ContentElemenSelect>
+                            <Label >Nombre</Label>
+                            <Input value={entidad} disabled />
+                        </ContentElemenSelect>
+                    </ContentElemen>
+
+                    <ContentElemen>
+                        <ContentElemenSelect>
                             <Label  >Correo Transportista</Label>
-                            <Input placeholder='Ingrese Correo' />
+                            <Input
+                                disabled={confirmar}
+                                type='texto'
+                                placeholder='Ingrese Correo'
+                                name='correo'
+                                value={correo}
+                                onChange={ev => setCorreo(ev.target.value)}
+                            />
                         </ContentElemenSelect>
 
                         <ContentElemenSelect>
                             <Label >Patente Vehiculo</Label>
-                            <Input placeholder='Ingrese Vehiculo' />
+                            <Input
+                                disabled={confirmar}
+                                type='texto'
+                                placeholder='Ingrese Vehiculo'
+                                name='patente'
+                                value={patente}
+                                onChange={ev => setPatente(ev.target.value)}
+                            />
+                            {/* hasta aqui 16:06 */}
                         </ContentElemenSelect>
+
+                        <Boton
+                            style={{ margin: '17px 0' }}
+                            onClick={addCabeceraIn}
+                            checked={confirmar}
+                            onChange={handleCheckboxChange}
+                            disabled={btnGuardar}
+                        >Guardar</Boton>
+
                     </ContentElemen>
-
                 </Formulario>
-
-                <Boton >Guardar</Boton>
             </ContenedorFormulario>
+
+            {/* hasta aqui */}
 
             <ContenedorFormulario>
                 <Formulario>
                     <ContentElemen >
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            <Input style={{ width: '700px' }} onChange={e => setNomEquipo(e.target.value)}
+                            <Input style={{ width: '700px' }} /* onChange={e => setNomEquipo(e.target.value)}*/
                                 placeholder='Escanee o ingrese Equipo'
                             />
                         </ContentElemenSelect>
@@ -232,6 +720,12 @@ const Entradas = () => {
                 </Table>
             </ListarProveedor>
 
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+
             {console.log(user.uid)}
         </ContenedorProveedor>
     );
@@ -307,4 +801,4 @@ const Boton = styled.button`
     border: none;
 `
 
-export default Entradas;
+export default Salidas;
