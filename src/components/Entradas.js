@@ -505,8 +505,6 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    // hasta aqui
-
 
     return (
         <ContenedorProveedor>
@@ -599,8 +597,6 @@ const Entradas = () => {
                     </ContentElemen>
                 </Formulario>
             </ContenedorFormulario>
-
-            {/* hasta aqui 24-07-2023 15:30*/}
 
             <ContenedorFormulario>
                 <Formulario>

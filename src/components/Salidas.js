@@ -37,7 +37,7 @@ const Salidas = () => {
     const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
     const [numSerie, setNumSerie] = useState('');
-    const [price, setPrice] = useState('');
+    // const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
@@ -72,7 +72,7 @@ const Salidas = () => {
 
     // Lectura cabecera de documentos
     const getCabecera = async () => {
-        const traerCabecera = collection(db, 'cabeceras');
+        const traerCabecera = collection(db, 'cabecerasout');
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
@@ -87,7 +87,7 @@ const Salidas = () => {
     }
 
     //Almacena movimientos de entrada del documento
-    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut && de.tipmov === 2 );
+    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
 
     // Validar rut
     const detectarCli = (e) => {
@@ -163,6 +163,9 @@ const Salidas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
 
+        //Comprobar que correo sea correcto
+        const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
@@ -222,6 +225,22 @@ const Salidas = () => {
             })
             return;
 
+        } else if (!expresionRegular.test(correo)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'favor ingresar un correo valido'
+            })
+            return;
+
+        } else if (patente === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese Patente del Vehiculo'
+            })
+            return;
+
         } else if (existe.length > 0) {
             if (existe[0].confirmado) {
                 cambiarEstadoAlerta(true);
@@ -254,7 +273,7 @@ const Salidas = () => {
                             tipDoc: nomTipDoc,
                             numDoc: numDoc,
                             date: date,
-                            tipoIn: nomTipoOut,
+                            tipoOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
                             correo: correo,
@@ -334,8 +353,6 @@ const Salidas = () => {
         }
     }
 
-    // hasta aqui funcional 24-07-2023 16:36
-
     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -349,17 +366,9 @@ const Salidas = () => {
         const existeIn = documento.filter(doc => doc.serie === numSerie)
 
         // Validar Id de Cabecera en Entradas
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut && cab.tipmov === 2)
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
 
-        if (price === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese Precio de Equipo'
-            })
-            return;
-
-        } else if (numSerie === '') {
+        if (numSerie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -389,9 +398,11 @@ const Salidas = () => {
                     tipDoc: nomTipDoc,
                     numDoc: numDoc,
                     date: date,
-                    tipoIn: nomTipoOut,
+                    tipoOut: nomTipoOut,
                     rut: rut,
                     entidad: entidad,
+                    correo: correo,
+                    patente: patente,
                     eq_id: existe[0].id,
                     familia: existe[0].familia,
                     tipo: existe[0].tipo,
@@ -399,7 +410,6 @@ const Salidas = () => {
                     modelo: existe[0].modelo,
                     serie: existe[0].serie,
                     rfid: existe[0].rfid,
-                    price: price,
                     cab_id: existeCab[0].id,
                     userAdd: user.email,
                     userMod: user.email,
@@ -408,7 +418,7 @@ const Salidas = () => {
                     // tipMov: 2,
                     status: 'Cliente'
                 });
-                setPrice('')
+                // setPrice('')
                 setNumSerie('')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -427,6 +437,8 @@ const Salidas = () => {
             }
         }
     }
+
+    // hasta aqui funcional 24-07-2023 15:54
 
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
@@ -451,7 +463,7 @@ const Salidas = () => {
                 tipo: 'exito',
                 mensaje: 'Documentos actualizados correctamente.'
             });
-            await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
+            await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
                 confirmado: true,
                 userMod: user.email,
                 fechaMod: fechaMod
@@ -473,6 +485,8 @@ const Salidas = () => {
         setNomTipoOut('');
         setRut('');
         setEntidad('');
+        setCorreo('');
+        setPatente('');
         setBtnConfirmar(true);
         setBtnAgregar(true);
         setBtnGuardar(false)
@@ -495,7 +509,6 @@ const Salidas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    // hasta aqui
 
     return (
         <ContenedorProveedor>
@@ -580,7 +593,7 @@ const Salidas = () => {
 
                     <ContentElemen>
                         <ContentElemenSelect>
-                            <Label  >Correo Transportista</Label>
+                            <Label>Correo Transportista</Label>
                             <Input
                                 disabled={confirmar}
                                 type='texto'
@@ -601,7 +614,6 @@ const Salidas = () => {
                                 value={patente}
                                 onChange={ev => setPatente(ev.target.value)}
                             />
-                            {/* hasta aqui 16:06 */}
                         </ContentElemenSelect>
 
                         <Boton
@@ -616,21 +628,26 @@ const Salidas = () => {
                 </Formulario>
             </ContenedorFormulario>
 
-            {/* hasta aqui */}
-
             <ContenedorFormulario>
                 <Formulario>
                     <ContentElemen >
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            <Input style={{ width: '700px' }} /* onChange={e => setNomEquipo(e.target.value)}*/
+                            <Input
+                                style={{ width: '500px' }}
+                                type='text'
+                                name='serie'
                                 placeholder='Escanee o ingrese Equipo'
+                                value={numSerie}
+                                onChange={e => setNumSerie(e.target.value)}
+                                onKeyDown={detectar}
                             />
                         </ContentElemenSelect>
 
-                        <Icon style={{ marginLeft: '0' }}>
-                            <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '16px' }} />
-                            <IoMdAdd style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px' }} />
+                        <Icon disabled={btnAgregar} onClick={handleSubmit}>
+                            <IoMdAdd
+                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
+                            />
                         </Icon>
 
                     </ContentElemen>
@@ -642,79 +659,75 @@ const Salidas = () => {
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
-                                <Table.HeaderCell>Familia</Table.HeaderCell>
-                                <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-                                <Table.HeaderCell>Marca</Table.HeaderCell>
-                                <Table.HeaderCell>Modelo</Table.HeaderCell>
+                                <Table.HeaderCell>Nombre de equipo</Table.HeaderCell>
+                                <Table.HeaderCell>N° Serie</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
 
                         <Table.Body>
-                            <Table.Row>
-                                <Table.Cell>1</Table.Cell>
-                                <Table.Cell>DISPOSITIVOS DE INFUSION</Table.Cell>
-                                <Table.Cell>BOMBA ENTERAL</Table.Cell>
-                                <Table.Cell>ABBOTT</Table.Cell>
-                                <Table.Cell>FREEGO</Table.Cell>
-                            </Table.Row>
-
-                            <Table.Row>
-                                <Table.Cell>2</Table.Cell>
-                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                                <Table.Cell>MOTOR DE ASPIRACION</Table.Cell>
-                                <Table.Cell>SUSED</Table.Cell>
-                                <Table.Cell>TRX-800</Table.Cell>
-                            </Table.Row>
+                            {documento.map((item, index) => {
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
                         </Table.Body>
 
                     </Table>
                 </ListarEquipos>
 
-                <Boton>Guardar</Boton>
+                <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
             </ContenedorFormulario>
 
 
             <ListarProveedor>
-                <h2>Cabecera de Documentos</h2>
-                <Table singleLine>
+                <h2>Listado de Documentos</h2>
+                <Table singleLine style={{ textAlign: 'center' }}>
 
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
                             <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Salida</Table.HeaderCell>
-                            <Table.HeaderCell>Transportista</Table.HeaderCell>
-                            <Table.HeaderCell>Vehículo</Table.HeaderCell>
+                            <Table.HeaderCell>Conf</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>127</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>416509</Table.Cell>
-                            <Table.Cell>9.345.654-6 </Table.Cell>
-                            <Table.Cell>ARQUIMED </Table.Cell>
-                            <Table.Cell>07-06-2023</Table.Cell>
-                            <Table.Cell>COMPRA</Table.Cell>
-                            <Table.Cell>Jose Miguel Aburto</Table.Cell>
-                            <Table.Cell>LJXU-90</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>486</Table.Cell>
-                            <Table.Cell>FACTURA</Table.Cell>
-                            <Table.Cell>218745</Table.Cell>
-                            <Table.Cell>6.140.830-4 </Table.Cell>
-                            <Table.Cell>OXIMED</Table.Cell>
-                            <Table.Cell>07-06-2023</Table.Cell>
-                            <Table.Cell>COMPRA</Table.Cell>
-                            <Table.Cell>Jose Miguel Aburto</Table.Cell>
-                            <Table.Cell>LJXU-90</Table.Cell>
-                        </Table.Row>
+                        {cabecera.map((item) => {
+                            if (item.confirmado === false) {
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell >{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.tipdoc}</Table.Cell>
+                                        <Table.Cell>{item.numdoc}</Table.Cell>
+                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{item.tipoin}</Table.Cell>
+                                        <Table.Cell>{item.rut}</Table.Cell>
+                                        <Table.Cell>{item.entidad}</Table.Cell>
+                                        <Table.Cell onClick={() => {
+                                            setNumDoc(item.numdoc);
+                                            setNomTipDoc(item.tipdoc);
+                                            setNomTipoOut(item.tipoout);
+                                            setRut(item.rut);
+                                            setEntidad(item.entidad);
+                                            setDate(item.date);
+                                            setBtnGuardar(true);
+                                            setBtnAgregar(false)
+                                            setFlag(!flag)
+                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
+                                    </Table.Row>
+                                )
+                            }
+                        }
+                        )}
 
                     </Table.Body>
                 </Table>
