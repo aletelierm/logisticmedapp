@@ -198,12 +198,13 @@ const Proveedores = () => {
         getTipo();
         getMarca();
         getModelo();
-        getStatus();
+        
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         getEquipo();
+        getStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag])
 

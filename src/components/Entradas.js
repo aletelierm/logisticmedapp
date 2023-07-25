@@ -37,7 +37,7 @@ const Entradas = () => {
     const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
-    const [idEquipo, setIdEquipo] = useState([]);
+    const [stEquipo, setStEquipo ]= useState([]);
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
@@ -129,6 +129,11 @@ const Entradas = () => {
             }
         }
     }
+     //Validar que existe el id del equipo en status       
+   /*   if(existe.length === 1){           
+        setIdEquipo(status.filter(st => st.id === existe[0].id) );
+        console.log('estatus:',idEquipo[0].status)
+    }  */
 
     // Validar N°serie
     const detectar = (e) => {
@@ -136,9 +141,16 @@ const Entradas = () => {
         cambiarAlerta({});
 
         if (e.key === 'Enter' || e.key === 'Tab') {
-            // Consulta si exite serie en el arreglo            
-            const existe = equipo.filter(eq => eq.serie === numSerie);
+            // Consulta si exite numero de serie en el arreglo de equipos        
+            const existe = equipo.filter(eq => eq.serie === numSerie);           
             const existeIn = documento.filter(doc => doc.serie === numSerie)
+
+            //Valida que exista status
+           if(existe.length === 1){
+                setStEquipo(status.filter(st => st.id ===existe[0].id));             
+            }           
+
+            console.log('arreglo detectar:',stEquipo)
             if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -151,7 +163,14 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
+            }else if(stEquipo.length > 0){
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra en Bodega'
+                })
             }
+           
         }
     }
 
@@ -349,14 +368,6 @@ const Entradas = () => {
 
         // Validar N° Serie en equipo
         const existe = equipo.filter(eq => eq.serie === numSerie);
-
-        //Validar que existe el id del equipo en status       
-        
-        if(existe.length === 1){           
-            setIdEquipo(status.filter(st => st.id === existe[0].id) );
-            console.log('estatus:',idEquipo[0].status)
-        } 
-              
        
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie)
@@ -364,7 +375,12 @@ const Entradas = () => {
         // Validar Id de Cabecera en Entradas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
 
-       
+        //Valida que exista status
+        if(existe.length === 1){
+            setStEquipo(status.filter(st => st.id ===existe[0].id));             
+        } 
+
+        console.log('arreglo submit:',stEquipo)
 
         if (price === '') {
             cambiarEstadoAlerta(true);
@@ -396,7 +412,7 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
 
-        } else if(idEquipo.length === 1 && idEquipo[0].status ==='BODEGA'){
+        }else if(stEquipo.length > 0){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -731,6 +747,7 @@ const Entradas = () => {
                                             setDate(item.date);
                                             setBtnGuardar(true);
                                             setBtnAgregar(false)
+                                            setConfirmar(true);
                                             setFlag(!flag)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
 
