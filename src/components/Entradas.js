@@ -809,7 +809,7 @@ const Boton = styled.button`
     padding: 10px;
     border-radius: 5px;
     border: none;
-    cursor: pointer;
+    // cursor: pointer;
 `
 
 export default Entradas;
