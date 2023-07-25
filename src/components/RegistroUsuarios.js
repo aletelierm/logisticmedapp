@@ -7,6 +7,7 @@ import {Roles} from './Roles';
 import {  createUserWithEmailAndPassword } from 'firebase/auth';
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
+import ExportarExcel from '../funciones/ExportarExcel';
 
 export const RegistroUsuarios = () => {
 
@@ -22,6 +23,7 @@ export const RegistroUsuarios = () => {
     const [apellido, setApellido] = useState('');
     const [rol, setRol] = useState([]);   
     const [empresa, setEmpresa] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
     const [nomEmpresa, setNomEmpresa] = useState([]);
     const [ alerta, cambiarAlerta] = useState({});
     const [ estadoAlerta, cambiarEstadoAlerta ] = useState(false);
@@ -33,9 +35,18 @@ export const RegistroUsuarios = () => {
         setEmpresa(dataEmpresa.docs.map((emp)=>({...emp.data(),id: emp.id})))
        
     }
+
+     //Lee datos de los usuarios
+     const getUsuarios = async ()=>{
+        const dataUsuarios = await getDocs(collection(db, "usuarios"));
+        setUsuarios(dataUsuarios.docs.map((emp)=>({...emp.data(),id: emp.id})))
+       
+    }
+    
         
     useEffect(()=>{
-        getEmpresa();        
+        getEmpresa();
+        getUsuarios();
     },[])
 
     //Lee input de formulario
@@ -67,8 +78,7 @@ export const RegistroUsuarios = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-       const indice = empresa.findIndex((elemento)=>elemento.empresa === nomEmpresa)
-       const id_emp = empresa[indice].id
+       
         /*  console.log(indice)
          console.log("el id de la empresa",empresa[indice].id) */
         
@@ -127,6 +137,8 @@ export const RegistroUsuarios = () => {
             })
            
         }else {
+            const indice = empresa.findIndex((elemento)=>elemento.empresa === nomEmpresa)
+            const id_emp = empresa[indice].id
             try{
                 await createUserWithEmailAndPassword(auth, correo, pass);
                //Obtener id de usuario creado en Auth
@@ -183,6 +195,20 @@ export const RegistroUsuarios = () => {
             }
             }          
     }
+
+      //Exportar a excel los equipos
+      const ExportarXls = ()=>{    
+        //Campos a mostrar en el excel   
+        const columnsToShow = ['empresa','nombre','apellido','correo','rol']
+        //Llamar a la funcion con props: array equipo y array columnas
+        const excelBlob = ExportarExcel ( usuarios, columnsToShow );
+        // Crear un objeto URL para el Blob y crear un enlace de descarga
+        const excelURL = URL.createObjectURL(excelBlob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = excelURL;
+        downloadLink.download = 'data.xlsx';
+        downloadLink.click();
+        }
     
   return (
     <ContenedorFormulario>
@@ -270,7 +296,10 @@ export const RegistroUsuarios = () => {
             <ContentElemen>
                 <Boton>GUARDAR</Boton>
             </ContentElemen>        
-         </Formulario>  
+         </Formulario> 
+         <ContentElemen>
+                <Boton onClick={ExportarXls}>Exportar</Boton>
+            </ContentElemen>   
         </Contenedor>
         <Alerta 
                 tipo={alerta.tipo}
