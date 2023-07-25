@@ -37,11 +37,9 @@ const Entradas = () => {
     const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
-    const [stEquipo, setStEquipo ]= useState([]);
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    // const [guardado, setGuardado] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
@@ -97,7 +95,6 @@ const Entradas = () => {
     //Almacena movimientos de entrada del documento
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
 
-
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -129,12 +126,7 @@ const Entradas = () => {
             }
         }
     }
-     //Validar que existe el id del equipo en status       
-   /*   if(existe.length === 1){           
-        setIdEquipo(status.filter(st => st.id === existe[0].id) );
-        console.log('estatus:',idEquipo[0].status)
-    }  */
-
+    
     // Validar N°serie
     const detectar = (e) => {
         cambiarEstadoAlerta(false);
@@ -143,14 +135,8 @@ const Entradas = () => {
         if (e.key === 'Enter' || e.key === 'Tab') {
             // Consulta si exite numero de serie en el arreglo de equipos        
             const existe = equipo.filter(eq => eq.serie === numSerie);           
-            const existeIn = documento.filter(doc => doc.serie === numSerie)
+            const existeIn = documento.filter(doc => doc.serie === numSerie)        
 
-            //Valida que exista status
-           if(existe.length === 1){
-                setStEquipo(status.filter(st => st.id ===existe[0].id));             
-            }           
-
-            console.log('arreglo detectar:',stEquipo)
             if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -163,14 +149,17 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-            }else if(stEquipo.length > 0){
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra en Bodega'
+            }else{
+                const existeStatus = status.filter(st=> st.id === existe[0].id && st.status==='BODEGA').length ===1;
+                if(existeStatus){
+                 cambiarEstadoAlerta(true);
+                 cambiarAlerta({
+                 tipo: 'error',
+                 mensaje: 'Equipo ya se encuentra en Bodega'
                 })
+                }
             }
-           
+               
         }
     }
 
@@ -373,13 +362,7 @@ const Entradas = () => {
         // Validar Id de Cabecera en Entradas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
 
-        //Valida que exista status
-        if(existe.length === 1){
-            setStEquipo(status.filter(st => st.id ===existe[0].id));             
-        } 
-
-        console.log('arreglo submit:',stEquipo)
-
+       
         if (price === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -410,56 +393,60 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
 
-        }else if(stEquipo.length > 0){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
+        }else {
+            const existeStatus = status.filter(st=> st.id === existe[0].id && st.status==='BODEGA').length ===1;
+            if(existeStatus){
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en Bodega'
             })
-        } else {
-            setBtnConfirmar(false);
-            try {
-                EntradasDB({
-                    emp_id: users.emp_id,
-                    tipDoc: nomTipDoc,
-                    numDoc: numDoc,
-                    date: date,
-                    tipoIn: nomTipoIn,
-                    rut: rut,
-                    entidad: entidad,
-                    eq_id: existe[0].id,
-                    familia: existe[0].familia,
-                    tipo: existe[0].tipo,
-                    marca: existe[0].marca,
-                    modelo: existe[0].modelo,
-                    serie: existe[0].serie,
-                    rfid: existe[0].rfid,
-                    price: price,
-                    cab_id: existeCab[0].id,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    // tipMov: 1,
-                    status: 'BODEGA'
-                });
-                setPrice('')
-                setNumSerie('')
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Item guardado correctamente'
-                })
-                setFlag(!flag);
-
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
+            }else{
+                setBtnConfirmar(false);
+                try {
+                    EntradasDB({
+                        emp_id: users.emp_id,
+                        tipDoc: nomTipDoc,
+                        numDoc: numDoc,
+                        date: date,
+                        tipoIn: nomTipoIn,
+                        rut: rut,
+                        entidad: entidad,
+                        eq_id: existe[0].id,
+                        familia: existe[0].familia,
+                        tipo: existe[0].tipo,
+                        marca: existe[0].marca,
+                        modelo: existe[0].modelo,
+                        serie: existe[0].serie,
+                        rfid: existe[0].rfid,
+                        price: price,
+                        cab_id: existeCab[0].id,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        // tipMov: 1,
+                        status: 'BODEGA'
+                    });
+                    setPrice('')
+                    setNumSerie('')
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Item guardado correctamente'
+                    })
+                    setFlag(!flag);
+    
+                    return;
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: error
+                    })
+                }
             }
+           
         }
     }
 
@@ -500,7 +487,9 @@ const Entradas = () => {
                 mensaje: 'Error al actualizar documentos:', error
             })
         }
-
+        
+        setNumSerie('');
+        setPrice('');
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
@@ -519,12 +508,12 @@ const Entradas = () => {
         getProveedor();
         getCliente();
         getEquipo();
-        getEntrada()
+        getEntrada();
+        getStatus();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    useEffect(() => {
-        getStatus();
+    useEffect(() => {        
         getEntrada();
         getCabecera();
         if (documento.length > 0) setBtnConfirmar(false);
@@ -690,7 +679,6 @@ const Entradas = () => {
                 <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
             </ContenedorFormulario>
 
-
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
@@ -749,8 +737,7 @@ const Entradas = () => {
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />
-
+            />           
         </ContenedorProveedor>
     );
 };
@@ -822,14 +809,12 @@ const Label = styled.label`
     padding: 5px;
     font-size: 20px;
 `
-
 const Boton = styled.button`
     background-color: #83d394;
     color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     border: none;
-    // cursor: pointer;
-`
+    cursor: pointer;`
 
 export default Entradas;
