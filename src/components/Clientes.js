@@ -529,15 +529,13 @@ const Boton = styled.button`
 `
 
 const BotonGuardar = styled.button`
-        cursor: pointer;
-    background-color: green;
+background-color: #83d394;
     color: #ffffff;
+    padding: 10px;
     border-radius: 5px;
     border: none;
-    margin: 0px 10px;
-    padding: 5px 10px;
-
-    &:hover{
-        background-color: #83d310;
-        }
+    cursor: pointer;
+    // &:hover{
+    //     background-color: #83d310;
+    //     }
 `

@@ -37,8 +37,10 @@ const Salidas = () => {
     const [patente, setPatente] = useState('');
     const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
+    const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
     // const [price, setPrice] = useState('');
+    const [idEquipo, setIdEquipo] = useState([]);
     const [flag, setFlag] = useState(false);
     const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
@@ -89,7 +91,14 @@ const Salidas = () => {
 
     //Almacena movimientos de entrada del documento
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
-    console.log('documento', documento)
+    
+    //Lectura de status
+    const getStatus= async () => {
+        const traerEntrada = collection(db, 'status');
+        const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
 
     // Validar rut
     const detectarCli = (e) => {
@@ -364,11 +373,17 @@ const Salidas = () => {
         // Validar N° Serie en equipo
         const existe = equipo.filter(eq => eq.serie === numSerie);
 
-        // Validar en N° Serie en Entradas
-        const existeIn = documento.filter(doc => doc.serie === numSerie)
+        //Validar que existe el id del equipo en status       
+        if(existe.length === 1){           
+            setIdEquipo(status.filter(st => st.id === existe[0].id) );
+            console.log('estatus:',idEquipo[0].status)
+        }
 
-        // Validar Id de Cabecera en Entradas
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+        // Validar en N° Serie en Salidas
+        const existeIn = documento.filter(doc => doc.serie === numSerie);
+
+        // Validar Id de Cabecera en Salidas
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
@@ -390,6 +405,13 @@ const Salidas = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
+            })
+
+        } else if(idEquipo.length === 1 && idEquipo[0].status ==='BODEGA'){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra en Bodega'
             })
 
         } else {
@@ -440,17 +462,14 @@ const Salidas = () => {
         }
     }
 
-    // hasta aqui funcional 24-07-2023 15:54
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
         const batch = writeBatch(db);
-        console.log('docuemnto dentro de batch', documento)
 
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
@@ -489,6 +508,7 @@ const Salidas = () => {
         setEntidad('');
         setCorreo('');
         setPatente('');
+        setNumSerie('');
         setBtnConfirmar(true);
         setBtnAgregar(true);
         setBtnGuardar(false)
@@ -504,6 +524,7 @@ const Salidas = () => {
     }, [])
 
     useEffect(() => {
+        getStatus();
         getSalida();
         getCabecera();
         if (documento.length > 0) setBtnConfirmar(false);
@@ -515,7 +536,7 @@ const Salidas = () => {
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                <h1>Salida de Equipos</h1>
+                <Titulo>Salida de Equipos</Titulo>
             </ContenedorFormulario>
 
             <ContenedorFormulario>
@@ -686,7 +707,7 @@ const Salidas = () => {
 
 
             <ListarProveedor>
-                <h2>Listado de Documentos</h2>
+                <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
 
                     <Table.Header>
@@ -721,6 +742,8 @@ const Salidas = () => {
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
                                             setDate(item.date);
+                                            setCorreo(item.correo);
+                                            setPatente(item.patente);
                                             setBtnGuardar(true);
                                             setBtnAgregar(false)
                                             setFlag(!flag)
@@ -757,7 +780,6 @@ const ContenedorFormulario = styled.div`
 
 const ContentElemen = styled.div`
     display: flex;
-    
     justify-content: space-evenly;
     padding: 5px 10px;
 `
@@ -771,6 +793,9 @@ const Select = styled.select`
     border-radius: 10px;
     padding: 5px;
     width: 200px;
+`
+const Titulo = styled.h2`
+    color:  #83d394;
 `
 
 const Icon = styled.button`
@@ -812,9 +837,14 @@ const Label = styled.label`
 
 const Boton = styled.button`
     background-color: #83d394;
+    color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     border: none;
+    cursor: pointer;
+    // &:hover{
+    //     background-color: #83d310;
+    // }
 `
 
 export default Salidas;

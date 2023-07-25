@@ -565,7 +565,7 @@ const Boton = styled.button`
 `
 const BotonGuardar = styled.button`
     background-color: #83d394;
-    color: green;
+    color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     border: none;

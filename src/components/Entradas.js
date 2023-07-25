@@ -87,7 +87,7 @@ const Entradas = () => {
     }
 
     //Lectura de status
-    const getStatus= async () => {
+    const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
@@ -172,9 +172,7 @@ const Entradas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
 
-        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
-        // console.log('esiste', existe[0].confirmado)
-        // console.log('existe id', existe[0].id)
+        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -351,20 +349,17 @@ const Entradas = () => {
         const existe = equipo.filter(eq => eq.serie === numSerie);
 
         //Validar que existe el id del equipo en status       
-        
-        if(existe.length === 1){           
-            setIdEquipo(status.filter(st => st.id === existe[0].id) );
-            console.log('estatus:',idEquipo[0].status)
-        } 
-              
-       
+
+        if (existe.length === 1) {
+            setIdEquipo(status.filter(st => st.id === existe[0].id));
+            console.log('estatus:', idEquipo[0].status)
+        }
+
         // Validar en N° Serie en Entradas
-        const existeIn = documento.filter(doc => doc.serie === numSerie)
+        const existeIn = documento.filter(doc => doc.serie === numSerie);
 
         // Validar Id de Cabecera en Entradas
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
-
-       
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
         if (price === '') {
             cambiarEstadoAlerta(true);
@@ -396,13 +391,13 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
 
-        } else if(idEquipo.length === 1 && idEquipo[0].status ==='BODEGA'){
+        } else if (idEquipo.length === 1 && idEquipo[0].status === 'BODEGA') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en Bodega'
             })
-        }else {
+        } else {
             setBtnConfirmar(false);
             try {
                 EntradasDB({
@@ -454,10 +449,9 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
         const batch = writeBatch(db);
-        console.log('docuemnto dentro de batch', documento)
 
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
@@ -488,29 +482,14 @@ const Entradas = () => {
             })
         }
 
-        // try {
-        //     console.log('documento cab_ id dentro de confirmado', existeCab[0].id)
-        //     await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
-        //         confirmado: true,
-        //         userMod: userMod,
-        //         fechaMod: fechaMod
-        //     });
-
-        // } catch (error) {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'Error al actualizar documentos:', error
-        //     })
-        // }
-        setNumSerie('');
-        setPrice('');
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
         setNomTipoIn('');
         setRut('');
         setEntidad('');
+        setNumSerie('');
+        setPrice('');
         setBtnConfirmar(true);
         setBtnAgregar(true);
         setBtnGuardar(false)
@@ -538,7 +517,7 @@ const Entradas = () => {
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
-                <h1>Recepcion de Equipos</h1>
+                <Titulo>Recepcion de Equipos</Titulo>
             </ContenedorFormulario>
 
             <ContenedorFormulario>
@@ -646,7 +625,7 @@ const Entradas = () => {
                             <Input
                                 type='text'
                                 name='serie'
-                                placeholder='Ingrese N° Serie'
+                                placeholder='Escanee o ingrese Equipo'
                                 value={numSerie}
                                 onChange={e => setNumSerie(e.target.value)}
                                 onKeyDown={detectar}
@@ -694,7 +673,7 @@ const Entradas = () => {
 
 
             <ListarProveedor>
-                <h2>Listado de Documentos</h2>
+                <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
 
                     <Table.Header>
@@ -752,7 +731,6 @@ const Entradas = () => {
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
 
-           
         </ContenedorProveedor>
     );
 };
@@ -782,6 +760,10 @@ const Select = styled.select`
     border-radius: 10px;
     padding: 5px;
     width: 200px;
+`
+
+const Titulo = styled.h2`
+    color:  #83d394;
 `
 
 const Icon = styled.button`
@@ -823,6 +805,7 @@ const Label = styled.label`
 
 const Boton = styled.button`
     background-color: #83d394;
+    color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     border: none;
