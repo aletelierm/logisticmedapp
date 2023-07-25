@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SalidasDB from '../firebase/SalidasDB'
@@ -772,10 +773,12 @@ const Select = styled.select`
     width: 200px;
 `
 
-const Icon = styled.div`
+const Icon = styled.button`
     display: flex;
     // justify-content: space-between;
     margin-left: 20px;
+    border: none;
+    background: none;
 `
 
 const ListarProveedor = styled.div`
