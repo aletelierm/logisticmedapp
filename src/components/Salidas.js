@@ -88,6 +88,7 @@ const Salidas = () => {
 
     //Almacena movimientos de entrada del documento
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+    console.log('documento', documento)
 
     // Validar rut
     const detectarCli = (e) => {
@@ -709,7 +710,7 @@ const Salidas = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.date}</Table.Cell>
-                                        <Table.Cell>{item.tipoin}</Table.Cell>
+                                        <Table.Cell>{item.tipoout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell onClick={() => {
@@ -739,7 +740,6 @@ const Salidas = () => {
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
 
-            {console.log(user.uid)}
         </ContenedorProveedor>
     );
 };
