@@ -780,6 +780,7 @@ const ContenedorFormulario = styled.div`
 
 const ContentElemen = styled.div`
     display: flex;
+
     justify-content: space-evenly;
     padding: 5px 10px;
 `
@@ -842,9 +843,6 @@ const Boton = styled.button`
     border-radius: 5px;
     border: none;
     cursor: pointer;
-    // &:hover{
-    //     background-color: #83d310;
-    // }
 `
 
 export default Salidas;
