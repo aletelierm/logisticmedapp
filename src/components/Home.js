@@ -30,12 +30,10 @@ import ActualizaEmpresa from './ActualizaEmpresa';
 import DashboardEq from './DashboardEq';
 import AsignarRfid from './AsignarRfid';
 
-export const Home = () => {
-  
+export const Home = () => { 
   
   return (
-    <div>  
-      
+    <div>      
     <NavbarSesion />
     <SideBar>    
     <Routes>
@@ -68,8 +66,7 @@ export const Home = () => {
             <Route path="configuracion/actualizaempresa/:id" element={<ActualizaEmpresa/>}/>
             <Route path="/" element={<Navigate to="/login"/>}/>
     </Routes>
-    </SideBar>
-    
+    </SideBar>    
     {/* <Footer/> */}
     </div>
   )

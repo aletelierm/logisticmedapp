@@ -14,7 +14,6 @@ import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
 const AgregarFamilia = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
@@ -202,11 +201,9 @@ const ContenedorFormulario = styled.div`
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
     background-color: #ffff;
 `
-
 const Titulo = styled.h2`
     color:  #83d394;
 `
-
 const ContentElemen = styled.div`
     display: flex;
     text-align: center;
@@ -215,7 +212,6 @@ const ContentElemen = styled.div`
     align-items: center;
     justify-content: space-between;
 `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
@@ -231,13 +227,11 @@ const Formulario = styled.form`
     align-items: center;
     justify-content: space-between;
 `
-
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px 30px;
 `
-
 const Boton = styled.button`
         background-color: #ffffff;
         padding: 10px;
@@ -246,5 +240,4 @@ const Boton = styled.button`
         margin: 0 10px;
         cursor: pointer;
 `
-
 export default AgregarFamilia;

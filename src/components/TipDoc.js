@@ -2,13 +2,10 @@ export const TipDoc = [
     { key: '1', value: '1', text: 'FACTURA' },
     { key: '2', value: '2', text: 'GUÍA' },
 ];
-
 export const TipTransaccion = [
     { key: '1', value: '1', text: 'ENTRADA' },
     { key: '2', value: '2', text: 'SALIDA' }
 ];
-
-
 export const TipoIn= [
     { key: '1', value: '1', text: 'COMPRA' },
     { key: '2', value: '2', text: 'ARRIENDO' },
@@ -16,8 +13,6 @@ export const TipoIn= [
     { key: '4', value: '4', text: 'DEVOLUCION CLIENTE' },
     { key: '5', value: '5', text: 'SERVICIO TECNICO' }
 ];
-
-
 export const TipoOut= [
     { key: '1', value: '1', text: 'CLIENTE' },
     { key: '2', value: '2', text: 'SERVICIO TECNICO' },

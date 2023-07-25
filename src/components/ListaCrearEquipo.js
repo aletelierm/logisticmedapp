@@ -1,5 +1,4 @@
 import React from 'react'
-// import Familia from './Familia'
 
 const ListaFamilias = ({ familias, setFamilias }) => {
 
@@ -12,14 +11,11 @@ const ListaFamilias = ({ familias, setFamilias }) => {
                 <th>Marca</th>
                 <th>Modelo</th>
                 <th>Acción</th>
-            </tr>
-
-            
+            </tr>           
 
             <div className='lista-tareas__mensaje'>No hay Dispositivos Médicos Creados</div>
         </ul>
     )
 }
-
 
 export default ListaFamilias;

@@ -14,13 +14,11 @@ import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
 const AgregarTipo = () => {
     const user = auth.currentUser;
     const {users} = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
-
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [tipo, setTipo] = useState('');
@@ -32,15 +30,12 @@ const AgregarTipo = () => {
     const handleChange = (e) => {
         setTipo(e.target.value);
     }
-
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         // Consulta si exite campo en el arreglo
         const existe = leer.filter(tip => tip.tipo === tipo.toLocaleUpperCase().trim()).length === 0
-
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
             cambiarEstadoAlerta(true);
@@ -48,14 +43,12 @@ const AgregarTipo = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe este Tipo de Equipamiento'
             })
-
         } else if (tipo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No ha ingresado una Tipo Equipamiento'
             })
-
         } else {
             const tip = tipo.toLocaleUpperCase().trim();
             AgregarTipoDb({
@@ -117,7 +110,6 @@ const AgregarTipo = () => {
             <ContenedorFormulario>
                 <Titulo>Tipos de Equipos</Titulo>
             </ContenedorFormulario>
-
             <ContenedorFormulario>
                 <Formulario action='' onSubmit={handleSubmit}>
                     <Input
@@ -133,14 +125,12 @@ const AgregarTipo = () => {
                     </Boton>
                 </Formulario>
             </ContenedorFormulario>
-
             <ListarProveedor>
                 <ContentElemen>
                     <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
                     <Titulo>Listado de Tipos de Equipamientos</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
-
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
                     <Input style={{ width: '100%' }}
@@ -150,7 +140,6 @@ const AgregarTipo = () => {
                         onChange={onBuscarCambios}
                     />
                 </ContentElemen>
-
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -162,7 +151,6 @@ const AgregarTipo = () => {
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {filtroTipo().map((item, index) => {
                             return (
@@ -176,7 +164,6 @@ const AgregarTipo = () => {
                             )
                         })}
                     </Table.Body>
-
                 </Table>
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
@@ -197,11 +184,9 @@ const ContenedorFormulario = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
-
 const Titulo = styled.h2`
     color:  #83d394;
 `
-
 const ContentElemen = styled.div`
     display: flex;
     text-align: center;
@@ -210,7 +195,6 @@ const ContentElemen = styled.div`
     align-items: center;
     justify-content: space-between;
 `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
@@ -225,13 +209,11 @@ const Formulario = styled.form`
     align-items: center;
     justify-content: space-between;
 `
-
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px 30px;
 `
-
 const Boton = styled.button`
     background-color: #ffffff;
     color: green;
@@ -241,5 +223,4 @@ const Boton = styled.button`
     margin: 0 10px;
     cursor: pointer;
 `
-
 export default AgregarTipo;

@@ -8,10 +8,8 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
 const Transaccion = () =>{
-
     const { users } = useContext(UserContext);
-    const [cabecera, setCabecera] = useState([]);   
-
+    const [cabecera, setCabecera] = useState([]);
      // Leer datos de cabecera
      const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
@@ -19,19 +17,15 @@ const Transaccion = () =>{
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     useEffect(()=>{
         getCabecera();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     const OrdenaPorNumDoc = (a,b)=>{
         return a.numdoc - b.numdoc;
     }
-
-    const ordenado = cabecera.sort(OrdenaPorNumDoc);
-    
+    const ordenado = cabecera.sort(OrdenaPorNumDoc);   
 
     return (
         <div>
@@ -39,7 +33,6 @@ const Transaccion = () =>{
             <ListarProveedor>
                 <h2>Listado Entradas</h2>
                 <Table singleLine>
-
                     <Table.Header>
                         <Table.Row>
                         <Table.HeaderCell>N°</Table.HeaderCell>
@@ -51,7 +44,6 @@ const Transaccion = () =>{
                             <Table.HeaderCell>Entidad</Table.HeaderCell>                                         
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {ordenado.map((item, index) => {
                             if (item.confirmado === true){
@@ -69,9 +61,7 @@ const Transaccion = () =>{
                                
                             } 
                         })}
-
                     </Table.Body>
-
                 </Table>
             </ListarProveedor>
         </div>
@@ -87,9 +77,3 @@ const ListarProveedor = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
-/* const Boton = styled.button`
-        background-color: #83d394;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
-` */

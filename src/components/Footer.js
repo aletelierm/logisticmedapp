@@ -5,8 +5,7 @@ import { TfiEmail } from "react-icons/tfi";
 import { FiPhoneCall } from "react-icons/fi";
 
 const Footer = () => {
-    return (
-        
+    return (        
             <div className='footer'>
                 <h2>Contactanos</h2>
                 <ul className='contact'>

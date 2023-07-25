@@ -4,28 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { signOut } from "firebase/auth";
 import format from 'date-fns/format'
-/* import { es } from 'date-fns/locale'; */
 import './../styles/navbarSession.css'
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
-const NavbarSesion = () => { 
-    
-    const {users} = useContext(UserContext);
-    
-    console.log('obtener usuario contexto global:',users);   
-   
-    const navigate = useNavigate();     
-    
- 
+const NavbarSesion = () => {     
+    const {users} = useContext(UserContext);//Contexto Global
+    const navigate = useNavigate();
     let fechaActual = format(new Date(),`dd 'de' MMMM 'de' yyyy`);
    /*  let horaActual = format (new Date(), `k ':' m`) */
-
     const cerrarSesion = () => {
         signOut(auth)
-        navigate('/');
-    }
+        navigate('/');    }
 
     return (
         <>
@@ -39,7 +29,6 @@ const NavbarSesion = () => {
                 <div>
                     <h4>Hoy : {fechaActual}</h4>
                 </div>
-
                 <div className='user'>
                     <div>
                         <FaUserAlt style={{color:'green', marginRight:'10px'}}/>

@@ -271,17 +271,6 @@ const Label = styled.label`
         padding: 5px;
         font-size: 20px;
 `
-
-/* const Boton = styled.button`
-        cursor:pointer;
-        background-color: #ffff;        
-        border-radius: 5px;
-        border: none;        
-        &:hover{
-            background-color: #83d310;
-        }
-` */
-
 const BotonGuardar = styled.button`
         cursor: pointer;
     background-color: green;

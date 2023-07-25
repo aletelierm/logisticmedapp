@@ -9,12 +9,8 @@ import { UserContext } from '../context/UserContext';
 const App = () => {
 
     const { users } = useContext(UserContext);
-
     const [estado, setEstado] = useState([])
     const [datos, setDatos] = useState([])
-    
-  
-
     //Leer Datos de status
    const getStatus = async () => {
         const traerStatus = collection(db, 'status');
@@ -22,7 +18,6 @@ const App = () => {
         const data = await getDocs(dato)
         setEstado(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
    }
-
     //Funcion agrupar datos y contar
     const agrupar = (datos)=>{
       const contador = datos.reduce((acc, obj)=>{
@@ -32,9 +27,6 @@ const App = () => {
       },{});
       return Object.entries(contador).map(([status, cantidad])=>({label: status,valor: cantidad}));
     };
-
-
-
 
     useEffect(()=>{
         getStatus();   
@@ -49,37 +41,27 @@ const App = () => {
         setDatos(resultado);
        
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[estado, setEstado])
-  
+    },[estado, setEstado])  
 
   return (
     <Contenedor>
-    <ContenedorElementos>
+      <ContenedorElementos>
         <Titulo>Donde estan Mis Equipos</Titulo>
+     </ContenedorElementos>    
+      <ContenedorElementos >
+        <div style={{width:"600px", height:"400px",padding:"20px",marginLeft:"100px"}}>
+           <GraficoTorta datos={datos} />
+        </div>  
     </ContenedorElementos>
-    
-    <ContenedorElementos >
-      <div style={{width:"600px", height:"400px",padding:"20px",marginLeft:"100px"}}>
-          <GraficoTorta datos={datos} />
-      </div>       
-         
-    </ContenedorElementos>
-        
-    
-</Contenedor>
-   /*  <div>
-      <h1>Donde estan mis equipos</h1>
-      <GraficoTorta datos={datos} />
-    </div> */
+  </Contenedor>
+   
   );
 };
 
 export default App;
 const Contenedor = styled.div`
-
   
 `
-
 const ContenedorElementos = styled.div`
     display: flex;
     margin-top: 20px;
@@ -88,8 +70,7 @@ const ContenedorElementos = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
     justify-content: center;
-    align-items: center;
-    
+    align-items: center;    
 `
 const Titulo = styled.h2`
     color:  #83d394;

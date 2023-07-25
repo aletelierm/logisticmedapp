@@ -10,7 +10,6 @@ import * as MdIcons from 'react-icons/md';
 import ExportarExcel from '../funciones/ExportarExcel';
 
 export const RegistroUsuarios = () => {
-
     let fechaactual = new Date();
     const userAuth = auth.currentUser.email;
     const useradd = userAuth;
@@ -26,29 +25,22 @@ export const RegistroUsuarios = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [nomEmpresa, setNomEmpresa] = useState([]);
     const [ alerta, cambiarAlerta] = useState({});
-    const [ estadoAlerta, cambiarEstadoAlerta ] = useState(false);
-
-      
+    const [ estadoAlerta, cambiarEstadoAlerta ] = useState(false);      
     //Lee datos de las empresas
     const getEmpresa = async ()=>{
         const dataEmpresa = await getDocs(collection(db, "empresas"));
-        setEmpresa(dataEmpresa.docs.map((emp)=>({...emp.data(),id: emp.id})))
-       
+        setEmpresa(dataEmpresa.docs.map((emp)=>({...emp.data(),id: emp.id})))       
     }
-
      //Lee datos de los usuarios
      const getUsuarios = async ()=>{
         const dataUsuarios = await getDocs(collection(db, "usuarios"));
-        setUsuarios(dataUsuarios.docs.map((emp)=>({...emp.data(),id: emp.id})))
-       
-    }
-    
+        setUsuarios(dataUsuarios.docs.map((emp)=>({...emp.data(),id: emp.id})))       
+    }   
         
     useEffect(()=>{
         getEmpresa();
         getUsuarios();
     },[])
-
     //Lee input de formulario
     const handleChange = (e)=>{
             switch(e.target.name){
@@ -72,20 +64,11 @@ export const RegistroUsuarios = () => {
         }
 
     }
-
     const handleSubmit = async (e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-
-       
-        /*  console.log(indice)
-         console.log("el id de la empresa",empresa[indice].id) */
-        
-        
-        //Comprobar que correo sea correcto
-        const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-        
+        cambiarAlerta({});     
+        const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;        
         if(nombre === ''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -100,8 +83,7 @@ export const RegistroUsuarios = () => {
                 mensaje: 'Campo Apellido no puede estar vacio'
             })
             return;
-        }else if(!expresionRegular.test(correo)){
-           
+        }else if(!expresionRegular.test(correo)){           
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -127,15 +109,13 @@ export const RegistroUsuarios = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Empresa'
-            })
-           
+            })           
         }else if(rol.length === 0 || rol==='Selecciona Opción'){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Rol'
-            })
-           
+            })           
         }else {
             const indice = empresa.findIndex((elemento)=>elemento.empresa === nomEmpresa)
             const id_emp = empresa[indice].id
@@ -168,8 +148,7 @@ export const RegistroUsuarios = () => {
                 cambiarAlerta({
                 tipo: 'exito',
                 mensaje: 'Usuario Registrado correctamente'
-            })
-           
+            })           
             }catch(error){
                     console.log('El error es',error.code);
                     cambiarEstadoAlerta(true);
@@ -214,8 +193,7 @@ export const RegistroUsuarios = () => {
     <ContenedorFormulario>
         <Contenedor>
             <Titulo>Registro de Usuarios y Roles</Titulo>
-        </Contenedor>
-        
+        </Contenedor>        
         <Contenedor>
          <Formulario onSubmit={handleSubmit}>            
             <ContentElemen>
@@ -273,26 +251,22 @@ export const RegistroUsuarios = () => {
                     onChange = { handleChange }
                 />
             </ContentElemen>  
-            <ContentElemen>
-            
+            <ContentElemen>            
                 <Label>Empresas</Label>
                 <Select value={nomEmpresa}  onChange={e =>setNomEmpresa(e.target.value)}>
                 <option>Selecciona Opción:</option>
                 {empresa.map((d)=>{
                     return(<option key={d.id}>{d.empresa}</option>)
                  })}
-                </Select>
-                       
+                </Select>                       
                 <Label>Roles</Label>
                 <Select value={rol} onChange={ev => setRol(ev.target.value)}>    
                 <option>Selecciona Opción:</option>                
                     {Roles.map((d)=>{
                         return(<option key={d.key}>{d.text}</option>)
                     })}
-                </Select>
-                
-            </ContentElemen>
-            
+                </Select>                
+            </ContentElemen>            
             <ContentElemen>
                 <Boton>GUARDAR</Boton>
             </ContentElemen>        
@@ -307,15 +281,13 @@ export const RegistroUsuarios = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
         />    
-    </ContenedorFormulario>
-    
+    </ContenedorFormulario>    
   )
 }
 
 const Titulo = styled.h2`
     color:  #83d394;
 `
-
 const ContenedorFormulario = styled.div`
 
 `
@@ -326,7 +298,6 @@ const ContentElemen = styled.div`
     text-align: center;
     align-items: center;    
 `
-
 const Contenedor= styled.div`
     width: 700px;
     margin-top: 20px;
@@ -336,25 +307,18 @@ const Contenedor= styled.div`
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
     font-size: 15px;
 `
-
-const Formulario = styled.form`
-    
+const Formulario = styled.form`    
         
 `
-
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px;
     width: 100%;
 `
-
 const Label = styled.label`
         font-size: 15px;
         padding: 5px;
-       
-        
-        
 `
 const Boton = styled.button`
         background-color:green;

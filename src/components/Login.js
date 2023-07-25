@@ -8,7 +8,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Styled from 'styled-components';
-
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
@@ -17,23 +16,18 @@ export default function Login() {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const {setUsers} = useContext(UserContext);
-  
+  const {setUsers} = useContext(UserContext);  
 
   const onSubmit = async (event) => {
     event.preventDefault();
-
     // validate the inputs
     if (!email || !password) {
       setError("Por favor ingresa email y password");
       return;
     }
-
     // clear the errors
     setError("");
-
-    // TODO: send the login request
-    
+    // TODO: send the login request    
     try {
       let loginResponse = await signInUser(email, password);
       let id = loginResponse.user.uid;
@@ -42,8 +36,7 @@ export default function Login() {
       try {
         const docum = await getDoc(doc(db,'usuarios', id));
         if(docum.exists){
-          setUsers(docum.data())
-          
+          setUsers(docum.data())          
         }
       } catch (error) {
         console.log('Error de usuario', error)
@@ -60,7 +53,6 @@ export default function Login() {
     <SuperContainer>
     <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
       <Card>
-
       <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} sx={{ mt: 3 }}>
           <Grid item xs={12} sm={6} md={4}>
             <img
@@ -68,10 +60,8 @@ export default function Login() {
               src="logo2.png" alt="imagen" />
           </Grid>
         </Grid>
-
         <CardContent>
-          <Typography variant="h5" component="h1" gutterBottom textAlign="center">
-            
+          <Typography variant="h5" component="h1" gutterBottom textAlign="center">            
           </Typography>
           {error && <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>}
           <Box component="form" onSubmit={onSubmit}>
@@ -93,9 +83,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               sx={{ mt: 3 }}
               fullWidth
-            />        
-
-
+            />
               <Grid style={{ display: 'flex', alignItems: 'center' }} container spacing={2}>
               <Grid item xs={6}>
                 <Typography variant="h8" gutterBottom textAlign="center" >
@@ -105,16 +93,13 @@ export default function Login() {
                     underline="none"
                   >
                     Olvide mi Password!
-                  </Link>
-              
+                  </Link>              
                 </Typography>
               </Grid>
-
               <Grid item xs={6}>
               <Button variant="contained" type="submit" sx={{ mt: 3 }} fullWidth>Inicio</Button>
               </Grid>
-            </Grid>            
-            
+            </Grid>
           </Box>
         </CardContent>
       </Card>

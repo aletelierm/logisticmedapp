@@ -166,8 +166,6 @@ import { auth } from '../firebase/firebaseConfig';
                 default:
                 break;
         }
-
-
     }
     }
 
@@ -292,11 +290,9 @@ const ContenedorFormulario = styled.div`
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-    
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);    
 `
-const ContentElemen = styled.div`
-   
+const ContentElemen = styled.div`   
     display: flex;
     justify-content: space-between;
     padding: 20px;
@@ -304,7 +300,6 @@ const ContentElemen = styled.div`
 const Formulario = styled.form`
 
 `
-
 const Input = styled.input`
     
     border: 2px solid #d1d1d1;
@@ -321,17 +316,6 @@ const Label = styled.label`
         padding: 5px;
         font-size: 20px;
 `
-
-/* const Boton = styled.button`
-        cursor:pointer;
-        background-color: #ffff;        
-        border-radius: 5px;
-        border: none;        
-        &:hover{
-            background-color: #83d310;
-        }
-` */
-
 const BotonGuardar = styled.button`
         cursor: pointer;
     background-color: green;

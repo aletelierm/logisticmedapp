@@ -199,7 +199,6 @@ const ContentElemen = styled.div`
     align-items: center;
     justify-content: space-between;
     `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
@@ -214,18 +213,11 @@ const Formulario = styled.form`
     align-items: center;
     justify-content: space-between;
 `
-
 const Input = styled.input`
     border: 2px solid  green;
     border-radius: 10px;
     padding: 5px;
 `
-
-/* const Label = styled.label`
-        padding: 10px;
-        font-size: 15px;
-` */
-
 const Boton = styled.button`    
     background-color: #ffffff;
     padding: 10px;
@@ -234,5 +226,4 @@ const Boton = styled.button`
     margin: 0 10px;
     cursor: pointer;
 `
-
 export default AgregarEmpresa;
