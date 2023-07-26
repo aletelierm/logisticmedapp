@@ -7,7 +7,7 @@ import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
@@ -42,6 +42,7 @@ const Entradas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
+    const [empresa, setEmpresa] = useState([]);
 
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
@@ -80,6 +81,11 @@ const Entradas = () => {
     }
     //Almacena movimientos de entrada del documento
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+    //Leer  Empresa
+    const getEmpresa = async () => {       
+        const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
+        setEmpresa(traerEmp.data());
+    }
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -422,7 +428,7 @@ const Entradas = () => {
         const batch = writeBatch(db);
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, { status: 'BODEGA' });
+            batch.update(docRef, { status: 'BODEGA', rut: empresa.rut, entidad: empresa.empresa });
         });
         try {
             await batch.commit();
@@ -466,6 +472,7 @@ const Entradas = () => {
         getEquipo();
         getEntrada();
         getStatus();
+        getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
