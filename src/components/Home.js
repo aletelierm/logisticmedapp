@@ -29,6 +29,9 @@ import ActualizaModelo from './ActualizaModelo';
 import ActualizaEmpresa from './ActualizaEmpresa';
 import DashboardEq from './DashboardEq';
 import AsignarRfid from './AsignarRfid';
+import Reporte1 from './Reporte1';
+import Reporte2 from './Reporte2';
+import { Reportes } from './Reportes';
 
 export const Home = () => { 
   
@@ -51,6 +54,9 @@ export const Home = () => {
             <Route path="transacciones" element={<Transaccion/>}/>
             <Route path="transacciones/entradas" element={<Entradas/>}/>
             <Route path="transacciones/salidas" element={<Salidas/>}/>
+            <Route path="reportes" element={<Reportes/>}/>
+            <Route path="reportes/reporte1" element={<Reporte1/>}/>
+            <Route path="reportes/reporte2" element={<Reporte2/>}/>
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>
             <Route path="serviciotecnico/protocolos" element={<Protocolos/>}/>            
             <Route path="serviciotecnico/programas" element={<Programas/>}/>

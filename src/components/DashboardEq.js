@@ -29,17 +29,13 @@ const App = () => {
     };
 
     useEffect(()=>{
-        getStatus();   
-        console.log('dentro del de useefect', estado)
-        
+        getStatus();              
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
  
     useEffect(()=>{
-        const resultado= agrupar(estado);
-        console.log('resultado nuevo arreglo',resultado)
-        setDatos(resultado);
-       
+        const resultado= agrupar(estado);       
+        setDatos(resultado);       
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[estado, setEstado])  
 

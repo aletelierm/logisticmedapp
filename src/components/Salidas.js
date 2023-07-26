@@ -373,7 +373,7 @@ const Salidas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
 
-        } else if(idEquipo.length === 1 && idEquipo[0].status ==='BODEGA'){
+        } else if(idEquipo.length === 1 && idEquipo[0].status ==='CLIENTE'){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',

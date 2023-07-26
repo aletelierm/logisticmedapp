@@ -22,10 +22,10 @@ const SideBar = ({ children }) => {
     },[users])
     return (
         <div className='container'>
-            <div style={{ width: isOpen ? "250px" : "50px"}} className='sidebar'>
+            <div style={{ width: isOpen ? "300px" : "50px"}} className='sidebar'>
                 <div className='top_section'>                   
                     <div style={{ marginLeft: isOpen ? "50px" : "0px" }} className='bars' >
-                        <FaBars onClick={toggle} />
+                        <FaBars onClick={toggle} style={{color:"green"}}/>
                     </div>
                 </div>               
                 {menu.map((item, index) => {

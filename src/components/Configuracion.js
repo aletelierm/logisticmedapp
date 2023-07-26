@@ -1,11 +1,14 @@
 import React from 'react';
 
+
 const Configuracion = () => {
     return (
         <div>
-            <h1>Dashboard Configuracion</h1>
-        </div>
+                <img style={{ width:"600px"}} src="configuracion.png" alt="imagen" />
+        </div>            
+      
     );
 };
 
 export default Configuracion;
+

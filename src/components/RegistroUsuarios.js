@@ -29,12 +29,12 @@ export const RegistroUsuarios = () => {
     //Lee datos de las empresas
     const getEmpresa = async ()=>{
         const dataEmpresa = await getDocs(collection(db, "empresas"));
-        setEmpresa(dataEmpresa.docs.map((emp)=>({...emp.data(),id: emp.id})))       
+        setEmpresa(dataEmpresa.docs.map((emp,index)=>({...emp.data(),id: emp.id, id2: index + 1 })))       
     }
      //Lee datos de los usuarios
      const getUsuarios = async ()=>{
         const dataUsuarios = await getDocs(collection(db, "usuarios"));
-        setUsuarios(dataUsuarios.docs.map((emp)=>({...emp.data(),id: emp.id})))       
+        setUsuarios(dataUsuarios.docs.map((emp,index)=>({...emp.data(),id: emp.id, id2: index + 1 })))       
     }   
         
     useEffect(()=>{
@@ -255,8 +255,8 @@ export const RegistroUsuarios = () => {
                 <Label>Empresas</Label>
                 <Select value={nomEmpresa}  onChange={e =>setNomEmpresa(e.target.value)}>
                 <option>Selecciona Opción:</option>
-                {empresa.map((d)=>{
-                    return(<option key={d.id}>{d.empresa}</option>)
+                {empresa.map((d)=>{                  
+                    return(<option key={d.id2}>{d.empresa}</option>)
                  })}
                 </Select>                       
                 <Label>Roles</Label>

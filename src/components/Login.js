@@ -30,8 +30,7 @@ export default function Login() {
     // TODO: send the login request    
     try {
       let loginResponse = await signInUser(email, password);
-      let id = loginResponse.user.uid;
-      console.log('login de usuario:',loginResponse.user.uid)
+      let id = loginResponse.user.uid;  
       startSession(loginResponse.user);
       try {
         const docum = await getDoc(doc(db,'usuarios', id));

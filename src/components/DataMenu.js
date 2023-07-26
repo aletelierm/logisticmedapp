@@ -81,6 +81,29 @@ export const DataMenu = [
 
     ]
   },
+  {
+    title: 'Reportes',
+    path: 'reportes',
+    icon: <IoIcons.IoIosInformationCircle />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: 'Eqs.Pacientes',
+        path: 'reportes/reporte1',
+        icon: <IoIcons.IoIosMedkit />,
+        cName: 'sub-nav'
+      },
+      {
+        title: 'Status Eqs.',
+        path: 'reportes/reporte2',
+        icon: <MdIcons.MdOutput />,
+        cName: 'sub-nav'
+      }
+
+    ]
+  },
 
   {
     title: 'Servicio Tecnico',
