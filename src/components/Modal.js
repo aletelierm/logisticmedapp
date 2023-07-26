@@ -16,9 +16,6 @@ const Modal = ({children, estado, cambiarEstado}) => {
                 </ContenedorModal>
             </Overlay>
     }
-        
-    
-    
     </>
   )
 }
@@ -37,7 +34,6 @@ const Overlay = styled.div`
     align-items: center;
     justify-content: center;
 `
-
 const ContenedorModal = styled.div`
     width: 500px;
     min-height: 100px;
@@ -47,7 +43,6 @@ const ContenedorModal = styled.div`
     box-shadow: rgba(100,100,111,.2) 0px 7px 29px 0px;
     padding: 20px;
 `
-
 const EncabezadoModal = styled.div`
     display: flex;
     align-items: center;
@@ -61,9 +56,7 @@ const EncabezadoModal = styled.div`
         font-size: 16px;
         color: #1766dc;
     }
-
 `
-
 const BotonCerrar = styled.button`
     position: absolute;
     top:20px;

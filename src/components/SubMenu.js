@@ -20,14 +20,10 @@ const SidebarLink = styled(Link)`
       border-left: 4px solid #16B9CF;
       cursor: pointer;
   }
-`;
-
+`
 const SidebarLabel = styled.span`
-  margin-left: 10px;
- 
-  
-`;
-
+  margin-left: 10px;   
+`
 const DropdownLink = styled(Link)`
  /*  background: #414757; */
   background-color: #C7DCC7;
@@ -47,26 +43,19 @@ const DropdownLink = styled(Link)`
   }
 `;
 
-const SubMenu = ({ item,isopen }) => {
-
-  
+const SubMenu = ({ item,isopen }) => {  
   const [subnav, setSubnav] = useState(false);
-
   const showSubnav = () => setSubnav(!subnav);
-
+  //#74C2F1
   return (
     <>
-      <SidebarLink to={item.path} onClick={item.subNav && showSubnav}>
-  
-        <div style={{color: "#74C2F1"}}>
+      <SidebarLink to={item.path} onClick={item.subNav && showSubnav}>  
+        <div style={{color: "green"}}>
           {item.icon}
         </div>
-
         <div style={{display: isopen ? "block" : "none"}}>
-           <SidebarLabel>{item.title}</SidebarLabel>
-            
-        </div>
-        
+           <SidebarLabel>{item.title}</SidebarLabel>            
+        </div>        
         <div style={{display: isopen ? "block" : "none"}}>
           {item.subNav && subnav
             ? item.iconOpened
@@ -78,9 +67,9 @@ const SubMenu = ({ item,isopen }) => {
       {subnav &&
         item.subNav.map((item, index) => {
           return (
-            <DropdownLink to={item.path} key={index} style={{display: isopen ? "block" : "none"}}>
+            <DropdownLink to={item.path} key={index} style={{display: isopen ? "block" : "none",color:"green"}}>
               {item.icon}
-              <SidebarLabel>{item.title}</SidebarLabel>
+              <SidebarLabel style={{color:"black", fontWeight:"600"}}>{item.title}</SidebarLabel>
             </DropdownLink>
           );
         })}

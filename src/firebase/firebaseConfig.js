@@ -3,7 +3,6 @@ import { getFirestore } from "firebase/firestore";
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, getAuth } from "firebase/auth";
 
-
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
   authDomain:process.env.REACT_APP_AUTHDOMAIN,
@@ -25,12 +24,9 @@ export const recovery = async (email) => {
   const auth = getAuth(app);
   return sendPasswordResetEmail(auth, email);
 }
-  
-
 export const createUser = async (email, password) => {
     return createUserWithEmailAndPassword(getAuth(app), email, password);
-  }
-  
+  }  
   export const signInUser = async (email, password) => {
     return signInWithEmailAndPassword(getAuth(app), email, password);
   }

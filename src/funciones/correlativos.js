@@ -22,7 +22,6 @@ const correlativos = async ()=>{
         } catch (error) {
             console.log('error de folio', error);
         }
-} 
-
+}
 
 export default correlativos;

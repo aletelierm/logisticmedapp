@@ -15,7 +15,6 @@ const EditarCliente = async ({id,nombre,direccion,telefono,correo,nomrsf,dirrsf,
         userMod: userMod,
         fechaMod: fechaMod
     })
-
 }
 
 export default EditarCliente;

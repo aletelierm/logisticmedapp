@@ -37,10 +37,8 @@ const AgregarModelo = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         // Consulta si exite campo en el arreglo
         const existe = leer.filter(mod => mod.modelo === modelo.toLocaleUpperCase().trim()).length === 0
-
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
             cambiarEstadoAlerta(true);
@@ -48,14 +46,12 @@ const AgregarModelo = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe este Modelo'
             })
-
         } else if (modelo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No ha ingresado un Modelo'
             })
-
         } else {
             const mod = modelo.toLocaleUpperCase().trim();
             AgregarModeloDb({
@@ -117,7 +113,6 @@ const AgregarModelo = () => {
             <ContenedorFormulario>
                 <Titulo>Modelos de Equipos</Titulo>
             </ContenedorFormulario>
-
             <ContenedorFormulario>
                 <Formulario action='' onSubmit={handleSubmit}>
                     <Input
@@ -133,14 +128,12 @@ const AgregarModelo = () => {
                     </Boton>
                 </Formulario>
             </ContenedorFormulario>
-
             <ListarProveedor>
                 <ContentElemen>
                     <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
                     <Titulo>Listado de Modelos</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
-
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
                     <Input style={{ width: '100%' }}
@@ -150,7 +143,6 @@ const AgregarModelo = () => {
                         onChange={onBuscarCambios}
                     />
                 </ContentElemen>
-
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -162,7 +154,6 @@ const AgregarModelo = () => {
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {filtroModelo().map((item, index) => {
                             return (
@@ -177,7 +168,6 @@ const AgregarModelo = () => {
                         })}
                     </Table.Body>
                 </Table>
-
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
@@ -197,11 +187,9 @@ const ContenedorFormulario = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
-
 const Titulo = styled.h2`
     color:  #83d394;
 `
-
 const ContentElemen = styled.div`
     display: flex;
     text-align: center;
@@ -210,7 +198,6 @@ const ContentElemen = styled.div`
     align-items: center;
     justify-content: space-between;
 `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
@@ -225,13 +212,11 @@ const Formulario = styled.form`
     align-items: center;
     justify-content: space-between;
 `
-
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px 30px;
 `
-
 const Boton = styled.button`
         background-color: #ffffff;
         padding: 10px;
@@ -240,5 +225,4 @@ const Boton = styled.button`
         margin: 0 10px;
         cursor: pointer;
 `
-
 export default AgregarModelo;

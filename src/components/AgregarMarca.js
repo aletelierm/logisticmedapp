@@ -14,7 +14,6 @@ import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
 const AgregarMarca = () => {
     const user = auth.currentUser;
     const {users} = useContext(UserContext);
@@ -37,10 +36,8 @@ const AgregarMarca = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         // Consulta si exite campo en el arreglo
         const existe = leer.filter(mar => mar.marca === marca.toLocaleUpperCase().trim()).length === 0
-
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
             cambiarEstadoAlerta(true);
@@ -48,14 +45,12 @@ const AgregarMarca = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe esta Marca'
             })
-
         } else if (marca === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No ha ingresado una Marca'
             })
-
         } else {
             const mar = marca.toLocaleUpperCase().trim()
             AgregarMarcaDb({
@@ -197,11 +192,9 @@ const ContenedorFormulario = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
-
 const Titulo = styled.h2`
     color:  #83d394;
 `
-
 const ContentElemen = styled.div`
     display: flex;
     text-align: center;
@@ -210,7 +203,6 @@ const ContentElemen = styled.div`
     align-items: center;
     justify-content: space-between;
 `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
@@ -225,13 +217,11 @@ const Formulario = styled.form`
     align-items: center;
     justify-content: space-between;
 `
-
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px 30px;
 `
-
 const Boton = styled.button`
         background-color: #ffffff;
         padding: 10px;
@@ -240,5 +230,4 @@ const Boton = styled.button`
         margin: 0 10px;
         cursor: pointer;
 `
-
 export default AgregarMarca;

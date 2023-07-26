@@ -1,12 +1,10 @@
 import {Alert,  Button, Container,  TextField, Typography} from "@mui/material";
 import React, { useState } from 'react';
 import { recovery } from '../firebase/firebaseConfig';
-
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Link } from "react-router-dom";
 import Grid from '@mui/material/Grid';
-
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +15,6 @@ const ForgotPasswordForm = () => {
     event.preventDefault();
     setErrorMessage('');
     setIsSubmitting(true);
-
     try {
       await recovery(email);
       setEmail("");
@@ -30,7 +27,6 @@ const ForgotPasswordForm = () => {
   };
 
   return (
-
     <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
       <Card>
         <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} sx={{ mt: 3 }}>
@@ -40,8 +36,7 @@ const ForgotPasswordForm = () => {
               
               src="logo2.png" alt="imagen" />
           </Grid>
-        </Grid>
-    
+        </Grid>   
 
       <CardContent>
       <form onSubmit={handleSubmit}>
@@ -66,9 +61,6 @@ const ForgotPasswordForm = () => {
             <p>
             Recuerda ingresar el correo electrónico con el cual fue creado el usuario en la cuenta de tu organización.
             </p>
-
-
-
             <Grid style={{ display: 'flex', alignItems: 'center' }} container spacing={2}>
               <Grid item xs={6}>
                 <Typography variant="h8" gutterBottom textAlign="center" >
@@ -79,8 +71,7 @@ const ForgotPasswordForm = () => {
                     underline="none"
                   >
                     Regresar al Login
-                  </Link>
-              
+                  </Link>              
                 </Typography>
               </Grid>
 
@@ -95,15 +86,11 @@ const ForgotPasswordForm = () => {
                 </Button>
               </Grid>
             </Grid>
-       
-            
         {isSubmitting ? "Enviando correo electrónico..." : ""}
       </form>
       </CardContent>
       </Card>
     </Container>
-
-    // *****************************
   );
 };
 

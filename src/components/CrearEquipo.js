@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Alerta from './Alertas'
-/* import EquipoDb from '../firebase/EquipoDb'; */
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
 import { collection, getDocs, where, query,addDoc,setDoc,doc } from 'firebase/firestore';
-// import { FaRegEdit } from "react-icons/fa";
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import Modal from './Modal';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-/* import ExportarExcel from '../funciones/ExportarExcel'; */
-/* import * as XLSX from 'xlsx'; */
 import ExportarExcel from '../funciones/ExportarExcel';
-
-
 
 const Proveedores = () => {
     const user = auth.currentUser;
@@ -123,22 +117,6 @@ const Proveedores = () => {
        });
         
     }
-
-    /* const EquipoStatusDb = async ({id,emp_id,familia, tipo,status,nomEntidad,userAdd,userMod,fechaAdd,fechaMod })=>{
-        await setDoc(doc(db, 'status',id), {
-            emp_id: emp_id,
-            familia: familia,
-            tipo: tipo,
-            status: status,
-            entidad: nomEntidad,
-            useradd: userAdd,
-            usermod: userMod,
-            fechaadd: fechaAdd,
-            fechamod: fechaMod
-            
-        });} */
-
-    
      
     // Buscador de equipos
     const filtro = () => {
@@ -280,8 +258,7 @@ const Proveedores = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra registrado'
             })
-        }else{           
-            
+        }else{ 
             try {
                 EquipoDb({
                     familia: nomFamilia,
@@ -318,9 +295,7 @@ const Proveedores = () => {
 
     const leerStatus = (id)=>{
             const existeStatus= status.filter(st => st.id === id);
-            setMostrarSt(existeStatus);
-            console.log(mostrarSt.status)
-            console.log(id)
+            setMostrarSt(existeStatus);            
     }
 
     //Exportar a excel los equipos
@@ -541,7 +516,6 @@ const ListarProveedor = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
-
 const Formulario = styled.form``
 
 const Input = styled.input`
@@ -549,12 +523,10 @@ const Input = styled.input`
     border-radius: 10px;
     padding: 5px;
 `
-
 const Label = styled.label`
         padding: 5px;
         font-size: 20px;
 `
-
 const Boton = styled.button`
     background-color: #ffffff;
     color: green;
@@ -592,12 +564,10 @@ const Boton2 = styled.button`
 		background: #0066FF;
 	}
 `
-
 const Contenido = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
 
 `
-
 export default Proveedores;

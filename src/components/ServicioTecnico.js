@@ -3,7 +3,7 @@ import React from 'react';
 const ServicioTecnico = () =>{
     return (
         <div>
-            <h1>Dashboard Servicio Tecnico</h1>
+            <img style={{ width:"600px"}} src="tecnico.png" alt="imagen" />
         </div>
     );
 };

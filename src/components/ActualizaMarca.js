@@ -181,7 +181,7 @@ const BotonGuardar = styled.button`
     padding: 5px 10px;
 
     &:hover{
-        background - color: #83d310;
+        background-color: #83d310;
     }
 `
 

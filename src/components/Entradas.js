@@ -14,7 +14,6 @@ import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
@@ -37,11 +36,9 @@ const Entradas = () => {
     const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
-    const [stEquipo, setStEquipo ]= useState([]);
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    // const [guardado, setGuardado] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
@@ -53,7 +50,6 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     //Lectura de clientes filtrados por empresa
     const getCliente = async () => {
         const traerCliente = collection(db, 'clientes');
@@ -61,7 +57,6 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     //Lectura de equipos filtrado por empresas
     const getEquipo = async () => {
         const traerEq = collection(db, 'equipos');
@@ -69,7 +64,6 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     // Lectura cabecera de documentos
     const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
@@ -77,7 +71,6 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     //Lectura mivimientos de entrada
     const getEntrada = async () => {
         const traerEntrada = collection(db, 'entradas');
@@ -85,7 +78,6 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -93,16 +85,12 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     //Almacena movimientos de entrada del documento
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
-
-
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         if (e.key === 'Enter' || e.key === 'Tab') {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
@@ -129,28 +117,16 @@ const Entradas = () => {
             }
         }
     }
-     //Validar que existe el id del equipo en status       
-   /*   if(existe.length === 1){           
-        setIdEquipo(status.filter(st => st.id === existe[0].id) );
-        console.log('estatus:',idEquipo[0].status)
-    }  */
-
+    
     // Validar N°serie
     const detectar = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         if (e.key === 'Enter' || e.key === 'Tab') {
             // Consulta si exite numero de serie en el arreglo de equipos        
             const existe = equipo.filter(eq => eq.serie === numSerie);           
-            const existeIn = documento.filter(doc => doc.serie === numSerie)
+            const existeIn = documento.filter(doc => doc.serie === numSerie)        
 
-            //Valida que exista status
-           if(existe.length === 1){
-                setStEquipo(status.filter(st => st.id ===existe[0].id));             
-            }           
-
-            console.log('arreglo detectar:',stEquipo)
             if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -163,36 +139,34 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-            }else if(stEquipo.length > 0){
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra en Bodega'
+            }else{
+                const existeStatus = status.filter(st=> st.id === existe[0].id && st.status==='BODEGA').length ===1;
+                if(existeStatus){
+                 cambiarEstadoAlerta(true);
+                 cambiarAlerta({
+                 tipo: 'error',
+                 mensaje: 'Equipo ya se encuentra en Bodega'
                 })
+                }
             }
-           
+               
         }
     }
-
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = (ev) => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         // Validar Rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
-
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -200,7 +174,6 @@ const Entradas = () => {
                 mensaje: 'Seleccione Tipo Documento'
             })
             return;
-
         } else if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -208,7 +181,6 @@ const Entradas = () => {
                 mensaje: 'Ingrese N° Documento'
             })
             return;
-
         } else if (date === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -216,7 +188,6 @@ const Entradas = () => {
                 mensaje: 'Seleccione una Fecha'
             })
             return;
-
         } else if (nomTipoIn.length === 0 || nomTipoIn === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -224,7 +195,6 @@ const Entradas = () => {
                 mensaje: 'Seleccione un Tipo de Entrada'
             })
             return;
-
             // Validacion Rut
         } else if (rut === '') {
             cambiarEstadoAlerta(true);
@@ -233,7 +203,6 @@ const Entradas = () => {
                 mensaje: 'Campo Rut no puede estar vacio'
             })
             return;
-
         } else if (!expresionRegularRut.test(rut)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -241,7 +210,6 @@ const Entradas = () => {
                 mensaje: 'Formato incorrecto de rut'
             })
             return;
-
         } else if (validaR !== parseInt(digito)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -249,7 +217,6 @@ const Entradas = () => {
                 mensaje: 'Rut no válido'
             })
             return;
-
         } else if (existe.length > 0) {
             if (existe[0].confirmado) {
                 cambiarEstadoAlerta(true);
@@ -264,7 +231,6 @@ const Entradas = () => {
                     mensaje: 'Ya existe este documento. Falta confirmar'
                 })
             }
-
         } else {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
@@ -357,29 +323,17 @@ const Entradas = () => {
             }
         }
     }
-
     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         // Validar N° Serie en equipo
-        const existe = equipo.filter(eq => eq.serie === numSerie);
-       
+        const existe = equipo.filter(eq => eq.serie === numSerie);       
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
-
         // Validar Id de Cabecera en Entradas
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
-
-        //Valida que exista status
-        if(existe.length === 1){
-            setStEquipo(status.filter(st => st.id ===existe[0].id));             
-        } 
-
-        console.log('arreglo submit:',stEquipo)
-
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)   
         if (price === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -387,7 +341,6 @@ const Entradas = () => {
                 mensaje: 'Ingrese Precio de Equipo'
             })
             return;
-
         } else if (numSerie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -395,88 +348,83 @@ const Entradas = () => {
                 mensaje: 'Ingrese o Scaneé N° Serie'
             })
             return;
-
         } else if (existe.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No existe un Equipo con este N° Serie'
             })
-
         } else if (existeIn.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-
-        }else if(stEquipo.length > 0){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
+        }else {
+            const existeStatus = status.filter(st=> st.id === existe[0].id && st.status==='BODEGA').length ===1;
+            if(existeStatus){
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en Bodega'
             })
-        } else {
-            setBtnConfirmar(false);
-            try {
-                EntradasDB({
-                    emp_id: users.emp_id,
-                    tipDoc: nomTipDoc,
-                    numDoc: numDoc,
-                    date: date,
-                    tipoIn: nomTipoIn,
-                    rut: rut,
-                    entidad: entidad,
-                    eq_id: existe[0].id,
-                    familia: existe[0].familia,
-                    tipo: existe[0].tipo,
-                    marca: existe[0].marca,
-                    modelo: existe[0].modelo,
-                    serie: existe[0].serie,
-                    rfid: existe[0].rfid,
-                    price: price,
-                    cab_id: existeCab[0].id,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    // tipMov: 1,
-                    status: 'BODEGA'
-                });
-                setPrice('')
-                setNumSerie('')
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Item guardado correctamente'
-                })
-                setFlag(!flag);
-
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
+            }else{
+                setBtnConfirmar(false);
+                try {
+                    EntradasDB({
+                        emp_id: users.emp_id,
+                        tipDoc: nomTipDoc,
+                        numDoc: numDoc,
+                        date: date,
+                        tipoIn: nomTipoIn,
+                        rut: rut,
+                        entidad: entidad,
+                        eq_id: existe[0].id,
+                        familia: existe[0].familia,
+                        tipo: existe[0].tipo,
+                        marca: existe[0].marca,
+                        modelo: existe[0].modelo,
+                        serie: existe[0].serie,
+                        rfid: existe[0].rfid,
+                        price: price,
+                        cab_id: existeCab[0].id,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        // tipMov: 1,
+                        status: 'BODEGA'
+                    });
+                    setPrice('')
+                    setNumSerie('')
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Item guardado correctamente'
+                    })
+                    setFlag(!flag);    
+                    return;
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: error
+                    })
+                }
             }
+           
         }
     }
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-
         const batch = writeBatch(db);
-
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
             batch.update(docRef, { status: 'BODEGA' });
         });
-
         try {
             await batch.commit();
             console.log('Documentos actualizados correctamente.');
@@ -491,7 +439,6 @@ const Entradas = () => {
                 fechaMod: fechaMod
             });
             setFlag(!flag)
-
         } catch (error) {
             console.error('Error al actualizar documentos:', error);
             cambiarEstadoAlerta(true);
@@ -499,8 +446,9 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Error al actualizar documentos:', error
             })
-        }
-
+        }        
+        setNumSerie('');
+        setPrice('');
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
@@ -513,35 +461,28 @@ const Entradas = () => {
         setBtnAgregar(true);
         setBtnGuardar(false)
     };
-
-
     useEffect(() => {
         getProveedor();
         getCliente();
         getEquipo();
-        getEntrada()
+        getEntrada();
+        getStatus();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-    useEffect(() => {
-        getStatus();
+    useEffect(() => {        
         getEntrada();
         getCabecera();
         if (documento.length > 0) setBtnConfirmar(false);
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-
 
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
                 <Titulo>Recepcion de Equipos</Titulo>
             </ContenedorFormulario>
-
             <ContenedorFormulario>
                 <Formulario action='' onSubmit={handleSubmit}>
-
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
@@ -554,7 +495,6 @@ const Entradas = () => {
                                 onChange={ev => setNumDoc(ev.target.value)}
                             />
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Tipo de Documento</Label>
                             <Select
@@ -567,7 +507,6 @@ const Entradas = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Fecha Ingreso</Label>
                             <Input
@@ -580,7 +519,6 @@ const Entradas = () => {
                             />
                         </ContentElemenSelect>
                     </ContentElemen>
-
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo Entrada</Label>
@@ -594,7 +532,6 @@ const Entradas = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label >Rut</Label>
                             <Input
@@ -607,12 +544,10 @@ const Entradas = () => {
                                 onKeyDown={detectarCli}
                             />
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
-
                         <Boton
                             style={{ margin: '17px 0' }}
                             onClick={addCabeceraIn}
@@ -620,11 +555,9 @@ const Entradas = () => {
                             onChange={handleCheckboxChange}
                             disabled={btnGuardar}
                         >Guardar</Boton>
-
                     </ContentElemen>
                 </Formulario>
             </ContenedorFormulario>
-
             <ContenedorFormulario>
                 <Formulario>
                     <ContentElemen >
@@ -638,7 +571,6 @@ const Entradas = () => {
                                 onChange={e => setPrice(e.target.value)}
                             />
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
                             <Input
@@ -650,19 +582,15 @@ const Entradas = () => {
                                 onKeyDown={detectar}
                             />
                         </ContentElemenSelect>
-
                         <Icon disabled={btnAgregar} onClick={handleSubmit}>
                             <IoMdAdd
                                 style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
                             />
                         </Icon>
-
                     </ContentElemen>
                 </Formulario>
-
                 <ListarEquipos>
                     <Table singleLine>
-
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
@@ -671,7 +599,6 @@ const Entradas = () => {
                                 <Table.HeaderCell>Precio</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
-
                         <Table.Body>
                             {documento.map((item, index) => {
                                 return (
@@ -684,17 +611,13 @@ const Entradas = () => {
                                 )
                             })}
                         </Table.Body>
-
                     </Table>
                 </ListarEquipos>
                 <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
             </ContenedorFormulario>
-
-
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
-
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
@@ -707,7 +630,6 @@ const Entradas = () => {
                             <Table.HeaderCell>Conf</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {cabecera.map((item) => {
                             if (item.confirmado === false) {
@@ -744,13 +666,11 @@ const Entradas = () => {
                     </Table.Body>
                 </Table>
             </ListarProveedor>
-
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />
-
+            />           
         </ContenedorProveedor>
     );
 };
@@ -764,28 +684,23 @@ const ContenedorFormulario = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
-
 const ContentElemen = styled.div`
     display: flex;
     justify-content: space-evenly;
     padding: 5px 10px;
 `
-
 const ContentElemenSelect = styled.div`
     padding: 20px;
 `
-
 const Select = styled.select`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px;
     width: 200px;
 `
-
 const Titulo = styled.h2`
     color:  #83d394;
 `
-
 const Icon = styled.button`
     display: flex;
     // justify-content: space-between;
@@ -793,7 +708,6 @@ const Icon = styled.button`
     border: none;
     background: none;
 `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
@@ -801,15 +715,13 @@ const ListarProveedor = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
-
 const ListarEquipos = styled.div`
     margin: 20px 0;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 10px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);
 `
-
 const Formulario = styled.form``
 
 const Input = styled.input`
@@ -817,19 +729,16 @@ const Input = styled.input`
     border-radius: 10px;
     padding: 5px;
 `
-
 const Label = styled.label`
     padding: 5px;
     font-size: 20px;
 `
-
 const Boton = styled.button`
     background-color: #83d394;
     color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     border: none;
-    // cursor: pointer;
-`
+    cursor: pointer;`
 
 export default Entradas;

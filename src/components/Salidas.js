@@ -15,8 +15,6 @@ import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-
-
 const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
@@ -58,7 +56,6 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     //Lectura de clientes filtrados por empresa
     const getCliente = async () => {
         const traerCliente = collection(db, 'clientes');
@@ -66,7 +63,6 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     //Lectura de equipos filtrado por empresas
     const getEquipo = async () => {
         const traerEq = collection(db, 'equipos');
@@ -74,7 +70,6 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     // Lectura cabecera de documentos
     const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabecerasout');
@@ -82,7 +77,6 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     //Lectura mivimientos de Salida
     const getSalida = async () => {
         const traerSalida = collection(db, 'salidas');
@@ -90,10 +84,10 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     //Almacena movimientos de entrada del documento
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
 
+    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);    
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -101,12 +95,10 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         if (e.key === 'Enter' || e.key === 'Tab') {
             if (nomTipoOut === 'CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
@@ -138,7 +130,6 @@ const Salidas = () => {
     const detectar = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         if (e.key === 'Enter' || e.key === 'Tab') {
             // Consulta si exite serie en el arreglo            
             const existe = equipo.filter(eq => eq.serie === numSerie);
@@ -158,29 +149,23 @@ const Salidas = () => {
             }
         }
     }
-
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = (ev) => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         // Validar Rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
-
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-
         if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -188,7 +173,6 @@ const Salidas = () => {
                 mensaje: 'Seleccione Tipo Documento'
             })
             return;
-
         } else if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -204,7 +188,6 @@ const Salidas = () => {
                 mensaje: 'Seleccione una Fecha'
             })
             return;
-
         } else if (nomTipoOut.length === 0 || nomTipoOut === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -212,7 +195,6 @@ const Salidas = () => {
                 mensaje: 'Seleccione un Tipo de Salida'
             })
             return;
-
             // Validacion Rut
         } else if (rut === '') {
             cambiarEstadoAlerta(true);
@@ -221,7 +203,6 @@ const Salidas = () => {
                 mensaje: 'Campo Rut no puede estar vacio'
             })
             return;
-
         } else if (!expresionRegularRut.test(rut)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -229,7 +210,6 @@ const Salidas = () => {
                 mensaje: 'Formato incorrecto de rut'
             })
             return;
-
         } else if (validaR !== parseInt(digito)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -237,7 +217,6 @@ const Salidas = () => {
                 mensaje: 'Rut no válido'
             })
             return;
-
         } else if (!expresionRegular.test(correo)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -245,7 +224,6 @@ const Salidas = () => {
                 mensaje: 'favor ingresar un correo valido'
             })
             return;
-
         } else if (patente === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -253,7 +231,6 @@ const Salidas = () => {
                 mensaje: 'Ingrese Patente del Vehiculo'
             })
             return;
-
         } else if (existe.length > 0) {
             if (existe[0].confirmado) {
                 cambiarEstadoAlerta(true);
@@ -268,7 +245,6 @@ const Salidas = () => {
                     mensaje: 'Ya existe este documento. Falta confirmar'
                 })
             }
-
         } else {
             if (nomTipoOut === 'CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
@@ -365,28 +341,22 @@ const Salidas = () => {
             }
         }
     }
-
     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         // Validar N° Serie en equipo
         const existe = equipo.filter(eq => eq.serie === numSerie);
-
         //Validar que existe el id del equipo en status       
         if (existe.length === 1) {
             setIdEquipo(status.filter(st => st.id === existe[0].id));
             console.log('estatus:', idEquipo[0].status)
         }
-
         // Validar en N° Serie en Salidas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
-
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -394,14 +364,12 @@ const Salidas = () => {
                 mensaje: 'Ingrese o Scaneé N° Serie'
             })
             return;
-
         } else if (existe.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No existe un Equipo con este N° Serie'
             })
-
         } else if (existeIn.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -409,13 +377,12 @@ const Salidas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
 
-        } else if (idEquipo.length === 1 && idEquipo[0].status === 'CLIENTE' && idEquipo[0].status === 'SERVICIO TECNICO' && idEquipo[0].status === 'DADO DE BAJA') {
+        } else if(idEquipo.length === 1 && idEquipo[0].status ==='CLIENTE'){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en Bodega'
             })
-
         } else {
             setBtnConfirmar(false);
             try {
@@ -463,21 +430,16 @@ const Salidas = () => {
             }
         }
     }
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-
         const batch = writeBatch(db);
-
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
             batch.update(docRef, { status: nomTipoOut });
         });
-
         try {
             await batch.commit();
             console.log('Documentos actualizados correctamente.');
@@ -492,7 +454,6 @@ const Salidas = () => {
                 fechaMod: fechaMod
             });
             setFlag(!flag)
-
         } catch (error) {
             console.error('Error al actualizar documentos:', error);
             cambiarEstadoAlerta(true);
@@ -501,7 +462,6 @@ const Salidas = () => {
                 mensaje: 'Error al actualizar documentos:', error
             })
         }
-
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
@@ -516,7 +476,6 @@ const Salidas = () => {
         setBtnGuardar(false)
     };
 
-
     useEffect(() => {
         getProveedor();
         getCliente();
@@ -530,20 +489,16 @@ const Salidas = () => {
         getSalida();
         getCabecera();
         if (documento.length > 0) setBtnConfirmar(false);
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-
 
     return (
         <ContenedorProveedor>
             <ContenedorFormulario>
                 <Titulo>Salida de Equipos</Titulo>
             </ContenedorFormulario>
-
             <ContenedorFormulario>
                 <Formulario action='' onSubmit={handleSubmit}>
-
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
@@ -556,7 +511,6 @@ const Salidas = () => {
                                 onChange={ev => setNumDoc(ev.target.value)}
                             />
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Tipo de Documento</Label>
                             <Select
@@ -569,7 +523,6 @@ const Salidas = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label>Fecha Ingreso</Label>
                             <Input
@@ -582,7 +535,6 @@ const Salidas = () => {
                             />
                         </ContentElemenSelect>
                     </ContentElemen>
-
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Tipo Salida</Label>
@@ -596,7 +548,6 @@ const Salidas = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label >Rut</Label>
                             <Input
@@ -609,13 +560,11 @@ const Salidas = () => {
                                 onKeyDown={detectarCli}
                             />
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
                     </ContentElemen>
-
                     <ContentElemen>
                         <ContentElemenSelect>
                             <Label>Correo Transportista</Label>
@@ -628,7 +577,6 @@ const Salidas = () => {
                                 onChange={ev => setCorreo(ev.target.value)}
                             />
                         </ContentElemenSelect>
-
                         <ContentElemenSelect>
                             <Label >Patente Vehiculo</Label>
                             <Input
@@ -640,7 +588,6 @@ const Salidas = () => {
                                 onChange={ev => setPatente(ev.target.value)}
                             />
                         </ContentElemenSelect>
-
                         <Boton
                             style={{ margin: '17px 0' }}
                             onClick={addCabeceraIn}
@@ -648,11 +595,9 @@ const Salidas = () => {
                             onChange={handleCheckboxChange}
                             disabled={btnGuardar}
                         >Guardar</Boton>
-
                     </ContentElemen>
                 </Formulario>
             </ContenedorFormulario>
-
             <ContenedorFormulario>
                 <Formulario>
                     <ContentElemen >
@@ -668,19 +613,15 @@ const Salidas = () => {
                                 onKeyDown={detectar}
                             />
                         </ContentElemenSelect>
-
                         <Icon disabled={btnAgregar} onClick={handleSubmit}>
                             <IoMdAdd
                                 style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
                             />
                         </Icon>
-
                     </ContentElemen>
                 </Formulario>
-
                 <ListarEquipos>
                     <Table singleLine>
-
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
@@ -688,7 +629,6 @@ const Salidas = () => {
                                 <Table.HeaderCell>N° Serie</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
-
                         <Table.Body>
                             {documento.map((item, index) => {
                                 return (
@@ -700,10 +640,8 @@ const Salidas = () => {
                                 )
                             })}
                         </Table.Body>
-
                     </Table>
                 </ListarEquipos>
-
                 <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
                 {/* <Boton onClick={() => setIsModalOpen(true)} disabled={btnConfirmar}>Confirmar</Boton>
                 <Modal
@@ -717,12 +655,9 @@ const Salidas = () => {
                     <button >No</button>
                 </Modal> */}
             </ContenedorFormulario>
-
-
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
-
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
@@ -735,7 +670,6 @@ const Salidas = () => {
                             <Table.HeaderCell>Conf</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {cabecera.map((item) => {
                             if (item.confirmado === false) {
@@ -766,21 +700,17 @@ const Salidas = () => {
                             }
                         }
                         )}
-
                     </Table.Body>
                 </Table>
             </ListarProveedor>
-
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
         </ContenedorProveedor>
     );
 };
-
 const ContenedorProveedor = styled.div``
 
 const ContenedorFormulario = styled.div`
@@ -788,19 +718,16 @@ const ContenedorFormulario = styled.div`
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-`
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);`
 
 const ContentElemen = styled.div`
     display: flex;
 
     justify-content: space-evenly;
-    padding: 5px 10px;
-`
+    padding: 5px 10px;`
 
 const ContentElemenSelect = styled.div`
-    padding: 20px;
-`
+    padding: 20px;`
 
 const Select = styled.select`
     border: 2px solid #d1d1d1;
@@ -811,30 +738,27 @@ const Select = styled.select`
 const Titulo = styled.h2`
     color:  #83d394;
 `
-
 const Icon = styled.button`
     display: flex;
-    // justify-content: space-between;
     margin-left: 20px;
     border: none;
     background: none;
-`
+    `
 
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-`
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);`
 
 const ListarEquipos = styled.div`
     margin: 20px 0;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 10px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);;
-`
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);
+    `
 
 const Formulario = styled.form``
 
@@ -843,30 +767,16 @@ const Input = styled.input`
     border-radius: 10px;
     padding: 5px;
 `
-
 const Label = styled.label`
     padding: 5px;
     font-size: 20px;
 `
-
 const Boton = styled.button`
     background-color: #83d394;
     color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     border: none;
-    cursor: pointer;
+    cursor: pointer;   
 `
-
-const Modal = styled.div`
-width: 200px;
-heigth: 200px
-    background-color: #83d394;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-`
-
 export default Salidas;

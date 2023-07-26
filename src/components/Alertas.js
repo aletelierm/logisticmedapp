@@ -58,29 +58,22 @@ const Alertas = ({tipo, mensaje, estadoAlerta, cambiarEstadoAlerta }) => {
 
     useEffect(()=>{
         let tiempo;
-
         if(estadoAlerta === true){
             tiempo = setTimeout(()=>{
                 cambiarEstadoAlerta(false);
             },4000);
         }
-
-        return(()=> clearTimeout(tiempo));
-        
+        return(()=> clearTimeout(tiempo));        
     },[estadoAlerta, cambiarEstadoAlerta]);
     return ( 
         <>
-        {
-            estadoAlerta &&
+        {estadoAlerta &&
             <ContenedorAlerta tipo={tipo}>
                 <p>{mensaje}</p>
             </ContenedorAlerta>
-        }
-         
+        }         
         </>
-           
-
-     );
+         );
 }
  
 export default Alertas ;

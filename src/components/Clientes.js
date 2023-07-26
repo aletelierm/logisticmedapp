@@ -13,13 +13,11 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 
-const Clientes = () => {
-    
+const Clientes = () => {    
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;   
     let fechaAdd = new Date();
-    let fechaMod = new Date();
-    
+    let fechaMod = new Date();    
     //Obtener datos de contexto global
     const {users} = useContext(UserContext);   
   
@@ -38,17 +36,12 @@ const Clientes = () => {
     const [nomRsf, setNomRsf] = useState('')
     const [dirRsf, setDirRsf] = useState('')
     const [telRsf, setTelRsf] = useState('')
-
-   
-   
-   
     //Lectura de datots filtrados por empresa
     const getData = async () => {
         const traerClientes = collection(db, 'clientes');
         const dato = query(traerClientes, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-    }
+        setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));    }
 
     //filtrar para paginacion
     const filtroCliente = () => {
@@ -71,7 +64,6 @@ const Clientes = () => {
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
-
     }
 
     useEffect(() => {
@@ -84,8 +76,7 @@ const Clientes = () => {
         
     },[]) */
 
-    const handleChange = (e)=>{        
-
+    const handleChange = (e)=>{
         switch(e.target.name){
             case 'rut':
                 setRut(e.target.value)
@@ -120,26 +111,9 @@ const Clientes = () => {
                     default:
                     break;
             }
-    
-
         }
     }
 
-    /* const detectar = (e)=>{
-        if(e.key==='Enter' || e.key==='Tab'){
-            // Consulta si exite rut en el arreglo            
-            const existe = leer.filter(cli => cli.rut === rut).length === 0      
-             
-        if(!existe){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Rut ya existe'
-            })            
-            return;
-        }        
-        }
-    } */
     const handleChek = (e)=>{
         setChecked(e.target.checked)
     }
@@ -149,19 +123,15 @@ const Clientes = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});       
         //Comprobar que existe el rut en DB
-        const existe = leer.filter(cli => cli.rut === rut).length === 0  
-        /* const existe = leer.filter(cli => cli.rut.includes(rut.toLocaleUpperCase().trim())).length > 0; */
-
+        const existe = leer.filter(cli => cli.rut === rut).length === 0 
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-       
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;       
        /*  console.log(validarRut(rut)); */
         const temp = rut.split('-');
         let digito = temp[1];
         if(digito ==='k' || digito ==='K') digito = -1;
         const validaR = validarRut(rut);
-
         if(rut ===''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -211,13 +181,6 @@ const Clientes = () => {
                 mensaje: 'favor ingresar un correo valido'
             })
             return;
-        /* }else if(nomContacto ===''){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Campo Contacto no puede estar vacio'
-            })
-            return; */
         }else if(!existe){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -404,8 +367,7 @@ const Clientes = () => {
                              </ContentElemen>
                                      :
                                  ''
-                
-                         }
+                }
                             
                 </Formulario>
                 <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar> 
@@ -468,9 +430,6 @@ const Clientes = () => {
         </ContenedorProveedor>
     );
 }
-
-
-
 export default Clientes;
 
 const Titulo = styled.h2`
@@ -485,39 +444,32 @@ const ContenedorFormulario = styled.div`
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-    
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);    
 `
-const ContentElemen = styled.div`
-   
+const ContentElemen = styled.div`   
     display: flex;
     justify-content: space-between;
     padding: 20px;
 `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
 const Formulario = styled.form`
 
 `
-
-const Input = styled.input`
-    
+const Input = styled.input`    
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px;
 `
-
 const Label = styled.label`
         padding: 5px;
         font-size: 20px;
 `
-
 const Boton = styled.button`
         cursor:pointer;
         background-color: #ffff;        
@@ -527,7 +479,6 @@ const Boton = styled.button`
             background-color: #83d310;
         }
 `
-
 const BotonGuardar = styled.button`
 background-color: #83d394;
     color: #ffffff;
@@ -535,7 +486,4 @@ background-color: #83d394;
     border-radius: 5px;
     border: none;
     cursor: pointer;
-    // &:hover{
-    //     background-color: #83d310;
-    //     }
 `

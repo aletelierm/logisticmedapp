@@ -14,16 +14,13 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 
-
-const Proveedores = () => {
-    
+const Proveedores = () => {    
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;     
     let fechaAdd = new Date();
     let fechaMod = new Date();
-
      //Obtener datos de contexto global
-    const {users} = useContext(UserContext);  
+    const {users} = useContext(UserContext);
 
     const [rut, setRut] = useState('')
     const [entidad, setEntidad] = useState('')
@@ -58,7 +55,6 @@ const Proveedores = () => {
         if (leer.filter(prov => prov.nombre.includes(buscador)).length > pagina + 5)
             setPagina(pagina + 5);
     }
-
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
 
@@ -99,39 +95,20 @@ const Proveedores = () => {
         } 
     }
 
-    /* const detectar = (e)=>{
-        if(e.key==='Enter' || e.key==='Tab'){
-            // Consulta si exite rut en el arreglo
-            const existe = leer.filter(cli => cli.rut === rut).length === 0          
-        if(!existe){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Rut ya existe'
-            })
-            return;
-        }        
-        }
-    } */
-
     const handleSubmit =(e)=>{
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Comprobar que existe el rut en DB
-        const existe = leer.filter(cli => cli.rut === rut).length === 0 
-        
+        const existe = leer.filter(cli => cli.rut === rut).length === 0;        
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         //Comprobar que rut tenga formato correcto
-        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-
-        /*  console.log(validarRut(rut)); */
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;     
         const temp = rut.split('-');
         let digito = temp[1];
         if(digito ==='k' || digito ==='K') digito = -1;        
         const validaR = validarRut(rut);
-
         if(rut ===''){
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -238,7 +215,6 @@ const Proveedores = () => {
             }
         }
     }
-
     //Exportar a excel los clientes
     const ExportarXls = ()=>{    
         //Campos a mostrar en el excel   
@@ -345,7 +321,6 @@ const Proveedores = () => {
                                     <Table.HeaderCell>Accion</Table.HeaderCell>        
                                     </Table.Row>
                             </Table.Header>
-
                             <Table.Body>
                                 {
                                     filtroProveedor().map((item,index)=>{
@@ -361,10 +336,7 @@ const Proveedores = () => {
                                         )
                                     })
                                 }
-                                                                        
-                                           
-           
-                            </Table.Body>
+                    </Table.Body>
                 </Table>
             </ListarProveedor>
             <Alerta 
@@ -385,52 +357,42 @@ const Titulo = styled.h2`
 const ContenedorProveedor = styled.div`
    
 `
-const ContenedorFormulario = styled.div`
-   
+const ContenedorFormulario = styled.div`   
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-    
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);    
 `
-const ContentElemen = styled.div`
-   
+const ContentElemen = styled.div`   
     display: flex;
     justify-content: space-between;
     padding: 20px;
 `
-
 const ListarProveedor = styled.div`
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
+    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
 `
 const Formulario = styled.form`
 
 `
-
-const Input = styled.input`
-    
+const Input = styled.input`    
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px;
 `
-
 const Label = styled.label`
         padding: 5px;
         font-size: 20px;
 `
-
 const Boton = styled.button`
         cursor: pointer;
         background-color: #ffff;        
         border-radius: 5px;
         border: none;
-       
-
 `
 const BotonGuardar = styled.button`
 background-color: #83d394;
@@ -439,8 +401,4 @@ background-color: #83d394;
     border-radius: 5px;
     border: none;
     cursor: pointer;
-
-    // &:hover{
-    //     background-color: #83d310;
-    //     }
 `
