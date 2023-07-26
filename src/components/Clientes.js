@@ -124,8 +124,9 @@ const Clientes = () => {
         cambiarAlerta({});       
         //Comprobar que existe el rut en DB
         const existe = leer.filter(cli => cli.rut === rut).length === 0 
-        //Comprobar que correo sea correcto
+        //Patron para Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+        //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;       
        /*  console.log(validarRut(rut)); */
         const temp = rut.split('-');

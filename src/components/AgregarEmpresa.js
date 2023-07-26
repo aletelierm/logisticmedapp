@@ -11,6 +11,7 @@ import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
 import { Link } from 'react-router-dom';
 import { FaRegEdit } from "react-icons/fa";
+import validarRut from '../funciones/validarRut';
 
 const AgregarEmpresa = () => {
     /* const navigate = useNavigate(); */
@@ -19,6 +20,7 @@ const AgregarEmpresa = () => {
     let fechaMod = new Date();
 
     const [empresa, setEmpresa] = useState('');
+    const [rut, setRut] = useState('');
     const [leer, setLeer] = useState([])
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
@@ -27,8 +29,17 @@ const AgregarEmpresa = () => {
     const [flag, setFlag] = useState(false);
 
     const handleChange = (e) => {
-        setEmpresa(e.target.value);
-    }
+        switch(e.target.name){
+            case 'rut':
+                setRut(e.target.value)
+                break;
+                case 'empresa':
+                setEmpresa(e.target.value);
+                break;
+                default:
+                break;
+            }
+        }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -37,9 +48,37 @@ const AgregarEmpresa = () => {
 
         // Consulta si exite campo en el arreglo
         const existe = leer.filter(emp => emp.empresa === empresa.toLocaleUpperCase().trim()).length === 0;
-       
+        //Patron para valiar rut
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;       
+       /*  console.log(validarRut(rut)); */
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if(digito ==='k' || digito ==='K') digito = -1;
+        const validaR = validarRut(rut);
+
         // Realiza comprobacion
-        if (!existe) {
+        if(rut ===''){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Rut no puede estar vacio'
+            })
+            return;
+        }else if(!expresionRegularRut.test(rut)){          
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Formato incorrecto de rut'
+            })
+            return;
+        }else if(validaR !== parseInt(digito)){ 
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;
+        }else if (!existe) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -54,6 +93,7 @@ const AgregarEmpresa = () => {
         } else {
             const emp = empresa.toLocaleUpperCase().trim()
             AgregarEmpresaDb({
+                rut: rut,
                 empresa: emp,
                 userAdd: user.email,
                 userMod: user.email,
@@ -112,7 +152,17 @@ const AgregarEmpresa = () => {
             <ContenedorFormulario>
                 <Formulario onSubmit={handleSubmit}>
                     <Input
-                        style={{ width: '100%' }}
+                            style={{ width: '80%' }}
+                            maxLength='10'
+                            type='text'
+                            name = 'rut'
+                            placeholder = 'Ingrese Rut sin puntos'
+                            value = { rut }
+                            onChange = { handleChange }
+                            /* onKeyDown={detectar} */
+                        />
+                    <Input
+                        style={{ width: '80%' }}
                         type='text'
                         placeholder='Ingrese Empresa'
                         name='empresa'
@@ -146,9 +196,10 @@ const AgregarEmpresa = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Empresa</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
+                            <Table.HeaderCell>Agregado por</Table.HeaderCell>
+                            <Table.HeaderCell>Modificado por</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
@@ -159,6 +210,7 @@ const AgregarEmpresa = () => {
                             return (
                                 < Table.Row key={item.i2}>
                                     <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
@@ -217,6 +269,7 @@ const Input = styled.input`
     border: 2px solid  green;
     border-radius: 10px;
     padding: 5px;
+    margin-left: 5%;
 `
 const Boton = styled.button`    
     background-color: #ffffff;
