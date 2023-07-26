@@ -16,7 +16,7 @@ import { UserContext } from '../context/UserContext';
 
 const AgregarMarca = () => {
     const user = auth.currentUser;
-    const {users} = useContext(UserContext);
+    const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -104,7 +104,7 @@ const AgregarMarca = () => {
 
     useEffect(() => {
         getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
     return (
@@ -151,10 +151,9 @@ const AgregarMarca = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Marca</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
+                            <Table.HeaderCell>Agregado por</Table.HeaderCell>
+                            <Table.HeaderCell>Modicicado por</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -166,7 +165,11 @@ const AgregarMarca = () => {
                                     <Table.Cell>{item.marca}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Link to={`/actualizamarca/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }}>
+                                        <Link to={`/actualizamarca/${item.id}`}>
+                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                        </Link>
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}

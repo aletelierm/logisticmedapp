@@ -1,7 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-// import Modal from 'react-modal';
 import SalidasDB from '../firebase/SalidasDB'
 import CabeceraOutDB from '../firebase/CabeceraOutDB'
 import Alertas from './Alertas';
@@ -39,15 +38,13 @@ const Salidas = () => {
     const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
     // const [price, setPrice] = useState('');
-    const [idEquipo, setIdEquipo] = useState([]);
     const [flag, setFlag] = useState(false);
     const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    // const [guardado, setGuardado] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    
 
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
@@ -77,7 +74,7 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    //Lectura mivimientos de Salida
+    //Lectura movimientos de Salida
     const getSalida = async () => {
         const traerSalida = collection(db, 'salidas');
         const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
@@ -85,8 +82,6 @@ const Salidas = () => {
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     //Almacena movimientos de entrada del documento
-    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
-
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);    
     //Lectura de status
     const getStatus = async () => {
@@ -95,6 +90,7 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -146,6 +142,15 @@ const Salidas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
+            } else {
+                const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+                if (!existeStatus) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Equipo no se encuentra en Bodega'
+                    })
+                }
             }
         }
     }
@@ -348,11 +353,6 @@ const Salidas = () => {
         cambiarAlerta({});
         // Validar N° Serie en equipo
         const existe = equipo.filter(eq => eq.serie === numSerie);
-        //Validar que existe el id del equipo en status       
-        if (existe.length === 1) {
-            setIdEquipo(status.filter(st => st.id === existe[0].id));
-            console.log('estatus:', idEquipo[0].status)
-        }
         // Validar en N° Serie en Salidas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
         // Validar Id de Cabecera en Salidas
@@ -376,57 +376,57 @@ const Salidas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-
-        } else if(idEquipo.length === 1 && idEquipo[0].status ==='CLIENTE'){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Equipo ya se encuentra en Bodega'
-            })
         } else {
-            setBtnConfirmar(false);
-            try {
-                SalidasDB({
-                    emp_id: users.emp_id,
-                    tipDoc: nomTipDoc,
-                    numDoc: numDoc,
-                    date: date,
-                    tipoOut: nomTipoOut,
-                    rut: rut,
-                    entidad: entidad,
-                    correo: correo,
-                    patente: patente,
-                    eq_id: existe[0].id,
-                    familia: existe[0].familia,
-                    tipo: existe[0].tipo,
-                    marca: existe[0].marca,
-                    modelo: existe[0].modelo,
-                    serie: existe[0].serie,
-                    rfid: existe[0].rfid,
-                    cab_id: existeCab[0].id,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    // tipMov: 2,
-                    status: nomTipoOut
-                });
-                // setPrice('')
-                setNumSerie('')
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Item guardado correctamente'
-                })
-                setFlag(!flag);
-
-                return;
-            } catch (error) {
+            const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+            if (!existeStatus) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: error
+                    mensaje: 'Equipo no se encuentra en Bodega'
                 })
+            } else {
+                setBtnConfirmar(false);
+                try {
+                    SalidasDB({
+                        emp_id: users.emp_id,
+                        tipDoc: nomTipDoc,
+                        numDoc: numDoc,
+                        date: date,
+                        tipoOut: nomTipoOut,
+                        rut: rut,
+                        entidad: entidad,
+                        eq_id: existe[0].id,
+                        familia: existe[0].familia,
+                        tipo: existe[0].tipo,
+                        marca: existe[0].marca,
+                        modelo: existe[0].modelo,
+                        serie: existe[0].serie,
+                        rfid: existe[0].rfid,
+                        // price: price,
+                        cab_id: existeCab[0].id,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        // tipMov: 2,
+                        status: nomTipoOut
+                    });
+                    // setPrice('')
+                    setNumSerie('')
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Item guardado correctamente'
+                    })
+                    setFlag(!flag);
+                    return;
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: error
+                    })
+                }
             }
         }
     }
@@ -643,17 +643,7 @@ const Salidas = () => {
                     </Table>
                 </ListarEquipos>
                 <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
-                {/* <Boton onClick={() => setIsModalOpen(true)} disabled={btnConfirmar}>Confirmar</Boton>
-                <Modal
-                style={{width: '20px', heigth: '20px'}}
-                    isOpen={isModalOpen}
-                    onRequestClose={() => setIsModalOpen(false)}
-                    contentLabel="Confirmación"
-                >
-                    <Titulo>¿Desea confirmar?</Titulo>
-                    <button onClick={actualizarDocs}>Sí</button>
-                    <button >No</button>
-                </Modal> */}
+                
             </ContenedorFormulario>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
@@ -693,6 +683,7 @@ const Salidas = () => {
                                             setPatente(item.patente);
                                             setBtnGuardar(true);
                                             setBtnAgregar(false)
+                                            setConfirmar(true);
                                             setFlag(!flag)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
                                     </Table.Row>

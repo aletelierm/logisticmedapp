@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Table } from 'semantic-ui-react'
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import Alerta from '../components/Alertas';
@@ -14,13 +14,13 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 
-const Proveedores = () => {    
+const Proveedores = () => {
     //lee usuario de autenticado y obtiene fecha actual
-    const user = auth.currentUser;     
+    const user = auth.currentUser;
     let fechaAdd = new Date();
     let fechaMod = new Date();
-     //Obtener datos de contexto global
-    const {users} = useContext(UserContext);
+    //Obtener datos de contexto global
+    const { users } = useContext(UserContext);
 
     const [rut, setRut] = useState('')
     const [entidad, setEntidad] = useState('')
@@ -33,7 +33,7 @@ const Proveedores = () => {
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
-    const [flag,setFlag] = useState(false)
+    const [flag, setFlag] = useState(false)
 
     //Lectura de datos filtrados por empresa
     const getData = async () => {
@@ -42,7 +42,7 @@ const Proveedores = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-    
+
     //filtrar para paginacion
     const filtroProveedor = () => {
         if (buscador.length === 0)
@@ -67,124 +67,124 @@ const Proveedores = () => {
 
     useEffect(() => {
         getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    const handleChange = (e)=>{
-        switch(e.target.name){
+    const handleChange = (e) => {
+        switch (e.target.name) {
             case 'rut':
                 setRut(e.target.value);
                 break;
-                case 'entidad':
+            case 'entidad':
                 setEntidad(e.target.value);
                 break;
-                case 'direccion':
+            case 'direccion':
                 setDireccion(e.target.value);
                 break;
-                case 'telefono':
+            case 'telefono':
                 setTelefono(e.target.value);
                 break;
-                case 'correo':
+            case 'correo':
                 setCorreo(e.target.value);
                 break;
-                case 'contacto':
+            case 'contacto':
                 setNomContacto(e.target.value);
                 break;
-                default:
+            default:
                 break;
-        } 
+        }
     }
 
-    const handleSubmit =(e)=>{
+    const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Comprobar que existe el rut en DB
-        const existe = leer.filter(cli => cli.rut === rut).length === 0;        
+        const existe = leer.filter(cli => cli.rut === rut).length === 0;
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         //Comprobar que rut tenga formato correcto
-        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;     
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
-        if(digito ==='k' || digito ==='K') digito = -1;        
+        if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
-        if(rut ===''){
+        if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Rut no puede estar vacio'
             })
             return;
-        }else if(!expresionRegularRut.test(rut)){          
+        } else if (!expresionRegularRut.test(rut)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Formato incorrecto de rut'
             })
             return;
-            }else if(validaR !== parseInt(digito)){ 
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Rut no válido'
-                })
-                return; 
-        }else if(entidad ===''){
+        } else if (validaR !== parseInt(digito)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;
+        } else if (entidad === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Razon Social no puede estar vacio'
             })
             return;
-        }else if(direccion ===''){
+        } else if (direccion === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Dirección no puede estar vacio'
             })
             return;
-        }else if(telefono ===''){
+        } else if (telefono === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo telefono no puede estar vacio'
             })
             return;
-        }else if(!expresionRegular.test(correo)){
+        } else if (!expresionRegular.test(correo)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'favor ingresar un correo valido'
             })
             return;
-        }else if(nomContacto ===''){
+        } else if (nomContacto === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Contacto no puede estar vacio'
             })
             return;
-        }else if(!existe){
+        } else if (!existe) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Rut ya existe'
             })
             return;
-        }else{
-                const nom = entidad.toLocaleUpperCase().trim()
-                const dir = direccion.toLocaleUpperCase().trim()
-                const nomC = nomContacto.toLocaleUpperCase().trim()
-                const corr = correo.toLocaleLowerCase().trim()
+        } else {
+            const nom = entidad.toLocaleUpperCase().trim()
+            const dir = direccion.toLocaleUpperCase().trim()
+            const nomC = nomContacto.toLocaleUpperCase().trim()
+            const corr = correo.toLocaleLowerCase().trim()
             try {
                 AgregarProveedorDb({
-                    rut:rut,
-                    nombre:nom,
-                    direccion:dir,
-                    telefono:telefono,
-                    correo:corr,
-                    contacto:nomC,
+                    rut: rut,
+                    nombre: nom,
+                    direccion: dir,
+                    telefono: telefono,
+                    correo: corr,
+                    contacto: nomC,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -199,14 +199,14 @@ const Proveedores = () => {
                 setNomContacto('')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Proveedor registrado exitosamente'
+                    tipo: 'exito',
+                    mensaje: 'Proveedor registrado exitosamente'
                 })
                 setFlag(!flag)
                 return;
-                
+
             } catch (error) {
-                console.log('se produjo un error al guardar',error);
+                console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -216,11 +216,11 @@ const Proveedores = () => {
         }
     }
     //Exportar a excel los clientes
-    const ExportarXls = ()=>{    
+    const ExportarXls = () => {
         //Campos a mostrar en el excel   
-        const columnsToShow = ['rut','nombre','direccion','telefono','correo','contacto']
+        const columnsToShow = ['rut', 'nombre', 'direccion', 'telefono', 'correo', 'contacto']
         //Llamar a la funcion con props: array equipo y array columnas
-        const excelBlob = ExportarExcel ( leer, columnsToShow );
+        const excelBlob = ExportarExcel(leer, columnsToShow);
         // Crear un objeto URL para el Blob y crear un enlace de descarga
         const excelURL = URL.createObjectURL(excelBlob);
         const downloadLink = document.createElement('a');
@@ -231,9 +231,9 @@ const Proveedores = () => {
 
     return (
         <ContenedorProveedor>
-             <ContenedorFormulario>
+            <ContenedorFormulario>
                 <Titulo>Mis Proveedores</Titulo>
-            </ContenedorFormulario>  
+            </ContenedorFormulario>
             <ContenedorFormulario>
                 <Formulario action='' >
                     <ContentElemen>
@@ -241,110 +241,116 @@ const Proveedores = () => {
                         <Input
                             maxLength='10'
                             type='text'
-                            name = 'rut'
-                            placeholder = 'Ingrese Rut sin puntos'
-                            value = { rut }
-                            onChange = { handleChange }
-                            /* onKeyDown={detectar} */
+                            name='rut'
+                            placeholder='Ingrese Rut sin puntos'
+                            value={rut}
+                            onChange={handleChange}
+                        /* onKeyDown={detectar} */
                         />
                         <Label>Razon Social</Label>
                         <Input
                             type='text'
-                            name = 'entidad'
-                            placeholder = 'Ingrese Razon Social'
-                            value = { entidad }
-                            onChange = { handleChange }  
+                            name='entidad'
+                            placeholder='Ingrese Razon Social'
+                            value={entidad}
+                            onChange={handleChange}
                         />
                         <Label >Dirección</Label>
                         <Input
                             type='text'
-                            name = 'direccion'
-                            placeholder = 'Ingrese Dirección'
-                            value = { direccion }
-                            onChange = { handleChange } 
-                        
+                            name='direccion'
+                            placeholder='Ingrese Dirección'
+                            value={direccion}
+                            onChange={handleChange}
+
                         />
                     </ContentElemen>
                     <ContentElemen>
                         <Label >Telefono</Label>
-                        <Input 
+                        <Input
                             type='number'
-                            name = 'telefono'
-                            placeholder = 'Ingrese Telefono'
-                            value = { telefono }
-                            onChange = { handleChange }
-                            />
+                            name='telefono'
+                            placeholder='Ingrese Telefono'
+                            value={telefono}
+                            onChange={handleChange}
+                        />
                         <Label>Email</Label>
-                        <Input 
-                            type='email'                            
-                            name = 'correo'
-                            placeholder = 'Ingrese Correo'
-                            value = { correo }
-                            onChange = { handleChange }
-                             
+                        <Input
+                            type='email'
+                            name='correo'
+                            placeholder='Ingrese Correo'
+                            value={correo}
+                            onChange={handleChange}
+
                         />
                         <Label>Nombre Contacto</Label>
                         <Input
                             type='text'
-                            name = 'contacto'
-                            placeholder = 'Ingrese Nombre Contacto'
-                            value = { nomContacto }
-                            onChange = { handleChange }                        
-                        />  
+                            name='contacto'
+                            placeholder='Ingrese Nombre Contacto'
+                            value={nomContacto}
+                            onChange={handleChange}
+                        />
                     </ContentElemen>
-                     <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>              
+                    <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
                 </Formulario>
             </ContenedorFormulario>
             <ListarProveedor>
-            <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color:'green' }} /></Boton>
+                <ContentElemen>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
                     <Titulo>Listado Proveedores</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
-            </ContentElemen>
-            <ContentElemen>
+                </ContentElemen>
+                <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
                         type='text'
-                        placeholder='Buscar Empresa'
+                        placeholder='Buscar Proveedor'
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                     <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green',marginLeft:'20px' }} title='Exportar Proveedores a Excel'/>
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green', marginLeft: '20px' }} title='Exportar Proveedores a Excel' />
                 </ContentElemen>
                 <Table singleLine>
-                            <Table.Header>
-                                 <Table.Row>
-                                    <Table.HeaderCell>Razon Social</Table.HeaderCell>
-                                    <Table.HeaderCell>Rut</Table.HeaderCell>        
-                                    <Table.HeaderCell>Direccion</Table.HeaderCell>        
-                                    <Table.HeaderCell>Telefono</Table.HeaderCell>        
-                                    <Table.HeaderCell>Accion</Table.HeaderCell>        
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Razon Social</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Direccion</Table.HeaderCell>
+                            <Table.HeaderCell>Telefono</Table.HeaderCell>
+                            <Table.HeaderCell>Accion</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {
+                            filtroProveedor().map((item, index) => {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.nombre}</Table.Cell>
+                                        <Table.Cell>{item.rut}</Table.Cell>
+                                        <Table.Cell>{item.direccion}</Table.Cell>
+                                        <Table.Cell>{item.telefono}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}}>
+                                            <Link to={`/actualizaproveedor/${item.id}`}>
+                                                <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                            </Link>
+                                        </Table.Cell>
                                     </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {
-                                    filtroProveedor().map((item,index)=>{
-                                        return (
-                                            <Table.Row key={index}>
-                                                <Table.Cell>{item.nombre}</Table.Cell>
-                                                <Table.Cell>{item.rut}</Table.Cell>       
-                                                <Table.Cell>{item.direccion}</Table.Cell>       
-                                                <Table.Cell>{item.telefono}</Table.Cell>       
-                                                <Table.Cell><Link to={`/actualizaproveedor/${item.id}`}><FaRegEdit style={{fontSize:'20px', color: 'green'}}/></Link></Table.Cell>       
-                                            </Table.Row> 
 
-                                        )
-                                    })
-                                }
+                                )
+                            })
+                        }
                     </Table.Body>
                 </Table>
             </ListarProveedor>
-            <Alerta 
+            <Alerta
                 tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
-            /> 
+            />
         </ContenedorProveedor>
     );
 };
@@ -401,4 +407,7 @@ background-color: #83d394;
     border-radius: 5px;
     border: none;
     cursor: pointer;
+    &:hover{
+        background-color: #83d310;
+    }
 `

@@ -16,7 +16,7 @@ import { UserContext } from '../context/UserContext';
 
 const AgregarTipo = () => {
     const user = auth.currentUser;
-    const {users} = useContext(UserContext);
+    const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
@@ -26,7 +26,7 @@ const AgregarTipo = () => {
     const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
-    
+
     const handleChange = (e) => {
         setTipo(e.target.value);
     }
@@ -102,7 +102,7 @@ const AgregarTipo = () => {
 
     useEffect(() => {
         getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setFlag, flag])
 
     return (
@@ -145,10 +145,9 @@ const AgregarTipo = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
+                            <Table.HeaderCell>Agregado por</Table.HeaderCell>
+                            <Table.HeaderCell>Modicicado por</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -159,7 +158,11 @@ const AgregarTipo = () => {
                                     <Table.Cell>{item.tipo}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Link to={`/actualizatipo/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }}>
+                                        <Link to={`/actualizatipo/${item.id}`}>
+                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                        </Link>
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
