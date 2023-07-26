@@ -53,6 +53,7 @@ const Reporte2 = () => {
                             <Table.HeaderCell>Id Equipo</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
+                            <Table.HeaderCell>Ubicacion</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Inicio Status</Table.HeaderCell>                            
                             <Table.HeaderCell>Fecha Proxima</Table.HeaderCell>                            
                         </Table.Row>
@@ -66,6 +67,7 @@ const Reporte2 = () => {
                                         <Table.Cell>{item.id}</Table.Cell>
                                         <Table.Cell>{item.tipo}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
+                                        <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.fechaadd)}</Table.Cell>
                                         <Table.Cell>-------------</Table.Cell>                                
                                     </Table.Row>
