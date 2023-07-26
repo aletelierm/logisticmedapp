@@ -7,7 +7,7 @@ import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoOut } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
@@ -44,7 +44,7 @@ const Salidas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
-    
+    const [empresa, setEmpresa] = useState([]);
 
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
@@ -83,6 +83,11 @@ const Salidas = () => {
     }
     //Almacena movimientos de entrada del documento
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);    
+    //Leer  Empresa
+    const getEmpresa = async () => {       
+        const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
+        setEmpresa(traerEmp.data());
+    }
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -277,7 +282,7 @@ const Salidas = () => {
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
                             // tipMov: 2,
-                            confirmado: false
+                            confirmado: false,
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -438,7 +443,7 @@ const Salidas = () => {
         const batch = writeBatch(db);
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, { status: nomTipoOut });
+            batch.update(docRef, { status: nomTipoOut, rut: rut, entidad: entidad });
         });
         try {
             await batch.commit();
@@ -480,7 +485,8 @@ const Salidas = () => {
         getProveedor();
         getCliente();
         getEquipo();
-        getSalida()
+        getSalida();
+        getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
