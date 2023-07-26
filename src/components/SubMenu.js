@@ -6,7 +6,7 @@ import './../App.css'
 const SidebarLink = styled(Link)`
   display: flex;
   color: #000;
-  justify-content: center;
+  // justify-content: center;
   align-items: center;
   padding: 10px;
   height: 30px;  
