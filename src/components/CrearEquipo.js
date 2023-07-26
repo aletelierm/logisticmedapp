@@ -110,7 +110,7 @@ const Proveedores = () => {
             fechaadd: fechaAdd,
             fechamod: fechaMod,
             emp_id: emp_id
-        });        
+        });
         console.log('este es el id del codigo al crear:', documento.id);
     //Guarda el status incial del equipo
        await setDoc(doc(db,'status', documento.id),{
@@ -127,7 +127,7 @@ const Proveedores = () => {
        });
         
     }
-     
+
     // Buscador de equipos
     const filtro = () => {
         const buscar = buscador.toLocaleUpperCase();
@@ -194,12 +194,12 @@ const Proveedores = () => {
     useEffect(() => {
         getEquipo();
         getStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag])
 
     // Lee input de formulario
     const handleChange = (e) => {
-        switch (e.target.name) { 
+        switch (e.target.name) {
             case 'serie':
                 setSerie(e.target.value);
                 break;
@@ -227,21 +227,21 @@ const Proveedores = () => {
                 mensaje: 'Favor Seleccionar Familia'
             })
 
-        } else if (nomTipo ==='' || nomTipo === 'Selecciona Opción:') {
+        } else if (nomTipo === '' || nomTipo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Tipo Equipamiento'
             })
 
-        } else if (nomMarca ==='' || nomMarca === 'Selecciona Opción:') {
+        } else if (nomMarca === '' || nomMarca === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Marca'
             })
 
-        } else if (nomModelo ==='' || nomModelo === 'Selecciona Opción:') {
+        } else if (nomModelo === '' || nomModelo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -255,20 +255,20 @@ const Proveedores = () => {
                 mensaje: 'Favor Ingresar N° Serie'
             })
 
-        // } else if (rfid === '') {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'Favor Ingresar RFID'
-        //     })
+            // } else if (rfid === '') {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Favor Ingresar RFID'
+            //     })
 
-        } else if(existeSerie){
+        } else if (existeSerie) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra registrado'
             })
-        }else{ 
+        } else {
             try {
                 //llama a la funcion guardar equipos y status, pasando los props
                 EquipoDb({
@@ -286,7 +286,7 @@ const Proveedores = () => {
                     rut: users.rut,
                     nomEntidad: users.empresa,
                     status: 'PREPARACION'
-                })                
+                })
                 setNomFamilia('');
                 setNomMarca('');
                 setNomModelo('');
@@ -298,31 +298,31 @@ const Proveedores = () => {
                     tipo: 'exito',
                     mensaje: 'Equipo creado correctamente'
                 })
-                setFlag(true);       
+                setFlag(true);
             } catch (error) {
                 console.log(error);
             }
-          
+
         }
     }
 
-    const leerStatus = (id)=>{
-            const existeStatus= status.filter(st => st.id === id);
-            setMostrarSt(existeStatus);            
+    const leerStatus = (id) => {
+        const existeStatus = status.filter(st => st.id === id);
+        setMostrarSt(existeStatus);
     }
 
     //Exportar a excel los equipos
-    const ExportarXls = ()=>{    
-    //Campos a mostrar en el excel   
-    const columnsToShow = ['id','familia','tipo','marca','modelo','serie','rfid']
-    //Llamar a la funcion con props: array equipo y array columnas
-    const excelBlob = ExportarExcel ( equipo, columnsToShow );
-    // Crear un objeto URL para el Blob y crear un enlace de descarga
-    const excelURL = URL.createObjectURL(excelBlob);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = excelURL;
-    downloadLink.download = 'data.xlsx';
-    downloadLink.click();
+    const ExportarXls = () => {
+        //Campos a mostrar en el excel   
+        const columnsToShow = ['id', 'familia', 'tipo', 'marca', 'modelo', 'serie', 'rfid']
+        //Llamar a la funcion con props: array equipo y array columnas
+        const excelBlob = ExportarExcel(equipo, columnsToShow);
+        // Crear un objeto URL para el Blob y crear un enlace de descarga
+        const excelURL = URL.createObjectURL(excelBlob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = excelURL;
+        downloadLink.download = 'data.xlsx';
+        downloadLink.click();
     }
 
     return (
@@ -371,7 +371,7 @@ const Proveedores = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-                    </ContentElemen>                    
+                    </ContentElemen>
                     <ContentElemen>
                         <Label >N° Serie</Label>
                         <Input
@@ -379,7 +379,7 @@ const Proveedores = () => {
                             placeholder='Ingrese N° Serie'
                             name='serie'
                             value={serie}
-                            onChange={handleChange}                            
+                            onChange={handleChange}
                         />
                         <Label >RFID</Label>
                         <Input
@@ -402,27 +402,27 @@ const Proveedores = () => {
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
                 <ContentElemenSelect>
-                        <Label>Buscar Por</Label>
-                        <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
-                            {/* <option>Selecciona Opción:</option> */}
-                            <option>Familia</option>
-                            <option>Tipo</option>
-                            <option>Marca</option>
-                            <option>Modelo</option>                           
-                        </Select>
+                    <Label>Buscar Por</Label>
+                    <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
+                        {/* <option>Selecciona Opción:</option> */}
+                        <option>Familia</option>
+                        <option>Tipo</option>
+                        <option>Marca</option>
+                        <option>Modelo</option>
+                    </Select>
                 </ContentElemenSelect>
-                
+
                 <ContentElemen>
-                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} title='Buscar Equipos'/>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
                     <Input style={{ width: '100%' }}
                         type='text'
                         placeholder={`Buscar ${categoria}`}
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green',marginLeft:'20px' }} title='Exportar Equipos a Excel'/>
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
                 </ContentElemen>
-                
+
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -433,7 +433,7 @@ const Proveedores = () => {
                             <Table.HeaderCell>Modelo</Table.HeaderCell>
                             <Table.HeaderCell>N° Serie</Table.HeaderCell>
                             <Table.HeaderCell>RFID</Table.HeaderCell>
-                            <Table.HeaderCell>UBICACION</Table.HeaderCell>
+                            <Table.HeaderCell>Ubicación</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -449,18 +449,15 @@ const Proveedores = () => {
                                         <Table.Cell>{item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.rfid}</Table.Cell>
-                                        <Table.Cell 
+                                        <Table.Cell
+                                            style={{ textAlign: 'center' }}
                                             title='Ver Satus del Equipo'
-                                            onClick={()=>{
-                                            leerStatus(item.id)
-                                            setEstadoModal(!estadoModal)}
-                                            }><MdIcons.MdFactCheck  style={{ fontSize: '20px', color: 'green' }}/>
+                                            onClick={() => {
+                                                leerStatus(item.id)
+                                                setEstadoModal(!estadoModal)
+                                            }
+                                            }><MdIcons.MdFactCheck style={{ fontSize: '20px', color: 'green' }} />
                                         </Table.Cell>
-                                        {/* <Table.Cell>
-                                            <Boton>
-                                                <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
-                                            </Boton>
-                                        </Table.Cell> */}
                                     </Table.Row>
                                 )
                             })
@@ -475,13 +472,13 @@ const Proveedores = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-             <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
+            <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
                 <Contenido>
                     <h1>Ubicacion del Equipo</h1>
-                    {mostrarSt.map((st) =>{
+                    {mostrarSt.map((st) => {
                         return <p key={st.id2}>El estado es en: {st.status}</p>
                     })}
-                 <Boton2 onClick={()=>setEstadoModal(!estadoModal)}>Aceptar</Boton2>
+                    <Boton2 onClick={() => setEstadoModal(!estadoModal)}>Aceptar</Boton2>
                 </Contenido>
             </Modal>
         </ContenedorFormulario>
@@ -557,9 +554,9 @@ const BotonGuardar = styled.button`
     border: none;
     margin: 0 10px;
     cursor: pointer;
-    &:hover{
-        background-color: #83d310;
-    }
+    // &:hover{
+    //     background-color: #83d310;
+    // }
 `
 const Boton2 = styled.button`
 	display: block;

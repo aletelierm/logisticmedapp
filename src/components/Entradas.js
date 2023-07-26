@@ -71,13 +71,15 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    //Lectura mivimientos de entrada
+    //Lectura movimientos de entrada
     const getEntrada = async () => {
         const traerEntrada = collection(db, 'entradas');
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+    //Almacena movimientos de entrada del documento
+    const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -85,8 +87,7 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    //Almacena movimientos de entrada del documento
-    const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -117,16 +118,15 @@ const Entradas = () => {
             }
         }
     }
-    
+
     // Validar N°serie
     const detectar = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
             // Consulta si exite numero de serie en el arreglo de equipos        
-            const existe = equipo.filter(eq => eq.serie === numSerie);           
-            const existeIn = documento.filter(doc => doc.serie === numSerie)        
-
+            const existe = equipo.filter(eq => eq.serie === numSerie);
+            const existeIn = documento.filter(doc => doc.serie === numSerie)
             if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -139,17 +139,16 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-            }else{
-                const existeStatus = status.filter(st=> st.id === existe[0].id && st.status==='BODEGA').length ===1;
-                if(existeStatus){
-                 cambiarEstadoAlerta(true);
-                 cambiarAlerta({
-                 tipo: 'error',
-                 mensaje: 'Equipo ya se encuentra en Bodega'
-                })
+            } else {
+                const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+                if (existeStatus) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Equipo ya se encuentra en Bodega'
+                    })
                 }
             }
-               
         }
     }
     const handleCheckboxChange = (event) => {
@@ -329,11 +328,11 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Validar N° Serie en equipo
-        const existe = equipo.filter(eq => eq.serie === numSerie);       
+        const existe = equipo.filter(eq => eq.serie === numSerie);
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
         // Validar Id de Cabecera en Entradas
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)   
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
         if (price === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -360,15 +359,15 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-        }else {
-            const existeStatus = status.filter(st=> st.id === existe[0].id && st.status==='BODEGA').length ===1;
-            if(existeStatus){
+        } else {
+            const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+            if (existeStatus) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Equipo ya se encuentra en Bodega'
-            })
-            }else{
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra en Bodega'
+                })
+            } else {
                 setBtnConfirmar(false);
                 try {
                     EntradasDB({
@@ -402,7 +401,7 @@ const Entradas = () => {
                         tipo: 'exito',
                         mensaje: 'Item guardado correctamente'
                     })
-                    setFlag(!flag);    
+                    setFlag(!flag);
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -412,7 +411,7 @@ const Entradas = () => {
                     })
                 }
             }
-           
+
         }
     }
     // Función para actualizar varios documentos por lotes
@@ -446,7 +445,7 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Error al actualizar documentos:', error
             })
-        }        
+        }
         setNumSerie('');
         setPrice('');
         setNomTipDoc('');
@@ -469,7 +468,7 @@ const Entradas = () => {
         getStatus();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    useEffect(() => {        
+    useEffect(() => {
         getEntrada();
         getCabecera();
         if (documento.length > 0) setBtnConfirmar(false);
@@ -670,7 +669,7 @@ const Entradas = () => {
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />           
+            />
         </ContenedorProveedor>
     );
 };

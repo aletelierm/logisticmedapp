@@ -156,8 +156,8 @@ const AgregarFamilia = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Familia</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioAdd</Table.HeaderCell>
-                            <Table.HeaderCell>UsuarioMod</Table.HeaderCell>
+                            <Table.HeaderCell>Agregado por</Table.HeaderCell>
+                            <Table.HeaderCell>Modicicado por</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -170,7 +170,7 @@ const AgregarFamilia = () => {
                                     <Table.Cell>{item.familia}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell>
+                                    <Table.Cell style={{textAlign: 'center'}}>
                                         <Link to={`/actualizafamilia/${item.id}`}>
                                             <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
                                         </Link>

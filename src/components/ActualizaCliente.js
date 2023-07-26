@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components';
-import  Alerta from '../components/Alertas';
+import Alerta from '../components/Alertas';
 import useObtenerCliente from '../hooks/useObtenerCliente';
 import EditarCliente from '../firebase/EditarClientesDb';
 import { auth } from '../firebase/firebaseConfig';
 
- const ActualizaCliente = () => {
+const ActualizaCliente = () => {
 
-    const user = auth.currentUser;   
+    const user = auth.currentUser;
     let fechaActual = new Date();
 
     const navigate = useNavigate();
@@ -27,31 +27,31 @@ import { auth } from '../firebase/firebaseConfig';
     const [dirRsf, setDirRsf] = useState('')
     const [telRsf, setTelRsf] = useState('')
 
-    const volver = ()=>{
-      navigate('/clientes')
+    const volver = () => {
+        navigate('/clientes')
     }
 
-    useEffect(()=>{
-        if(cliente){
-           setRut(cliente.rut)
-           setNombre(cliente.nombre);
-           setDireccion(cliente.direccion);
-           setTelefono(cliente.telefono);
-           setCorreo(cliente.correo);
-           setNomRsf(cliente.nomrsf);
-           setDirRsf(cliente.dirrsf);
-           setTelRsf(cliente.telrsf);                  
-       }else{
-       navigate('/')
-   }
+    useEffect(() => {
+        if (cliente) {
+            setRut(cliente.rut)
+            setNombre(cliente.nombre);
+            setDireccion(cliente.direccion);
+            setTelefono(cliente.telefono);
+            setCorreo(cliente.correo);
+            setNomRsf(cliente.nomrsf);
+            setDirRsf(cliente.dirrsf);
+            setTelRsf(cliente.telrsf);
+        } else {
+            navigate('/')
+        }
 
- },[cliente,navigate])
+    }, [cliente, navigate])
 
- const handleChek = (e)=>{
-    setChecked(e.target.checked)
-}
+    const handleChek = (e) => {
+        setChecked(e.target.checked)
+    }
 
-    const handleSubmit =(e)=>{
+    const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -59,220 +59,220 @@ import { auth } from '../firebase/firebaseConfig';
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
 
-        if(rut ===''){
+        if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Campo Rut no puede estar vacio'
-            })             
-         return;
-        }else if(nombre ===''){
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-            tipo: 'error',
-            mensaje: 'Campo Nombre no puede estar vacio'
-         })
-        return;
-    }else if(direccion ===''){
-        cambiarEstadoAlerta(true);
-        cambiarAlerta({
-            tipo: 'error',
-            mensaje: 'Campo Dirección no puede estar vacio'
-        })
-        return;
-    }else if(telefono ===''){
-        cambiarEstadoAlerta(true);
-        cambiarAlerta({
-            tipo: 'error',
-            mensaje: 'Campo telefono no puede estar vacio'
-        })
-        return;
-    }else if(!expresionRegular.test(correo)){
-        cambiarEstadoAlerta(true);
-        cambiarAlerta({
-            tipo: 'error',
-            mensaje: 'favor ingresar un correo valido'
-        })
-        return;
-    
-    }else{
-        try {
-            const nom = nombre.toLocaleUpperCase().trim();
-            const dir = direccion.toLocaleUpperCase().trim();
-            const corr = correo.toLocaleUpperCase().trim();
-            const nomrsf = nomRsf.toLocaleUpperCase().trim();
-            const dirrsf = dirRsf.toLocaleUpperCase().trim();
-            const telrsf = telRsf.toLocaleLowerCase().trim();                       
-            EditarCliente({
-                id: id,
-                nombre:nom,
-                direccion:dir,
-                telefono:telefono,
-                correo:corr,
-                nomrsf:nomrsf,
-                dirrsf:dirrsf,
-                telrsf:telrsf,                
-                userMod: user.email,               
-                fechaMod: fechaActual
-            }) 
-            .catch((error)=>{console.log(error)})            
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-            tipo: 'exito',
-            mensaje: 'Cliente Actualizado exitosamente'
             })
             return;
-            
-        } catch (error) {
-            console.log('se produjo un error al guardar',error);
+        } else if (nombre === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: error
+                mensaje: 'Campo Nombre no puede estar vacio'
             })
+            return;
+        } else if (direccion === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Dirección no puede estar vacio'
+            })
+            return;
+        } else if (telefono === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo telefono no puede estar vacio'
+            })
+            return;
+        } else if (!expresionRegular.test(correo)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'favor ingresar un correo valido'
+            })
+            return;
+
+        } else {
+            try {
+                const nom = nombre.toLocaleUpperCase().trim();
+                const dir = direccion.toLocaleUpperCase().trim();
+                const corr = correo.toLocaleUpperCase().trim();
+                const nomrsf = nomRsf.toLocaleUpperCase().trim();
+                const dirrsf = dirRsf.toLocaleUpperCase().trim();
+                const telrsf = telRsf.toLocaleLowerCase().trim();
+                EditarCliente({
+                    id: id,
+                    nombre: nom,
+                    direccion: dir,
+                    telefono: telefono,
+                    correo: corr,
+                    nomrsf: nomrsf,
+                    dirrsf: dirrsf,
+                    telrsf: telrsf,
+                    userMod: user.email,
+                    fechaMod: fechaActual
+                })
+                    .catch((error) => { console.log(error) })
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Cliente Actualizado exitosamente'
+                })
+                return;
+
+            } catch (error) {
+                console.log('se produjo un error al guardar', error);
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
         }
     }
-    }    
 
-    const handleChange = (e)=>{
-        switch(e.target.name){
+    const handleChange = (e) => {
+        switch (e.target.name) {
             case 'nombre':
-            setNombre(e.target.value);
-            break;
+                setNombre(e.target.value);
+                break;
             case 'direccion':
-            setDireccion(e.target.value);
-            break;
+                setDireccion(e.target.value);
+                break;
             case 'telefono':
-            setTelefono(e.target.value);
-            break;
+                setTelefono(e.target.value);
+                break;
             case 'correo':
-            setCorreo(e.target.value);
-            break;
+                setCorreo(e.target.value);
+                break;
             default:
-            break;
-    } 
-
-    if(checked){
-        switch(e.target.name){
-            case 'nombrersf':
-                setNomRsf(e.target.value)
-                break;
-                case 'direccionrsf':
-                setDirRsf(e.target.value);
-                break;
-                case 'telefonorsf':
-                setTelRsf(e.target.value);
-                break;
-                default:
                 break;
         }
-    }
+
+        if (checked) {
+            switch (e.target.name) {
+                case 'nombrersf':
+                    setNomRsf(e.target.value)
+                    break;
+                case 'direccionrsf':
+                    setDirRsf(e.target.value);
+                    break;
+                case 'telefonorsf':
+                    setTelRsf(e.target.value);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
-  return (
-    <ContenedorCliente>
-    <ContenedorFormulario>
-        <Titulo>Actuliaza Clientes</Titulo>
-    </ContenedorFormulario>
-   
-    <ContenedorFormulario>
-        <Formulario action='' onSubmit={handleSubmit}>
-            <ContentElemen>
-                <Label>Rut</Label>
-                <Input
-                    type='text'
-                    name = 'rut'
-                    value = { rut }                   
-                    disabled
-                />
-                <Label>Nombre</Label>
-                <Input
-                    type='text'
-                    name = 'nombre'
-                    placeholder = 'Modifica Nombre'
-                    value = { nombre}
-                    onChange = { handleChange }                        
-                />
-                <Label >Dirección</Label>
-                <Input
-                    type='text'
-                    name = 'direccion'
-                    placeholder = 'Modifica Dirección'
-                    value = { direccion}
-                    onChange = { handleChange }                        
-                />
-            </ContentElemen>
-            <ContentElemen>
-                <Label >Telefono</Label>
-                <Input 
-                    type='number'
-                    name = 'telefono'
-                    placeholder = 'Modifica Telefono'
-                    value = { telefono}
-                    onChange = { handleChange }
-                />
-                <Label>Email</Label>
-                <Input
-                    type='email'
-                    name = 'correo'
-                    placeholder = 'Modifica Correo'
-                    value = { correo }
-                    onChange = { handleChange }
-                
-                />
-                <Label>Responsable financiero?</Label>
-                        <Input 
-                            style={{width:"3%",color:"green"}}
+    return (
+        <ContenedorCliente>
+            <ContenedorFormulario>
+                <Titulo>Actuliaza Clientes</Titulo>
+            </ContenedorFormulario>
+
+            <ContenedorFormulario>
+                <Formulario action='' onSubmit={handleSubmit}>
+                    <ContentElemen>
+                        <Label>Rut</Label>
+                        <Input
+                            type='text'
+                            name='rut'
+                            value={rut}
+                            disabled
+                        />
+                        <Label>Nombre</Label>
+                        <Input
+                            type='text'
+                            name='nombre'
+                            placeholder='Modifica Nombre'
+                            value={nombre}
+                            onChange={handleChange}
+                        />
+                        <Label >Dirección</Label>
+                        <Input
+                            type='text'
+                            name='direccion'
+                            placeholder='Modifica Dirección'
+                            value={direccion}
+                            onChange={handleChange}
+                        />
+                    </ContentElemen>
+                    <ContentElemen>
+                        <Label >Telefono</Label>
+                        <Input
+                            type='number'
+                            name='telefono'
+                            placeholder='Modifica Telefono'
+                            value={telefono}
+                            onChange={handleChange}
+                        />
+                        <Label>Email</Label>
+                        <Input
+                            type='email'
+                            name='correo'
+                            placeholder='Modifica Correo'
+                            value={correo}
+                            onChange={handleChange}
+
+                        />
+                        <Label>Responsable financiero?</Label>
+                        <Input
+                            style={{ width: "3%", color: "green" }}
                             type="checkbox"
-                            checked={checked}                          
+                            checked={checked}
                             onChange={handleChek}
-                            />          
-            </ContentElemen>
-            { checked ? 
-                            <ContentElemen>
-                                <Label>Nombre</Label>
-                                <Input
-                                    name="nombrersf"
-                                    type="text"
-                                    placeholder='Responsable financiero'
-                                    value={nomRsf}
-                                    onChange={handleChange}
-                                />
-                                <Label>Dirección</Label>
-                                <Input
+                        />
+                    </ContentElemen>
+                    {checked ?
+                        <ContentElemen>
+                            <Label>Nombre</Label>
+                            <Input
+                                name="nombrersf"
+                                type="text"
+                                placeholder='Responsable financiero'
+                                value={nomRsf}
+                                onChange={handleChange}
+                            />
+                            <Label>Dirección</Label>
+                            <Input
                                 name="direccionrsf"
-                                    type="text"
-                                    placeholder='Ingres dirección'
-                                    value={dirRsf}
-                                    onChange={handleChange}
-                                />
-                                <Label>Telefono</Label>
-                                <Input
-                                     name="telefonorsf"
-                                     type="number"
-                                     placeholder='Ingrese telefono'
-                                     value={telRsf}
-                                     onChange={handleChange}
-                                />
-                             </ContentElemen>
-                                     :
-                                 ''
-                
-                         }
-            <BotonGuardar >Actualizar</BotonGuardar>  
-            <BotonGuardar onClick={volver}>Volver</BotonGuardar>            
-        </Formulario>
-      </ContenedorFormulario>    
-      <Alerta 
-          tipo={alerta.tipo}
-          mensaje={alerta.mensaje}
-          estadoAlerta={estadoAlerta}
-          cambiarEstadoAlerta={cambiarEstadoAlerta}
-     /> 
-    
-    </ContenedorCliente>
-    
-  )
+                                type="text"
+                                placeholder='Ingres dirección'
+                                value={dirRsf}
+                                onChange={handleChange}
+                            />
+                            <Label>Telefono</Label>
+                            <Input
+                                name="telefonorsf"
+                                type="number"
+                                placeholder='Ingrese telefono'
+                                value={telRsf}
+                                onChange={handleChange}
+                            />
+                        </ContentElemen>
+                        :
+                        ''
+
+                    }
+                    <BotonGuardar >Actualizar</BotonGuardar>
+                    <BotonGuardar onClick={volver}>Volver</BotonGuardar>
+                </Formulario>
+            </ContenedorFormulario>
+            <Alerta
+                tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+
+        </ContenedorCliente>
+
+    )
 }
 
 export default ActualizaCliente;
@@ -281,11 +281,9 @@ const Titulo = styled.h2`
     color:  #83d394;
 `
 
-const ContenedorCliente = styled.div`
-   
-`
+const ContenedorCliente = styled.div``
+
 const ContenedorFormulario = styled.div`
-   
     margin-top: 20px;
     padding: 20px;
     border: 2px solid #d1d1d1;
@@ -297,18 +295,16 @@ const ContentElemen = styled.div`
     justify-content: space-between;
     padding: 20px;
 `
-const Formulario = styled.form`
+const Formulario = styled.form``
 
-`
 const Input = styled.input`
-    
     border: 2px solid #d1d1d1;
     border-radius: 6px;
     padding: 5px;
     transition: all.3s ease all;
     
     &:focus{
-      border: 3px solid #83d394;
+        border: 3px solid #83d394;
     }
 `
 
@@ -317,8 +313,8 @@ const Label = styled.label`
         font-size: 20px;
 `
 const BotonGuardar = styled.button`
-        cursor: pointer;
-    background-color: green;
+    cursor: pointer;
+    background-color: #83d394;
     color: #ffffff;
     border-radius: 5px;
     border: none;

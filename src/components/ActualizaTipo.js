@@ -167,7 +167,7 @@ const Input = styled.input`
 `
 const BotonGuardar = styled.button`
     cursor: pointer;
-    background-color: green;
+    background-color: #83d394;
     color: #ffffff;
     border-radius: 5px;
     border: none;
