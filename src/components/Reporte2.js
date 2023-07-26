@@ -7,6 +7,8 @@ import { collection, getDocs, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import moment from 'moment';
+import ExportarExcel from '../funciones/ExportarExcel';
+import * as FaIcons from 'react-icons/fa';
 
 const Reporte2 = () => {
 
@@ -34,6 +36,20 @@ const Reporte2 = () => {
         return formatear;
     }
 
+     //Exportar a excel los equipos
+     const ExportarXls = () => {
+        //Campos a mostrar en el excel   
+        const columnsToShow = ['id', 'tipo', 'status', 'rut', 'entidad', 'fechamod']
+        //Llamar a la funcion con props: array equipo y array columnas
+        const excelBlob = ExportarExcel(estado, columnsToShow);
+        // Crear un objeto URL para el Blob y crear un enlace de descarga
+        const excelURL = URL.createObjectURL(excelBlob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = excelURL;
+        downloadLink.download = 'data.xlsx';
+        downloadLink.click();
+    }
+
 
     return (
        <ContenedorReporte>
@@ -42,7 +58,8 @@ const Reporte2 = () => {
             </ContenedorFormulario>
             <ListarProveedor>
                 <ContentElemen>                    
-                    <Titulo>Listado de Dispositivos Médicos</Titulo>                    
+                    <Titulo>Listado de Dispositivos Médicos</Titulo>   
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green', marginLeft: '20px' }} title='Exportar Status a Excel' />                 
                 </ContentElemen>
                               
                 
@@ -53,9 +70,10 @@ const Reporte2 = () => {
                             <Table.HeaderCell>Id Equipo</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
-                            <Table.HeaderCell>Ubicacion</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Inicio Status</Table.HeaderCell>                            
-                            <Table.HeaderCell>Fecha Proxima</Table.HeaderCell>                            
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha Status</Table.HeaderCell>                            
+                                                    
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>      
@@ -68,8 +86,8 @@ const Reporte2 = () => {
                                         <Table.Cell>{item.tipo}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{formatearFecha(item.fechaadd)}</Table.Cell>
-                                        <Table.Cell>-------------</Table.Cell>                                
+                                        <Table.Cell>{item.entidad}</Table.Cell>
+                                        <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
                                     </Table.Row>
                                 )
                             })
