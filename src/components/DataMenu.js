@@ -90,7 +90,7 @@ export const DataMenu = [
 
     subNav: [
       {
-        title: 'Equipos por Pacientes',
+        title: 'Historial por Equipo',
         path: 'reportes/reporte1',
         icon: <IoIcons.IoIosMedkit />,
         cName: 'sub-nav'

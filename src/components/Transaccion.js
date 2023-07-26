@@ -28,10 +28,9 @@ const Transaccion = () =>{
     const ordenado = cabecera.sort(OrdenaPorNumDoc);   
 
     return (
-        <div>
-            <h2>Ultimas Transacciones</h2>
+        <div>          
             <ListarProveedor>
-                <h2>Listado Entradas</h2>
+                <Titulo>Listado Entradas</Titulo>
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -76,4 +75,7 @@ const ListarProveedor = styled.div`
     border: 2px solid #d1d1d1;
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
+`
+const Titulo = styled.h2`
+    color:  #83d394;
 `

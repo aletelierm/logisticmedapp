@@ -85,13 +85,13 @@ export const DataMenuAdmin = [
 
     subNav: [
       {
-        title: 'Eqs.Pacientes',
+        title: 'Historial por Equipo',
         path: 'reportes/reporte1',
         icon: <IoIcons.IoIosMedkit />,
         cName: 'sub-nav'
       },
       {
-        title: 'Status Eqs.',
+        title: 'Status de Equipos',
         path: 'reportes/reporte2',
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'

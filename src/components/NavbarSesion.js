@@ -24,6 +24,9 @@ const NavbarSesion = () => {
                     <img src='../../logo.png' alt='Logo' />
                 </div>
                 <div>
+                    v1.0 Beta
+                </div>
+                <div>
                     <h4>Empresa : {'   ' + users.empresa}</h4>
                 </div>
                 <div>
