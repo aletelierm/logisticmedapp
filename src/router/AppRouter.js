@@ -10,14 +10,12 @@ import Recover from '../components/ForgotPasswordForm'
 export const AppRouter = () => {
   return (
     <>
-    
-    <Routes>        
+       <Routes>        
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/recover" element={<Recover />} />       
         <Route path="/*" element={<Home/> }/>  
-    </Routes>
-   
+    </Routes>   
     </>
     
       )

@@ -32,13 +32,13 @@ import AsignarRfid from './AsignarRfid';
 import Reporte1 from './Reporte1';
 import Reporte2 from './Reporte2';
 import { Reportes } from './Reportes';
-
 export const Home = () => { 
   
   return (
-    <div>      
+    <div> 
+     
     <NavbarSesion />
-    <SideBar>    
+    <SideBar>     
     <Routes>
             <Route path="misequipos" element={<DashboardEq/>}/>
             <Route path="misequipos/agregarfamilia" element={<AgregarFamilia/>}/>
@@ -71,7 +71,7 @@ export const Home = () => {
             <Route path="configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
             <Route path="configuracion/actualizaempresa/:id" element={<ActualizaEmpresa/>}/>
             <Route path="/" element={<Navigate to="/login"/>}/>
-    </Routes>
+    </Routes>    
     </SideBar>    
     {/* <Footer/> */}
     </div>

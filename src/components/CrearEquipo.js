@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Alerta from './Alertas'
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
-import { collection, getDocs, where, query, addDoc, setDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, where, query,addDoc,setDoc,doc,getDoc } from 'firebase/firestore';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import Modal from './Modal';
@@ -38,7 +38,10 @@ const Proveedores = () => {
     const [estadoModal, setEstadoModal] = useState(false);
     const [status, setStatus] = useState([]);
     const [mostrarSt, setMostrarSt] = useState([]);
+    const [empresa, setEmpresa] = useState([]);
 
+
+    
     //Leer los datos de Familia
     const getFamilia = async () => {
         const traerFam = collection(db, 'familias');
@@ -46,7 +49,12 @@ const Proveedores = () => {
         const data = await getDocs(dato)
         setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
+    //Leer  Empresa
+    const getEmpresa = async () => {       
+        const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
+        setEmpresa(traerEmp.data());
+    }
+     
     //Leer los datos de Tipos
     const getTipo = async () => {
         const traerTip = collection(db, 'tipos');
@@ -87,8 +95,8 @@ const Proveedores = () => {
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
-    //Guardar los equipos creado
-    const EquipoDb = async ({ status, nomEntidad, familia, tipo, marca, modelo, serie, rfid, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+    //Funcion Guardar los equipos creados
+    const EquipoDb = async ({ status,nomEntidad,familia, tipo, marca, modelo, serie, rfid, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
         /* setDocumentoID('') */
         const documento = await addDoc(collection(db, 'equipos'), {
             familia: familia,
@@ -104,18 +112,20 @@ const Proveedores = () => {
             emp_id: emp_id
         });
         console.log('este es el id del codigo al crear:', documento.id);
-        await setDoc(doc(db, 'status', documento.id), {
-            emp_id: emp_id,
-            familia: familia,
-            tipo: tipo,
-            status: status,
-            entidad: users.empresa,
-            useradd: userAdd,
-            usermod: userMod,
-            fechaadd: fechaAdd,
-            fechamod: fechaMod
-        });
-
+    //Guarda el status incial del equipo
+       await setDoc(doc(db,'status', documento.id),{
+        emp_id: emp_id,
+        familia: familia,
+        tipo: tipo,
+        status: status,
+        entidad: nomEntidad,
+        rut: empresa.rut,
+        useradd: userAdd,
+        usermod: userMod,
+        fechaadd: fechaAdd,
+        fechamod: fechaMod
+       });
+        
     }
 
     // Buscador de equipos
@@ -176,8 +186,9 @@ const Proveedores = () => {
         getTipo();
         getMarca();
         getModelo();
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        getEmpresa();
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -206,10 +217,9 @@ const Proveedores = () => {
         cambiarAlerta({});
         setFlag(false);
 
-        const existeSerie = equipo.filter(equi => equi.serie === serie).length > 0
-        console.log('existe serie:', existeSerie)
-
-        if (nomFamilia === '' || nomFamilia === 'Selecciona Opción:') {
+        const existeSerie = equipo.filter(equi => equi.serie === serie).length > 0;       
+        
+        if (nomFamilia ==='' || nomFamilia === 'Selecciona Opción:') {
             console.log(nomFamilia);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -260,6 +270,7 @@ const Proveedores = () => {
             })
         } else {
             try {
+                //llama a la funcion guardar equipos y status, pasando los props
                 EquipoDb({
                     familia: nomFamilia,
                     tipo: nomTipo,
@@ -272,6 +283,8 @@ const Proveedores = () => {
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
                     emp_id: users.emp_id,
+                    rut: users.rut,
+                    nomEntidad: users.empresa,
                     status: 'PREPARACION'
                 })
                 setNomFamilia('');
