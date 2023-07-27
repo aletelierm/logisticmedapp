@@ -7,7 +7,7 @@ import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoOut } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
@@ -44,7 +44,7 @@ const Salidas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
-    const [empresa, setEmpresa] = useState([]);
+    /* const [empresa, setEmpresa] = useState([]); */
 
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
@@ -84,10 +84,10 @@ const Salidas = () => {
     //Almacena movimientos de entrada del documento
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);    
     //Leer  Empresa
-    const getEmpresa = async () => {       
+    /* const getEmpresa = async () => {       
         const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
         setEmpresa(traerEmp.data());
-    }
+    } */
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -486,7 +486,7 @@ const Salidas = () => {
         getCliente();
         getEquipo();
         getSalida();
-        getEmpresa();
+        /* getEmpresa(); */
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
