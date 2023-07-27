@@ -373,7 +373,7 @@ const Clientes = () => {
             <ListarProveedor>
                 <ContentElemen>
                     <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
-                    <Titulo>Listado Clientes</Titulo>
+                    <Titulo>Listado de Clientes</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
                 </ContentElemen>
                 <ContentElemen>
@@ -408,7 +408,7 @@ const Clientes = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.direccion}</Table.Cell>
                                         <Table.Cell>{item.telefono}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center', marginRigth: '0'}}>
+                                        <Table.Cell style={{textAlign: 'center'}}>
                                             <Link to={`/actualizacliente/${item.id}`}>
                                                 <FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
                                             </Link>

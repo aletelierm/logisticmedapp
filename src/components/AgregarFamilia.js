@@ -171,8 +171,8 @@ const AgregarFamilia = () => {
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
                                     <Table.Cell style={{textAlign: 'center'}}>
-                                        <Link to={`/actualizafamilia/${item.id}`}>
-                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                        <Link disabled to={`/actualizafamilia/${item.id}`}>
+                                            <FaRegEdit disabled style={{ fontSize: '20px', color: 'green' }} />
                                         </Link>
                                     </Table.Cell>
                                 </Table.Row>

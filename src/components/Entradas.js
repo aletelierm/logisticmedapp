@@ -131,15 +131,16 @@ const Entradas = () => {
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
             // Consulta si exite numero de serie en el arreglo de equipos        
-            const existe = equipo.filter(eq => eq.serie === numSerie);
-            const existeIn = documento.filter(doc => doc.serie === numSerie)
+            const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
+            const existeIn = documento.filter(doc => doc.serie === numSerie);
+            const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
             if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'No existe un Equipo con este N° Serie'
+                    mensaje: 'No existe un Equipo con este N° Serie o Id'
                 })
-            } else if (existeIn.length > 0) {
+            } else if (existeIn.length > 0 || existeIn2.length > 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -334,9 +335,12 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Validar N° Serie en equipo
-        const existe = equipo.filter(eq => eq.serie === numSerie);
+        const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
+        // const existe2 = equipo.filter(eq => eq.id === numSerie);
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
+        const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
+        console.log('existe', existe)
         // Validar Id de Cabecera en Entradas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
         if (price === '') {
@@ -357,9 +361,9 @@ const Entradas = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'No existe un Equipo con este N° Serie'
+                mensaje: 'No existe un Equipo con este N° Serie o Id'
             })
-        } else if (existeIn.length > 0) {
+        } else if (existeIn.length > 0 || existeIn2.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -543,7 +547,7 @@ const Entradas = () => {
                             <Input
                                 disabled={confirmar}
                                 type='numero'
-                                placeholder='Ingrese Rut'
+                                placeholder='Ingrese Rut sin puntos'
                                 name='rut'
                                 value={rut}
                                 onChange={ev => setRut(ev.target.value)}
@@ -633,7 +637,7 @@ const Entradas = () => {
                             <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Conf</Table.HeaderCell>
+                            <Table.HeaderCell>Confirmar</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -745,6 +749,10 @@ const Boton = styled.button`
     padding: 10px;
     border-radius: 5px;
     border: none;
-    cursor: pointer;`
+    cursor: pointer;
+    &:hover{
+        background-color: #83d310;
+    }
+`
 
 export default Entradas;

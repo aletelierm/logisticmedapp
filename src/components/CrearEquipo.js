@@ -149,6 +149,10 @@ const Proveedores = () => {
         } else if (categoria === 'Modelo') {
             const nuevoFiltro = equipo.filter(eq => eq.modelo.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
+
+        } else if (categoria === 'N° Serie') {
+            const nuevoFiltro = equipo.filter(eq => eq.serie.includes(buscar));
+            return nuevoFiltro.slice(pagina, pagina + 5);
         }
     }
 
@@ -169,6 +173,10 @@ const Proveedores = () => {
         } else if (categoria === 'Modelo') {
             if (equipo.filter(eq => eq.modelo.includes(buscador)).length > pagina + 5)
                 setPagina(pagina + 5);
+
+        } else if (categoria === 'N° Serie') {
+            if (equipo.filter(eq => eq.serie.includes(buscador)).length > pagina + 5)
+            setPagina(pagina + 5);
         }
     }
 
@@ -409,6 +417,7 @@ const Proveedores = () => {
                         <option>Tipo</option>
                         <option>Marca</option>
                         <option>Modelo</option>
+                        <option>N° Serie</option>
                     </Select>
                 </ContentElemenSelect>
 
@@ -554,9 +563,9 @@ const BotonGuardar = styled.button`
     border: none;
     margin: 0 10px;
     cursor: pointer;
-    // &:hover{
-    //     background-color: #83d310;
-    // }
+    &:hover{
+        background-color: #83d310;
+    }
 `
 const Boton2 = styled.button`
 	display: block;
