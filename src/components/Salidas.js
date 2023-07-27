@@ -292,7 +292,7 @@ const Salidas = () => {
                         setFlag(!flag);
                         setConfirmar(true);
                         setBtnAgregar(false);
-                        setBtnGuardar(true);
+                        setBtnGuardar(true);                        
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
