@@ -44,7 +44,7 @@ const NavbarSesion = () => {
                 </div>
                 <div>
                     <div className='icon' onClick={() => cerrarSesion()}>
-                        <BiExit className='iconUser' />
+                        <BiExit className='iconUser' title="Cerrar Sesióncl"/>
                     </div>
                 </div>
             </div>
