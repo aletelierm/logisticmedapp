@@ -14,7 +14,7 @@ const Navbar = () => {
         <>
             <div className='navbar'>
                 <div className='imageLogo'>
-                    <img src='./logo.png' alt='Logo' />
+                    <img src='./logo.png' alt='Logo' style={{height:'240px'}} />
                 </div>
                 <div className='user'>
                      <h4>Iniciar Sesion</h4>                   

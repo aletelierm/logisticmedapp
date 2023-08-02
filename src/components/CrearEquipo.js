@@ -10,6 +10,7 @@ import Modal from './Modal';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
+import EnviarCorreo from '../funciones/EnviarCorreo';
 
 const Proveedores = () => {
     const user = auth.currentUser;
@@ -307,6 +308,9 @@ const Proveedores = () => {
                     mensaje: 'Equipo creado correctamente'
                 })
                 setFlag(true);
+                //Envio de correo 
+                const datosEquipo = nomTipo+" "+nomMarca+" "+nomModelo+" SN:"+serie                
+                EnviarCorreo('yeicoletelier@gmail.com','Creacion de equipo',`El usuario ${users.nombre} ${users.apellido} ha creado el equipo: ${datosEquipo}`)
             } catch (error) {
                 console.log(error);
             }

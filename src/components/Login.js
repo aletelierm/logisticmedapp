@@ -43,8 +43,13 @@ export default function Login() {
       const lastPath = localStorage.getItem('lastPath') || '/misequipos'
       navigate(lastPath);      
     } catch (error) {
-      console.error(error.message);
-      setError(error.message);
+      console.log(error.message)
+      if(error.code ==='auth/wrong-password'){
+        setError('Usuario o Contraseña incorrecta');
+      }else if(error.code ==='auth/user-not-found'){
+        setError('No existe esta cuenta de usuario')
+      }
+      
     }
   }
 
@@ -53,11 +58,13 @@ export default function Login() {
     <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
       <Card>
       <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} sx={{ mt: 3 }}>
-          <Grid item xs={12} sm={6} md={4}>
+         {/*  <Grid item xs={12} sm={6} md={4}>
             <img
-              height={50}              
-              src="logo2.png" alt="imagen" />
-          </Grid>
+              height={50}         
+              src="logo.png" alt="imagen" 
+              style={{width:'25%'}}
+              />
+          </Grid> */}
         </Grid>
         <CardContent>
           <Typography variant="h5" component="h1" gutterBottom textAlign="center">            
