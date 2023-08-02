@@ -173,20 +173,20 @@ const Entradas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione Tipo Documento'
-            })
-            return;
-        } else if (numDoc === '') {
+        if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ingrese N° Documento'
             })
             return;
+        } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Seleccione Tipo Documento'
+                })
+                return;
         } else if (date === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({

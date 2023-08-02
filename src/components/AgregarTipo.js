@@ -63,7 +63,7 @@ const AgregarTipo = () => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
-                        mensaje: 'Familia Ingresada Correctamente'
+                        mensaje: 'Tipo Equipamiento Ingresado Correctamente'
                     })
                     setTipo('');
                     setFlag(!flag)
