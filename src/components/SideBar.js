@@ -4,7 +4,6 @@ import { DataMenu } from './DataMenu'
 import { DataMenuAdmin } from './DataMenuAdmin';
 import { DataMenuSup } from './DataMenuSup';
 import SubMenu from './SubMenu';
-import '../styles/sideBar.css'
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
