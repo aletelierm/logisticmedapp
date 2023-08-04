@@ -114,11 +114,11 @@ const Proveedores = () => {
                 fechamod: fechaMod,
                 emp_id: emp_id
             });
-            console.log('este es el id del codigo al crear:', documento.id);
+        
             documentoId.current = documento.id;
-            Swal.fire('Equipo se guardo correctamente');
+            
         } catch (error) {
-            console.log(error);
+          
             Swal.fire('Se ha producido un error grave. Llame al Administrador',error);
         }
         
@@ -130,16 +130,16 @@ const Proveedores = () => {
                 tipo: tipo,
                 status: status,
                 entidad: nomEntidad,
+                serie: serie,
+                flag: true,
                 rut: empresaRut.current,
                 useradd: userAdd,
                 usermod: userMod,
                 fechaadd: fechaAdd,
                 fechamod: fechaMod
          });
-        } catch (error) {
-            
-            Swal.fire('Se ha producido un error grave. Llame al Administrador',error);
-            
+        } catch (error) {            
+            Swal.fire('Se ha producido un error grave. Llame al Administrador',error);            
         }        
     }
 
