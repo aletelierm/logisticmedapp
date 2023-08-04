@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import styled from 'styled-components';
 import Alerta from './Alertas'
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
@@ -9,9 +10,8 @@ import Modal from './Modal';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
-import EnviarCorreo from '../funciones/EnviarCorreo';
-import {ContentElemenSelect, Select, Formulario, Input, Label, Contenido} from '../elementos/CrearEquipos'
-import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2} from '../elementos/General';
+import Swal from 'sweetalert2';
+/* import EnviarCorreo from '../funciones/EnviarCorreo'; */
 
 const Proveedores = () => {
     const user = auth.currentUser;
@@ -36,12 +36,12 @@ const Proveedores = () => {
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
     const [flag, setFlag] = useState(false);
-    /* const [documentoId, setDocumentoID]=useState(''); */
     const [estadoModal, setEstadoModal] = useState(false);
     const [status, setStatus] = useState([]);
     const [mostrarSt, setMostrarSt] = useState([]);
-    const [empresa, setEmpresa] = useState([]);
-
+    /* const [empresa, setEmpresa] = useState([]); */
+    const documentoId = useRef('');
+    const empresaRut = useRef('');
 
     
     //Leer los datos de Familia
@@ -54,7 +54,8 @@ const Proveedores = () => {
     //Leer  Empresa
     const getEmpresa = async () => {       
         const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
-        setEmpresa(traerEmp.data());
+        /* setEmpresa(traerEmp.data());  */      
+        empresaRut.current = traerEmp.data().rut;       
     }
      
     //Leer los datos de Tipos
@@ -99,35 +100,47 @@ const Proveedores = () => {
 
     //Funcion Guardar los equipos creados
     const EquipoDb = async ({ status,nomEntidad,familia, tipo, marca, modelo, serie, rfid, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
-        /* setDocumentoID('') */
-        const documento = await addDoc(collection(db, 'equipos'), {
-            familia: familia,
-            tipo: tipo,
-            marca: marca,
-            modelo: modelo,
-            serie: serie,
-            rfid: rfid,
-            useradd: userAdd,
-            usermod: userMod,
-            fechaadd: fechaAdd,
-            fechamod: fechaMod,
-            emp_id: emp_id
-        });
-        console.log('este es el id del codigo al crear:', documento.id);
-    //Guarda el status incial del equipo
-       await setDoc(doc(db,'status', documento.id),{
-        emp_id: emp_id,
-        familia: familia,
-        tipo: tipo,
-        status: status,
-        entidad: nomEntidad,
-        rut: empresa.rut,
-        useradd: userAdd,
-        usermod: userMod,
-        fechaadd: fechaAdd,
-        fechamod: fechaMod
-       });
+        try {
+            const documento = await addDoc(collection(db, 'equipos'), {
+                familia: familia,
+                tipo: tipo,
+                marca: marca,
+                modelo: modelo,
+                serie: serie,
+                rfid: rfid,
+                useradd: userAdd,
+                usermod: userMod,
+                fechaadd: fechaAdd,
+                fechamod: fechaMod,
+                emp_id: emp_id
+            });
         
+            documentoId.current = documento.id;
+            
+        } catch (error) {
+          
+            Swal.fire('Se ha producido un error grave. Llame al Administrador',error);
+        }
+        
+        try {
+            //Guarda el status incial del equipo          
+            await setDoc(doc(db,'status', documentoId.current),{
+                emp_id: emp_id,
+                familia: familia,
+                tipo: tipo,
+                status: status,
+                entidad: nomEntidad,
+                serie: serie,
+                flag: true,
+                rut: empresaRut.current,
+                useradd: userAdd,
+                usermod: userMod,
+                fechaadd: fechaAdd,
+                fechamod: fechaMod
+         });
+        } catch (error) {            
+            Swal.fire('Se ha producido un error grave. Llame al Administrador',error);            
+        }        
     }
 
     // Buscador de equipos
@@ -310,8 +323,8 @@ const Proveedores = () => {
                 })
                 setFlag(true);
                 //Envio de correo 
-                const datosEquipo = nomTipo+" "+nomMarca+" "+nomModelo+" SN:"+serie                
-                EnviarCorreo('yeicoletelier@gmail.com','Creacion de equipo',`El usuario ${users.nombre} ${users.apellido} ha creado el equipo: ${datosEquipo}`)
+               // const datosEquipo = nomTipo+" "+nomMarca+" "+nomModelo+" SN:"+serie                
+               // EnviarCorreo('yeicoletelier@gmail.com','Creacion de equipo',`El usuario ${users.nombre} ${users.apellido} ha creado el equipo: ${datosEquipo}`)
             } catch (error) {
                 console.log(error);
             }
