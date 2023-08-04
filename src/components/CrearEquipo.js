@@ -13,7 +13,7 @@ import ExportarExcel from '../funciones/ExportarExcel';
 import Swal from 'sweetalert2';
 /* import EnviarCorreo from '../funciones/EnviarCorreo'; */
 
-const Proveedores = () => {
+const CrearEquipos = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
@@ -598,4 +598,4 @@ const Contenido = styled.div`
     align-items: center;
 
 `
-export default Proveedores;
+export default CrearEquipos;
