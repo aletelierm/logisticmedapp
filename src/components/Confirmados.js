@@ -48,6 +48,8 @@ const Confirmados = () => {
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
                                 <Table.HeaderCell>Equipo</Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
                                 <Table.HeaderCell>N° Serie</Table.HeaderCell>
                                 <Table.HeaderCell>Dar Confirmacion</Table.HeaderCell>
                                 <Table.HeaderCell>Obserbaiones</Table.HeaderCell>
@@ -87,18 +89,19 @@ const Confirmados = () => {
 
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
-                <Table singleLine style={{ textAlign: 'center' }}>
+                <Table /* singleLine style={{ textAlign: 'center' }}*/>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Cliente</Table.HeaderCell>
+                            <Table.HeaderCell /* width={2} */>N°</Table.HeaderCell>
+                            <Table.HeaderCell /* width={2} */>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell /* width={2} */>Tipo Documento</Table.HeaderCell>
+                            <Table.HeaderCell /* width={2} */>Fecha</Table.HeaderCell>
+                            <Table.HeaderCell /* width={2} */>Rut</Table.HeaderCell>
+                            <Table.HeaderCell /* width={2} */>Cliente</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
+                    
                     <Table.Body>
 
                         <Table.Row>
@@ -115,7 +118,7 @@ const Confirmados = () => {
                         </Table.Row>
                     </Table.Body>
                 </Table>
-            </ListarProveedor>
+            </ListarProveedor >
             {/* <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
@@ -141,44 +144,18 @@ const ContenedorFormulario = styled.div`
     border: 2px solid #d1d1d1;
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-
-    /* Media query para pantallas aún más pequeñas */
-    @media screen and (max-width: 576px) {
-
-    }
-
-  /* @media screen and (min-width: 768px) {} */
-
-  /* @media screen and (min-width: 992px) {} */
-
 `
 const ContentElemen = styled.div`
     display: flex;
     justify-content: space-evenly;
     padding: 5px 10px;
-
-    /* Media query para pantallas aún más pequeñas */
-    @media screen and (max-width: 576px) {
-        // padding: 0px 10px;
-        // width: auto;
-        // justify-content: center;
-    }
 `
-// const ContentElemenSelect = styled.div`
-//     padding: 20px;
-// `
-// const Select = styled.select`
-//     border: 2px solid #d1d1d1;
-//     border-radius: 10px;
-//     padding: 5px;
-//     width: 200px;
-// `
 const Titulo = styled.h2`
     color:  #83d394;
 
     /* Media query para pantallas aún más pequeñas */
     @media screen and (max-width: 576px) {
-        font-size: 1.2rem ;
+        font-size: 1.5rem ;
     }
 `
 
@@ -189,24 +166,13 @@ const ListarProveedor = styled.div`
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
 `
-// const ListarEquipos = styled.div`
-//     margin: 20px 0;
-//     padding: 20px;
-//     border: 2px solid #d1d1d1;
-//     border-radius: 10px;
-//     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);
-// `
-// const Formulario = styled.form``
 
 const Input = styled.input`
     border: 2px solid #d1d1d1;
     border-radius: 10px;
     padding: 5px;
 `
-// const Label = styled.label`
-//     padding: 5px;
-//     font-size: 20px;
-// `
+
 const Boton = styled.button`
     background-color: #83d394;
     color: #ffffff;
@@ -218,5 +184,22 @@ const Boton = styled.button`
         background-color: #83d310;
     }
 `
+
+// const StyledTable = styled(Table)`
+//   /* Estilos generales de la tabla */
+//   /* Otros estilos generales para la tabla */
+
+//   /* Media query para pantallas con un ancho máximo de 768px (tamaño móvil típico) */
+//   @media screen and (max-width: 576px) {
+//     font-size: 14px; /* Cambia el tamaño de fuente para pantallas pequeñas */
+//     /* Otros estilos para pantallas pequeñas */
+
+//     /* Ajusta el tamaño de las celdas para pantallas pequeñas */
+//     &&&.celled tbody tr > td {
+
+//       padding: 4px 8px; /* Ajusta el relleno (padding) de las celdas */
+//     }
+//   }
+// `
 
 export default Confirmados;

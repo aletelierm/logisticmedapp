@@ -26,7 +26,8 @@ const SidebarLabel = styled.span`
 `
 const DropdownLink = styled(Link)`
  /*  background: #414757; */
-  background-color: #C7DCC7;
+  // background-color: #C7DCC7;
+  background-color: #c8dddf;
   height: 30px;
   padding-left: 3rem;
   display: flex;
@@ -50,7 +51,7 @@ const SubMenu = ({ item,isopen }) => {
   return (
     <>
       <SidebarLink to={item.path} onClick={item.subNav && showSubnav}>  
-        <div style={{color: "green"}}>
+        <div style={{color: "#328AC4"}}>
           {item.icon}
         </div>
         <div style={{display: isopen ? "block" : "none"}}>
@@ -67,7 +68,7 @@ const SubMenu = ({ item,isopen }) => {
       {subnav &&
         item.subNav.map((item, index) => {
           return (
-            <DropdownLink to={item.path} key={index} style={{display: isopen ? "block" : "none",color:"green"}}>
+            <DropdownLink to={item.path} key={index} style={{display: isopen ? "block" : "none",color:"#328AC4"}}>
               {item.icon}
               <SidebarLabel style={{color:"black", fontWeight:"600"}}>{item.title}</SidebarLabel>
             </DropdownLink>

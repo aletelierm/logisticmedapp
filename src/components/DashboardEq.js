@@ -5,6 +5,8 @@ import { db } from '../firebase/firebaseConfig';
 import { collection, getDocs, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import {ContenedorElementos,Titulo} from '../elementos/General'
+
 
 const App = () => {
 
@@ -57,17 +59,4 @@ const App = () => {
 export default App;
 const Contenedor = styled.div`
   
-`
-const ContenedorElementos = styled.div`
-    display: flex;
-    margin-top: 20px;
-    padding: 10px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-    justify-content: center;
-    align-items: center;    
-`
-const Titulo = styled.h2`
-    color:  #83d394;
 `

@@ -34,7 +34,7 @@ const NavbarSesion = () => {
                 </div>
                 <div className='user'>
                     <div>
-                        <FaUserAlt style={{color:'green', marginRight:'10px'}}/>
+                        <FaUserAlt style={{color:'#328AC4', marginRight:'10px'}}/>
                     </div>
                     <div>
                          <h4>{users.nombre +' '+ users.apellido}</h4>

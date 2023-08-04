@@ -24,7 +24,7 @@ const SideBar = ({ children }) => {
             <div style={{ width: isOpen ? "250px" : "50px"}} className='sidebar'>
                 <div className='top_section'>                   
                     <div style={{ marginLeft: isOpen ? "50px" : "0px" }} className='bars' >
-                        <FaBars onClick={toggle} style={{color:"green"}}/>
+                        <FaBars onClick={toggle} style={{color:"#328AC4"}}/>
                     </div>
                 </div>               
                 {menu.map((item, index) => {

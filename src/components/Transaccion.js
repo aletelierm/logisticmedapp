@@ -6,6 +6,7 @@ import {  db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import {ListarProveedor, Titulo} from '../elementos/General'
 
 const Transaccion = () =>{
     const { users } = useContext(UserContext);
@@ -69,13 +70,13 @@ const Transaccion = () =>{
 
 export default Transaccion;
 
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-`
-const Titulo = styled.h2`
-    color:  #83d394;
-`
+// const ListarProveedor = styled.div`
+//     margin-top: 20px;
+//     padding: 20px;
+//     border: 2px solid #d1d1d1;
+//     border-radius: 20px;
+//     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
+// `
+// const Titulo = styled.h2`
+//     color:  #83d394;
+// `

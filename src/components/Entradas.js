@@ -13,6 +13,8 @@ import { TipDoc, TipoIn } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
+import {ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label} from '../elementos/CrearEquipos'
 
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -488,12 +490,12 @@ const Entradas = () => {
 
     return (
         <ContenedorProveedor>
-            <ContenedorFormulario>
+            <Contenedor >
                 <Titulo>Recepcion de Equipos</Titulo>
-            </ContenedorFormulario>
-            <ContenedorFormulario>
+            </Contenedor>
+            <Contenedor>
                 <Formulario action='' onSubmit={handleSubmit}>
-                    <ContentElemen>
+                    <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
                             <Input
@@ -528,8 +530,8 @@ const Entradas = () => {
                                 onChange={ev => setDate(ev.target.value)}
                             />
                         </ContentElemenSelect>
-                    </ContentElemen>
-                    <ContentElemen>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Tipo Entrada</Label>
                             <Select
@@ -558,19 +560,19 @@ const Entradas = () => {
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
-                        <Boton
+                        <BotonGuardar
                             style={{ margin: '17px 0' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
                             onChange={handleCheckboxChange}
                             disabled={btnGuardar}
-                        >Guardar</Boton>
-                    </ContentElemen>
+                        >Guardar</BotonGuardar>
+                    </ContentElemenMov>
                 </Formulario>
-            </ContenedorFormulario>
-            <ContenedorFormulario>
+            </Contenedor>
+            <Contenedor>
                 <Formulario>
-                    <ContentElemen >
+                    <ContentElemenMov >
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Precio</Label>
                             <Input
@@ -592,12 +594,12 @@ const Entradas = () => {
                                 onKeyDown={detectar}
                             />
                         </ContentElemenSelect>
-                        <Icon disabled={btnAgregar} onClick={handleSubmit}>
+                        <Boton disabled={btnAgregar} onClick={handleSubmit}>
                             <IoMdAdd
-                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
+                                style={{ fontSize: '36px', color: '#328AC4', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
                             />
-                        </Icon>
-                    </ContentElemen>
+                        </Boton>
+                    </ContentElemenMov>
                 </Formulario>
                 <ListarEquipos>
                     <Table singleLine>
@@ -623,8 +625,8 @@ const Entradas = () => {
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
-                <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
-            </ContenedorFormulario>
+                <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
+            </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
@@ -684,75 +686,5 @@ const Entradas = () => {
         </ContenedorProveedor>
     );
 };
-
-const ContenedorProveedor = styled.div``
-
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-`
-const ContentElemen = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    padding: 5px 10px;
-`
-const ContentElemenSelect = styled.div`
-    padding: 20px;
-`
-const Select = styled.select`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-    width: 200px;
-`
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const Icon = styled.button`
-    display: flex;
-    // justify-content: space-between;
-    margin-left: 20px;
-    border: none;
-    background: none;
-`
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-`
-const ListarEquipos = styled.div`
-    margin: 20px 0;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);
-`
-const Formulario = styled.form``
-
-const Input = styled.input`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-`
-const Label = styled.label`
-    padding: 5px;
-    font-size: 20px;
-`
-const Boton = styled.button`
-    background-color: #83d394;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    &:hover{
-        background-color: #83d310;
-    }
-`
 
 export default Entradas;

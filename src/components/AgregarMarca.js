@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import AgregarMarcaDb from '../firebase/AgregarMarcaDb';
 import Alertas from './Alertas';
 import { auth } from '../firebase/firebaseConfig';
@@ -13,6 +12,8 @@ import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton} from '../elementos/General'
+
 
 const AgregarMarca = () => {
     const user = auth.currentUser;
@@ -109,14 +110,13 @@ const AgregarMarca = () => {
 
     return (
         <ContenedorProveedor>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Marcas de Equipos</Titulo>
-            </ContenedorFormulario>
+            </Contenedor>
 
-            <ContenedorFormulario>
-                <Formulario action='' onSubmit={handleSubmit}>
-                    <Input
-                        style={{ width: '100%' }}
+            <Contenedor>
+                <FormularioAdd action='' onSubmit={handleSubmit}>
+                    <InputAdd
                         type='text'
                         placeholder='Ingrese Marca Equipamiento Médico'
                         name='marca'
@@ -124,27 +124,27 @@ const AgregarMarca = () => {
                         onChange={handleChange}
                     />
                     <Boton>
-                        <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
+                        <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
                     </Boton>
-                </Formulario>
-            </ContenedorFormulario>
+                </FormularioAdd>
+            </Contenedor>
 
             <ListarProveedor>
-                <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                <ContentElemenAdd>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                     <Titulo>Listado de Marcas</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
-                </ContentElemen>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                </ContentElemenAdd>
 
-                <ContentElemen>
-                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} />
-                    <Input style={{ width: '100%' }}
+                <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
+                    <InputAdd
                         type='text'
                         placeholder='Buscar Marca'
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                </ContentElemen>
+                </ContentElemenAdd>
 
                 <Table singleLine>
                     <Table.Header>
@@ -167,7 +167,7 @@ const AgregarMarca = () => {
                                     <Table.Cell>{item.userMod}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}>
                                         <Link to={`/actualizamarca/${item.id}`}>
-                                            <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                            <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />
                                         </Link>
                                     </Table.Cell>
                                 </Table.Row>
@@ -186,51 +186,4 @@ const AgregarMarca = () => {
     );
 };
 
-const ContenedorProveedor = styled.div``
-
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-`
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const ContentElemen = styled.div`
-    display: flex;
-    text-align: center;
-    padding: 7px;
-    margin-right: 30px;
-    align-items: center;
-    justify-content: space-between;
-`
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-`
-const Formulario = styled.form`
-    display: flex;
-    padding: 0px;
-    text-align: center;
-    align-items: center;
-    justify-content: space-between;
-`
-const Input = styled.input`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px 30px;
-`
-const Boton = styled.button`
-        background-color: #ffffff;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
-        margin: 0 10px;
-        cursor: pointer;
-`
 export default AgregarMarca;
