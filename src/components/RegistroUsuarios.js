@@ -262,8 +262,8 @@ export const RegistroUsuarios = () => {
                         <Label>Roles</Label>
                         <Select value={rol} onChange={ev => setRol(ev.target.value)}>
                             <option>Selecciona Opción:</option>
-                            {Roles.map((d) => {
-                                return (<option key={d.key}>{d.text}</option>)
+                            {Roles.map((d,index) => {
+                                return (<option key={index}>{d.text}</option>)
                             })}
                         </Select>
                     </ContentElemen>

@@ -447,7 +447,7 @@ const Salidas = () => {
         });
         try {
             await batch.commit();
-            console.log('Documentos actualizados correctamente.');
+            
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
