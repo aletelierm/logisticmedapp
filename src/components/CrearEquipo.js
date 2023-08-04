@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+/* import styled from 'styled-components'; */
 import Alerta from './Alertas'
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
@@ -12,6 +12,8 @@ import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 import Swal from 'sweetalert2';
 /* import EnviarCorreo from '../funciones/EnviarCorreo'; */
+import {ContentElemenSelect, Select, Formulario, Input, Label, Contenido} from '../elementos/CrearEquipos'
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2} from '../elementos/General';
 
 const CrearEquipos = () => {
     const user = auth.currentUser;
@@ -164,6 +166,10 @@ const CrearEquipos = () => {
         } else if (categoria === 'Modelo') {
             const nuevoFiltro = equipo.filter(eq => eq.modelo.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
+
+        } else if (categoria === 'N° Serie') {
+            const nuevoFiltro = equipo.filter(eq => eq.serie.includes(buscar));
+            return nuevoFiltro.slice(pagina, pagina + 5);
         }
     }
 
@@ -184,6 +190,10 @@ const CrearEquipos = () => {
         } else if (categoria === 'Modelo') {
             if (equipo.filter(eq => eq.modelo.includes(buscador)).length > pagina + 5)
                 setPagina(pagina + 5);
+
+        } else if (categoria === 'N° Serie') {
+            if (equipo.filter(eq => eq.serie.includes(buscador)).length > pagina + 5)
+            setPagina(pagina + 5);
         }
     }
 
@@ -344,14 +354,14 @@ const CrearEquipos = () => {
     }
 
     return (
-        <ContenedorFormulario>
+        <ContenedorProveedor>
             <Contenedor>
                 <Titulo>Crear Dispositivos Médicos</Titulo>
             </Contenedor>
 
             <Contenedor>
                 <Formulario action='' onSubmit={handleSubmit}>
-                    <ContentElemen>
+                    <ContentElemenAdd>
                         <ContentElemenSelect>
                             <Label>Familias</Label>
                             <Select defaultValue='' value={nomFamilia} onChange={e => { setNomFamilia(e.target.value); sessionStorage.setItem('familia', e.target.value) }}>
@@ -389,8 +399,8 @@ const CrearEquipos = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-                    </ContentElemen>
-                    <ContentElemen>
+                    </ContentElemenAdd>
+                    <ContentElemenAdd>
                         <Label >N° Serie</Label>
                         <Input
                             type='text'
@@ -408,17 +418,17 @@ const CrearEquipos = () => {
                             onChange={handleChange}
                             disabled
                         />
-                    </ContentElemen>
+                    </ContentElemenAdd>
                     <BotonGuardar>Crear</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
             <ListarProveedor>
-                <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                <ContentElemenAdd>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                     <Titulo>Listado de Dispositivos Médicos</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
-                </ContentElemen>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                </ContentElemenAdd>
                 <ContentElemenSelect>
                     <Label>Buscar Por</Label>
                     <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
@@ -427,19 +437,20 @@ const CrearEquipos = () => {
                         <option>Tipo</option>
                         <option>Marca</option>
                         <option>Modelo</option>
+                        <option>N° Serie</option>
                     </Select>
                 </ContentElemenSelect>
 
-                <ContentElemen>
-                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
+                <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
                     <Input style={{ width: '100%' }}
                         type='text'
                         placeholder={`Buscar ${categoria}`}
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
-                </ContentElemen>
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
+                </ContentElemenAdd>
 
                 <Table singleLine>
                     <Table.Header>
@@ -474,7 +485,7 @@ const CrearEquipos = () => {
                                                 leerStatus(item.id)
                                                 setEstadoModal(!estadoModal)
                                             }
-                                            }><MdIcons.MdFactCheck style={{ fontSize: '20px', color: 'green' }} />
+                                            }><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
                                         </Table.Cell>
                                     </Table.Row>
                                 )
@@ -499,103 +510,8 @@ const CrearEquipos = () => {
                     <Boton2 onClick={() => setEstadoModal(!estadoModal)}>Aceptar</Boton2>
                 </Contenido>
             </Modal>
-        </ContenedorFormulario>
+        </ContenedorProveedor>
     );
 };
 
-const ContenedorFormulario = styled.div``
-
-const Contenedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-    font-size: 15px;
-`
-
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-
-const ContentElemen = styled.div`
-    display: flex;
-    text-align: center;
-    padding: 7px;
-    margin-right: 30px;
-    align-items: center;
-    justify-content: space-between;
-`
-
-const ContentElemenSelect = styled.div`
-    padding: 20px;
-`
-const Select = styled.select`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-    width: 200px;
-`
-
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-`
-const Formulario = styled.form``
-
-const Input = styled.input`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-`
-const Label = styled.label`
-        padding: 5px;
-        font-size: 20px;
-`
-const Boton = styled.button`
-    background-color: #ffffff;
-    color: green;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    margin: 0 10px;
-    cursor: pointer;
-`
-const BotonGuardar = styled.button`
-    background-color: #83d394;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    margin: 0 10px;
-    cursor: pointer;
-    // &:hover{
-    //     background-color: #83d310;
-    // }
-`
-const Boton2 = styled.button`
-	display: block;
-	padding: 10px 30px;
-	border-radius: 100px;
-	color: #fff;
-	border: none;
-	background: #1766DC;
-	cursor: pointer;
-	font-family: 'Roboto', sans-serif;
-	font-weight: 500;
-	transition: .3s ease all;
-
-	&:hover {
-		background: #0066FF;
-	}
-`
-const Contenido = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-`
 export default CrearEquipos;

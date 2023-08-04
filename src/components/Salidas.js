@@ -1,6 +1,5 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import SalidasDB from '../firebase/SalidasDB'
 import CabeceraOutDB from '../firebase/CabeceraOutDB'
 import Alertas from './Alertas';
@@ -13,6 +12,9 @@ import { TipDoc, TipoOut } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
+import {ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label} from '../elementos/CrearEquipos'
+
 
 const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -133,15 +135,16 @@ const Salidas = () => {
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
             // Consulta si exite serie en el arreglo            
-            const existe = equipo.filter(eq => eq.serie === numSerie);
-            const existeIn = documento.filter(doc => doc.serie === numSerie)
+            const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
+            const existeIn = documento.filter(doc => doc.serie === numSerie);
+            const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
             if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'No existe un Equipo con este N° Serie'
+                    mensaje: 'No existe un Equipo con este N° Serie o Id'
                 })
-            } else if (existeIn.length > 0) {
+            } else if (existeIn.length > 0 || existeIn2.length > 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -176,18 +179,19 @@ const Salidas = () => {
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione Tipo Documento'
-            })
-            return;
-        } else if (numDoc === '') {
+        if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Ingrese N° Documento'
+            })
+            return;
+        
+        } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Tipo Documento'
             })
             return;
 
@@ -357,9 +361,10 @@ const Salidas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Validar N° Serie en equipo
-        const existe = equipo.filter(eq => eq.serie === numSerie);
+        const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
         // Validar en N° Serie en Salidas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
+        const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         if (numSerie === '') {
@@ -373,9 +378,9 @@ const Salidas = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'No existe un Equipo con este N° Serie'
+                mensaje: 'No existe un Equipo con este N° Serie o Id'
             })
-        } else if (existeIn.length > 0) {
+        } else if (existeIn.length > 0 || existeIn2.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -500,12 +505,12 @@ const Salidas = () => {
 
     return (
         <ContenedorProveedor>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Salida de Equipos</Titulo>
-            </ContenedorFormulario>
-            <ContenedorFormulario>
+            </Contenedor>
+            <Contenedor>
                 <Formulario action='' onSubmit={handleSubmit}>
-                    <ContentElemen>
+                    <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
                             <Input
@@ -540,8 +545,8 @@ const Salidas = () => {
                                 onChange={ev => setDate(ev.target.value)}
                             />
                         </ContentElemenSelect>
-                    </ContentElemen>
-                    <ContentElemen>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Tipo Salida</Label>
                             <Select
@@ -559,7 +564,7 @@ const Salidas = () => {
                             <Input
                                 disabled={confirmar}
                                 type='numero'
-                                placeholder='Ingrese Rut'
+                                placeholder='Ingrese Rut sin puntos'
                                 name='rut'
                                 value={rut}
                                 onChange={ev => setRut(ev.target.value)}
@@ -570,8 +575,8 @@ const Salidas = () => {
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
-                    </ContentElemen>
-                    <ContentElemen>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Correo Transportista</Label>
                             <Input
@@ -594,19 +599,19 @@ const Salidas = () => {
                                 onChange={ev => setPatente(ev.target.value)}
                             />
                         </ContentElemenSelect>
-                        <Boton
+                        <BotonGuardar
                             style={{ margin: '17px 0' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
                             onChange={handleCheckboxChange}
                             disabled={btnGuardar}
-                        >Guardar</Boton>
-                    </ContentElemen>
+                        >Guardar</BotonGuardar>
+                    </ContentElemenMov>
                 </Formulario>
-            </ContenedorFormulario>
-            <ContenedorFormulario>
+            </Contenedor>
+            <Contenedor>
                 <Formulario>
-                    <ContentElemen >
+                    <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
                             <Input
@@ -619,12 +624,12 @@ const Salidas = () => {
                                 onKeyDown={detectar}
                             />
                         </ContentElemenSelect>
-                        <Icon disabled={btnAgregar} onClick={handleSubmit}>
+                        <Boton disabled={btnAgregar} onClick={handleSubmit}>
                             <IoMdAdd
-                                style={{ fontSize: '36px', color: 'green', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
+                                style={{ fontSize: '36px', color: '#328AC4', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
                             />
-                        </Icon>
-                    </ContentElemen>
+                        </Boton>
+                    </ContentElemenMov>
                 </Formulario>
                 <ListarEquipos>
                     <Table singleLine>
@@ -648,9 +653,9 @@ const Salidas = () => {
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
-                <Boton onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</Boton>
+                <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
                 
-            </ContenedorFormulario>
+            </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
@@ -708,72 +713,5 @@ const Salidas = () => {
         </ContenedorProveedor>
     );
 };
-const ContenedorProveedor = styled.div``
 
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);`
-
-const ContentElemen = styled.div`
-    display: flex;
-
-    justify-content: space-evenly;
-    padding: 5px 10px;`
-
-const ContentElemenSelect = styled.div`
-    padding: 20px;`
-
-const Select = styled.select`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-    width: 200px;
-`
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const Icon = styled.button`
-    display: flex;
-    margin-left: 20px;
-    border: none;
-    background: none;
-    `
-
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);`
-
-const ListarEquipos = styled.div`
-    margin: 20px 0;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.40);
-    `
-
-const Formulario = styled.form``
-
-const Input = styled.input`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-`
-const Label = styled.label`
-    padding: 5px;
-    font-size: 20px;
-`
-const Boton = styled.button`
-    background-color: #83d394;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;   
-`
 export default Salidas;

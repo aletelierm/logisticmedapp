@@ -3,12 +3,14 @@ import { auth } from '../firebase/firebaseConfig';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from '../firebase/firebaseConfig';
 import { collection, getDocs, where, query } from 'firebase/firestore';
-import styled from 'styled-components';
 import Alertas from './Alertas';
 import ActualizarTipoDb from '../firebase/ActualizarTipoDb';
 import useObtenerTipo from '../hooks/useObtenerTipo';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import {ContenedorCliente, Formulario} from '../elementos/CrearEquipos';
+import {Contenedor, ContentElemenAdd, Titulo, InputAdd, BotonGuardar} from '../elementos/General';
+
 
 const ActualizaTipo = () => {
     const user = auth.currentUser;
@@ -102,14 +104,14 @@ const ActualizaTipo = () => {
 
     return (
         <ContenedorCliente>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Actualiazar Tipo Equipamiento</Titulo>
-            </ContenedorFormulario>
+            </Contenedor>
 
-            <ContenedorFormulario>
+            <Contenedor>
                 <Formulario action='' onSubmit={handleSubmit} >
-                    <ContentElemen>
-                        <Input
+                    <ContentElemenAdd>
+                        <InputAdd
                             type='text'
                             name='tipo'
                             placeholder='Ingrese Tipo Equipamiento Médico'
@@ -118,9 +120,9 @@ const ActualizaTipo = () => {
                         />
                         <BotonGuardar >Actualizar</BotonGuardar>
                         <BotonGuardar onClick={volver}>Volver</BotonGuardar>
-                    </ContentElemen>
+                    </ContentElemenAdd>
                 </Formulario>
-            </ContenedorFormulario>
+            </Contenedor>
 
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
@@ -132,50 +134,4 @@ const ActualizaTipo = () => {
     )
 }
 
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const ContenedorCliente = styled.div`
-width: 70%;`
-
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-`
-const ContentElemen = styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-`
-const Formulario = styled.form``
-
-const Input = styled.input`
-    border: 2px solid #d1d1d1;
-    border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 16px;
-    transition: all.3s ease all;
-    width: 100%;
-    text-align: center;
-
-    &:focus{
-        border: 3px solid #83d394;
-    }
-`
-const BotonGuardar = styled.button`
-    cursor: pointer;
-    background-color: #83d394;
-    color: #ffffff;
-    border-radius: 5px;
-    border: none;
-    margin: 0px 10px;
-    padding: 5px 10px;
-
-    &:hover{
-        background-color: #83d310;
-    }
-`
 export default ActualizaTipo;

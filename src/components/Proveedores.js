@@ -13,6 +13,8 @@ import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
+import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
+import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
 
 const Proveedores = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -231,10 +233,10 @@ const Proveedores = () => {
 
     return (
         <ContenedorProveedor>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Mis Proveedores</Titulo>
-            </ContenedorFormulario>
-            <ContenedorFormulario>
+            </Contenedor>
+            <Contenedor>
                 <Formulario action='' >
                     <ContentElemen>
                         <Label>Rut</Label>
@@ -294,22 +296,22 @@ const Proveedores = () => {
                     </ContentElemen>
                     <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
                 </Formulario>
-            </ContenedorFormulario>
+            </Contenedor>
             <ListarProveedor>
                 <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                     <Titulo>Listado Proveedores</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                 </ContentElemen>
                 <ContentElemen>
-                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px' }} />
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
                         type='text'
                         placeholder='Buscar Proveedor'
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green', marginLeft: '20px' }} title='Exportar Proveedores a Excel' />
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Proveedores a Excel' />
                 </ContentElemen>
                 <Table singleLine>
                     <Table.Header>
@@ -334,7 +336,7 @@ const Proveedores = () => {
                                         <Table.Cell>{item.telefono}</Table.Cell>
                                         <Table.Cell style={{textAlign: 'center'}}>
                                             <Link to={`/actualizaproveedor/${item.id}`}>
-                                                <FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                                <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />
                                             </Link>
                                         </Table.Cell>
                                     </Table.Row>
@@ -356,58 +358,3 @@ const Proveedores = () => {
 };
 
 export default Proveedores;
-
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const ContenedorProveedor = styled.div`
-   
-`
-const ContenedorFormulario = styled.div`   
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);    
-`
-const ContentElemen = styled.div`   
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-`
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-`
-const Formulario = styled.form`
-
-`
-const Input = styled.input`    
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-`
-const Label = styled.label`
-        padding: 5px;
-        font-size: 20px;
-`
-const Boton = styled.button`
-        cursor: pointer;
-        background-color: #ffff;        
-        border-radius: 5px;
-        border: none;
-`
-const BotonGuardar = styled.button`
-background-color: #83d394;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    &:hover{
-        background-color: #83d310;
-    }
-`

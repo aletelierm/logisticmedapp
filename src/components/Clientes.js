@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { Table } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import { auth, db } from '../firebase/firebaseConfig';
@@ -12,6 +11,9 @@ import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
+import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
+import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
+
 
 const Clientes = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -276,11 +278,11 @@ const Clientes = () => {
 
     return (
         <ContenedorProveedor>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Mis Clientes</Titulo>
-            </ContenedorFormulario>
+            </Contenedor>
 
-            <ContenedorFormulario>
+            <Contenedor>
                 <Formulario action='' >
                     <ContentElemen>
                         <Label>Rut</Label>
@@ -369,22 +371,22 @@ const Clientes = () => {
 
                 </Formulario>
                 <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
-            </ContenedorFormulario>
+            </Contenedor>
             <ListarProveedor>
                 <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
-                    <Titulo>Listado Clientes</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    <Titulo>Listado de Clientes</Titulo>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                 </ContentElemen>
                 <ContentElemen>
-                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px' }} />
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
                         type='text'
                         placeholder='Buscar Cliente'
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green', marginLeft: '20px' }} title='Exportar Clientes a Excel' />
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Clientes a Excel' />
                 </ContentElemen>
                 <Table singleLine>
                     <Table.Header>
@@ -408,9 +410,9 @@ const Clientes = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.direccion}</Table.Cell>
                                         <Table.Cell>{item.telefono}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center', marginRigth: '0'}}>
+                                        <Table.Cell style={{textAlign: 'center'}}>
                                             <Link to={`/actualizacliente/${item.id}`}>
-                                                <FaIcons.FaRegEdit style={{ fontSize: '20px', color: 'green' }} />
+                                                <FaIcons.FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />
                                             </Link>
                                         </Table.Cell>
                                     </Table.Row>
@@ -431,57 +433,3 @@ const Clientes = () => {
     );
 }
 export default Clientes;
-
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const ContenedorProveedor = styled.div``
-
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);    
-`
-const ContentElemen = styled.div`   
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-`
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-`
-
-const Formulario = styled.form``
-
-const Input = styled.input`    
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-`
-const Label = styled.label`
-        padding: 5px;
-        font-size: 20px;
-`
-const Boton = styled.button`
-        cursor:pointer;
-        background-color: #ffff;        
-        border-radius: 5px;
-        border: none;
-`
-const BotonGuardar = styled.button`
-    background-color: #83d394;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    &:hover{
-        background-color: #83d310;
-    }
-`
