@@ -12,8 +12,10 @@ import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 import Swal from 'sweetalert2';
 /* import EnviarCorreo from '../funciones/EnviarCorreo'; */
+import {ContentElemenSelect, Select, Formulario, Input, Label, Contenido} from '../elementos/CrearEquipos'
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2} from '../elementos/General';
 
-const Proveedores = () => {
+const CrearEquipos = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
@@ -512,4 +514,4 @@ const Proveedores = () => {
     );
 };
 
-export default Proveedores;
+export default CrearEquipos;
