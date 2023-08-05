@@ -207,9 +207,9 @@ const AgregarEmpresa = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {filtroEmpresa().map((item) => {
+                        {filtroEmpresa().map((item,index) => {
                             return (
-                                < Table.Row key={item.i2}>
+                                < Table.Row key={index}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>

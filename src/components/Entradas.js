@@ -315,7 +315,7 @@ const Entradas = () => {
                             mensaje: 'Ingreso realizado exitosamente'
                         })
                         setFlag(!flag);
-                        setConfirmar(false)
+                        setConfirmar(true)
                         setBtnAgregar(false)
                         setBtnGuardar(true);
                         return;
@@ -467,7 +467,8 @@ const Entradas = () => {
         setEntidad('');
         setNumSerie('');
         setPrice('');
-        setBtnConfirmar(true);
+        setConfirmar(false);
+        setBtnConfirmar(false);
         setBtnAgregar(true);
         setBtnGuardar(false)
     };

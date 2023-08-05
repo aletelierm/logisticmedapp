@@ -27,7 +27,7 @@ const Reporte2 = () => {
         setEstado(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
-    console.log(estado);
+    
     useEffect(()=>{
         getStatus();
     },[])
@@ -41,7 +41,7 @@ const Reporte2 = () => {
      //Exportar a excel los equipos
      const ExportarXls = () => {
         //Campos a mostrar en el excel   
-        const columnsToShow = ['id', 'tipo', 'status', 'rut', 'entidad', 'fechamod']
+        const columnsToShow = ['id', 'tipo', 'status', 'serie','rut', 'entidad', 'fechamod']
         //Llamar a la funcion con props: array equipo y array columnas
         const excelBlob = ExportarExcel(estado, columnsToShow);
         // Crear un objeto URL para el Blob y crear un enlace de descarga
@@ -71,6 +71,7 @@ const Reporte2 = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Id Equipo</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
@@ -86,6 +87,7 @@ const Reporte2 = () => {
                                         <Table.Cell>{item.id2}</Table.Cell>
                                         <Table.Cell>{item.id}</Table.Cell>
                                         <Table.Cell>{item.tipo}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>

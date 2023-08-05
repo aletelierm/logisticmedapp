@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+/* import styled from 'styled-components'; */
 import Alerta from './Alertas'
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
