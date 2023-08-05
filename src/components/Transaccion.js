@@ -1,7 +1,6 @@
 /* eslint-disable array-callback-return */
 import React,{useEffect, useState} from 'react';
 import { Table } from 'semantic-ui-react'
-import styled from 'styled-components';
 import {  db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';

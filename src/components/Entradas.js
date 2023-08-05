@@ -1,6 +1,5 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import EntradasDB from '../firebase/EntradasDB'
 import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';

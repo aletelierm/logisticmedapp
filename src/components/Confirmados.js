@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 // import Alertas from './Alertas';
 import { Table } from 'semantic-ui-react';
