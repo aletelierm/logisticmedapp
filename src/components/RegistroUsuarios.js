@@ -8,6 +8,9 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
 import ExportarExcel from '../funciones/ExportarExcel';
+import {Titulo, BotonGuardar} from '../elementos/General'
+import {Formulario} from '../elementos/CrearEquipos'
+import {ContentElemenUser, ContenedorUser, InputUser, LabelUser, SelectUser} from '../elementos/Configuracion'
 
 export const RegistroUsuarios = () => {
     let fechaactual = new Date();
@@ -191,90 +194,90 @@ export const RegistroUsuarios = () => {
 
     return (
         <ContenedorFormulario>
-            <Contenedor>
+            <ContenedorUser>
                 <Titulo>Registro de Usuarios y Roles</Titulo>
-            </Contenedor>
-            <Contenedor>
+            </ContenedorUser>
+            <ContenedorUser>
                 <Formulario onSubmit={handleSubmit}>
-                    <ContentElemen>
-                        <FaIcons.FaUserAlt style={{ color: 'green', fontSize: '20px' }} />
-                        <Label>Nombre:</Label>
-                        <Input
+                    <ContentElemenUser>
+                        <FaIcons.FaUserAlt style={{ color: '#328AC4', fontSize: '20px' }} />
+                        <LabelUser>Nombre:</LabelUser>
+                        <InputUser
                             type='text'
                             name='nombre'
                             placeholder='Ingrese Nombre'
                             value={nombre}
                             onChange={handleChange}
                         />
-                    </ContentElemen>
-                    <ContentElemen>
-                        <FaIcons.FaUserAlt style={{ color: 'green', fontSize: '20px' }} />
-                        <Label>Apellido:</Label>
-                        <Input
+                    </ContentElemenUser>
+                    <ContentElemenUser>
+                        <FaIcons.FaUserAlt style={{ color: '#328AC4', fontSize: '20px' }} />
+                        <LabelUser>Apellido:</LabelUser>
+                        <InputUser
                             type='text'
                             name='apellido'
                             placeholder='Ingrese Apellido'
                             value={apellido}
                             onChange={handleChange}
                         />
-                    </ContentElemen>
-                    <ContentElemen>
-                        <MdIcons.MdOutlineEmail style={{ color: 'green', fontSize: '20px' }} />
-                        <Label>Correo:</Label>
-                        <Input
+                    </ContentElemenUser>
+                    <ContentElemenUser>
+                        <MdIcons.MdOutlineEmail style={{ color: '#328AC4', fontSize: '20px' }} />
+                        <LabelUser>Correo:</LabelUser>
+                        <InputUser
                             type='email'
                             name='email'
                             placeholder='Correo Electronico'
                             value={correo}
                             onChange={handleChange}
                         />
-                    </ContentElemen>
-                    <ContentElemen>
-                        <FaIcons.FaKey style={{ color: 'green', fontSize: '20px' }} />
-                        <Label>Password:</Label>
-                        <Input
+                    </ContentElemenUser>
+                    <ContentElemenUser>
+                        <FaIcons.FaKey style={{ color: '#328AC4', fontSize: '20px' }} />
+                        <LabelUser>Password:</LabelUser>
+                        <InputUser
                             type='password'
                             name='password'
                             placeholder='Ingrese Password'
                             value={pass}
                             onChange={handleChange}
                         />
-                    </ContentElemen>
-                    <ContentElemen>
-                        <FaIcons.FaKey style={{ color: 'green', fontSize: '20px' }} />
-                        <Label>Password:</Label>
-                        <Input
+                    </ContentElemenUser>
+                    <ContentElemenUser>
+                        <FaIcons.FaKey style={{ color: '#328AC4', fontSize: '20px' }} />
+                        <LabelUser>Password:</LabelUser>
+                        <InputUser
                             type='password'
                             name='password2'
                             placeholder='Repita Password'
                             value={pass2}
                             onChange={handleChange}
                         />
-                    </ContentElemen>
-                    <ContentElemen>
-                        <Label>Empresas</Label>
-                        <Select value={nomEmpresa} onChange={e => setNomEmpresa(e.target.value)}>
+                    </ContentElemenUser>
+                    <ContentElemenUser>
+                        <LabelUser>Empresas</LabelUser>
+                        <SelectUser value={nomEmpresa} onChange={e => setNomEmpresa(e.target.value)}>
                             <option>Selecciona Opción:</option>
                             {empresa.map((d) => {
                                 return (<option key={d.id2}>{d.empresa}</option>)
                             })}
-                        </Select>
-                        <Label>Roles</Label>
-                        <Select value={rol} onChange={ev => setRol(ev.target.value)}>
+                        </SelectUser>
+                        <LabelUser>Roles</LabelUser>
+                        <SelectUser value={rol} onChange={ev => setRol(ev.target.value)}>
                             <option>Selecciona Opción:</option>
                             {Roles.map((d) => {
                                 return (<option key={d.key}>{d.text}</option>)
                             })}
-                        </Select>
-                    </ContentElemen>
-                    <ContentElemen>
-                        <Boton>GUARDAR</Boton>
-                    </ContentElemen>
+                        </SelectUser>
+                    </ContentElemenUser>
+                    <ContentElemenUser>
+                        <BotonGuardar>GUARDAR</BotonGuardar>
+                    </ContentElemenUser>
                 </Formulario>
-                <ContentElemen>
-                    <Boton onClick={ExportarXls}>Exportar</Boton>
-                </ContentElemen>
-            </Contenedor>
+                <ContentElemenUser>
+                    <BotonGuardar onClick={ExportarXls}>Exportar</BotonGuardar>
+                </ContentElemenUser>
+            </ContenedorUser>
             <Alerta
                 tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
@@ -285,57 +288,5 @@ export const RegistroUsuarios = () => {
     )
 }
 
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const ContenedorFormulario = styled.div`
-
-`
-const ContentElemen = styled.div`   
-    display: flex;
-    padding: 10px;
-    font-size: 15px;
-    text-align: center;
-    align-items: center;    
-`
-const Contenedor = styled.div`
-    width: 700px;
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-    font-size: 15px;
-`
-const Formulario = styled.form`    
-        
-`
-const Input = styled.input`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-    width: 100%;
-`
-const Label = styled.label`
-        font-size: 15px;
-        padding: 5px;
-`
-const Boton = styled.button`
-    background-color: #83d394;
-    color: #ffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    margin-top: 5px;
-    margin-left: 20px;
-    font-size: 15px;
-    &:hover{
-        background-color: #83d310;
-    }
-`
-const Select = styled.select`
-    border: 2px solid #d1d1d1;
-    border-radius: 10px;
-    padding: 5px;
-    width: 100%;
-`
+const ContenedorFormulario = styled.div``
+export default RegistroUsuarios;

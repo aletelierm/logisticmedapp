@@ -5,6 +5,9 @@ import Alerta from '../components/Alertas';
 import useObtenerProveedor from '../hooks/useObtenerProveedor';
 import EditarProveedor from '../firebase/EditarProveedorDb';
 import { auth } from '../firebase/firebaseConfig';
+import {Contenedor, Titulo, InputUpdate, BotonGuardar} from '../elementos/General'
+import {ContentElemen, Formulario, Label} from '../elementos/CrearEquipos'
+
 
 const ActualizaProveedor = () => {
 
@@ -151,22 +154,22 @@ const ActualizaProveedor = () => {
 
     return (
         <ContenedorCliente>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Actuliaza Proveedor</Titulo>
-            </ContenedorFormulario>
+            </Contenedor>
 
-            <ContenedorFormulario>
+            <Contenedor>
                 <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemen>
                         <Label>Rut</Label>
-                        <Input
+                        <InputUpdate
                             type='text'
                             name='rut'
                             value={rut}
                             disabled
                         />
                         <Label>Nombre</Label>
-                        <Input
+                        <InputUpdate
                             type='text'
                             name='entidad'
                             placeholder='Modifica Nombre'
@@ -174,7 +177,7 @@ const ActualizaProveedor = () => {
                             onChange={handleChange}
                         />
                         <Label >Dirección</Label>
-                        <Input
+                        <InputUpdate
                             type='text'
                             name='direccion'
                             placeholder='Modifica Dirección'
@@ -184,7 +187,7 @@ const ActualizaProveedor = () => {
                     </ContentElemen>
                     <ContentElemen>
                         <Label >Telefono</Label>
-                        <Input
+                        <InputUpdate
                             type='number'
                             name='telefono'
                             placeholder='Modifica Telefono'
@@ -192,7 +195,7 @@ const ActualizaProveedor = () => {
                             onChange={handleChange}
                         />
                         <Label>Email</Label>
-                        <Input
+                        <InputUpdate
                             type='email'
                             name='correo'
                             placeholder='Modifica Correo'
@@ -201,7 +204,7 @@ const ActualizaProveedor = () => {
 
                         />
                         <Label>Nombre Contacto</Label>
-                        <Input
+                        <InputUpdate
                             type='text'
                             name='contacto'
                             placeholder='Modifica Nombre Contacto'
@@ -213,7 +216,7 @@ const ActualizaProveedor = () => {
                     <BotonGuardar >Actualizar</BotonGuardar>
                     <BotonGuardar onClick={volver}>Volver</BotonGuardar>
                 </Formulario>
-            </ContenedorFormulario>
+            </Contenedor>
             <Alerta
                 tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
@@ -227,51 +230,4 @@ const ActualizaProveedor = () => {
 
 export default ActualizaProveedor;
 
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-
 const ContenedorCliente = styled.div``
-
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-    
-`
-const ContentElemen = styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-`
-const Formulario = styled.form``
-
-const Input = styled.input`
-    border: 2px solid #d1d1d1;
-    border-radius: 6px;
-    padding: 5px;
-    transition: all.3s ease all;
-    &:focus{
-        border: 3px solid #83d394;
-    }
-`
-
-const Label = styled.label`
-    padding: 5px;
-    font-size: 20px;
-`
-const BotonGuardar = styled.button`
-    cursor: pointer;
-    background-color: #83d394;
-    color: #ffffff;
-    border-radius: 5px;
-    border: none;
-    margin: 0px 10px;
-    padding: 5px 10px;
-
-    &:hover{
-        background-color: #83d310;
-        }
-`

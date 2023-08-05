@@ -1,5 +1,4 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import styled from 'styled-components';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
 import AgregarEmpresaDb from '../firebase/AgregarEmpresaDb';
@@ -12,6 +11,8 @@ import { BiAddToQueue } from "react-icons/bi";
 import { Link } from 'react-router-dom';
 import { FaRegEdit } from "react-icons/fa";
 import validarRut from '../funciones/validarRut';
+import {ContenedorProveedor, Contenedor, ListarProveedor, FormularioAdd, Titulo, Boton} from '../elementos/General'
+import {ContentElemenEmp, InputEmp} from '../elementos/Configuracion'
 
 const AgregarEmpresa = () => {
     /* const navigate = useNavigate(); */
@@ -145,13 +146,13 @@ const AgregarEmpresa = () => {
 
     return (
         <ContenedorProveedor>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Registrar Empresas</Titulo>
-            </ContenedorFormulario>
+            </Contenedor>
 
-            <ContenedorFormulario>
-                <Formulario onSubmit={handleSubmit}>
-                    <Input
+            <Contenedor>
+                <FormularioAdd onSubmit={handleSubmit}>
+                    <InputEmp
                             style={{ width: '80%' }}
                             maxLength='10'
                             type='text'
@@ -161,7 +162,7 @@ const AgregarEmpresa = () => {
                             onChange = { handleChange }
                             /* onKeyDown={detectar} */
                         />
-                    <Input
+                    <InputEmp
                         style={{ width: '80%' }}
                         type='text'
                         placeholder='Ingrese Empresa'
@@ -170,27 +171,27 @@ const AgregarEmpresa = () => {
                         onChange={handleChange}
                     />
                     <Boton>
-                        <BiAddToQueue style={{ fontSize: '32px', color: 'green' }} />
+                        <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
                     </Boton>
-                </Formulario>
-            </ContenedorFormulario>
+                </FormularioAdd>
+            </Contenedor>
 
             <ListarProveedor>
-                <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: 'green' }} /></Boton>
+                <ContentElemenEmp>
+                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                     <Titulo>Listado de Empresas</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: 'green' }} /></Boton>
-                </ContentElemen>
+                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                </ContentElemenEmp>
 
-                <ContentElemen>
-                    <FaIcons.FaSearch style={{ fontSize: '30px', color: 'green', padding: '5px' }} />
-                    <Input style={{ width: '100%' }}
+                <ContentElemenEmp>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
+                    <InputEmp style={{ width: '100%' }}
                         type='text'
                         placeholder='Buscar Empresa'
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                </ContentElemen>
+                </ContentElemenEmp>
 
                 <Table singleLine>
                     <Table.Header>
@@ -214,7 +215,7 @@ const AgregarEmpresa = () => {
                                     <Table.Cell>{item.empresa}</Table.Cell>
                                     <Table.Cell>{item.userAdd}</Table.Cell>
                                     <Table.Cell>{item.userMod}</Table.Cell>
-                                    <Table.Cell><Link to={`/configuracion/actualizaempresa/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: 'green' }} /></Link></Table.Cell>
+                                    <Table.Cell><Link to={`/configuracion/actualizaempresa/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} /></Link></Table.Cell>
                                 </Table.Row>
                                     )
                         })}
@@ -231,52 +232,4 @@ const AgregarEmpresa = () => {
     );
 };
 
-const Titulo = styled.h2`
-    color:  #83d394;
-`
-const ContenedorProveedor = styled.div``
-
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-`
-const ContentElemen = styled.div`
-    display: flex;
-    text-align: center;
-    padding: 7px;
-    margin-right: 30px;
-    align-items: center;
-    justify-content: space-between;
-    `
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-`
-const Formulario = styled.form`
-    display: flex;
-    padding: 0px;
-    text-align: center;
-    align-items: center;
-    justify-content: space-between;
-`
-const Input = styled.input`
-    border: 2px solid  green;
-    border-radius: 10px;
-    padding: 5px;
-    margin-left: 5%;
-`
-const Boton = styled.button`    
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    margin: 0 10px;
-    cursor: pointer;
-`
 export default AgregarEmpresa;

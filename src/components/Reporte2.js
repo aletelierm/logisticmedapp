@@ -9,6 +9,8 @@ import { UserContext } from '../context/UserContext';
 import moment from 'moment';
 import ExportarExcel from '../funciones/ExportarExcel';
 import * as FaIcons from 'react-icons/fa';
+import {Contenedor, ListarProveedor, Titulo} from '../elementos/General'
+import {ContentElemenMov} from '../elementos/CrearEquipos'
 
 const Reporte2 = () => {
 
@@ -53,14 +55,14 @@ const Reporte2 = () => {
 
     return (
        <ContenedorReporte>
-            <ContenedorFormulario>
+            <Contenedor>
                 <Titulo>Estados de los Equipos</Titulo>
-            </ContenedorFormulario>
+            </Contenedor>
             <ListarProveedor>
-                <ContentElemen>                    
+                <ContentElemenMov>                    
                     <Titulo>Listado de Dispositivos Médicos</Titulo>   
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: 'green', marginLeft: '20px' }} title='Exportar Status a Excel' />                 
-                </ContentElemen>
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', marginTop: '7px' }} title='Exportar Status a Excel' />                 
+                </ContentElemenMov>
                               
                 
                 <Table singleLine>
@@ -102,28 +104,3 @@ const Reporte2 = () => {
 
 export default Reporte2;
 const ContenedorReporte = styled.div``
-
-const ContenedorFormulario = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-`
-const ContentElemen = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    padding: 5px 10px;
-`
-
-const Titulo = styled.h2`
-    color:  #83d394;
- background: none;
-`
-const ListarProveedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
-    border: 2px solid #d1d1d1;
-    border-radius: 20px;
-    box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-    `

@@ -1,6 +1,14 @@
 import styled from 'styled-components';
 
-const ContenedorProveedor = styled.div``
+const ContenedorProveedor = styled.div`
+    /* Media query para pantallas aún más pequeñas */
+    @media screen and (max-width: 576px) {
+        margin-left: 40px;
+        padding: 0px 20px;
+        alignItems: center;
+        width: 100%;
+    }
+`
 
 const Contenedor = styled.div`
     margin-top: 20px;
@@ -48,10 +56,16 @@ const ListarProveedor = styled.div`
 const Titulo = styled.h2`
     // color:  #83d394;
     color:  #328AC4;
+
+    /* Media query para pantallas aún más pequeñas */
+    @media screen and (max-width: 576px) {
+        font-size: 1.2rem ;
+    }
 `
 
 const InputAdd = styled.input`
-    border: 2px solid #d1d1d1;
+    // border: 2px solid #d1d1d1;
+    border: 2px solid #328AC4;
     border-radius: 10px;
     padding: 5px 30px;
     font-size: 16px;

@@ -11,6 +11,14 @@ const ContentElemen = styled.div`
     padding: 20px;
 `
 
+const ContentElemenUser = styled.div`   
+    display: flex;
+    padding: 10px;
+    font-size: 15px;
+    text-align: center;
+    align-items: center;    
+`
+
 const ContentElemenMov = styled.div`
     display: flex;
     justify-content: space-evenly;
@@ -55,4 +63,4 @@ const Contenido = styled.div`
 `
 
 
-export {ContenedorCliente, ContentElemen, ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, Contenido};
+export {ContenedorCliente, ContentElemen, ContentElemenUser, ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, Contenido};

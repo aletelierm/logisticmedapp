@@ -1,6 +1,5 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import EntradasDB from '../firebase/EntradasDB'
 import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
@@ -561,7 +560,7 @@ const Entradas = () => {
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
                         <BotonGuardar
-                            style={{ margin: '17px 0' }}
+                            style={{ margin: '35px 0' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
                             onChange={handleCheckboxChange}
