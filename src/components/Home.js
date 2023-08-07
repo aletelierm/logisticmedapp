@@ -33,6 +33,7 @@ import Reporte1 from './Reporte1';
 import Reporte2 from './Reporte2';
 import { Reportes } from './Reportes';
 import Confirmados from './Confirmados';
+import UsuariosEnvios from './UsuariosAlertas';
 
 export const Home = () => { 
   
@@ -72,6 +73,7 @@ export const Home = () => {
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
             <Route path="configuracion/actualizaempresa/:id" element={<ActualizaEmpresa/>}/>
+            <Route path="configuracion/envios" element={<UsuariosEnvios/>}/>
             <Route path="confirmados" element={<Confirmados/>}/>
             <Route path="/" element={<Navigate to="/login"/>}/>
     </Routes>    

@@ -165,12 +165,12 @@ export const DataMenu = [
         title: 'Registrar Empresa',
         path: 'configuracion/agregarempresa',
         icon: <FaIcons.FaDeezer />
-      }/* ,
+      },
       {
-        title: 'Parametro Global',
-        path: 'configuracion/global',
-        icon: <RiIcons.RiGlobalLine />
-      } */
+        title: 'Usuarios y Envios',
+        path: 'configuracion/envios',
+        icon: <MdIcons.MdEmail />
+      } 
     ]
   }
 
