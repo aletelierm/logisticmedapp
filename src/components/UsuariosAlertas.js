@@ -153,6 +153,7 @@ export const UsuariosEnvios = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Correo</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Apellido</Table.HeaderCell>
                             <Table.HeaderCell>Empresa</Table.HeaderCell>
@@ -168,6 +169,7 @@ export const UsuariosEnvios = () => {
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.correo}</Table.Cell>
                                         <Table.Cell>{item.nombre}</Table.Cell>
                                         <Table.Cell>{item.apellido}</Table.Cell>
                                         <Table.Cell>{item.empresa}</Table.Cell>

@@ -134,6 +134,7 @@ export const RegistroUsuarios = () => {
                         apellido: apellido,
                         empresa: nomEmpresa,
                         emp_id: id_emp,
+                        correo: correo,
                         rol: rol,
                         user_add: useradd,
                         user_mod: usermod,
