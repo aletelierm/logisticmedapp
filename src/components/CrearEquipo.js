@@ -166,7 +166,7 @@ const CrearEquipos = () => {
             const nuevoFiltro = equipo.filter(eq => eq.modelo.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
 
-        } else if (categoria === 'N° Serie') {
+        } else if (categoria === 'N°Serie') {
             const nuevoFiltro = equipo.filter(eq => eq.serie.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
         }
@@ -190,7 +190,7 @@ const CrearEquipos = () => {
             if (equipo.filter(eq => eq.modelo.includes(buscador)).length > pagina + 5)
                 setPagina(pagina + 5);
 
-        } else if (categoria === 'N° Serie') {
+        } else if (categoria === 'N°Serie') {
             if (equipo.filter(eq => eq.serie.includes(buscador)).length > pagina + 5)
             setPagina(pagina + 5);
         }
@@ -436,7 +436,7 @@ const CrearEquipos = () => {
                         <option>Tipo</option>
                         <option>Marca</option>
                         <option>Modelo</option>
-                        <option>N° Serie</option>
+                        <option>N°Serie</option>
                     </Select>
                 </ContentElemenSelect>
 
