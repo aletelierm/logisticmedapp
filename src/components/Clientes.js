@@ -331,7 +331,7 @@ const Clientes = () => {
                         />
                         <Label>Responsable financiero?</Label>
                         <Input
-                            style={{ width: "3%", color: "green" }}
+                            style={{ width: "3%", color: "#328AC4" }}
                             type="checkbox"
                             checked={checked}
                             onChange={handleChek}

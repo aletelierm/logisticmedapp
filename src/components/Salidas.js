@@ -287,6 +287,7 @@ const Salidas = () => {
                             fechaMod: fechaMod,
                             // tipMov: 2,
                             confirmado: false,
+                            entregado: false
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -332,7 +333,8 @@ const Salidas = () => {
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
                             // tipMov: 2,
-                            confirmado: false
+                            confirmado: false,
+                            entregado: false
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -696,7 +698,7 @@ const Salidas = () => {
                                             setBtnAgregar(false)
                                             setConfirmar(true);
                                             setFlag(!flag)
-                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
+                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                     </Table.Row>
                                 )
                             }

@@ -134,11 +134,11 @@ export const UsuariosEnvios = () => {
                 </Formulario>
             </Contenedor>
             <ListarProveedor>
-                <ContentElemen>
+                
                     {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado Usuarios y Alertas</Titulo>
                     {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
-                </ContentElemen>
+                
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}

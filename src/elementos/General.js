@@ -3,10 +3,11 @@ import styled from 'styled-components';
 const ContenedorProveedor = styled.div`
     /* Media query para pantallas aún más pequeñas */
     @media screen and (max-width: 576px) {
-        margin-left: 40px;
-        padding: 0px 20px;
+        // margin-left: 140px;
+        // margin-rigth: 40px;
+        margin: auto;
         alignItems: center;
-        width: 100%;
+        width: auto;
     }
 `
 
@@ -16,6 +17,12 @@ const Contenedor = styled.div`
     border: 2px solid #d1d1d1;
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+
+    /* Media query para pantallas aún más pequeñas */
+    @media screen and (max-width: 576px) {
+        alignItems: center;
+        width: auto;
+    }
 `
 
 const ContenedorElementos = styled.div`
@@ -51,6 +58,12 @@ const ListarProveedor = styled.div`
     border: 2px solid #d1d1d1;
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
+
+    /* Media query para pantallas aún más pequeñas */
+    @media screen and (max-width: 576px) {
+        alignItems: center;
+        width: auto;
+    }
 `
 
 const Titulo = styled.h2`
@@ -78,7 +91,7 @@ const InputAdd = styled.input`
 `
 
 const InputUpdate = styled.input`
-    border: 2px solid #d1d1d1;
+    border: 2px solid #328AC4;
     border-radius: 6px;
     padding: 5px;
     transition: all.3s ease all;

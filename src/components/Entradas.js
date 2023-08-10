@@ -665,7 +665,7 @@ const Entradas = () => {
                                             setBtnAgregar(false)
                                             setConfirmar(true);
                                             setFlag(!flag)
-                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: 'green' }} /></Table.Cell>
+                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
 
                                     </Table.Row>
                                 )

@@ -38,7 +38,7 @@ const ListarEquipos = styled.div`
 `
 
 const Select = styled.select`
-    border: 2px solid #d1d1d1;
+    border: 2px solid #328AC4;
     border-radius: 10px;
     padding: 5px;
     width: 200px;
@@ -47,7 +47,7 @@ const Select = styled.select`
 const Formulario = styled.form``
 
 const Input = styled.input`
-    border: 2px solid #d1d1d1;
+    border: 2px solid #328AC4;
     border-radius: 10px;
     padding: 5px;
 `

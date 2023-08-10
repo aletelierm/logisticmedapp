@@ -28,7 +28,7 @@ const ContentElemenEmp = styled.div`
 `
 
 const InputUser = styled.input`
-    border: 2px solid #d1d1d1;
+    border: 2px solid #328AC4;
     border-radius: 10px;
     padding: 5px;
     width: 100%;
@@ -47,7 +47,7 @@ const LabelUser = styled.label`
 `
 
 const SelectUser = styled.select`
-    border: 2px solid #d1d1d1;
+    border: 2px solid #328AC4;
     border-radius: 10px;
     padding: 5px;
     width: 100%;
