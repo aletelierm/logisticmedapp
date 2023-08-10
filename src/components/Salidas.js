@@ -285,7 +285,7 @@ const Salidas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            // tipMov: 2,
+                            tipMov: 2,
                             confirmado: false,
                             entregado: false
                         })
@@ -332,7 +332,7 @@ const Salidas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            // tipMov: 2,
+                            tipMov: 2,
                             confirmado: false,
                             entregado: false
                         })

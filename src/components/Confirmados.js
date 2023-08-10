@@ -25,7 +25,7 @@ const Confirmados = () => {
     const [cabecera, setCabecera] = useState([]);
     const [status, setStatus] = useState([]);
     const [dataSalida, setDataSalida] = useState([]);
-    // const [flag, setFlag] = useState(false);
+    const [flag, setFlag] = useState(false);
     const [cab_id, setCab_id] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [isChecked, setIsChecked] = useState([]);
@@ -46,7 +46,7 @@ const Confirmados = () => {
         const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false})))
-        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
+        // setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
         console.log('Is Checked', isChecked)
     }
     //Lectura de status
@@ -70,7 +70,6 @@ const Confirmados = () => {
                 item.id === itemId ? { ...item, checked: !item.checked } : item 
             )
         );
-        
     };
 
 
@@ -82,6 +81,11 @@ const Confirmados = () => {
         getCabecera();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag, setFlag])
 
 
     return (
@@ -118,6 +122,7 @@ const Confirmados = () => {
                                         <Table.Cell onClick={() => {
                                             setCab_id(item.id)
                                             setIsOpen(!isOpen)
+                                            setFlag(!flag)
                                         }} >
                                             <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
                                         </Table.Cell>

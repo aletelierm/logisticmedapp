@@ -262,7 +262,7 @@ const Entradas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            // tipMov: 1,
+                            tipMov: 1,
                             confirmado: false
                         })
                         cambiarEstadoAlerta(true);
@@ -306,7 +306,7 @@ const Entradas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            // tipMov: 1,
+                            tipMov: 1,
                             confirmado: false
                         })
                         cambiarEstadoAlerta(true);
