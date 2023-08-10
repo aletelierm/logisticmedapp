@@ -163,7 +163,7 @@ const Confirmados = () => {
                                             />
                                         </Table.Cell>
                                         <Table.Cell>
-                                        {/* {isChecked ? 
+                                        {item.checked === true ? 
                                             <Input
                                                 disabled
                                                 type='text'
@@ -178,7 +178,7 @@ const Confirmados = () => {
                                                 // value={obs}
                                                 // onChange={ev => setObs(ev.target.value)}
                                             />
-                                        } */}
+                                        }
                                         </Table.Cell>
                                     </Table.Row>
                                 )
