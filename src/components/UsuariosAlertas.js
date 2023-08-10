@@ -2,76 +2,194 @@ import React, { useEffect, useState } from 'react';
 import Alerta from './Alertas'
 import { db, auth } from './../firebase/firebaseConfig';
 import { collection, getDocs} from 'firebase/firestore';
+import AgregarAlertas from '../firebase/AgregarUsuariosAlertas';
 import { Table } from 'semantic-ui-react';
 import * as FaIcons from 'react-icons/fa';
 import { FaRegEdit } from "react-icons/fa";
-/* import * as MdIcons from 'react-icons/md'; */
 import ExportarExcel from '../funciones/ExportarExcel';
 import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General'
 import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
-/* import { BiAddToQueue } from "react-icons/bi";
- */
+import Swal from 'sweetalert2';
+
 export const UsuariosEnvios = () => {
     let fechaactual = new Date();
     const userAuth = auth.currentUser.email;
-    const useradd = userAuth;
-    const usermod = userAuth;
+    const useraddmod = userAuth;
+   /*  const { users } = useContext(UserContext); */
 
     const [correo, setCorreo] = useState('');
     const [ isCheckedSalida, setIsCheckedSalida] = useState(false);
     const [ isCheckedRfid, setIsCheckedRfid] = useState(false);
-    const [ isCheckedConfirma, setIsCheckedConfirma] = useState(false);
+    const [ isCheckedConfirma, setIsCheckedConfirma] = useState(false);    
     const [nombre, setNombre] = useState('');
-    const [apellido, setApellido] = useState('');
-    const [empresa, setEmpresa] = useState([]);
+    const [apellido, setApellido] = useState('');   
+    const [entidad, setEntidad] = useState('');
+    const [epmId, setEmpId] = useState('');
     const [usuarios, setUsuarios] = useState([]);
-       const [alerta, cambiarAlerta] = useState({});
+    const [usuarioAlert, setUsuarioAlert] = useState([]);
+    const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    //Lee datos de las empresas
-    const getEmpresa = async () => {
-        const dataEmpresa = await getDocs(collection(db, "empresas"));
-        setEmpresa(dataEmpresa.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
-    }
+  
     //Lee datos de los usuarios
     const getUsuarios = async () => {
         const dataUsuarios = await getDocs(collection(db, "usuarios"));
         setUsuarios(dataUsuarios.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
     }
+     //Lee datos de usuario y alertas
+     const getUsuarioAlert = async () => {
+        const dataAlert = await getDocs(collection(db, "usuariosalertas"));
+        setUsuarioAlert(dataAlert.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
+     }
 
-    useEffect(() => {
-        getEmpresa();
+    useEffect(() => {        
         getUsuarios();
+        getUsuarioAlert();
     }, [])
+
     //Lee input de formulario
     const handleChange = (e) => {
         switch (e.target.name) {
             case 'email':
                 setCorreo(e.target.value);
-                break;           
-            case 'nombre':
-                setNombre(e.target.value);
-                break;
-            case 'apellido':
-                setApellido(e.target.value);
                 break;
             default:
                 break;
         }
+      
+    }
+
+    const handleCheck = (ev, checkboxNumber) =>{
+        const isChecked = ev.target.checked;
+        switch (checkboxNumber){
+            case 1:
+                setIsCheckedSalida(isChecked);
+                break;
+            case 2:
+                setIsCheckedRfid(isChecked);
+                break;
+            case 3:
+                setIsCheckedConfirma(isChecked);
+                break;
+                default:
+                break;
+        }
+      
 
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        const existeCorreo = usuarios.filter(corr => corr.correo === correo);
+        const existeEnAlerta = usuarioAlert.filter(existe => existe.correo === correo);
+      
+
+        if(correo === ''){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({                
+                tipo: 'error',
+                mensaje: 'Campo Correo no puede estar vacio'
+            })
+        }else if (existeCorreo.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No existe usuario con ese correo'
+            })
+         }else if(existeEnAlerta.length > 0){
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya esta creado este usuarios y sus alertas...'
+                })
+                setCorreo('');
+                setNombre('');
+                setApellido('');
+                setEntidad('');
+            }else{
+                setCorreo(existeCorreo[0].correo);
+                setNombre(existeCorreo[0].nombre);
+                setApellido(existeCorreo[0].apellido);
+                setEntidad(existeCorreo[0].empresa)
+                setEmpId(existeCorreo[0].emp_id)
+                try {
+                    AgregarAlertas({
+                        userAdd: useraddmod,
+                        userMod: useraddmod, 
+                        fechaAdd: fechaactual,
+                        fechaMod: fechaactual,
+                        emp_id: epmId,
+                        empresa: entidad,
+                        nombre: nombre +" "+apellido,
+                        correo: correo,
+                        salida:isCheckedSalida,
+                        rfid: isCheckedRfid,
+                        confirma: isCheckedConfirma
+                    })
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({                
+                        tipo: 'exito',
+                        mensaje: 'Alertas asignadas correctamente'
+                    })                    
+                    setCorreo('');
+                    setNombre('');
+                    setApellido('');
+                    setEntidad('');
+                    } catch (error) {
+                            Swal.fire('Se ha producido un error grave. Llame al Administrador',error); 
+                    }
+                }   
         
     }
+
+    const detectarCorreo  = (e)=>{
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        const existeCorreo = usuarios.filter(corr => corr.correo === correo);
+        const existeEnAlerta = usuarioAlert.filter(existe => existe.correo === correo);
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            if(correo===''){
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Campo Correo no puede estar vacío'
+                })
+            }else if (existeCorreo.length === 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe usuario con ese correo'
+                })
+            }else if(existeEnAlerta.length > 0){               
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya esta creado este usuarios y sus alertas...'
+                })
+                setCorreo('');
+                setNombre('');
+                setApellido('');
+                setEntidad('');
+            }else {
+                setCorreo(existeCorreo[0].correo);
+                setNombre(existeCorreo[0].nombre);
+                setApellido(existeCorreo[0].apellido);
+                setEntidad(existeCorreo[0].empresa)
+                setEmpId(existeCorreo[0].emp_id)
+             
+               
+            }
+        }
+    }
+
+    
 
     //Exportar a excel los equipos
     const ExportarXls = () => {
         //Campos a mostrar en el excel   
-        const columnsToShow = ['empresa', 'nombre', 'apellido', 'correo', 'rol']
-        //Llamar a la funcion con props: array equipo y array columnas
-        const excelBlob = ExportarExcel(usuarios, columnsToShow);
+        const columnsToShow = ['empresa', 'nombre', 'correo', 'salida','rfid','confirma']
+        //Llamar a la funcion con props: array usuariosalertas y array columnas
+        const excelBlob = ExportarExcel(usuarioAlert, columnsToShow);
         // Crear un objeto URL para el Blob y crear un enlace de descarga
         const excelURL = URL.createObjectURL(excelBlob);
         const downloadLink = document.createElement('a');
@@ -89,49 +207,59 @@ export const UsuariosEnvios = () => {
                 <Formulario action='' >
                     <ContentElemen>
                         <Label>Email</Label>
-                        <Input
-                          
+                        <Input                          
                             type='email'
                             name='email'
                             placeholder='Ingrese Email'
                             value={correo}
                             onChange={handleChange}
-                        /* onKeyDown={detectar} */
+                            onKeyDown={detectarCorreo}                     
                         />
                         <Label>Nombre</Label>
-                       
-                        <Label >Apellido</Label>
-                        
+                        <Input 
+                            type='nombre'
+                            name='nombre'
+                            value={nombre + " " + apellido}
+                            disabled                           
+                        />
+                        <Label>Empresa</Label>
+                        <Input 
+                            type='empresa'
+                            name='empresa'
+                            value={entidad}
+                            disabled                          
+                        />
                     </ContentElemen>
                     <ContentElemen>
                         <Label >Salidas</Label>
                         <Input
+                            style={{width:"3%"}}
                             type='checkbox'
-                            name='salida'                          
-                            value='salidas'
-                            onChange={handleChange}
+                            name='salida'                                                 
+                            onChange={(ev) => handleCheck(ev, 1)}
                             checked={isCheckedSalida}
                         />
                         <Label>Rfid</Label>
                         <Input
+                            style={{width:"3%"}}
                             type='checkbox'
                             name='rfid'                          
-                            value='rfid'
-                            onChange={handleChange}
+                            onChange={(ev) => handleCheck(ev, 2)}
                             checked={isCheckedRfid}
 
                         />
                         <Label>Confirmacion</Label>
                         <Input
+                            style={{width:"3%"}}
                             type='checkbox'
                             name='confirma'                          
-                            value='confirma'
-                            onChange={handleChange}
+                            onChange={(ev) => handleCheck(ev, 3)}
                             checked={isCheckedConfirma}
                         />
                     </ContentElemen>
-                    <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
+                    
                 </Formulario>
+                <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
             </Contenedor>
             <ListarProveedor>
                 
@@ -155,7 +283,6 @@ export const UsuariosEnvios = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Correo</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
-                            <Table.HeaderCell>Apellido</Table.HeaderCell>
                             <Table.HeaderCell>Empresa</Table.HeaderCell>
                             <Table.HeaderCell>Salidas</Table.HeaderCell>
                             <Table.HeaderCell>Rfid</Table.HeaderCell>
@@ -165,28 +292,28 @@ export const UsuariosEnvios = () => {
                     </Table.Header>
                     <Table.Body>
                         {
-                            usuarios.map((item, index) => {
+                            usuarioAlert.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell>{item.id2}</Table.Cell>
                                         <Table.Cell>{item.correo}</Table.Cell>
-                                        <Table.Cell>{item.nombre}</Table.Cell>
-                                        <Table.Cell>{item.apellido}</Table.Cell>
+                                        <Table.Cell>{item.nombre}</Table.Cell>                                       
                                         <Table.Cell>{item.empresa}</Table.Cell>
-                                        <Table.Cell>Salidas</Table.Cell>
-                                        <Table.Cell>Rfid</Table.Cell>
-                                        <Table.Cell>Confirma</Table.Cell>                                       
+                                        <Table.Cell><input type='checkbox' checked={item.salida} disabled/></Table.Cell>
+                                        <Table.Cell><Input type='checkbox' checked={item.rfid} disabled/></Table.Cell>
+                                        <Table.Cell><Input type='checkbox' checked={item.confirma} disabled/></Table.Cell>                                                                          
                                         <Table.Cell style={{textAlign: 'center'}}>
                                         <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }}/>
                                             {/* <Link to={`/actualizaproveedor/${item.id}`}>
                                                 <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />
                                             </Link> */}
-                                        </Table.Cell>
+                                        </Table.Cell>           
                                     </Table.Row>
 
                                 )
                             })
                         }
+                        
                     </Table.Body>
                 </Table>
             </ListarProveedor>
