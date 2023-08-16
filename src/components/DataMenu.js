@@ -88,13 +88,13 @@ export const DataMenu = [
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
   },
-  {
+  /* {
     title: 'Pruebas',
     path: 'pruebas',
     icon: <AiIcons.AiFillHome />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
-  },
+  }, */
   {
     title: 'Reportes',
     path: 'reportes',

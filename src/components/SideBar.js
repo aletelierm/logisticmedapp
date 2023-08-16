@@ -3,6 +3,7 @@ import { FaBars } from 'react-icons/fa'
 import { DataMenu } from './DataMenu'
 import { DataMenuAdmin } from './DataMenuAdmin';
 import { DataMenuSup } from './DataMenuSup';
+import { DataMenuTransp} from './DataMenuTransp';
 import SubMenu from './SubMenu';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -17,6 +18,7 @@ const SideBar = ({ children }) => {
                 if(users.rol==='DADMIN') setMenu(DataMenu)
                 if(users.rol==='ADMIN') setMenu(DataMenuAdmin)
                 if(users.rol==='SUPERVISOR') setMenu(DataMenuSup)
+                if(users.rol==='TRANSPORTE') setMenu(DataMenuTransp)
                 
     },[users])
     return (

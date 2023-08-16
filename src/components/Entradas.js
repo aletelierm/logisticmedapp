@@ -402,7 +402,7 @@ const Entradas = () => {
                         userMod: user.email,
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
-                        // tipMov: 1,
+                        tipMov: 1,
                         status: 'BODEGA'
                     });
                     setPrice('')
@@ -651,13 +651,13 @@ const Entradas = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.date}</Table.Cell>
-                                        <Table.Cell>{item.tipoin}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell onClick={() => {
                                             setNumDoc(item.numdoc);
                                             setNomTipDoc(item.tipdoc);
-                                            setNomTipoIn(item.tipoin);
+                                            setNomTipoIn(item.tipoinout);
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
                                             setDate(item.date);

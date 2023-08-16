@@ -420,7 +420,7 @@ const Salidas = () => {
                         userMod: user.email,
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
-                        // tipMov: 2,
+                        tipMov: 2,
                         status: nomTipoOut
                     });
                     // setPrice('')
@@ -682,13 +682,13 @@ const Salidas = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.date}</Table.Cell>
-                                        <Table.Cell>{item.tipoout}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell onClick={() => {
                                             setNumDoc(item.numdoc);
                                             setNomTipDoc(item.tipdoc);
-                                            setNomTipoOut(item.tipoout);
+                                            setNomTipoOut(item.tipoinout);
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
                                             setDate(item.date);
