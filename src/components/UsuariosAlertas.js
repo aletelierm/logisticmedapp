@@ -299,9 +299,9 @@ export const UsuariosEnvios = () => {
                                         <Table.Cell>{item.correo}</Table.Cell>
                                         <Table.Cell>{item.nombre}</Table.Cell>                                       
                                         <Table.Cell>{item.empresa}</Table.Cell>
-                                        <Table.Cell><input type='checkbox' checked={item.salida} disabled/></Table.Cell>
-                                        <Table.Cell><Input type='checkbox' checked={item.rfid} disabled/></Table.Cell>
-                                        <Table.Cell><Input type='checkbox' checked={item.confirma} disabled/></Table.Cell>                                                                          
+                                        <Table.Cell><Input type='checkbox' checked={item.salida} disabled style={{width:'100%'}}/></Table.Cell>
+                                        <Table.Cell><Input type='checkbox' checked={item.rfid} disabled style={{width:'100%'}}/></Table.Cell>
+                                        <Table.Cell><Input type='checkbox' checked={item.confirma} disabled style={{width:'100%'}}/></Table.Cell>                                                                          
                                         <Table.Cell style={{textAlign: 'center'}}>
                                         <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }}/>
                                             {/* <Link to={`/actualizaproveedor/${item.id}`}>
