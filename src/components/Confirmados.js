@@ -9,7 +9,8 @@ import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General'
-import { Input } from '../elementos/CrearEquipos'
+import { Formulario, Input } from '../elementos/CrearEquipos'
+
 
 
 
@@ -29,8 +30,9 @@ const Confirmados = () => {
     const [cab_id, setCab_id] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [isChecked, setIsChecked] = useState([]);
-    const [ver, setVer] = useState([]);
-    // const [obs, setObs] = useState(false);
+    // const [ver, setVer] = useState([]);
+    const [obs, setObs] = useState([]);
+    // const [writeObs, setWriteObs] = useState('');
 
     // Lectura cabecera de documentos
     const getCabecera = async () => {
@@ -45,9 +47,7 @@ const Confirmados = () => {
         const traerSalida = collection(db, 'salidas');
         const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false})))
-        // setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
-        console.log('Is Checked', isChecked)
+        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false, observacion: '' })))
     }
     //Lectura de status
     const getStatus = async () => {
@@ -56,148 +56,222 @@ const Confirmados = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    // encontrars items que conincidan con cabecera
-    // const mostrar = dataSalida.filter(ds => ds.cab_id === cab_id)
-    // setVer(mostrar)
-    // console.log('mostrar', mostrar)
-
 
     const handleCheckboxChange = (itemId) => {
-        // console.log('mostrar2', mostrar)
-        // console.log('iguaes id', itemId )
         setIsChecked((prevItems) =>
             prevItems.map((item) =>
-                item.id === itemId ? { ...item, checked: !item.checked } : item 
+                item.id === itemId ? { ...item, checked: !item.checked } : item
             )
         );
     };
+    // console.log('IsChecked', isChecked)
+
+    // Guardar campo observaciones
+    const handleChange = (e, item) => {
+        const nuevoIsChecked = isChecked.map((i) => {
+            if (i.id === item.id) {
+                return {...i, observacion: e.target.value};
+            }
+            return i;
+        })
+        setIsChecked(nuevoIsChecked)
+    };
+
+    // console.log('obs', obs)
+
+const confirmaEntrega = (e) => {
+    e.preventDefault();
+    console.log('Valores del formulario:', isChecked);
+    cambiarEstadoAlerta(false);
+    cambiarAlerta({});
+
+    const verdaderos = isChecked.filter(check => check.checked === true);
+    const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
+
+    if (falsos.length > 0) {
+        cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese una Observacion'
+            })
+            return;
+    }
 
 
-    console.log('IsChecked', isChecked)
+    // if (verdaderos.length > 0 || falsos.length > 0) {
+        // console.log('verdaderos', verdaderos)
+        // console.log('falsos', falsos)
+    // }
 
-    useEffect(() => {
-        getStatus();
-        getSalida();
-        getCabecera();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    // if (falsos.length > 0 && observacion === '') {
+    //     cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'Ingrese una Observacion'
+    //         })
+    //         return;
+    // }
 
-    useEffect(() => {
-        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [flag, setFlag])
+    // if (falsos.length > 0) {
+    // console.log('falsos', falsos)
+    // }
+}
+
+// // Función para actualizar varios documentos por lotes
+// const actualizarDocs = async () => {
+//     cambiarEstadoAlerta(false);
+//     cambiarAlerta({});
+//     const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+//     const batch = writeBatch(db);
+//     documento.forEach((docs) => {
+//         const docRef = doc(db, 'status', docs.eq_id);
+//         batch.update(docRef, { status: nomTipoOut, rut: rut, entidad: entidad });
+//     });
+//     try {
+//         await batch.commit();
+
+//         cambiarEstadoAlerta(true);
+//         cambiarAlerta({
+//             tipo: 'exito',
+//             mensaje: 'Documentos actualizados correctamente.'
+//         });
+//         await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
+//             confirmado: true,
+//             usermod: user.email,
+//             fechamod: fechaMod
+//         });
+//         setFlag(!flag)
+//     } catch (error) {
+//         console.error('Error al actualizar documentos:', error);
+//         cambiarEstadoAlerta(true);
+//         cambiarAlerta({
+//             tipo: 'error',
+//             mensaje: 'Error al actualizar documentos:', error
+//         })
+//     }
+// };
+
+useEffect(() => {
+    getStatus();
+    getSalida();
+    getCabecera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [])
+
+useEffect(() => {
+    setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [flag, setFlag])
 
 
-    return (
-        <ContenedorProveedor>
+return (
+    <ContenedorProveedor>
+        <Contenedor>
+            <Titulo>Confirmacion de Entrega</Titulo>
+        </Contenedor>
+
+        <ListarProveedor>
+            <Titulo>Listado de Documentos por Confirmar</Titulo>
+            <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
+                        <Table.HeaderCell>N° Docuemtno</Table.HeaderCell>
+                        <Table.HeaderCell>Fecha</Table.HeaderCell>
+                        <Table.HeaderCell>Entidad</Table.HeaderCell>
+                        <Table.HeaderCell>Rut</Table.HeaderCell>
+                        <Table.HeaderCell>Nombre</Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {porEntregar.map((item, index) => {
+                        if (item.entregado === false && item.confirmado === true) {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{item.date}</Table.Cell>
+                                    <Table.Cell>{item.tipoout}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell onClick={() => {
+                                        setCab_id(item.id)
+                                        setIsOpen(!isOpen)
+                                        setFlag(!flag)
+                                    }} >
+                                        <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
+                                </Table.Row>
+                            )
+                        }
+                    }
+                    )}
+                </Table.Body>
+            </StyledTable>
+        </ListarProveedor >
+
+        {isOpen &&
             <Contenedor>
-                <Titulo>Confirmacion de Entrega</Titulo>
-            </Contenedor>
-
-            <ListarProveedor>
-                <Titulo>Listado de Documentos por Confirmar</Titulo>
-                <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
-                    <Table.Header>
+                <StyledTable striped celled unstackable responsive>
+                    <Table.Header style={{ textAlign: 'center' }}>
                         <Table.Row>
-                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>N° Docuemtno</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Nombre</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Serie</Table.HeaderCell>
+                            <Table.HeaderCell>Entregado</Table.HeaderCell>
+                            <Table.HeaderCell>Observación</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
+
                     <Table.Body>
-                        {porEntregar.map((item, index) => {
-                            if (item.entregado === false && item.confirmado === true) {
-                                return (
-                                    <Table.Row key={item.id}>
-                                        <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{item.date}</Table.Cell>
-                                        <Table.Cell>{item.tipoout}</Table.Cell>
-                                        <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>
-                                        <Table.Cell onClick={() => {
-                                            setCab_id(item.id)
-                                            setIsOpen(!isOpen)
-                                            setFlag(!flag)
-                                        }} >
-                                            <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
-                                        </Table.Cell>
-                                    </Table.Row>
-                                )
-                            }
-                        }
-                        )}
-                    </Table.Body>
-                </StyledTable>
-            </ListarProveedor >
-
-            {isOpen &&
-                <Contenedor>
-                    <StyledTable striped celled unstackable responsive>
-                        <Table.Header style={{ textAlign: 'center' }}>
-                            <Table.Row>
-                                <Table.HeaderCell>N°</Table.HeaderCell>
-                                <Table.HeaderCell>Equipo</Table.HeaderCell>
-                                <Table.HeaderCell>Serie</Table.HeaderCell>
-                                <Table.HeaderCell>Entregado</Table.HeaderCell>
-                                <Table.HeaderCell>Observación</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-
-                        <Table.Body >
-                            {isChecked.map((item, index) => {
-                                return (
-                                    <Table.Row key={item.id}>
-                                        <Table.Cell>{index + 1}</Table.Cell>
-                                        <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
-                                        <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell style={{ textAlign: 'center' }}>
-                                            <Input
-                                                type="checkbox"
-                                                checked={item.checked}
-                                                onChange={() => handleCheckboxChange(item.id)}
-                                            />
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                        {item.checked === true ? 
+                        {isChecked.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
+                                    <Table.Cell>{item.serie}</Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }}>
+                                        <Input
+                                            type="checkbox"
+                                            checked={item.checked}
+                                            onChange={() => handleCheckboxChange(item.id)}
+                                        />
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        {item.checked === true ?
                                             <Input
                                                 disabled
                                                 type='text'
                                                 name='observaciones'
-                                                // value={obs}
-                                                // onChange={ev => setObs(ev.target.value)}
                                             />
-                                            : 
+                                            :
                                             <Input
                                                 type='text'
-                                                name='observaciones'
-                                                // value={obs}
-                                                // onChange={ev => setObs(ev.target.value)}
+                                                name={item.observacion}
+                                                value={item.observacion}
+                                                onChange={(e) => handleChange(e, item)}
                                             />
                                         }
-                                        </Table.Cell>
-                                    </Table.Row>
-                                )
-                            }
+                                    </Table.Cell>
+                                </Table.Row>
                             )
-                            }
-                        </Table.Body>
-                    </StyledTable>
-                    <BotonGuardar>Confirmar Entrega</BotonGuardar>
-                </Contenedor>
-            }
+                        }
+                        )
+                        }
+                    </Table.Body>
+                </StyledTable>
+                <BotonGuardar onClick={confirmaEntrega} >Confirmar Entrega</BotonGuardar>
+            </Contenedor>
+        }
 
-            <Alertas tipo={alerta.tipo}
-                mensaje={alerta.mensaje}
-                estadoAlerta={estadoAlerta}
-                cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />
-        </ContenedorProveedor >
-    );
+        <Alertas tipo={alerta.tipo}
+            mensaje={alerta.mensaje}
+            estadoAlerta={estadoAlerta}
+            cambiarEstadoAlerta={cambiarEstadoAlerta}
+        />
+    </ContenedorProveedor >
+);
 };
 
 const StyledTable = styled(Table)`
