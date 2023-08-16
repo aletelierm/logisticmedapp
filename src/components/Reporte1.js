@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useState, useRef} from 'react';
+import Alerta from '../components/Alertas';
 import {ContentElemen, Input} from '../elementos/CrearEquipos'
 import {ContenedorProveedor, Contenedor,  Titulo} from '../elementos/General';
 import { Table } from 'semantic-ui-react'
@@ -10,77 +11,57 @@ import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
 
 const Reporte1 = () => {
-
     
-    const { users } = useContext(UserContext);  
+    const { users } = useContext(UserContext); 
 
-    const [entrada, setEntrada] = useState([]);
-    const [salida, setSalida] = useState([]);
-    const [data, setData] = useState([]);
-    const [equipo, setEquipo] = useState([]);
+    const [alerta, cambiarAlerta] = useState({});
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);      
     const [serie, setSerie] = useState('');
-    const [idEquipo, setIdEquipo] = useState('');
+    const [merges, setMerges] = useState([]);
     const merge = useRef([]);
-
-  /*   const getEntradas = async () => {
-             const dato = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id','==', 'lNcgEOthiVyrhlVq4343'));
-        const data = await getDocs(dato)
-        setEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        data.forEach((doc)=>{
-            console.log(doc.id, "=>",doc.data());
-        })
-    } */
-
- /*    const getSalidas = async () => {
-    
-        const dato = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id','==', 'vqpbcQVx2aB3VGBJ5wjk'));
-        const data = await getDocs(dato)
-        setSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        data.forEach((doc)=>{
-            console.log(doc.id, "=>",doc.data());
-        })
-    } */
-
-    //Mescla arreglo de entrada y salida
-    /* const mergeArrar = [...entrada, ...salida].sort((a,b) => a.date.localeCompare(b.date));
-    console.log(mergeArrar)
-    useEffect(()=>{
-        getEntradas();
-        getSalidas();
-        console.log(entrada);
-        setData(mergeArrar);
-        console.log('ARREGLO MERGE',data)
-    },[]); */
-
-    const handleChange = (e)=>{
-        setSerie(e.target.value);
-    }
+    const ent = useRef([]);
+    const sal = useRef([]);
 
     const detectarEquipo = async  (e)=>{
+       
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
         const dato = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie','==', serie));
         const data = await getDocs(dato);
-        if(data.docs.length === 1){
-            setIdEquipo(data.docs[0].id)
+        if(data.docs.length === 1){           
             console.log('si existe este numero de serie:',data.docs[0].id)
 
             //leer entradas por id
             const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id','==', data.docs[0].id));
-            const dataE = await getDocs(datoE);
-            setEntrada(dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            const dataE = await getDocs(datoE);            
+            ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));
 
             //leer salidas por id
             const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id','==', data.docs[0].id));
-            const dataS = await getDocs(datoS)
-            setSalida(dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            const dataS = await getDocs(datoS);           
+            sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));
 
-             merge.current = [...entrada, ...salida].sort((a,b) => a.date.localeCompare(b.date));
+             /* merge.current = [...entrada, ...salida].sort((a,b) => a.date.localeCompare(b.date)); */
+             merge.current = [...ent.current, ...sal.current].sort((a,b) => a.date.localeCompare(b.date));
+             console.log('hay merge ?:', merge.current)
+             setMerges(merge.current);
            
         }else{
-                console.log('no existe ese numero de serie')
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No existe un Equipo con ese Numero de Serie !!!'
+            })
+            return;
+                
             }
         
         }
+    }
+
+    const handleChange = (e)=>{
+        setSerie(e.target.value);
     }
 
     return (
@@ -102,7 +83,13 @@ const Reporte1 = () => {
                 </ContentElemen>
                 </Contenedor>
             <Contenedor>
-               <Titulo>Equipo :</Titulo>
+                {
+                    merge.current.length > 0 ?
+                    <Titulo style={{fontSize:'20px'}}>Equipo :{merge.current[0].tipo+" "+merge.current[0].marca+" "+merge.current[0].modelo}</Titulo>
+                    :
+                    <Titulo>Equipo:</Titulo>
+                }
+               
             <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -119,8 +106,9 @@ const Reporte1 = () => {
                     </Table.Header>
 
                     <Table.Body>
+                        {console.log('merge jsx:',merge.current)}
                         {
-                            merge.current.map((item, index) => {
+                            merges.map((item, index) => {
                                 return (
                                     <Table.Row key={index + 1}>
                                         <Table.Cell>{item.id2}</Table.Cell>
@@ -140,6 +128,12 @@ const Reporte1 = () => {
 
                 </Table>
             </Contenedor>
+            <Alerta
+                tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
        </ContenedorProveedor>            
       
     );
