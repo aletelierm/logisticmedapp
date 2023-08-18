@@ -22,17 +22,15 @@ const Reporte1 = () => {
     const ent = useRef([]);
     const sal = useRef([]);
 
-    const detectarEquipo = async  (e)=>{
-       
+    const detectarEquipo = async  (e)=>{       
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+
         if (e.key === 'Enter' || e.key === 'Tab') {
         const dato = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie','==', serie));
         const data = await getDocs(dato);
         if(data.docs.length === 1){           
-            console.log('si existe este numero de serie:',data.docs[0].id)
-
-            //leer entradas por id
+             //leer entradas por id
             const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id','==', data.docs[0].id));
             const dataE = await getDocs(datoE);            
             ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));
@@ -44,7 +42,6 @@ const Reporte1 = () => {
 
              /* merge.current = [...entrada, ...salida].sort((a,b) => a.date.localeCompare(b.date)); */
              merge.current = [...ent.current, ...sal.current].sort((a,b) => a.date.localeCompare(b.date));
-             console.log('hay merge ?:', merge.current)
              setMerges(merge.current);
            
         }else{
@@ -74,7 +71,7 @@ const Reporte1 = () => {
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
                         type='text'
-                        placeholder='Digite o escane serie o id equipo'
+                        placeholder='Buscar x Serie'
                         value={serie}
                         onChange={handleChange}
                         onKeyDown={detectarEquipo} 
