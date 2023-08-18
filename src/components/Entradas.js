@@ -10,6 +10,7 @@ import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch }
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
+import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
@@ -94,6 +95,13 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+
+    // Cambiar fecha
+    const formatearFecha =(fecha)=>{
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
+        return formatear;
+    }
 
     // Validar rut
     const detectarCli = (e) => {
@@ -403,7 +411,8 @@ const Entradas = () => {
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
                         tipMov: 1,
-                        status: 'BODEGA'
+                        status: 'BODEGA',
+                        observacion: ''
                     });
                     setPrice('')
                     setNumSerie('')
@@ -614,7 +623,7 @@ const Entradas = () => {
                         <Table.Body>
                             {documento.map((item, index) => {
                                 return (
-                                    <Table.Row key={item.id2}>
+                                    <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
@@ -643,14 +652,15 @@ const Entradas = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {cabecera.map((item) => {
+                        {cabecera.map((item, index) => {
                             if (item.confirmado === false) {
                                 return (
-                                    <Table.Row key={item.id2}>
-                                        <Table.Cell >{item.id2}</Table.Cell>
+                                    <Table.Row key={index}>
+                                        <Table.Cell >{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
@@ -669,12 +679,9 @@ const Entradas = () => {
 
                                     </Table.Row>
                                 )
-
                             }
                         }
-
                         )}
-
                     </Table.Body>
                 </Table>
             </ListarProveedor>

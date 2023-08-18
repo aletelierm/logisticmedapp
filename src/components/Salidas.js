@@ -10,6 +10,7 @@ import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'f
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoOut } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
+import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
@@ -97,6 +98,13 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+
+    // Cambiar fecha
+    const formatearFecha =(fecha)=>{
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
+        return formatear;
+    }
 
     // Validar rut
     const detectarCli = (e) => {
@@ -681,7 +689,8 @@ const Salidas = () => {
                                         <Table.Cell >{item.id2}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
