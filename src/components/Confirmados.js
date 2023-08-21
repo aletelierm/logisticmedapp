@@ -11,8 +11,7 @@ import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General'
 import { Input } from '../elementos/CrearEquipos'
-import { fas } from '@fortawesome/free-solid-svg-icons';
-// import moment from 'moment';
+import moment from 'moment';
 
 
 const Confirmados = () => {
@@ -21,6 +20,7 @@ const Confirmados = () => {
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
+    // let fechaInOut = new Date(date)
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
@@ -57,12 +57,12 @@ const Confirmados = () => {
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
 
-    // // Cambiar fecha
-    // const formatearFecha =(fecha)=>{
-    //     const dateObj = fecha.toDate();
-    //     const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
-    //     return formatear;
-    // }
+    // Cambiar fecha
+    const formatearFecha =(fecha)=>{
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
+        return formatear;
+    }
 
     const handleCheckboxChange = (itemId) => {
         setIsChecked((prevItems) =>
@@ -319,8 +319,8 @@ const Confirmados = () => {
                                     <Table.Row key={item.id}>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
-                                        {/* <Table.Cell>{formatearFecha(item.date)}</Table.Cell> */}
-                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>

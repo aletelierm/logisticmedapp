@@ -5,7 +5,8 @@ import {  db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import {ListarProveedor, Titulo} from '../elementos/General'
+import {ListarProveedor, Titulo} from '../elementos/General';
+import moment from 'moment';
 
 const Transaccion = () =>{
     const { users } = useContext(UserContext);
@@ -17,6 +18,14 @@ const Transaccion = () =>{
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+
+    // Cambiar fecha
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+        return formatear;
+    }
+
     useEffect(()=>{
         getCabecera();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,7 +60,7 @@ const Transaccion = () =>{
                                         <Table.Cell >{index+1}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.tipoin}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>                                 

@@ -13,8 +13,8 @@ import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
-import {ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label} from '../elementos/CrearEquipos'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos'
 
 
 const Salidas = () => {
@@ -85,7 +85,7 @@ const Salidas = () => {
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     //Almacena movimientos de entrada del documento
-    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);    
+    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
     //Leer  Empresa
     /* const getEmpresa = async () => {       
         const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
@@ -100,11 +100,24 @@ const Salidas = () => {
     }
 
     // Cambiar fecha
-    const formatearFecha =(fecha)=>{
+    const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
-    }
+    }
+
+    // Transformar fecha de moment a date
+    const fechaDate = (fecha) => {
+        // Convierte a milisegundos
+        const nuevaFecha = fecha.seconds * 1000
+        // Crea un objeto Date a partir del timestamp en milisegundos
+        const fechas = new Date(nuevaFecha);
+        // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
+        const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
+        console.log(formatoDatetimeLocal);
+        // console.log('nuevafecha', nuevaFecha)
+        setDate(formatoDatetimeLocal)
+    }
 
     // Validar rut
     const detectarCli = (e) => {
@@ -194,7 +207,7 @@ const Salidas = () => {
                 mensaje: 'Ingrese N° Documento'
             })
             return;
-        
+
         } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -268,6 +281,8 @@ const Salidas = () => {
                 })
             }
         } else {
+            const fechaInOut = new Date(date);
+            console.log('fechaInOut', fechaInOut)
             if (nomTipoOut === 'CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
                 if (existeCli.length === 0) {
@@ -283,7 +298,7 @@ const Salidas = () => {
                             emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
                             numDoc: numDoc,
-                            date: date,
+                            date: fechaInOut,
                             tipoInOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
@@ -305,7 +320,7 @@ const Salidas = () => {
                         setFlag(!flag);
                         setConfirmar(true);
                         setBtnAgregar(false);
-                        setBtnGuardar(true);                        
+                        setBtnGuardar(true);
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -330,7 +345,7 @@ const Salidas = () => {
                             emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
                             numDoc: numDoc,
-                            date: date,
+                            date: fechaInOut,
                             tipoInOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
@@ -405,13 +420,15 @@ const Salidas = () => {
                     mensaje: 'Equipo no se encuentra en Bodega'
                 })
             } else {
+                const fechaInOut = new Date(date);
+                // console.log('fechaInOut', fechaInOut)
                 setBtnConfirmar(false);
                 try {
                     SalidasDB({
                         emp_id: users.emp_id,
                         tipDoc: nomTipDoc,
                         numDoc: numDoc,
-                        date: date,
+                        date: fechaInOut,
                         tipoInOut: nomTipoOut,
                         rut: rut,
                         entidad: entidad,
@@ -462,7 +479,7 @@ const Salidas = () => {
         });
         try {
             await batch.commit();
-            
+
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
@@ -470,8 +487,8 @@ const Salidas = () => {
             });
             await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
                 confirmado: true,
-                userMod: user.email,
-                fechaMod: fechaMod
+                usermod: user.email,
+                fechamod: fechaMod
             });
             setFlag(!flag)
         } catch (error) {
@@ -548,7 +565,7 @@ const Salidas = () => {
                             <Label>Fecha Ingreso</Label>
                             <Input
                                 disabled={confirmar}
-                                type='date'
+                                type='datetime-local'
                                 placeholder='Seleccione Fecha'
                                 name='date'
                                 value={date}
@@ -664,7 +681,7 @@ const Salidas = () => {
                     </Table>
                 </ListarEquipos>
                 <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
-                
+
             </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
@@ -700,7 +717,8 @@ const Salidas = () => {
                                             setNomTipoOut(item.tipoinout);
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
-                                            setDate(item.date);
+                                            fechaDate(item.date)
+                                            // setDate(item.date);
                                             setCorreo(item.correo);
                                             setPatente(item.patente);
                                             setBtnGuardar(true);

@@ -13,8 +13,9 @@ import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
-import {ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label} from '../elementos/CrearEquipos'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos'
+
 
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -84,8 +85,8 @@ const Entradas = () => {
     //Almacena movimientos de entrada del documento
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
     //Leer  Empresa
-    const getEmpresa = async () => {       
-        const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
+    const getEmpresa = async () => {
+        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
         setEmpresa(traerEmp.data());
     }
     //Lectura de status
@@ -97,11 +98,24 @@ const Entradas = () => {
     }
 
     // Cambiar fecha
-    const formatearFecha =(fecha)=>{
+    const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
-    }
+    }
+
+    // Transformar fecha de moment a date
+    const fechaDate = (fecha) => {
+        // Convierte a milisegundos
+        const nuevaFecha = fecha.seconds * 1000
+        // Crea un objeto Date a partir del timestamp en milisegundos
+        const fechas = new Date(nuevaFecha);
+        // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
+        const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
+        console.log(formatoDatetimeLocal);
+        // console.log('nuevafecha', nuevaFecha)
+        setDate(formatoDatetimeLocal)
+    }
 
   
     // Validar rut
@@ -191,12 +205,12 @@ const Entradas = () => {
             })
             return;
         } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Seleccione Tipo Documento'
-                })
-                return;
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Tipo Documento'
+            })
+            return;
         } else if (date === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -248,7 +262,14 @@ const Entradas = () => {
                 })
             }
         } else {
+
+            // console.log('Date', date)
+
             const fechaInOut = new Date(date);
+            // const fechaMoment = moment(fechaInOut)
+            // console.log('fechaMoment', fechaMoment.format('DD/MM/YYYY HH:mm:ss'))
+            
+
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
                 if (existeCli.length === 0) {
@@ -391,6 +412,7 @@ const Entradas = () => {
                 })
             } else {
                 const fechaInOut = new Date(date);
+                // console.log('fechaInOut', fechaInOut)
                 setBtnConfirmar(false);
                 try {
                     EntradasDB({
@@ -458,8 +480,8 @@ const Entradas = () => {
             });
             await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
                 confirmado: true,
-                userMod: user.email,
-                fechaMod: fechaMod
+                usermod: user.email,
+                fechamod: fechaMod
             });
             setFlag(!flag)
         } catch (error) {
@@ -659,12 +681,13 @@ const Entradas = () => {
                         {cabecera.map((item, index) => {
                             if (item.confirmado === false) {
                                 return (
-                                    <Table.Row key={index}>
+                                    <Table.Row key={item.id2}>
                                         <Table.Cell >{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        {/*  <Table.Cell>{item.date}</Table.Cell> */}
+                                        {/* <Table.Cell>{formatearFecha(item.fechaInOut)}</Table.Cell> */}
+                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
@@ -674,7 +697,8 @@ const Entradas = () => {
                                             setNomTipoIn(item.tipoinout);
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
-                                            setDate(item.date);
+                                            fechaDate(item.date)
+                                            // setDate(fechaDate(item.date));
                                             setBtnGuardar(true);
                                             setBtnAgregar(false)
                                             setConfirmar(true);
