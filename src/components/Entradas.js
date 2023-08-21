@@ -103,6 +103,7 @@ const Entradas = () => {
         return formatear;
     }
 
+  
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -247,6 +248,7 @@ const Entradas = () => {
                 })
             }
         } else {
+            const fechaInOut = new Date(date);
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
                 if (existeCli.length === 0) {
@@ -262,7 +264,7 @@ const Entradas = () => {
                             emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
                             numDoc: numDoc,
-                            date: date,
+                            date: fechaInOut,
                             tipoInOut: nomTipoIn,
                             rut: rut,
                             entidad: entidad,
@@ -300,13 +302,14 @@ const Entradas = () => {
                         mensaje: 'No existe rut de proveedor'
                     })
                 } else {
+                    const fechaInOut = new Date(date);
                     setEntidad(existeProv[0].nombre);
                     try {
                         CabeceraInDB({
                             emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
                             numDoc: numDoc,
-                            date: date,
+                            date: fechaInOut,
                             tipoInOut: nomTipoIn,
                             rut: rut,
                             entidad: entidad,
@@ -387,13 +390,14 @@ const Entradas = () => {
                     mensaje: 'Equipo ya se encuentra en Bodega'
                 })
             } else {
+                const fechaInOut = new Date(date);
                 setBtnConfirmar(false);
                 try {
                     EntradasDB({
                         emp_id: users.emp_id,
                         tipDoc: nomTipDoc,
                         numDoc: numDoc,
-                        date: date,
+                        date: fechaInOut,
                         tipoInOut: nomTipoIn,
                         rut: rut,
                         entidad: entidad,
@@ -532,7 +536,7 @@ const Entradas = () => {
                             <Label>Fecha Ingreso</Label>
                             <Input
                                 disabled={confirmar}
-                                type='date'
+                                type='datetime-local'
                                 placeholder='Seleccione Fecha'
                                 name='date'
                                 value={date}
@@ -660,7 +664,7 @@ const Entradas = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
+                                        {/*  <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
