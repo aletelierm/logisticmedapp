@@ -9,6 +9,7 @@ import { collection, getDocs, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
+import moment from 'moment'
 
 const Reporte1 = () => {
     
@@ -61,6 +62,13 @@ const Reporte1 = () => {
         setSerie(e.target.value);
     }
 
+    // Cambiar fecha
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+        return formatear;
+    }
+
     return (
        <ContenedorProveedor>
             <Contenedor>
@@ -109,7 +117,7 @@ const Reporte1 = () => {
                                 return (
                                     <Table.Row key={index + 1}>
                                         <Table.Cell>{item.id2}</Table.Cell>
-                                        <Table.Cell>{item.date}</Table.Cell>
+                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>                                      
                                         <Table.Cell>{item.tipoinout === 'COMPRA' ? '1':'0'}</Table.Cell>
