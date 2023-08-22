@@ -287,8 +287,7 @@ const Entradas = () => {
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
                             tipMov: 0,
-                            confirmado: false,
-                            retirado: false
+                            confirmado: false
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -309,8 +308,6 @@ const Entradas = () => {
                         })
                     }
                 }
-            // } else if () {
-
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
