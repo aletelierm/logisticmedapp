@@ -1,20 +1,20 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect } from 'react';
-import SalidasDB from '../firebase/SalidasDB'
-import CabeceraOutDB from '../firebase/CabeceraOutDB'
+import React, { useState, useEffect, useRef } from 'react';
+import SalidasDB from '../firebase/SalidasDB';
+import CabeceraOutDB from '../firebase/CabeceraOutDB';
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
-import { Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
-import { TipDoc, TipoOut } from './TipDoc'
+import { TipDoc, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General';
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 
 
 const Salidas = () => {
@@ -40,13 +40,13 @@ const Salidas = () => {
     const [cabecera, setCabecera] = useState([]);
     const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
-    // const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
+    const inOut = useRef('');
     /* const [empresa, setEmpresa] = useState([]); */
 
     //Lectura de proveedores filtrados por empresa
@@ -114,8 +114,6 @@ const Salidas = () => {
         const fechas = new Date(nuevaFecha);
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
-        console.log(formatoDatetimeLocal);
-        // console.log('nuevafecha', nuevaFecha)
         setDate(formatoDatetimeLocal)
     }
 
@@ -282,7 +280,6 @@ const Salidas = () => {
             }
         } else {
             const fechaInOut = new Date(date);
-            console.log('fechaInOut', fechaInOut)
             if (nomTipoOut === 'CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
                 if (existeCli.length === 0) {
@@ -421,7 +418,14 @@ const Salidas = () => {
                 })
             } else {
                 const fechaInOut = new Date(date);
-                // console.log('fechaInOut', fechaInOut)
+                if (nomTipoOut === 'CLIENTE') {
+                    inOut.current = 'TRANSITO CLIENTE'
+                } else if (nomTipoOut === 'SERVICIO TECNICO') {
+                    inOut.current = 'TRANSITO S.T.'
+                } else {
+                    inOut.current = nomTipoOut
+                }
+
                 setBtnConfirmar(false);
                 try {
                     SalidasDB({
@@ -439,7 +443,6 @@ const Salidas = () => {
                         modelo: existe[0].modelo,
                         serie: existe[0].serie,
                         rfid: existe[0].rfid,
-                        // price: price,
                         cab_id: existeCab[0].id,
                         userAdd: user.email,
                         userMod: user.email,
@@ -448,7 +451,6 @@ const Salidas = () => {
                         tipMov: 2,
                         status: nomTipoOut
                     });
-                    // setPrice('')
                     setNumSerie('')
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -475,7 +477,7 @@ const Salidas = () => {
         const batch = writeBatch(db);
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, { status: nomTipoOut, rut: rut, entidad: entidad });
+            batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad });
         });
         try {
             await batch.commit();
@@ -492,7 +494,6 @@ const Salidas = () => {
             });
             setFlag(!flag)
         } catch (error) {
-            console.error('Error al actualizar documentos:', error);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -508,6 +509,7 @@ const Salidas = () => {
         setCorreo('');
         setPatente('');
         setNumSerie('');
+        setConfirmar(false)
         setBtnConfirmar(true);
         setBtnAgregar(true);
         setBtnGuardar(false)
@@ -707,7 +709,6 @@ const Salidas = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
@@ -718,7 +719,6 @@ const Salidas = () => {
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
                                             fechaDate(item.date)
-                                            // setDate(item.date);
                                             setCorreo(item.correo);
                                             setPatente(item.patente);
                                             setBtnGuardar(true);

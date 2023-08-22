@@ -11,6 +11,7 @@ import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General'
 import { Input } from '../elementos/CrearEquipos'
+
 import moment from 'moment';
 
 
@@ -124,7 +125,7 @@ const Confirmados = () => {
                 tipoinout: inOut.current,
                 rut: docs.rut,
                 entidad: docs.entidad,
-                eq_id: docs.id,
+                eq_id: docs.eq_id,
                 familia: docs.familia,
                 tipo: docs.tipo,
                 marca: docs.marca,
@@ -261,18 +262,18 @@ const Confirmados = () => {
                         mensaje: 'Error al actualizar documentos:', error
                     })
                 }
+            }
 
-                // ACTUALIZAR CABECERA DE CONFIRMADOS
-                try {
-                    await updateDoc(doc(db, 'cabecerasout', cab_id), {
-                        entregado: true,
-                        usermod: user.email,
-                        fechamod: fechaMod
-                    })
-                } catch (error) {
-                    Swal.fire('Se ha producido un error al actualizar la cabecera');
-                    console.log('ERROR', error)
-                }
+            // ACTUALIZAR CABECERA DE CONFIRMADOS
+            try {
+                await updateDoc(doc(db, 'cabecerasout', cab_id), {
+                    entregado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                })
+            } catch (error) {
+                Swal.fire('Se ha producido un error al actualizar la cabecera');
+                console.log('ERROR', error)
             }
         }
     }
