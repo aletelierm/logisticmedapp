@@ -15,7 +15,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General';
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
-
+import EnviarCorreo from '../funciones/EnviarCorreo';
 
 const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -23,7 +23,6 @@ const Salidas = () => {
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
-
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [proveedor, setProveedor] = useState([]);
@@ -46,9 +45,16 @@ const Salidas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
+    const [alertaSalida, setAlertasalida] = useState([]);
     const inOut = useRef('');
-    /* const [empresa, setEmpresa] = useState([]); */
-
+    
+    //Lectura de usuario para alertas de salida
+    const getAlertasSalidas = async () => {
+        const traerAlertas = collection(db, 'usuariosalertas');
+        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato);
+        setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
         const traerProveedor = collection(db, 'proveedores');
@@ -86,11 +92,7 @@ const Salidas = () => {
     }
     //Almacena movimientos de entrada del documento
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
-    //Leer  Empresa
-    /* const getEmpresa = async () => {       
-        const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
-        setEmpresa(traerEmp.data());
-    } */
+ 
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -98,14 +100,12 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
     }
-
     // Transformar fecha de moment a date
     const fechaDate = (fecha) => {
         // Convierte a milisegundos
@@ -116,7 +116,6 @@ const Salidas = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
-
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -147,7 +146,6 @@ const Salidas = () => {
             }
         }
     }
-
     // Validar N°serie
     const detectar = (e) => {
         cambiarEstadoAlerta(false);
@@ -213,7 +211,6 @@ const Salidas = () => {
                 mensaje: 'Seleccione Tipo Documento'
             })
             return;
-
         } else if (date === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -425,7 +422,6 @@ const Salidas = () => {
                 } else {
                     inOut.current = nomTipoOut
                 }
-
                 setBtnConfirmar(false);
                 try {
                     SalidasDB({
@@ -481,7 +477,6 @@ const Salidas = () => {
         });
         try {
             await batch.commit();
-
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
@@ -492,6 +487,7 @@ const Salidas = () => {
                 usermod: user.email,
                 fechamod: fechaMod
             });
+            
             setFlag(!flag)
         } catch (error) {
             cambiarEstadoAlerta(true);
@@ -513,6 +509,17 @@ const Salidas = () => {
         setBtnConfirmar(true);
         setBtnAgregar(true);
         setBtnGuardar(false)
+        try {           
+        
+            const mensaje = documento.map((item, index)=> `${index+1}.Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n');
+            alertaSalida.forEach((destino)=>{
+                EnviarCorreo(destino.correo,'Alerta Salida de Bodega',mensaje)
+            })
+           
+        } catch (error) {
+            console.log('error', error)
+        }
+        
     };
 
     useEffect(() => {
@@ -520,6 +527,7 @@ const Salidas = () => {
         getCliente();
         getEquipo();
         getSalida();
+        getAlertasSalidas()       
         /* getEmpresa(); */
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -531,7 +539,6 @@ const Salidas = () => {
         if (documento.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -742,5 +749,4 @@ const Salidas = () => {
         </ContenedorProveedor>
     );
 };
-
 export default Salidas;

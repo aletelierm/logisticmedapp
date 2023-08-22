@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useRef } from 'react';
 import Alertas from './Alertas';
@@ -26,7 +27,7 @@ const Confirmados = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
-    const [status, setStatus] = useState([]);
+    /* const [status, setStatus] = useState([]); */
     const [dataSalida, setDataSalida] = useState([]);
     const [flag, setFlag] = useState(false);
     const [cab_id, setCab_id] = useState('');
@@ -50,13 +51,13 @@ const Confirmados = () => {
         const data = await getDocs(dato)
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false, observacion: '' })))
     }
-    //Lectura de status
+   /*  //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    }
+    } */
 
     // Cambiar fecha
     const formatearFecha =(fecha)=>{
@@ -254,6 +255,7 @@ const Confirmados = () => {
                         tipo: 'exito',
                         mensaje: 'Documentos actualizados correctamente.'
                     });
+                    
                 } catch (error) {
                     console.error('Error al actualizar documentos:', error);
                     cambiarEstadoAlerta(true);
@@ -271,24 +273,25 @@ const Confirmados = () => {
                     usermod: user.email,
                     fechamod: fechaMod
                 })
+                setFlag(!flag)
             } catch (error) {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
                 console.log('ERROR', error)
             }
         }
     }
-
-
+    useEffect(()=>{
+        getCabecera();
+    },[flag])
 
     useEffect(() => {
-        getStatus();
-        getSalida();
-        getCabecera();
+        /* getStatus(); */
+        getSalida();        
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
+         setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
