@@ -51,13 +51,13 @@ const Confirmados = () => {
         const data = await getDocs(dato)
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false, observacion: '' })))
     }
-   /*  //Lectura de status
-    const getStatus = async () => {
-        const traerEntrada = collection(db, 'status');
-        const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
-        const data = await getDocs(dato)
-        setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    } */
+    /*  //Lectura de status
+     const getStatus = async () => {
+         const traerEntrada = collection(db, 'status');
+         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
+         const data = await getDocs(dato)
+         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+     } */
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -157,7 +157,6 @@ const Confirmados = () => {
             });
     }
 
-
     const verdaderos = isChecked.filter(check => check.checked === true);
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
@@ -168,8 +167,6 @@ const Confirmados = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        console.log('verdaderos', verdaderos)
-        console.log('cabecera out', cab_id)
         if (falsos.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -254,7 +251,7 @@ const Confirmados = () => {
                         tipo: 'exito',
                         mensaje: 'Documentos actualizados correctamente.'
                     });
-                    
+
                 } catch (error) {
                     console.error('Error al actualizar documentos:', error);
                     cambiarEstadoAlerta(true);
@@ -273,24 +270,25 @@ const Confirmados = () => {
                     fechamod: fechaMod
                 })
                 setFlag(!flag)
+                setIsOpen(!isOpen)
             } catch (error) {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
                 console.log('ERROR', error)
             }
         }
     }
-    useEffect(()=>{
+    useEffect(() => {
         getCabecera();
-    },[flag])
+    }, [flag])
 
     useEffect(() => {
         /* getStatus(); */
-        getSalida();        
+        getSalida();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-         setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
+        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -323,7 +321,6 @@ const Confirmados = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>

@@ -1,18 +1,18 @@
 /* eslint-disable array-callback-return */
-import React,{useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'semantic-ui-react'
-import {  db } from '../firebase/firebaseConfig';
+import { db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import {ListarProveedor, Titulo} from '../elementos/General';
+import { ListarProveedor, Titulo } from '../elementos/General';
 import moment from 'moment';
 
-const Transaccion = () =>{
+const Transaccion = () => {
     const { users } = useContext(UserContext);
     const [cabecera, setCabecera] = useState([]);
-     // Leer datos de cabecera
-     const getCabecera = async () => {
+    // Leer datos de cabecera
+    const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
@@ -26,48 +26,47 @@ const Transaccion = () =>{
         return formatear;
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getCabecera();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
-    const OrdenaPorNumDoc = (a,b)=>{
+    const OrdenaPorNumDoc = (a, b) => {
         return a.numdoc - b.numdoc;
     }
-    const ordenado = cabecera.sort(OrdenaPorNumDoc);   
+    const ordenado = cabecera.sort(OrdenaPorNumDoc);
 
     return (
-        <div>          
+        <div>
             <ListarProveedor>
                 <Titulo>Listado Entradas</Titulo>
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
-                        <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
                             <Table.HeaderCell>N° Documento</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>                                         
+                            <Table.HeaderCell>Entidad</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {ordenado.map((item, index) => {
-                            if (item.confirmado === true){
+                            if (item.confirmado === true) {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell >{index+1}</Table.Cell>
+                                        <Table.Cell >{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        <Table.Cell>{item.tipoin}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>                                 
+                                        <Table.Cell>{item.entidad}</Table.Cell>
                                     </Table.Row>
                                 )
-                               
-                            } 
+                            }
                         })}
                     </Table.Body>
                 </Table>
