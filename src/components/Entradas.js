@@ -112,8 +112,6 @@ const Entradas = () => {
         const fechas = new Date(nuevaFecha);
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
-        console.log(formatoDatetimeLocal);
-        // console.log('nuevafecha', nuevaFecha)
         setDate(formatoDatetimeLocal)
     }
 
@@ -261,13 +259,8 @@ const Entradas = () => {
                 })
             }
         } else {
-
-            // console.log('Date', date)
-
             const fechaInOut = new Date(date);
             // const fechaMoment = moment(fechaInOut)
-            // console.log('fechaMoment', fechaMoment.format('DD/MM/YYYY HH:mm:ss'))
-            
 
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
@@ -456,7 +449,6 @@ const Entradas = () => {
                     })
                 }
             }
-
         }
     }
     // Función para actualizar varios documentos por lotes
@@ -471,7 +463,6 @@ const Entradas = () => {
         });
         try {
             await batch.commit();
-            console.log('Documentos actualizados correctamente.');
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
@@ -484,7 +475,6 @@ const Entradas = () => {
             });
             setFlag(!flag)
         } catch (error) {
-            console.error('Error al actualizar documentos:', error);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -685,8 +675,6 @@ const Entradas = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        {/* <Table.Cell>{formatearFecha(item.fechaInOut)}</Table.Cell> */}
-                                        {/* <Table.Cell>{item.date}</Table.Cell> */}
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
@@ -697,13 +685,11 @@ const Entradas = () => {
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
                                             fechaDate(item.date)
-                                            // setDate(fechaDate(item.date));
                                             setBtnGuardar(true);
                                             setBtnAgregar(false)
                                             setConfirmar(true);
                                             setFlag(!flag)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-
                                     </Table.Row>
                                 )
                             }
