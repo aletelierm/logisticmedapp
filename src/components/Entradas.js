@@ -42,9 +42,10 @@ const Entradas = () => {
     const [flag, setFlag] = useState(false);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnConfirmar, setBtnConfirmar] = useState(true);
-    const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
+    const [btnAgregar, setBtnAgregar] = useState(true);
+    const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnNuevo, setBtnNuevo] = useState(true);
     const [empresa, setEmpresa] = useState([]);
 
     //Lectura de proveedores filtrados por empresa
@@ -285,7 +286,7 @@ const Entradas = () => {
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            tipMov: 1,
+                            tipMov: 0,
                             confirmado: false
                         })
                         cambiarEstadoAlerta(true);
@@ -297,6 +298,7 @@ const Entradas = () => {
                         setConfirmar(true);
                         setBtnAgregar(false);
                         setBtnGuardar(true);
+                        setBtnNuevo(false);
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -339,9 +341,10 @@ const Entradas = () => {
                             mensaje: 'Ingreso realizado exitosamente'
                         })
                         setFlag(!flag);
-                        setConfirmar(true)
-                        setBtnAgregar(false)
+                        setConfirmar(true);
+                        setBtnAgregar(false);
                         setBtnGuardar(true);
+                        setBtnNuevo(false);
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -405,7 +408,7 @@ const Entradas = () => {
             } else {
                 const fechaInOut = new Date(date);
                 // console.log('fechaInOut', fechaInOut)
-                setBtnConfirmar(false);
+
                 try {
                     EntradasDB({
                         emp_id: users.emp_id,
@@ -440,6 +443,8 @@ const Entradas = () => {
                         mensaje: 'Item guardado correctamente'
                     })
                     setFlag(!flag);
+                    setBtnConfirmar(false);
+                    setBtnNuevo(false);
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -481,8 +486,6 @@ const Entradas = () => {
                 mensaje: 'Error al actualizar documentos:', error
             })
         }
-        setNumSerie('');
-        setPrice('');
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
@@ -492,10 +495,29 @@ const Entradas = () => {
         setNumSerie('');
         setPrice('');
         setConfirmar(false);
-        setBtnConfirmar(false);
+        setBtnConfirmar(true);
         setBtnAgregar(true);
         setBtnGuardar(false)
+        setBtnNuevo(true);
     };
+
+    // Agregar una nueva cabecera
+    const nuevo = () => {
+        setNumDoc('');
+        setNomTipDoc('');
+        setDate('');
+        setNomTipoIn('');
+        setRut('');
+        setEntidad('');
+        setNumSerie('');
+        setPrice('');
+        setConfirmar(false);
+        setBtnGuardar(false);
+        setBtnAgregar(true);
+        setBtnConfirmar(true);
+        setBtnNuevo(true);
+    }
+
     useEffect(() => {
         getProveedor();
         getCliente();
@@ -585,12 +607,19 @@ const Entradas = () => {
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
                         <BotonGuardar
-                            style={{ margin: '35px 0' }}
+                            style={{ margin: '35px 10px' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
                             onChange={handleCheckboxChange}
                             disabled={btnGuardar}
                         >Guardar</BotonGuardar>
+                        <BotonGuardar
+                            style={{ margin: '35px 0' }}
+                            onClick={nuevo}
+                            checked={confirmar}
+                            onChange={handleCheckboxChange}
+                            disabled={btnNuevo}
+                        >Nuevo</BotonGuardar>
                     </ContentElemenMov>
                 </Formulario>
             </Contenedor>
