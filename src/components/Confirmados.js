@@ -60,7 +60,7 @@ const Confirmados = () => {
     } */
 
     // Cambiar fecha
-    const formatearFecha =(fecha)=>{
+    const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
@@ -167,7 +167,6 @@ const Confirmados = () => {
         // console.log('Valores del formulario:', isChecked);
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
 
         console.log('verdaderos', verdaderos)
         console.log('cabecera out', cab_id)

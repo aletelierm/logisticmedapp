@@ -42,10 +42,11 @@ const Salidas = () => {
     const [flag, setFlag] = useState(false);
     const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnConfirmar, setBtnConfirmar] = useState(true);
-    const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
     const [alertaSalida, setAlertasalida] = useState([]);
+    const [btnAgregar, setBtnAgregar] = useState(true);
+    const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnNuevo, setBtnNuevo] = useState(true);
     const inOut = useRef('');
     
     //Lectura de usuario para alertas de salida
@@ -315,6 +316,7 @@ const Salidas = () => {
                         setConfirmar(true);
                         setBtnAgregar(false);
                         setBtnGuardar(true);
+                        setBtnNuevo(false);
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -359,9 +361,10 @@ const Salidas = () => {
                             mensaje: 'Ingreso realizado exitosamente'
                         })
                         setFlag(!flag);
-                        setConfirmar(false)
+                        setConfirmar(true)
                         setBtnAgregar(false)
                         setBtnGuardar(true);
+                        setBtnNuevo(false);
                         return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
@@ -423,6 +426,7 @@ const Salidas = () => {
                     inOut.current = nomTipoOut
                 }
                 setBtnConfirmar(false);
+
                 try {
                     SalidasDB({
                         emp_id: users.emp_id,
@@ -454,6 +458,8 @@ const Salidas = () => {
                         mensaje: 'Item guardado correctamente'
                     })
                     setFlag(!flag);
+                    setBtnConfirmar(false);
+                    setBtnNuevo(false);
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -520,7 +526,27 @@ const Salidas = () => {
             console.log('error', error)
         }
         
+        setBtnGuardar(false);
+        setBtnNuevo(true);
     };
+
+    // Agregar una nueva cabecera
+    const nuevo = () => {
+        setNumDoc('');
+        setNomTipDoc('');
+        setDate('');
+        setNomTipoOut('');
+        setRut('');
+        setEntidad('');
+        setNumSerie('');
+        setCorreo('');
+        setPatente('');
+        setConfirmar(false);
+        setBtnGuardar(false);
+        setBtnAgregar(true);
+        setBtnConfirmar(true);
+        setBtnNuevo(true);
+    }
 
     useEffect(() => {
         getProveedor();
@@ -636,12 +662,19 @@ const Salidas = () => {
                             />
                         </ContentElemenSelect>
                         <BotonGuardar
-                            style={{ margin: '17px 0' }}
+                            style={{ margin: '35px 10px' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
                             onChange={handleCheckboxChange}
                             disabled={btnGuardar}
                         >Guardar</BotonGuardar>
+                        <BotonGuardar
+                            style={{ margin: '35px 0' }}
+                            onClick={nuevo}
+                            checked={confirmar}
+                            onChange={handleCheckboxChange}
+                            disabled={btnNuevo}
+                        >Nuevo</BotonGuardar>
                     </ContentElemenMov>
                 </Formulario>
             </Contenedor>
