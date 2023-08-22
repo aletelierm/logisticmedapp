@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SalidasDB from '../firebase/SalidasDB'
 import CabeceraOutDB from '../firebase/CabeceraOutDB'
 import Alertas from './Alertas';
@@ -40,13 +40,14 @@ const Salidas = () => {
     const [cabecera, setCabecera] = useState([]);
     const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
-    // const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
     const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnGuardar, setBtnGuardar] = useState(false);
+    const inOut = useRef('');
+    
     /* const [empresa, setEmpresa] = useState([]); */
 
     //Lectura de proveedores filtrados por empresa
@@ -421,6 +422,13 @@ const Salidas = () => {
                 })
             } else {
                 const fechaInOut = new Date(date);
+                if (nomTipoOut === 'CLIENTE') {
+                    inOut.current = 'TRANSITO CLIENTE'
+                } else if (nomTipoOut === 'SERVICIO TECNICO') {
+                    inOut.current = 'TRANSITO S.T.'
+                } else {
+                    inOut.current = nomTipoOut
+                }
                 // console.log('fechaInOut', fechaInOut)
                 setBtnConfirmar(false);
                 try {
@@ -475,7 +483,7 @@ const Salidas = () => {
         const batch = writeBatch(db);
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, { status: nomTipoOut, rut: rut, entidad: entidad });
+            batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad });
         });
         try {
             await batch.commit();

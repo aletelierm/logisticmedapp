@@ -117,7 +117,6 @@ const Entradas = () => {
         setDate(formatoDatetimeLocal)
     }
 
-  
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
@@ -649,7 +648,7 @@ const Entradas = () => {
                         <Table.Body>
                             {documento.map((item, index) => {
                                 return (
-                                    <Table.Row key={index}>
+                                    <Table.Row key={item.id2}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
