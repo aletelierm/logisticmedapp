@@ -103,7 +103,7 @@ const Reporte1 = () => {
                             <Table.HeaderCell>T.Doc</Table.HeaderCell>
                             <Table.HeaderCell>Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Salida</Table.HeaderCell>
-                            <Table.HeaderCell>Ubicacion</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                         </Table.Row>
