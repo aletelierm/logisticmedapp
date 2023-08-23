@@ -47,7 +47,7 @@ export const DataMenu = [
     ]
   },
   {
-    title: 'Mis Clientes',
+    title: 'Mis Pacientes',
     path: 'clientes',
     icon: <FaIcons.FaUserNurse />,
   },

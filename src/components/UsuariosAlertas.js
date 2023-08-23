@@ -29,6 +29,7 @@ export const UsuariosEnvios = () => {
     const [usuarioAlert, setUsuarioAlert] = useState([]);
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [flag, setFlag] = useState(false);
   
     //Lee datos de los usuarios
     const getUsuarios = async () => {
@@ -44,7 +45,7 @@ export const UsuariosEnvios = () => {
     useEffect(() => {        
         getUsuarios();
         getUsuarioAlert();
-    }, [])
+    }, [flag])
 
     //Lee input de formulario
     const handleChange = (e) => {
@@ -135,6 +136,7 @@ export const UsuariosEnvios = () => {
                     setNombre('');
                     setApellido('');
                     setEntidad('');
+                    setFlag(!flag)
                     } catch (error) {
                             Swal.fire('Se ha producido un error grave. Llame al Administrador',error); 
                     }
@@ -201,7 +203,7 @@ export const UsuariosEnvios = () => {
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Configura Alertas y Envíos</Titulo>
+                <Titulo>Configuración de Alertas</Titulo>
             </Contenedor>
             <Contenedor>
                 <Formulario action='' >
