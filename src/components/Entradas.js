@@ -14,7 +14,7 @@ import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos'
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 
 
 const Entradas = () => {
@@ -28,25 +28,29 @@ const Entradas = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [proveedor, setProveedor] = useState([]);
     const [cliente, setCliente] = useState([]);
-    const [nomTipDoc, setNomTipDoc] = useState('');
+    const [equipo, setEquipo] = useState([]);
+    const [cabecera, setCabecera] = useState([]);
+    // const [usuario, setUsuarios] = useState([]);
+    const [dataEntrada, setDataEntrada] = useState([]);
+    const [empresa, setEmpresa] = useState([]);
+    const [status, setStatus] = useState([]);
     const [numDoc, setNumDoc] = useState('');
+    const [nomTipDoc, setNomTipDoc] = useState('');
     const [date, setDate] = useState('');
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
-    const [equipo, setEquipo] = useState([]);
-    const [cabecera, setCabecera] = useState([]);
-    const [status, setStatus] = useState([]);
+    // const [correo, setCorreo] = useState('');
+    // const [patente, setPatente] = useState('');
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
-    const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnGuardar, setBtnGuardar] = useState(false);
+    const [btnGuardar, setBtnGuardar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
-    const [empresa, setEmpresa] = useState([]);
+    // const [mostraCP, setmostraCP] = useState(false)
 
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
@@ -69,6 +73,11 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
+    // //Lee datos de los usuarios
+    // const getUsuarios = async () => {
+    //     const dataUsuarios = await getDocs(collection(db, "usuarios"));
+    //     setUsuarios(dataUsuarios.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
+    // }
     // Lectura cabecera de documentos
     const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
@@ -87,7 +96,7 @@ const Entradas = () => {
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
     //Leer  Empresa
     const getEmpresa = async () => {
-        const traerEmp = await getDoc(doc(db, 'empresas',users.emp_id));
+        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
         setEmpresa(traerEmp.data());
     }
     //Lectura de status
@@ -97,29 +106,30 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-
     // Transformar fecha de moment a date
     const fechaDate = (fecha) => {
         // Convierte a milisegundos
         const nuevaFecha = fecha.seconds * 1000
         // Crea un objeto Date a partir del timestamp en milisegundos
         const fechas = new Date(nuevaFecha);
+        // console.log('fechas', fechas)
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
+        // console.log(formatoDatetimeLocal)
     }
 
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        setBtnGuardar(true)
         if (e.key === 'Enter' || e.key === 'Tab') {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
@@ -131,6 +141,7 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
+                    setBtnGuardar(false)
                 }
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
@@ -142,6 +153,7 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeProv[0].nombre);
+                    setBtnGuardar(false)
                 }
             }
         }
@@ -180,6 +192,17 @@ const Entradas = () => {
             }
         }
     }
+
+    // // Validar Tipo de Entrada
+    // const detectarTipoIn = (valor) => {
+    //     console.log('detectar Tipoinout',valor)
+    //     if (valor === 'DEVOLUCION SERVICIO TECNICO' || valor === 'DEVOLUCION CLIENTE') {
+    //         setmostraCP(true)
+    //     } else {
+    //         setmostraCP(false)
+    //     }
+    // }
+
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -195,6 +218,8 @@ const Entradas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        // const existeCorreo = usuario.filter(corr => corr.correo === correo);
+
         if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -245,6 +270,27 @@ const Entradas = () => {
                 mensaje: 'Rut no válido'
             })
             return;
+            // } else if (mostraCP && correo === '') {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Ingrese un correo'
+            //     })
+            //     return;
+            // } else if (mostraCP && existeCorreo.length === 0) {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'No existe usuario con ese correo'
+            //     })
+            // } else if (mostraCP && patente === '') {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Ingrese una Patente'
+            //     })
+            //     return;
+
         } else if (existe.length > 0) {
             if (existe[0].confirmado) {
                 cambiarEstadoAlerta(true);
@@ -260,107 +306,162 @@ const Entradas = () => {
                 })
             }
         } else {
-            const fechaInOut = new Date(date);
+            // const fechaInOut = new Date(date);
             // const fechaMoment = moment(fechaInOut)
 
-            if (nomTipoIn === 'DEVOLUCION CLIENTE') {
-                const existeCli = cliente.filter(cli => cli.rut === rut);
-                if (existeCli.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
-                    })
-                } else {
-                    setEntidad(existeCli[0].nombre);
-                    try {
-                        CabeceraInDB({
-                            emp_id: users.emp_id,
-                            tipDoc: nomTipDoc,
-                            numDoc: numDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoIn,
-                            rut: rut,
-                            entidad: entidad,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            tipMov: 0,
-                            confirmado: false,
-                            retirado: false
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Cabecera Documento guadada exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
-            // } else if () {
+            // if (nomTipoIn === 'DEVOLUCION CLIENTE') {
+            //     const existeCli = cliente.filter(cli => cli.rut === rut);
+            //     if (existeCli.length === 0) {
+            //         cambiarEstadoAlerta(true);
+            //         cambiarAlerta({
+            //             tipo: 'error',
+            //             mensaje: 'No existe rut del cliente'
+            //         })
+            //     } else {
+            //         setEntidad(existeCli[0].nombre);
+            //         try {
+            //             CabeceraInDB({
+            //                 emp_id: users.emp_id,
+            //                 tipDoc: nomTipDoc,
+            //                 numDoc: numDoc,
+            //                 date: fechaInOut,
+            //                 tipoInOut: nomTipoIn,
+            //                 rut: rut,
+            //                 entidad: entidad,
+            //                 correo: correo,
+            //                 patente: patente,
+            //                 userAdd: user.email,
+            //                 userMod: user.email,
+            //                 fechaAdd: fechaAdd,
+            //                 fechaMod: fechaMod,
+            //                 tipMov: 0,
+            //                 confirmado: false,
+            //                 retirado: false
+            //             })
+            //             cambiarEstadoAlerta(true);
+            //             cambiarAlerta({
+            //                 tipo: 'exito',
+            //                 mensaje: 'Cabecera Documento guadada exitosamente'
+            //             })
+            //             setFlag(!flag);
+            //             setConfirmar(true);
+            //             setBtnAgregar(false);
+            //             setBtnGuardar(true);
+            //             setBtnNuevo(false);
+            //             return;
+            //         } catch (error) {
+            //             cambiarEstadoAlerta(true);
+            //             cambiarAlerta({
+            //                 tipo: 'error',
+            //                 mensaje: error
+            //             })
+            //         }
+            //     }
 
+            // } else if (nomTipoIn === 'DEVOLUCION SERVICIO TECNICO') {
+            //     const existeProv = proveedor.filter(prov => prov.rut === rut);
+            //     if (existeProv.length === 0) {
+            //         cambiarEstadoAlerta(true);
+            //         cambiarAlerta({
+            //             tipo: 'error',
+            //             mensaje: 'No existe rut de proveedor'
+            //         })
+            //     } else {
+            //         const fechaInOut = new Date(date);
+            //         setEntidad(existeProv[0].nombre);
+            //         try {
+            //             CabeceraInDB({
+            //                 emp_id: users.emp_id,
+            //                 tipDoc: nomTipDoc,
+            //                 numDoc: numDoc,
+            //                 date: fechaInOut,
+            //                 tipoInOut: nomTipoIn,
+            //                 rut: rut,
+            //                 entidad: entidad,
+            //                 correo: correo,
+            //                 patente: patente,
+            //                 userAdd: user.email,
+            //                 userMod: user.email,
+            //                 fechaAdd: fechaAdd,
+            //                 fechaMod: fechaMod,
+            //                 tipMov: 0,
+            //                 confirmado: false,
+            //                 retirado: false
+            //             })
+            //             cambiarEstadoAlerta(true);
+            //             cambiarAlerta({
+            //                 tipo: 'exito',
+            //                 mensaje: 'Ingreso realizado exitosamente'
+            //             })
+            //             setFlag(!flag);
+            //             setConfirmar(true);
+            //             setBtnAgregar(false);
+            //             setBtnGuardar(true);
+            //             setBtnNuevo(false);
+            //             return;
+            //         } catch (error) {
+            //             cambiarEstadoAlerta(true);
+            //             cambiarAlerta({
+            //                 tipo: 'error',
+            //                 mensaje: error
+            //             })
+            //         }
+            //     }
+
+            // } else {
+            const existeProv = proveedor.filter(prov => prov.rut === rut);
+            if (existeProv.length === 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe rut de proveedor'
+                })
             } else {
-                const existeProv = proveedor.filter(prov => prov.rut === rut);
-                if (existeProv.length === 0) {
+                const fechaInOut = new Date(date);
+                setEntidad(existeProv[0].nombre);
+                try {
+                    CabeceraInDB({
+                        numDoc: numDoc,
+                        tipDoc: nomTipDoc,
+                        date: fechaInOut,
+                        tipoInOut: nomTipoIn,
+                        rut: rut,
+                        entidad: entidad,
+                        // correo:'',
+                        // patente: '',
+                        tipMov: 1,
+                        confirmado: false,
+                        // retirado: true,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id
+                    })
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Ingreso realizado exitosamente'
+                    })
+                    setFlag(!flag);
+                    setConfirmar(true);
+                    setBtnAgregar(false);
+                    setBtnGuardar(true);
+                    setBtnNuevo(false);
+                    return;
+                } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut de proveedor'
+                        mensaje: error
                     })
-                } else {
-                    const fechaInOut = new Date(date);
-                    setEntidad(existeProv[0].nombre);
-                    try {
-                        CabeceraInDB({
-                            emp_id: users.emp_id,
-                            tipDoc: nomTipDoc,
-                            numDoc: numDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoIn,
-                            rut: rut,
-                            entidad: entidad,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            tipMov: 1,
-                            confirmado: false
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
                 }
             }
         }
     }
-     //Valida y guarda los detalles del documento
+
+    // console.log('empresa', empresa)
+    //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -400,6 +501,7 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
+
             const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
             if (existeStatus) {
                 cambiarEstadoAlerta(true);
@@ -408,18 +510,66 @@ const Entradas = () => {
                     mensaje: 'Equipo ya se encuentra en Bodega'
                 })
             } else {
-                const fechaInOut = new Date(date);
-                // console.log('fechaInOut', fechaInOut)
-
+                // if (mostraCP) {
+                //     try {
+                //         EntradasDB({
+                //             numDoc: numDoc,
+                //             tipDoc: nomTipDoc,
+                //             date: existeCab[0].date,
+                //             tipoInOut: nomTipoIn,
+                //             rut: rut,
+                //             entidad: entidad,
+                //             correo: correo,
+                //             patente: patente,
+                //             price: price,
+                //             cab_id: existeCab[0].id,
+                //             eq_id: existe[0].id,
+                //             familia: existe[0].familia,
+                //             tipo: existe[0].tipo,
+                //             marca: existe[0].marca,
+                //             modelo: existe[0].modelo,
+                //             serie: existe[0].serie,
+                //             rfid: existe[0].rfid,
+                //             tipMov: 0,
+                //             observacion: '',
+                //             status: 'BODEGA',
+                //             userAdd: user.email,
+                //             userMod: user.email,
+                //             fechaAdd: fechaAdd,
+                //             fechaMod: fechaMod,
+                //             emp_id: users.emp_id,
+                //         });
+                //         setPrice('')
+                //         setNumSerie('')
+                //         cambiarEstadoAlerta(true);
+                //         cambiarAlerta({
+                //             tipo: 'exito',
+                //             mensaje: 'Item guardado correctamente'
+                //         })
+                //         setFlag(!flag);
+                //         setBtnConfirmar(false);
+                //         setBtnNuevo(false);
+                //         return;
+                //     } catch (error) {
+                //         cambiarEstadoAlerta(true);
+                //         cambiarAlerta({
+                //             tipo: 'error',
+                //             mensaje: error
+                //         })
+                //     }
+                // } else {
                 try {
                     EntradasDB({
-                        emp_id: users.emp_id,
-                        tipDoc: nomTipDoc,
                         numDoc: numDoc,
-                        date: fechaInOut,
+                        tipDoc: nomTipDoc,
+                        date: existeCab[0].date,
                         tipoInOut: nomTipoIn,
                         rut: rut,
                         entidad: entidad,
+                        // correo: '',
+                        // patente: '',
+                        price: price,
+                        cab_id: existeCab[0].id,
                         eq_id: existe[0].id,
                         familia: existe[0].familia,
                         tipo: existe[0].tipo,
@@ -427,15 +577,14 @@ const Entradas = () => {
                         modelo: existe[0].modelo,
                         serie: existe[0].serie,
                         rfid: existe[0].rfid,
-                        price: price,
-                        cab_id: existeCab[0].id,
+                        tipMov: 1,
+                        observacion: '',
+                        status: 'BODEGA',
                         userAdd: user.email,
                         userMod: user.email,
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
-                        tipMov: 1,
-                        status: 'BODEGA',
-                        observacion: ''
+                        emp_id: users.emp_id,
                     });
                     setPrice('')
                     setNumSerie('')
@@ -458,6 +607,7 @@ const Entradas = () => {
             }
         }
     }
+
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
@@ -513,8 +663,11 @@ const Entradas = () => {
         setEntidad('');
         setNumSerie('');
         setPrice('');
+        setPrice('');
+        // setCorreo('');
+        // setPatente('');
         setConfirmar(false);
-        setBtnGuardar(false);
+        setBtnGuardar(true);
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
@@ -527,6 +680,7 @@ const Entradas = () => {
         getEntrada();
         getStatus();
         getEmpresa();
+        // getUsuarios();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -542,7 +696,7 @@ const Entradas = () => {
                 <Titulo>Recepcion de Equipos</Titulo>
             </Contenedor>
             <Contenedor>
-                <Formulario action='' onSubmit={handleSubmit}>
+                <Formulario action='' /* onSubmit={handleSubmit} */>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
@@ -585,11 +739,16 @@ const Entradas = () => {
                             <Select
                                 disabled={confirmar}
                                 value={nomTipoIn}
-                                onChange={ev => setNomTipoIn(ev.target.value)}>
+                                onChange={(ev) => {
+                                    setNomTipoIn(ev.target.value)
+                                    // detectarTipoIn(ev.target.value)
+                                    // console.log('select', ev.target.value)
+                                }}>
                                 <option>Selecciona Opción:</option>
                                 {TipoIn.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
                                 })}
+
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -608,7 +767,8 @@ const Entradas = () => {
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
-                        <BotonGuardar
+
+                        {/* <BotonGuardar
                             style={{ margin: '35px 10px' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
@@ -621,8 +781,50 @@ const Entradas = () => {
                             checked={confirmar}
                             onChange={handleCheckboxChange}
                             disabled={btnNuevo}
-                        >Nuevo</BotonGuardar>
+                        >Nuevo</BotonGuardar> */}
                     </ContentElemenMov>
+
+                    {/* {mostraCP &&
+                        <ContentElemenMov>
+                            <ContentElemenSelect>
+                                <Label>Correo Transportista</Label>
+                                <Input
+                                    disabled={confirmar}
+                                    type='texto'
+                                    placeholder='Ingrese Correo'
+                                    name='correo'
+                                    value={correo}
+                                    onChange={ev => setCorreo(ev.target.value)}
+                                />
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label >Patente Vehiculo</Label>
+                                <Input
+                                    disabled={confirmar}
+                                    type='texto'
+                                    placeholder='Ingrese Vehiculo'
+                                    name='patente'
+                                    value={patente}
+                                    onChange={ev => setPatente(ev.target.value)}
+                                />
+                            </ContentElemenSelect>
+                        </ContentElemenMov>
+                    } */}
+
+                    <BotonGuardar
+                        style={{ margin: '35px 10px' }}
+                        onClick={addCabeceraIn}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnGuardar}
+                    >Guardar</BotonGuardar>
+                    <BotonGuardar
+                        style={{ margin: '35px 0' }}
+                        onClick={nuevo}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnNuevo}
+                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -710,16 +912,21 @@ const Entradas = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell onClick={() => {
+                                            // detectar(item.tipoinout)
                                             setNumDoc(item.numdoc);
                                             setNomTipDoc(item.tipdoc);
+                                            fechaDate(item.date)
                                             setNomTipoIn(item.tipoinout);
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
-                                            fechaDate(item.date)
+                                            // setCorreo(item.correo);
+                                            // setPatente(item.patente);
                                             setBtnGuardar(true);
                                             setBtnAgregar(false)
                                             setConfirmar(true);
+                                            setBtnNuevo(false)
                                             setFlag(!flag)
+                                            // console.log('hora cabecera', item.date)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                     </Table.Row>
                                 )

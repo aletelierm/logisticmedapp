@@ -12,8 +12,8 @@ const EditarCliente = async ({id,nombre,direccion,telefono,correo,nomrsf,dirrsf,
         direccion: direccion,
         telefono: telefono,
         nombre:nombre,
-        userMod: userMod,
-        fechaMod: fechaMod
+        usermod: userMod,
+        fechamod: fechaMod
     })
 }
 

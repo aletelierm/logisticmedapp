@@ -6,8 +6,8 @@ const ActualizarTipoDb = async  ({id, tipo, userMod, fechaMod}) => {
 
     return await updateDoc(doc(db, 'tipos', id),{
         tipo: tipo,
-        userMod: userMod,
-        fechaMod: fechaMod
+        usermod: userMod,
+        fechamod: fechaMod
     })
 }
 

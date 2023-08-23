@@ -12,10 +12,10 @@ const AgregarProveedorDb = async  ({emp_id,rut,nombre,direccion,telefono,correo,
         telefono: telefono,
         correo: correo,
         contacto: contacto,
-        userAdd: userAdd,
-        userMod: userMod,
-        fechaAdd: fechaAdd,
-        fechaMod: fechaMod        
+        useradd: userAdd,
+        usermod: userMod,
+        fechaadd: fechaAdd,
+        fechamod: fechaMod        
     });
 }
  

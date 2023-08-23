@@ -6,10 +6,10 @@ const AgregarTipoDb = async  ({tipo, userAdd, userMod, fechaAdd, fechaMod, emp_i
 
     return await addDoc(collection(db, 'tipos'),{
         tipo: tipo,
-        userAdd: userAdd,
-        userMod: userMod,
-        fechaAdd: fechaAdd,
-        fechaMod: fechaMod,
+        useradd: userAdd,
+        usermod: userMod,
+        fechaadd: fechaAdd,
+        fechamod: fechaMod,
         emp_id: emp_id
     })
 }
