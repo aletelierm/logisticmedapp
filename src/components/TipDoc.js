@@ -11,7 +11,7 @@ export const TipoIn= [
     { key: '2', value: '2', text: 'ARRIENDO' },
     { key: '3', value: '3', text: 'COMODATO' },
     { key: '5', value: '5', text: 'DEVOLUCION CLIENTE' },
-    { key: '6', value: '6', text: 'DEVOLUCION S.T.' }
+    { key: '6', value: '6', text: 'DEVOLUCION SERVICIO TECNICO' }
 ];
 export const TipoOut= [
     { key: '1', value: '1', text: 'CLIENTE' },

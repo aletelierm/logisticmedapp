@@ -111,9 +111,11 @@ const Entradas = () => {
         const nuevaFecha = fecha.seconds * 1000
         // Crea un objeto Date a partir del timestamp en milisegundos
         const fechas = new Date(nuevaFecha);
+        console.log('fechas', fechas)
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
+        console.log(formatoDatetimeLocal)
     }
 
     // Validar rut
@@ -309,7 +311,53 @@ const Entradas = () => {
                         })
                     }
                 }
-            // } else if () {
+            // } else if (nomTipoIn === 'DEVOLUCION SERVICIO TECNICO') {
+                // const existeProv = proveedor.filter(prov => prov.rut === rut);
+                // if (existeProv.length === 0) {
+                //     cambiarEstadoAlerta(true);
+                //     cambiarAlerta({
+                //         tipo: 'error',
+                //         mensaje: 'No existe rut de proveedor'
+                //     })
+                // } else {
+                //     const fechaInOut = new Date(date);
+                //     setEntidad(existeProv[0].nombre);
+                //     try {
+                //         CabeceraInDB({
+                //             emp_id: users.emp_id,
+                //             tipDoc: nomTipDoc,
+                //             numDoc: numDoc,
+                //             date: fechaInOut,
+                //             tipoInOut: nomTipoIn,
+                //             rut: rut,
+                //             entidad: entidad,
+                //             userAdd: user.email,
+                //             userMod: user.email,
+                //             fechaAdd: fechaAdd,
+                //             fechaMod: fechaMod,
+                //             tipMov: 0,
+                //             confirmado: false,
+                //             retirado: false
+                //         })
+                //         cambiarEstadoAlerta(true);
+                //         cambiarAlerta({
+                //             tipo: 'exito',
+                //             mensaje: 'Ingreso realizado exitosamente'
+                //         })
+                //         setFlag(!flag);
+                //         setConfirmar(true);
+                //         setBtnAgregar(false);
+                //         setBtnGuardar(true);
+                //         setBtnNuevo(false);
+                //         return;
+                //     } catch (error) {
+                //         cambiarEstadoAlerta(true);
+                //         cambiarAlerta({
+                //             tipo: 'error',
+                //             mensaje: error
+                //         })
+                //     }
+                // }
 
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
@@ -721,6 +769,7 @@ const Entradas = () => {
                                             setBtnAgregar(false)
                                             setConfirmar(true);
                                             setFlag(!flag)
+                                            console.log('hora cabecera', item.date)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                     </Table.Row>
                                 )
