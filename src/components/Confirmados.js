@@ -205,7 +205,7 @@ const Confirmados = () => {
                 if (falsoCheck[0].tipoinout === 'CLIENTE') {
                     inOut.current = 'DEVOLUCION CLIENTE'
                 } else {
-                    inOut.current = 'SERVICIO TECNICO'
+                    inOut.current = 'DEVOLUCION SERVICIO TECNICO'
                 }
                 // crea cabecera
                 try {
