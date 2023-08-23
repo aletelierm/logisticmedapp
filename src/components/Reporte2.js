@@ -84,7 +84,7 @@ const Reporte2 = () => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{item.id2}</Table.Cell>                                        
-                                        <Table.Cell>{item.tipo}</Table.Cell>
+                                        <Table.Cell>{item.tipo+" - "+item.marca+"  - "+item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>

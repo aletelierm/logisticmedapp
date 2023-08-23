@@ -43,7 +43,6 @@ const CrearEquipos = () => {
     /* const [empresa, setEmpresa] = useState([]); */
     const documentoId = useRef('');
     const empresaRut = useRef('');
-
     
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -57,8 +56,7 @@ const CrearEquipos = () => {
         const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
         /* setEmpresa(traerEmp.data());  */      
         empresaRut.current = traerEmp.data().rut;       
-    }
-     
+    }     
     //Leer los datos de Tipos
     const getTipo = async () => {
         const traerTip = collection(db, 'tipos');
@@ -66,7 +64,6 @@ const CrearEquipos = () => {
         const data = await getDocs(dato)
         setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     //Leer los datos de Marcas
     const getMarca = async () => {
         const traerMar = collection(db, 'marcas');
@@ -74,7 +71,6 @@ const CrearEquipos = () => {
         const data = await getDocs(dato)
         setMarca(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     //Leer los datos de Modelos
     const getModelo = async () => {
         const traerMod = collection(db, 'modelos');
@@ -82,7 +78,6 @@ const CrearEquipos = () => {
         const data = await getDocs(dato)
         setModelo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     //Leer los datos de Equipos
     const getEquipo = async () => {
         const traerEq = collection(db, 'equipos');
@@ -90,7 +85,6 @@ const CrearEquipos = () => {
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     //Leer los datos de Equipos
     const getStatus = async () => {
         const traerEq = collection(db, 'status');
@@ -98,7 +92,6 @@ const CrearEquipos = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     //Funcion Guardar los equipos creados
     const EquipoDb = async ({ status,nomEntidad,familia, tipo, marca, modelo, serie, rfid, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
         try {
@@ -129,6 +122,8 @@ const CrearEquipos = () => {
                 emp_id: emp_id,
                 familia: familia,
                 tipo: tipo,
+                marca: marca,
+                modelo: modelo,
                 status: status,
                 entidad: nomEntidad,
                 serie: serie,
@@ -322,10 +317,7 @@ const CrearEquipos = () => {
                     tipo: 'exito',
                     mensaje: 'Equipo creado correctamente'
                 })
-                setFlag(true);
-                //Envio de correo 
-               // const datosEquipo = nomTipo+" "+nomMarca+" "+nomModelo+" SN:"+serie                
-               // EnviarCorreo('yeicoletelier@gmail.com','Creacion de equipo',`El usuario ${users.nombre} ${users.apellido} ha creado el equipo: ${datosEquipo}`)
+                setFlag(true);                
             } catch (error) {
                 console.log(error);
             }

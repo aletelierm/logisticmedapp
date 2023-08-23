@@ -34,6 +34,7 @@ import Reporte2 from './Reporte2';
 import { Reportes } from './Reportes';
 import Confirmados from './Confirmados';
 import UsuariosEnvios from './UsuariosAlertas';
+import ActualizaUsuariosAlertas from './ActualizaUsuariosAlertas';
 /* import FormularioDinamico from './Pruebas'; */
 
 export const Home = () => { 
@@ -75,6 +76,7 @@ export const Home = () => {
             <Route path="configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
             <Route path="configuracion/actualizaempresa/:id" element={<ActualizaEmpresa/>}/>
             <Route path="configuracion/envios" element={<UsuariosEnvios/>}/>
+            <Route path="configuracion/actualizaalerta/:id" element={<ActualizaUsuariosAlertas/>}/>
             <Route path="confirmados" element={<Confirmados/>}/>
             {/* <Route path="pruebas" element={<FormularioDinamico/>}/> */}
             <Route path="/" element={<Navigate to="/login"/>}/>

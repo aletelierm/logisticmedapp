@@ -262,7 +262,7 @@ export const RegistroUsuarios = () => {
                             {empresa.map((d) => {
                                 return (<option key={d.id2}>{d.empresa}</option>)
                             })}
-                        </SelectUser>
+                        </SelectUser> 
                         <LabelUser>Roles</LabelUser>
                         <SelectUser value={rol} onChange={ev => setRol(ev.target.value)}>
                             <option>Selecciona Opción:</option>

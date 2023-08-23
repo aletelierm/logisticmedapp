@@ -9,6 +9,7 @@ import { FaRegEdit } from "react-icons/fa";
 import ExportarExcel from '../funciones/ExportarExcel';
 import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General'
 import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
+import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 export const UsuariosEnvios = () => {
@@ -24,7 +25,7 @@ export const UsuariosEnvios = () => {
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');   
     const [entidad, setEntidad] = useState('');
-    const [epmId, setEmpId] = useState('');
+    /* const [epmId, setEmpId] = useState(''); */
     const [usuarios, setUsuarios] = useState([]);
     const [usuarioAlert, setUsuarioAlert] = useState([]);
     const [alerta, cambiarAlerta] = useState({});
@@ -82,8 +83,7 @@ export const UsuariosEnvios = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         const existeCorreo = usuarios.filter(corr => corr.correo === correo);
-        const existeEnAlerta = usuarioAlert.filter(existe => existe.correo === correo);
-      
+        const existeEnAlerta = usuarioAlert.filter(existe => existe.correo === correo);      
 
         if(correo === ''){
             cambiarEstadoAlerta(true);
@@ -111,17 +111,17 @@ export const UsuariosEnvios = () => {
                 setCorreo(existeCorreo[0].correo);
                 setNombre(existeCorreo[0].nombre);
                 setApellido(existeCorreo[0].apellido);
-                setEntidad(existeCorreo[0].empresa)
-                setEmpId(existeCorreo[0].emp_id)
+                setEntidad(existeCorreo[0].empresa);
+                /* setEmpId(existeCorreo[0].emp_id);   */              
                 try {
                     AgregarAlertas({
                         userAdd: useraddmod,
                         userMod: useraddmod, 
                         fechaAdd: fechaactual,
                         fechaMod: fechaactual,
-                        emp_id: epmId,
-                        empresa: entidad,
-                        nombre: nombre +" "+apellido,
+                        emp_id: existeCorreo[0].emp_id,
+                        empresa: existeCorreo[0].empresa,
+                        nombre: existeCorreo[0].nombre+" "+existeCorreo[0].apellido,
                         correo: correo,
                         salida:isCheckedSalida,
                         rfid: isCheckedRfid,
@@ -177,7 +177,7 @@ export const UsuariosEnvios = () => {
                 setNombre(existeCorreo[0].nombre);
                 setApellido(existeCorreo[0].apellido);
                 setEntidad(existeCorreo[0].empresa)
-                setEmpId(existeCorreo[0].emp_id)
+               /*  setEmpId(existeCorreo[0].emp_id) */
              
                
             }
@@ -304,11 +304,10 @@ export const UsuariosEnvios = () => {
                                         <Table.Cell><Input type='checkbox' checked={item.salida} disabled style={{width:'100%'}}/></Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.rfid} disabled style={{width:'100%'}}/></Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.confirma} disabled style={{width:'100%'}}/></Table.Cell>                                                                          
-                                        <Table.Cell style={{textAlign: 'center'}}>
-                                        <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }}/>
-                                            {/* <Link to={`/actualizaproveedor/${item.id}`}>
+                                        <Table.Cell style={{textAlign: 'center'}}>                                        
+                                            <Link to={`/configuracion/actualizaalerta/${item.id}`}>
                                                 <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />
-                                            </Link> */}
+                                            </Link>
                                         </Table.Cell>           
                                     </Table.Row>
 

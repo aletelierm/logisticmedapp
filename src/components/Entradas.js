@@ -360,8 +360,7 @@ const Entradas = () => {
             }
         }
     }
-    console.log('empresa',empresa)
-    //Valida y guarda los detalles del documento
+     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -372,7 +371,6 @@ const Entradas = () => {
         // Validar en N° Serie en Entradas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
         const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
-        console.log('existe', existe)
         // Validar Id de Cabecera en Entradas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
         if (price === '') {
