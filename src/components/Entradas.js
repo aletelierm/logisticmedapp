@@ -14,7 +14,7 @@ import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos'
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 
 
 const Entradas = () => {
@@ -28,25 +28,28 @@ const Entradas = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [proveedor, setProveedor] = useState([]);
     const [cliente, setCliente] = useState([]);
-    const [nomTipDoc, setNomTipDoc] = useState('');
+    const [equipo, setEquipo] = useState([]);
+    const [cabecera, setCabecera] = useState([]);
+    const [dataEntrada, setDataEntrada] = useState([]);
+    const [empresa, setEmpresa] = useState([]);
+    const [status, setStatus] = useState([]);
     const [numDoc, setNumDoc] = useState('');
+    const [nomTipDoc, setNomTipDoc] = useState('');
     const [date, setDate] = useState('');
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
-    const [equipo, setEquipo] = useState([]);
-    const [cabecera, setCabecera] = useState([]);
-    const [status, setStatus] = useState([]);
+    const [correo, setCorreo] = useState('');
+    const [patente, setPatente] = useState('');
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
-    const [dataEntrada, setDataEntrada] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnGuardar, setBtnGuardar] = useState(false);
+    const [btnGuardar, setBtnGuardar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
-    const [empresa, setEmpresa] = useState([]);
+    const [mostraCP, setmostraCP] = useState(false)
 
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
@@ -87,7 +90,7 @@ const Entradas = () => {
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
     //Leer  Empresa
     const getEmpresa = async () => {
-        const traerEmp = await getDoc(doc(db, 'empresas',users.emp_id));
+        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
         setEmpresa(traerEmp.data());
     }
     //Lectura de status
@@ -97,14 +100,12 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-
     // Transformar fecha de moment a date
     const fechaDate = (fecha) => {
         // Convierte a milisegundos
@@ -122,6 +123,7 @@ const Entradas = () => {
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        setBtnGuardar(true)
         if (e.key === 'Enter' || e.key === 'Tab') {
             if (nomTipoIn === 'DEVOLUCION CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
@@ -133,6 +135,7 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
+                    setBtnGuardar(false)
                 }
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
@@ -144,6 +147,7 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeProv[0].nombre);
+                    setBtnGuardar(false)
                 }
             }
         }
@@ -182,6 +186,17 @@ const Entradas = () => {
             }
         }
     }
+
+    // Validar Tipo de Entrada
+    const detectarTipoIn = (valor) => {
+        console.log(nomTipoIn)
+        if (valor === 'DEVOLUCION SERVICIO TECNICO' || valor === 'DEVOLUCION CLIENTE') {
+            setmostraCP(true)
+        } else {
+            setmostraCP(false)
+        }
+    }
+
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -311,7 +326,7 @@ const Entradas = () => {
                         })
                     }
                 }
-            // } else if (nomTipoIn === 'DEVOLUCION SERVICIO TECNICO') {
+                // } else if (nomTipoIn === 'DEVOLUCION SERVICIO TECNICO') {
                 // const existeProv = proveedor.filter(prov => prov.rut === rut);
                 // if (existeProv.length === 0) {
                 //     cambiarEstadoAlerta(true);
@@ -408,7 +423,7 @@ const Entradas = () => {
             }
         }
     }
-    console.log('empresa',empresa)
+    console.log('empresa', empresa)
     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -460,13 +475,13 @@ const Entradas = () => {
             } else {
                 const fechaInOut = new Date(date);
                 // console.log('fechaInOut', fechaInOut)
-
+                console.log('hora cabecera', existeCab[0].date)
                 try {
                     EntradasDB({
                         emp_id: users.emp_id,
                         tipDoc: nomTipDoc,
                         numDoc: numDoc,
-                        date: fechaInOut,
+                        date: existeCab[0].date,
                         tipoInOut: nomTipoIn,
                         rut: rut,
                         entidad: entidad,
@@ -478,6 +493,8 @@ const Entradas = () => {
                         serie: existe[0].serie,
                         rfid: existe[0].rfid,
                         price: price,
+                        correo: correo,
+                        patente: patente,
                         cab_id: existeCab[0].id,
                         userAdd: user.email,
                         userMod: user.email,
@@ -592,7 +609,7 @@ const Entradas = () => {
                 <Titulo>Recepcion de Equipos</Titulo>
             </Contenedor>
             <Contenedor>
-                <Formulario action='' onSubmit={handleSubmit}>
+                <Formulario action='' /* onSubmit={handleSubmit} */>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
@@ -635,11 +652,16 @@ const Entradas = () => {
                             <Select
                                 disabled={confirmar}
                                 value={nomTipoIn}
-                                onChange={ev => setNomTipoIn(ev.target.value)}>
+                                onChange={(ev) => {
+                                    setNomTipoIn(ev.target.value)
+                                    detectarTipoIn(ev.target.value)
+                                    console.log('select', ev.target.value)
+                                    }}>
                                 <option>Selecciona Opción:</option>
                                 {TipoIn.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
                                 })}
+                                
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -658,7 +680,52 @@ const Entradas = () => {
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
+
+                        {/* <BotonGuardar
+                            style={{ margin: '35px 10px' }}
+                            onClick={addCabeceraIn}
+                            checked={confirmar}
+                            onChange={handleCheckboxChange}
+                            disabled={btnGuardar}
+                        >Guardar</BotonGuardar>
                         <BotonGuardar
+                            style={{ margin: '35px 0' }}
+                            onClick={nuevo}
+                            checked={confirmar}
+                            onChange={handleCheckboxChange}
+                            disabled={btnNuevo}
+                        >Nuevo</BotonGuardar> */}
+                    </ContentElemenMov>
+
+                    {
+                        mostraCP &&
+                            <ContentElemenMov>
+                                <ContentElemenSelect>
+                            <Label>Correo Transportista</Label>
+                            <Input
+                                disabled={confirmar}
+                                type='texto'
+                                placeholder='Ingrese Correo'
+                                name='correo'
+                                value={correo}
+                                onChange={ev => setCorreo(ev.target.value)}
+                            />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label >Patente Vehiculo</Label>
+                            <Input
+                                disabled={confirmar}
+                                type='texto'
+                                placeholder='Ingrese Vehiculo'
+                                name='patente'
+                                value={patente}
+                                onChange={ev => setPatente(ev.target.value)}
+                            />
+                        </ContentElemenSelect>
+                            </ContentElemenMov>
+                        }
+                    
+                    <BotonGuardar
                             style={{ margin: '35px 10px' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
@@ -672,7 +739,6 @@ const Entradas = () => {
                             onChange={handleCheckboxChange}
                             disabled={btnNuevo}
                         >Nuevo</BotonGuardar>
-                    </ContentElemenMov>
                 </Formulario>
             </Contenedor>
             <Contenedor>

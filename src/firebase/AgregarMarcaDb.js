@@ -6,10 +6,10 @@ const AgregarMarcaDb = async  ({marca, userAdd, userMod, fechaAdd, fechaMod, emp
 
     return await addDoc(collection(db, 'marcas'),{
         marca: marca,
-        userAdd: userAdd,
-        userMod: userMod,
-        fechaAdd: fechaAdd,
-        fechaMod: fechaMod,
+        useradd: userAdd,
+        usermod: userMod,
+        fechaadd: fechaAdd,
+        fechamod: fechaMod,
         emp_id: emp_id
     })
 }

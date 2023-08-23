@@ -213,8 +213,8 @@ const AgregarEmpresa = () => {
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.empresa}</Table.Cell>
-                                    <Table.Cell>{item.userAdd}</Table.Cell>
-                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell>{item.useradd}</Table.Cell>
+                                    <Table.Cell>{item.usermod}</Table.Cell>
                                     <Table.Cell><Link to={`/configuracion/actualizaempresa/${item.id}`}><FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} /></Link></Table.Cell>
                                 </Table.Row>
                                     )

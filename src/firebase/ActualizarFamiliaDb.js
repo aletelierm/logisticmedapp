@@ -6,8 +6,8 @@ const ActualizarFamiliaDb = async  ({id, familia, userMod, fechaMod}) => {
 
     return await updateDoc(doc(db, 'familias', id),{
         familia: familia,
-        userMod: userMod,
-        fechaMod: fechaMod
+        usermod: userMod,
+        fechamod: fechaMod
     })
 }
 

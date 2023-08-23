@@ -7,10 +7,10 @@ const AgregarEmpresaDb = async  ({rut,empresa,userAdd,userMod,fechaAdd, fechaMod
     return await addDoc(collection(db, 'empresas'),{
         rut: rut,
         empresa: empresa,
-        userAdd: userAdd,
-        userMod: userMod,
-        fechaAdd: fechaAdd,
-        fechaMod: fechaMod
+        useradd: userAdd,
+        usermod: userMod,
+        fechaadd: fechaAdd,
+        fechamod: fechaMod
         
     })
 }

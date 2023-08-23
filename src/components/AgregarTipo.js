@@ -156,8 +156,8 @@ const AgregarTipo = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell>{item.id2}</Table.Cell>
                                     <Table.Cell>{item.tipo}</Table.Cell>
-                                    <Table.Cell>{item.userAdd}</Table.Cell>
-                                    <Table.Cell>{item.userMod}</Table.Cell>
+                                    <Table.Cell>{item.useradd}</Table.Cell>
+                                    <Table.Cell>{item.usermod}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}>
                                         <Link to={`/actualizatipo/${item.id}`}>
                                             <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />

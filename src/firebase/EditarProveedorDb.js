@@ -10,8 +10,8 @@ const EditarProveedor = async ({id,nombre,direccion,telefono,correo, contacto,us
         direccion: direccion,
         telefono: telefono,
         nombre:nombre,
-        userMod: userMod,
-        fechaMod: fechaMod
+        usermod: userMod,
+        fechamod: fechaMod
 
     })
 
