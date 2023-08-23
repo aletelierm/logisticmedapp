@@ -279,7 +279,7 @@ const Clientes = () => {
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Mis Clientes</Titulo>
+                <Titulo>Mis Pacientes</Titulo>
             </Contenedor>
 
             <Contenedor>
@@ -375,7 +375,7 @@ const Clientes = () => {
             <ListarProveedor>
                 <ContentElemen>
                     <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
-                    <Titulo>Listado de Clientes</Titulo>
+                    <Titulo>Listado de Pacientes</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                 </ContentElemen>
                 <ContentElemen>

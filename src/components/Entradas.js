@@ -87,7 +87,7 @@ const Entradas = () => {
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
     //Leer  Empresa
     const getEmpresa = async () => {
-        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
+        const traerEmp = await getDoc(doc(db, 'empresas',users.emp_id));
         setEmpresa(traerEmp.data());
     }
     //Lectura de status
@@ -408,6 +408,7 @@ const Entradas = () => {
             }
         }
     }
+    console.log('empresa',empresa)
     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
