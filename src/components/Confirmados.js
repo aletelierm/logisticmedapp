@@ -12,7 +12,6 @@ import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General'
 import { Input } from '../elementos/CrearEquipos'
-
 import moment from 'moment';
 
 
@@ -27,12 +26,13 @@ const Confirmados = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
-    /* const [status, setStatus] = useState([]); */
     const [dataSalida, setDataSalida] = useState([]);
     const [flag, setFlag] = useState(false);
     const [cab_id, setCab_id] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenR, setIsOpenR] = useState(false);
     const [isChecked, setIsChecked] = useState([]);
+    const [isChecked2, setIsChecked2] = useState([]);
     const cabeceraId = useRef('');
     const inOut = useRef('');
 
@@ -43,7 +43,8 @@ const Confirmados = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
     }
-    const porEntregar = cabecera.filter(cab => cab.correo === users.correo)
+    const porEntregar = cabecera.filter(cab => cab.correo === users.correo && cab.entregado === false && cab.confirmado === true)
+    const porRetirar = cabecera.filter(cab => cab.correo === users.correo && cab.retirado === false && cab.confirmado === true)
     //Lectura movimientos de Salida
     const getSalida = async () => {
         const traerSalida = collection(db, 'salidas');
@@ -51,13 +52,6 @@ const Confirmados = () => {
         const data = await getDocs(dato)
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false, observacion: '' })))
     }
-    /*  //Lectura de status
-     const getStatus = async () => {
-         const traerEntrada = collection(db, 'status');
-         const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
-         const data = await getDocs(dato)
-         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-     } */
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -89,8 +83,8 @@ const Confirmados = () => {
     const CabeceraInDB = async ({ tipDoc, numDoc, date, tipoInOut, rut, entidad, tipMov, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
         try {
             const cabecera = await addDoc(collection(db, 'cabeceras'), {
-                tipdoc: tipDoc,
                 numdoc: numDoc,
+                tipdoc: tipDoc,
                 date: date,
                 tipoinout: tipoInOut,
                 rut: rut,
@@ -111,7 +105,6 @@ const Confirmados = () => {
 
         // Crea una nueva instancia de lote (batch)
         const batch = writeBatch(db);
-
         // Obtiene una referencia a una colección específica en Firestore
         const entradasRef = collection(db, 'entradas');
         console.log('cabecera id foreach', cabeceraId.current)
@@ -119,29 +112,28 @@ const Confirmados = () => {
         falsoCheck.forEach((docs) => {
             const nuevoDocRef = doc(entradasRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
             batch.set(nuevoDocRef, {
-                emp_id: users.emp_id,
-                tipdoc: docs.tipdoc,
                 numdoc: docs.numdoc,
+                tipdoc: docs.tipdoc,
                 date: fechaAdd,
                 tipoinout: inOut.current,
                 rut: docs.rut,
                 entidad: docs.entidad,
+                cab_id: cabeceraId.current,
                 eq_id: docs.eq_id,
                 familia: docs.familia,
                 tipo: docs.tipo,
                 marca: docs.marca,
+                price: 0,
                 modelo: docs.modelo,
                 serie: docs.serie,
                 rfid: docs.rfid,
-                price: 0,
-                cab_id: cabeceraId.current,
                 useradd: user.email,
                 usermod: user.email,
                 fechaadd: fechaAdd,
                 fechamod: fechaMod,
                 tipmov: 1,
-                status: 'BODEGA',
-                observacion: docs.observacion
+                observacion: docs.observacion,
+                emp_id: users.emp_id,
             }
 
             );
@@ -288,19 +280,22 @@ const Confirmados = () => {
     }, [])
 
     useEffect(() => {
-        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id))
+        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 2))
+        setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
+    // console.log('isChecked', isChecked)
+    // console.log('isChecked2', isChecked2)
 
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Confirmacion de Entrega</Titulo>
+                <Titulo>Rntregados - Retirados</Titulo>
             </Contenedor>
 
             <ListarProveedor>
-                <Titulo>Listado de Documentos por Confirmar</Titulo>
+                <Titulo>Listado de Documentos por Entregar</Titulo>
                 <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
                     <Table.Header>
                         <Table.Row>
@@ -314,27 +309,27 @@ const Confirmados = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {porEntregar.map((item, index) => {
-                            if (item.entregado === false && item.confirmado === true) {
-                                return (
-                                    <Table.Row key={item.id}>
-                                        <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>
-                                        <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>
-                                        <Table.Cell onClick={() => {
-                                            setCab_id(item.id)
-                                            setIsOpen(!isOpen)
-                                            setFlag(!flag)
-                                        }} >
-                                            <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
-                                        </Table.Cell>
-                                    </Table.Row>
-                                )
-                            }
+                        {porEntregar.map((item) => {
+                            // if (item.entregado === false && item.confirmado === true) {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipoinout}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell onClick={() => {
+                                        setCab_id(item.id)
+                                        setIsOpen(!isOpen)
+                                        setFlag(!flag)
+                                    }} >
+                                        <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
+                                </Table.Row>
+                            )
                         }
+                            // }
                         )}
                     </Table.Body>
                 </StyledTable>
@@ -393,6 +388,68 @@ const Confirmados = () => {
                     <BotonGuardar onClick={confirmaEntrega} >Confirmar Entrega</BotonGuardar>
                 </Contenedor>
             }
+
+
+
+            <ListarProveedor>
+                <Titulo>Listado de Documentos por Retirar</Titulo>
+                <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
+                            <Table.HeaderCell>N° Docuemtno</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha</Table.HeaderCell>
+                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {porRetirar.map((item) => {
+                            // if (item.entregado === false && item.confirmado === true) {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipoinout}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell onClick={() => {
+                                        setCab_id(item.id)
+                                        setIsOpenR(!isOpenR)
+                                        setFlag(!flag)
+                                    }} >
+                                        <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
+                                </Table.Row>
+                            )
+                        }
+                            // }
+                        )}
+                    </Table.Body>
+                </StyledTable>
+            </ListarProveedor >
+
+            {isOpenR &&
+                <Contenedor>
+                    <StyledTable striped celled unstackable responsive>
+                        <Table.Header style={{ textAlign: 'center' }}>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Equipo</Table.HeaderCell>
+                                <Table.HeaderCell>Serie</Table.HeaderCell>
+                                <Table.HeaderCell>Retirado</Table.HeaderCell>
+                                <Table.HeaderCell>Observación</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                    </StyledTable>
+                </Contenedor>
+                // Falta mostrar los campos no retirados
+            }
+
+            
 
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
