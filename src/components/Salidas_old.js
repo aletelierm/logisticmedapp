@@ -23,34 +23,32 @@ const Salidas = () => {
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
-
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
-    const [alertaSalida, setAlertasalida] = useState([]);
     const [proveedor, setProveedor] = useState([]);
     const [cliente, setCliente] = useState([]);
-    const [equipo, setEquipo] = useState([]);
-    const [cabecera, setCabecera] = useState([]);
-    const [dataSalida, setDataSalida] = useState([]);
-    const [status, setStatus] = useState([]);
-    const [usuario, setUsuarios] = useState([]);
-    const [numDoc, setNumDoc] = useState('');
     const [nomTipDoc, setNomTipDoc] = useState('');
+    const [numDoc, setNumDoc] = useState('');
     const [date, setDate] = useState('');
     const [nomTipoOut, setNomTipoOut] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
+    const [equipo, setEquipo] = useState([]);
+    const [cabecera, setCabecera] = useState([]);
+    const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
     const [flag, setFlag] = useState(false);
+    const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnGuardar, setBtnGuardar] = useState(true);
+    const [btnGuardar, setBtnGuardar] = useState(false);
+    const [alertaSalida, setAlertasalida] = useState([]);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const inOut = useRef('');
-
+    
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
         const traerAlertas = collection(db, 'usuariosalertas');
@@ -95,7 +93,7 @@ const Salidas = () => {
     }
     //Almacena movimientos de entrada del documento
     const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
-
+ 
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -103,12 +101,6 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    //Lee datos de los usuarios
-    const getUsuarios = async () => {
-        const dataUsuarios = await getDocs(collection(db, "usuarios"));
-        setUsuarios(dataUsuarios.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
-    }
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -130,7 +122,7 @@ const Salidas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
-            if (nomTipoOut === 'CLIENTE' || nomTipoOut === 'RETIRO CLIENTE') {
+            if (nomTipoOut === 'CLIENTE') {
                 const existeCli = cliente.filter(cli => cli.rut === rut);
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
@@ -140,7 +132,6 @@ const Salidas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
-                    setBtnGuardar(false);
                 }
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
@@ -152,7 +143,6 @@ const Salidas = () => {
                     })
                 } else {
                     setEntidad(existeProv[0].nombre);
-                    setBtnGuardar(false);
                 }
             }
         }
@@ -179,39 +169,17 @@ const Salidas = () => {
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
             } else {
-                console.log('tipo salida validar serie', nomTipoOut)
-                const existeStatusCli = status.filter(st => st.id === existe[0].id && st.status === 'CLIENTE').length === 1;
-                const existeStatusST = status.filter(st => st.id === existe[0].id && st.status === 'SERVICIO TECNICO').length === 1;
-                const existeStatusBod = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
-                if (nomTipoOut === 'RETIRO CLIENTE') {
-                    if (!existeStatusCli) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Cliente'
-                        })
-                    }
-                } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-                    if (!existeStatusST) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Servicio Tecnico'
-                        })
-                    }
-                } else {
-                    if (!existeStatusBod) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Bodega'
-                        })
-                    }
+                const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+                if (!existeStatus) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Equipo no se encuentra en Bodega'
+                    })
                 }
             }
         }
     }
-
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -229,8 +197,6 @@ const Salidas = () => {
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        const existeCorreo = usuario.filter(corr => corr.correo === correo);
-
         if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -282,25 +248,11 @@ const Salidas = () => {
                 mensaje: 'Rut no válido'
             })
             return;
-        } else if (correo === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese un correo'
-            })
-            return;
         } else if (!expresionRegular.test(correo)) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'favor ingresar un correo valido'
-            })
-            return;
-        } else if (existeCorreo.length === 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'No existe usuario con ese correo'
             })
             return;
         } else if (patente === '') {
@@ -338,23 +290,22 @@ const Salidas = () => {
                     setEntidad(existeCli[0].nombre);
                     try {
                         CabeceraOutDB({
-                            numDoc: numDoc,
+                            emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
+                            numDoc: numDoc,
                             date: fechaInOut,
                             tipoInOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod,
                             tipMov: 2,
                             confirmado: false,
-                            entregado: false,
-                            retirado: true,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
+                            entregado: false
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -375,107 +326,6 @@ const Salidas = () => {
                         })
                     }
                 }
-            } else if (nomTipoOut === 'RETIRO CLIENTE') {
-                const existeCli = cliente.filter(cli => cli.rut === rut);
-                if (existeCli.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
-                    })
-                } else {
-                    setEntidad(existeCli[0].nombre);
-                    try {
-                        CabeceraOutDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            tipMov: 0,
-                            confirmado: false,
-                            entregado: true,
-                            retirado: false,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Cabecera Documento guadada exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
-
-            } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-                const existeProv = proveedor.filter(prov => prov.rut === rut);
-                if (existeProv.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut de proveedor'
-                    })
-                } else {
-                    setEntidad(existeProv[0].nombre);
-                    try {
-                        CabeceraOutDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            tipMov: 0,
-                            confirmado: false,
-                            entregado: true,
-                            retirado: false,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Cabecera Documento guadada exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
-
-                // hasta aqui corrigiendo 11:06
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
@@ -488,23 +338,22 @@ const Salidas = () => {
                     setEntidad(existeProv[0].nombre);
                     try {
                         CabeceraOutDB({
-                            numDoc: numDoc,
+                            emp_id: users.emp_id,
                             tipDoc: nomTipDoc,
+                            numDoc: numDoc,
                             date: fechaInOut,
                             tipoInOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
-                            tipMov: 2,
-                            confirmado: false,
-                            entregado: false,
-                            retirado: true,
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
-                            emp_id: users.emp_id
+                            tipMov: 2,
+                            confirmado: false,
+                            entregado: false
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -560,186 +409,68 @@ const Salidas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
-            const existeStatusBod = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
-            const existeStatusCli = status.filter(st => st.id === existe[0].id && st.status === 'CLIENTE').length === 1;
-            const existeStatusST = status.filter(st => st.id === existe[0].id && st.status === 'SERVICIO TECNICO').length === 1;
-            if (nomTipoOut === 'RETIRO CLIENTE') {
-                if (!existeStatusCli) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Cliente'
-                    })
-                } else {
-                    inOut.current = 'PROCESO RETIRO CLIENTE';
-                    setBtnConfirmar(false);
-                    try {
-                        SalidasDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: existeCab[0].date,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            cab_id: existeCab[0].id,
-                            eq_id: existe[0].id,
-                            familia: existe[0].familia,
-                            tipo: existe[0].tipo,
-                            marca: existe[0].marca,
-                            modelo: existe[0].modelo,
-                            serie: existe[0].serie,
-                            rfid: existe[0].rfid,
-                            tipMov: 0,
-                            observacion: '',
-                            // status: nomTipoOut,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        });
-                        setNumSerie('')
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Item guardado correctamente'
-                        })
-                        setFlag(!flag);
-                        setBtnConfirmar(false);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
-            } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-                if (!existeStatusST) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Servicio Tecnico'
-                    })
-                } else {
-                    inOut.current = 'PROCESO RETIRO SERVICIO TECNICO';
-                    setBtnConfirmar(false);
-                    try {
-                        SalidasDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: existeCab[0].date,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            cab_id: existeCab[0].id,
-                            eq_id: existe[0].id,
-                            familia: existe[0].familia,
-                            tipo: existe[0].tipo,
-                            marca: existe[0].marca,
-                            modelo: existe[0].modelo,
-                            serie: existe[0].serie,
-                            rfid: existe[0].rfid,
-                            tipMov: 0,
-                            observacion: '',
-                            // status: nomTipoOut,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        });
-                        setNumSerie('')
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Item guardado correctamente'
-                        })
-                        setFlag(!flag);
-                        setBtnConfirmar(false);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
+            const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+            if (!existeStatus) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo no se encuentra en Bodega'
+                })
             } else {
-                if (!existeStatusBod) {
+                const fechaInOut = new Date(date);
+                if (nomTipoOut === 'CLIENTE') {
+                    inOut.current = 'TRANSITO CLIENTE'
+                } else if (nomTipoOut === 'SERVICIO TECNICO') {
+                    inOut.current = 'TRANSITO S.T.'
+                } else {
+                    inOut.current = nomTipoOut
+                }
+                setBtnConfirmar(false);
+
+                try {
+                    SalidasDB({
+                        emp_id: users.emp_id,
+                        tipDoc: nomTipDoc,
+                        numDoc: numDoc,
+                        date: fechaInOut,
+                        tipoInOut: nomTipoOut,
+                        rut: rut,
+                        entidad: entidad,
+                        eq_id: existe[0].id,
+                        familia: existe[0].familia,
+                        tipo: existe[0].tipo,
+                        marca: existe[0].marca,
+                        modelo: existe[0].modelo,
+                        serie: existe[0].serie,
+                        rfid: existe[0].rfid,
+                        cab_id: existeCab[0].id,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        tipMov: 2,
+                        status: nomTipoOut
+                    });
+                    setNumSerie('')
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Item guardado correctamente'
+                    })
+                    setFlag(!flag);
+                    setBtnConfirmar(false);
+                    setBtnNuevo(false);
+                    return;
+                } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Bodega'
+                        mensaje: error
                     })
-                } else {
-                    // const fechaInOut = new Date(date);
-                    if (nomTipoOut === 'CLIENTE') {
-                        inOut.current = 'TRANSITO CLIENTE'
-                    } else if (nomTipoOut === 'SERVICIO TECNICO') {
-                        inOut.current = 'TRANSITO S.T.'
-                    } else {
-                        inOut.current = nomTipoOut
-                    }
-                    setBtnConfirmar(false);
-
-                    try {
-                        SalidasDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: existeCab[0].date,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            cab_id: existeCab[0].id,
-                            eq_id: existe[0].id,
-                            familia: existe[0].familia,
-                            tipo: existe[0].tipo,
-                            marca: existe[0].marca,
-                            modelo: existe[0].modelo,
-                            serie: existe[0].serie,
-                            rfid: existe[0].rfid,
-                            tipMov: 2,
-                            observacion: '',
-                            // status: nomTipoOut,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        });
-                        setNumSerie('')
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Item guardado correctamente'
-                        })
-                        setFlag(!flag);
-                        setBtnConfirmar(false);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
                 }
             }
         }
     }
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
@@ -762,7 +493,7 @@ const Salidas = () => {
                 usermod: user.email,
                 fechamod: fechaMod
             });
-
+            
             setFlag(!flag)
         } catch (error) {
             cambiarEstadoAlerta(true);
@@ -780,21 +511,23 @@ const Salidas = () => {
         setCorreo('');
         setPatente('');
         setNumSerie('');
-        setConfirmar(false);
-        setBtnGuardar(true);
-        setBtnAgregar(true);
+        setConfirmar(false)
         setBtnConfirmar(true);
-        setBtnNuevo(true);
-        try {
-
-            const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n');
-            alertaSalida.forEach((destino) => {
-                EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
+        setBtnAgregar(true);
+        setBtnGuardar(false)
+        try {           
+        
+            const mensaje = documento.map((item, index)=> `${index+1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n');
+            alertaSalida.forEach((destino)=>{
+                EnviarCorreo(destino.correo,'Alerta Salida de Bodega',mensaje)
             })
-
+           
         } catch (error) {
             console.log('error', error)
         }
+        
+        setBtnGuardar(false);
+        setBtnNuevo(true);
     };
 
     // Agregar una nueva cabecera
@@ -809,7 +542,7 @@ const Salidas = () => {
         setCorreo('');
         setPatente('');
         setConfirmar(false);
-        setBtnGuardar(true);
+        setBtnGuardar(false);
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
@@ -820,8 +553,7 @@ const Salidas = () => {
         getCliente();
         getEquipo();
         getSalida();
-        getUsuarios();
-        getAlertasSalidas()
+        getAlertasSalidas()       
         /* getEmpresa(); */
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -1009,11 +741,11 @@ const Salidas = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {cabecera.map((item, index) => {
+                        {cabecera.map((item) => {
                             if (item.confirmado === false) {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell >{index + 1}</Table.Cell>
+                                        <Table.Cell >{item.id2}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
@@ -1026,13 +758,12 @@ const Salidas = () => {
                                             setNomTipoOut(item.tipoinout);
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
-                                            fechaDate(item.date);
+                                            fechaDate(item.date)
                                             setCorreo(item.correo);
                                             setPatente(item.patente);
                                             setBtnGuardar(true);
-                                            setBtnAgregar(false);
+                                            setBtnAgregar(false)
                                             setConfirmar(true);
-                                            setBtnNuevo(true);
                                             setFlag(!flag)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                     </Table.Row>

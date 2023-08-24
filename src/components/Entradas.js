@@ -27,7 +27,7 @@ const Entradas = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [proveedor, setProveedor] = useState([]);
-    const [cliente, setCliente] = useState([]);
+    // const [cliente, setCliente] = useState([]);
     const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
     // const [usuario, setUsuarios] = useState([]);
@@ -59,13 +59,13 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-    //Lectura de clientes filtrados por empresa
-    const getCliente = async () => {
-        const traerCliente = collection(db, 'clientes');
-        const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
-        const data = await getDocs(dato)
-        setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    }
+    // //Lectura de clientes filtrados por empresa
+    // const getCliente = async () => {
+    //     const traerCliente = collection(db, 'clientes');
+    //     const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
+    //     const data = await getDocs(dato)
+    //     setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    // }
     //Lectura de equipos filtrado por empresas
     const getEquipo = async () => {
         const traerEq = collection(db, 'equipos');
@@ -78,6 +78,7 @@ const Entradas = () => {
     //     const dataUsuarios = await getDocs(collection(db, "usuarios"));
     //     setUsuarios(dataUsuarios.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
     // }
+
     // Lectura cabecera de documentos
     const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
@@ -118,11 +119,9 @@ const Entradas = () => {
         const nuevaFecha = fecha.seconds * 1000
         // Crea un objeto Date a partir del timestamp en milisegundos
         const fechas = new Date(nuevaFecha);
-        // console.log('fechas', fechas)
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
-        // console.log(formatoDatetimeLocal)
     }
 
     // Validar rut
@@ -131,19 +130,19 @@ const Entradas = () => {
         cambiarAlerta({});
         setBtnGuardar(true)
         if (e.key === 'Enter' || e.key === 'Tab') {
-            if (nomTipoIn === 'DEVOLUCION CLIENTE') {
-                const existeCli = cliente.filter(cli => cli.rut === rut);
-                if (existeCli.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
-                    })
-                } else {
-                    setEntidad(existeCli[0].nombre);
-                    setBtnGuardar(false)
-                }
-            } else {
+            // if (nomTipoIn === 'DEVOLUCION CLIENTE') {
+            //     const existeCli = cliente.filter(cli => cli.rut === rut);
+            //     if (existeCli.length === 0) {
+            //         cambiarEstadoAlerta(true);
+            //         cambiarAlerta({
+            //             tipo: 'error',
+            //             mensaje: 'No existe rut del cliente'
+            //         })
+            //     } else {
+            //         setEntidad(existeCli[0].nombre);
+            //         setBtnGuardar(false)
+            //     }
+            // } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
                     cambiarEstadoAlerta(true);
@@ -156,7 +155,6 @@ const Entradas = () => {
                     setBtnGuardar(false)
                 }
             }
-        }
     }
 
     // Validar N°serie
@@ -582,7 +580,7 @@ const Entradas = () => {
                         rfid: existe[0].rfid,
                         tipMov: 1,
                         observacion: '',
-                        status: 'BODEGA',
+                        // status: 'BODEGA',
                         userAdd: user.email,
                         userMod: user.email,
                         fechaAdd: fechaAdd,
@@ -678,7 +676,7 @@ const Entradas = () => {
 
     useEffect(() => {
         getProveedor();
-        getCliente();
+        // getCliente();
         getEquipo();
         getEntrada();
         getStatus();
