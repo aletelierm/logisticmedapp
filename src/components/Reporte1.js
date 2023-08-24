@@ -37,16 +37,14 @@ const Reporte1 = () => {
                 //leer entradas por id
                 const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', data.docs[0].id));
                 const dataE = await getDocs(datoE);
-                ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));
-                console.log('entrada', ent.current)
+                ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));              
                 //leer salidas por id
                 const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', data.docs[0].id));
                 const dataS = await getDocs(datoS);
-                sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));
-                console.log('salida', sal.current)
-                /* merge.current = [...entrada, ...salida].sort((a,b) => a.date.localeCompare(b.date)); */
+                sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));  
                 merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
-                setMerges(merge.current);
+                const movimientos = merge.current.filter(mov => mov.tipmov !==0)                
+                setMerges(movimientos);
             } else if(dataid.exists()){                
                 //leer entradas por id
                 const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie));
