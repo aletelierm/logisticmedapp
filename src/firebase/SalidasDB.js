@@ -2,15 +2,18 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc } from "firebase/firestore";
 
-const SalidasDB = async ({ tipDoc, numDoc, date, tipoInOut, rut, entidad, eq_id, familia, tipo, marca, modelo, serie, rfid, cab_id, tipMov, status, userAdd, userMod, fechaAdd, fechaMod, emp_id,tipmov }) => {
+const SalidasDB = async ({ numDoc, tipDoc, date, tipoInOut, rut, entidad, correo, patente, cab_id, eq_id, familia, tipo, marca, modelo, serie, rfid, tipMov, observacion, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
 
     return await addDoc(collection(db, 'salidas'), {
-        tipdoc: tipDoc,
         numdoc: numDoc,
+        tipdoc: tipDoc,
         date: date, 
         tipoinout: tipoInOut,
         rut: rut,
         entidad: entidad,
+        correo: correo,
+        patente: patente,
+        cab_id: cab_id,
         eq_id: eq_id,
         familia: familia,
         tipo: tipo,
@@ -18,10 +21,9 @@ const SalidasDB = async ({ tipDoc, numDoc, date, tipoInOut, rut, entidad, eq_id,
         modelo: modelo,
         serie: serie,
         rfid: rfid,
-        // price: price,
-        cab_id: cab_id,
         tipmov: tipMov,
-        status: status,
+        observacion: observacion,
+        // status: status,
         useradd: userAdd,
         usermod: userMod,
         fechaadd: fechaAdd,

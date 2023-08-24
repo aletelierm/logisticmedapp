@@ -1,57 +1,61 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect } from 'react';
-import EntradasDB from '../firebase/EntradasDB'
-import CabeceraInDB from '../firebase/CabeceraInDB'
+import React, { useState, useEffect, useRef } from 'react';
+import SalidasDB from '../firebase/SalidasDB';
+import CabeceraOutDB from '../firebase/CabeceraOutDB';
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
-import { Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
-import { TipDoc, TipoIn } from './TipDoc'
+import { TipDoc, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General';
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
+import EnviarCorreo from '../funciones/EnviarCorreo';
 
-
-const Entradas = () => {
+const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
-
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [proveedor, setProveedor] = useState([]);
-    // const [cliente, setCliente] = useState([]);
-    const [equipo, setEquipo] = useState([]);
-    const [cabecera, setCabecera] = useState([]);
-    // const [usuario, setUsuarios] = useState([]);
-    const [dataEntrada, setDataEntrada] = useState([]);
-    const [empresa, setEmpresa] = useState([]);
-    const [status, setStatus] = useState([]);
-    const [numDoc, setNumDoc] = useState('');
+    const [cliente, setCliente] = useState([]);
     const [nomTipDoc, setNomTipDoc] = useState('');
+    const [numDoc, setNumDoc] = useState('');
     const [date, setDate] = useState('');
-    const [nomTipoIn, setNomTipoIn] = useState('');
+    const [nomTipoOut, setNomTipoOut] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
-    // const [correo, setCorreo] = useState('');
-    // const [patente, setPatente] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [patente, setPatente] = useState('');
+    const [equipo, setEquipo] = useState([]);
+    const [cabecera, setCabecera] = useState([]);
+    const [status, setStatus] = useState([]);
     const [numSerie, setNumSerie] = useState('');
-    const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
+    const [dataSalida, setDataSalida] = useState([]);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnGuardar, setBtnGuardar] = useState(true);
+    const [btnGuardar, setBtnGuardar] = useState(false);
+    const [alertaSalida, setAlertasalida] = useState([]);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
-    // const [mostraCP, setmostraCP] = useState(false)
-
+    const inOut = useRef('');
+    
+    //Lectura de usuario para alertas de salida
+    const getAlertasSalidas = async () => {
+        const traerAlertas = collection(db, 'usuariosalertas');
+        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato);
+        setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
     //Lectura de proveedores filtrados por empresa
     const getProveedor = async () => {
         const traerProveedor = collection(db, 'proveedores');
@@ -59,13 +63,13 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-    // //Lectura de clientes filtrados por empresa
-    // const getCliente = async () => {
-    //     const traerCliente = collection(db, 'clientes');
-    //     const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    // }
+    //Lectura de clientes filtrados por empresa
+    const getCliente = async () => {
+        const traerCliente = collection(db, 'clientes');
+        const dato = query(traerCliente, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCliente(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
     //Lectura de equipos filtrado por empresas
     const getEquipo = async () => {
         const traerEq = collection(db, 'equipos');
@@ -73,33 +77,23 @@ const Entradas = () => {
         const data = await getDocs(dato)
         setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-    // //Lee datos de los usuarios
-    // const getUsuarios = async () => {
-    //     const dataUsuarios = await getDocs(collection(db, "usuarios"));
-    //     setUsuarios(dataUsuarios.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
-    // }
-
     // Lectura cabecera de documentos
     const getCabecera = async () => {
-        const traerCabecera = collection(db, 'cabeceras');
+        const traerCabecera = collection(db, 'cabecerasout');
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    //Lectura movimientos de entrada
-    const getEntrada = async () => {
-        const traerEntrada = collection(db, 'entradas');
-        const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
+    //Lectura movimientos de Salida
+    const getSalida = async () => {
+        const traerSalida = collection(db, 'salidas');
+        const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     //Almacena movimientos de entrada del documento
-    const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
-    //Leer  Empresa
-    const getEmpresa = async () => {
-        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
-        setEmpresa(traerEmp.data());
-    }
+    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+ 
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -110,7 +104,7 @@ const Entradas = () => {
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
     }
     // Transformar fecha de moment a date
@@ -123,26 +117,23 @@ const Entradas = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
-
     // Validar rut
     const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        setBtnGuardar(true)
         if (e.key === 'Enter' || e.key === 'Tab') {
-            // if (nomTipoIn === 'DEVOLUCION CLIENTE') {
-            //     const existeCli = cliente.filter(cli => cli.rut === rut);
-            //     if (existeCli.length === 0) {
-            //         cambiarEstadoAlerta(true);
-            //         cambiarAlerta({
-            //             tipo: 'error',
-            //             mensaje: 'No existe rut del cliente'
-            //         })
-            //     } else {
-            //         setEntidad(existeCli[0].nombre);
-            //         setBtnGuardar(false)
-            //     }
-            // } else {
+            if (nomTipoOut === 'CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                if (existeCli.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut del cliente'
+                    })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                }
+            } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
                     cambiarEstadoAlerta(true);
@@ -152,17 +143,16 @@ const Entradas = () => {
                     })
                 } else {
                     setEntidad(existeProv[0].nombre);
-                    setBtnGuardar(false)
                 }
             }
+        }
     }
-
     // Validar N°serie
     const detectar = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
-            // Consulta si exite numero de serie en el arreglo de equipos        
+            // Consulta si exite serie en el arreglo            
             const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
             const existeIn = documento.filter(doc => doc.serie === numSerie);
             const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
@@ -180,27 +170,16 @@ const Entradas = () => {
                 })
             } else {
                 const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
-                if (existeStatus) {
+                if (!existeStatus) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo ya se encuentra en Bodega'
+                        mensaje: 'Equipo no se encuentra en Bodega'
                     })
                 }
             }
         }
     }
-
-    // // Validar Tipo de Entrada
-    // const detectarTipoIn = (valor) => {
-    //     console.log('detectar Tipoinout',valor)
-    //     if (valor === 'DEVOLUCION SERVICIO TECNICO' || valor === 'DEVOLUCION CLIENTE') {
-    //         setmostraCP(true)
-    //     } else {
-    //         setmostraCP(false)
-    //     }
-    // }
-
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -215,9 +194,9 @@ const Entradas = () => {
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
+        //Comprobar que correo sea correcto
+        const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        // const existeCorreo = usuario.filter(corr => corr.correo === correo);
-
         if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -225,6 +204,7 @@ const Entradas = () => {
                 mensaje: 'Ingrese N° Documento'
             })
             return;
+
         } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -239,11 +219,11 @@ const Entradas = () => {
                 mensaje: 'Seleccione una Fecha'
             })
             return;
-        } else if (nomTipoIn.length === 0 || nomTipoIn === 'Selecciona Opción:') {
+        } else if (nomTipoOut.length === 0 || nomTipoOut === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Seleccione un Tipo de Entrada'
+                mensaje: 'Seleccione un Tipo de Salida'
             })
             return;
             // Validacion Rut
@@ -268,27 +248,20 @@ const Entradas = () => {
                 mensaje: 'Rut no válido'
             })
             return;
-            // } else if (mostraCP && correo === '') {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'Ingrese un correo'
-            //     })
-            //     return;
-            // } else if (mostraCP && existeCorreo.length === 0) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'No existe usuario con ese correo'
-            //     })
-            // } else if (mostraCP && patente === '') {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'Ingrese una Patente'
-            //     })
-            //     return;
-
+        } else if (!expresionRegular.test(correo)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'favor ingresar un correo valido'
+            })
+            return;
+        } else if (patente === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese Patente del Vehiculo'
+            })
+            return;
         } else if (existe.length > 0) {
             if (existe[0].confirmado) {
                 cambiarEstadoAlerta(true);
@@ -304,161 +277,106 @@ const Entradas = () => {
                 })
             }
         } else {
-            // const fechaInOut = new Date(date);
-            // const fechaMoment = moment(fechaInOut)
-
-            // if (nomTipoIn === 'DEVOLUCION CLIENTE') {
-            //     const existeCli = cliente.filter(cli => cli.rut === rut);
-            //     if (existeCli.length === 0) {
-            //         cambiarEstadoAlerta(true);
-            //         cambiarAlerta({
-            //             tipo: 'error',
-            //             mensaje: 'No existe rut del cliente'
-            //         })
-            //     } else {
-            //         setEntidad(existeCli[0].nombre);
-            //         try {
-            //             CabeceraInDB({
-            //                 emp_id: users.emp_id,
-            //                 tipDoc: nomTipDoc,
-            //                 numDoc: numDoc,
-            //                 date: fechaInOut,
-            //                 tipoInOut: nomTipoIn,
-            //                 rut: rut,
-            //                 entidad: entidad,
-            //                 correo: correo,
-            //                 patente: patente,
-            //                 userAdd: user.email,
-            //                 userMod: user.email,
-            //                 fechaAdd: fechaAdd,
-            //                 fechaMod: fechaMod,
-            //                 tipMov: 0,
-            //                 confirmado: false,
-            //                 retirado: false
-            //             })
-            //             cambiarEstadoAlerta(true);
-            //             cambiarAlerta({
-            //                 tipo: 'exito',
-            //                 mensaje: 'Cabecera Documento guadada exitosamente'
-            //             })
-            //             setFlag(!flag);
-            //             setConfirmar(true);
-            //             setBtnAgregar(false);
-            //             setBtnGuardar(true);
-            //             setBtnNuevo(false);
-            //             return;
-            //         } catch (error) {
-            //             cambiarEstadoAlerta(true);
-            //             cambiarAlerta({
-            //                 tipo: 'error',
-            //                 mensaje: error
-            //             })
-            //         }
-            //     }
-
-            // } else if (nomTipoIn === 'DEVOLUCION SERVICIO TECNICO') {
-            //     const existeProv = proveedor.filter(prov => prov.rut === rut);
-            //     if (existeProv.length === 0) {
-            //         cambiarEstadoAlerta(true);
-            //         cambiarAlerta({
-            //             tipo: 'error',
-            //             mensaje: 'No existe rut de proveedor'
-            //         })
-            //     } else {
-            //         const fechaInOut = new Date(date);
-            //         setEntidad(existeProv[0].nombre);
-            //         try {
-            //             CabeceraInDB({
-            //                 emp_id: users.emp_id,
-            //                 tipDoc: nomTipDoc,
-            //                 numDoc: numDoc,
-            //                 date: fechaInOut,
-            //                 tipoInOut: nomTipoIn,
-            //                 rut: rut,
-            //                 entidad: entidad,
-            //                 correo: correo,
-            //                 patente: patente,
-            //                 userAdd: user.email,
-            //                 userMod: user.email,
-            //                 fechaAdd: fechaAdd,
-            //                 fechaMod: fechaMod,
-            //                 tipMov: 0,
-            //                 confirmado: false,
-            //                 retirado: false
-            //             })
-            //             cambiarEstadoAlerta(true);
-            //             cambiarAlerta({
-            //                 tipo: 'exito',
-            //                 mensaje: 'Ingreso realizado exitosamente'
-            //             })
-            //             setFlag(!flag);
-            //             setConfirmar(true);
-            //             setBtnAgregar(false);
-            //             setBtnGuardar(true);
-            //             setBtnNuevo(false);
-            //             return;
-            //         } catch (error) {
-            //             cambiarEstadoAlerta(true);
-            //             cambiarAlerta({
-            //                 tipo: 'error',
-            //                 mensaje: error
-            //             })
-            //         }
-            //     }
-
-            // } else {
-            const existeProv = proveedor.filter(prov => prov.rut === rut);
-            if (existeProv.length === 0) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'No existe rut de proveedor'
-                })
-            } else {
-                const fechaInOut = new Date(date);
-                setEntidad(existeProv[0].nombre);
-                try {
-                    CabeceraInDB({
-                        numDoc: numDoc,
-                        tipDoc: nomTipDoc,
-                        date: fechaInOut,
-                        tipoInOut: nomTipoIn,
-                        rut: rut,
-                        entidad: entidad,
-                        // correo:'',
-                        // patente: '',
-                        tipMov: 1,
-                        confirmado: false,
-                        // retirado: true,
-                        userAdd: user.email,
-                        userMod: user.email,
-                        fechaAdd: fechaAdd,
-                        fechaMod: fechaMod,
-                        emp_id: users.emp_id
-                    })
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Ingreso realizado exitosamente'
-                    })
-                    setFlag(!flag);
-                    setConfirmar(true);
-                    setBtnAgregar(false);
-                    setBtnGuardar(true);
-                    setBtnNuevo(false);
-                    return;
-                } catch (error) {
+            const fechaInOut = new Date(date);
+            if (nomTipoOut === 'CLIENTE') {
+                const existeCli = cliente.filter(cli => cli.rut === rut);
+                if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: error
+                        mensaje: 'No existe rut del cliente'
                     })
+                } else {
+                    setEntidad(existeCli[0].nombre);
+                    try {
+                        CabeceraOutDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: fechaInOut,
+                            tipoInOut: nomTipoOut,
+                            rut: rut,
+                            entidad: entidad,
+                            correo: correo,
+                            patente: patente,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod,
+                            tipMov: 2,
+                            confirmado: false,
+                            entregado: false
+                        })
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Cabecera Documento guadada exitosamente'
+                        })
+                        setFlag(!flag);
+                        setConfirmar(true);
+                        setBtnAgregar(false);
+                        setBtnGuardar(true);
+                        setBtnNuevo(false);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
+                }
+            } else {
+                const existeProv = proveedor.filter(prov => prov.rut === rut);
+                if (existeProv.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'No existe rut de proveedor'
+                    })
+                } else {
+                    setEntidad(existeProv[0].nombre);
+                    try {
+                        CabeceraOutDB({
+                            emp_id: users.emp_id,
+                            tipDoc: nomTipDoc,
+                            numDoc: numDoc,
+                            date: fechaInOut,
+                            tipoInOut: nomTipoOut,
+                            rut: rut,
+                            entidad: entidad,
+                            correo: correo,
+                            patente: patente,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod,
+                            tipMov: 2,
+                            confirmado: false,
+                            entregado: false
+                        })
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Ingreso realizado exitosamente'
+                        })
+                        setFlag(!flag);
+                        setConfirmar(true)
+                        setBtnAgregar(false)
+                        setBtnGuardar(true);
+                        setBtnNuevo(false);
+                        return;
+                    } catch (error) {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'error',
+                            mensaje: error
+                        })
+                    }
                 }
             }
         }
     }
-
-    // console.log('empresa', empresa)
     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -466,20 +384,12 @@ const Entradas = () => {
         cambiarAlerta({});
         // Validar N° Serie en equipo
         const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
-        // const existe2 = equipo.filter(eq => eq.id === numSerie);
-        // Validar en N° Serie en Entradas
+        // Validar en N° Serie en Salidas
         const existeIn = documento.filter(doc => doc.serie === numSerie);
         const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
-        // Validar Id de Cabecera en Entradas
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
-        if (price === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese Precio de Equipo'
-            })
-            return;
-        } else if (numSerie === '') {
+        // Validar Id de Cabecera en Salidas
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        if (numSerie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -499,75 +409,33 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
-
             const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
-            if (existeStatus) {
+            if (!existeStatus) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra en Bodega'
+                    mensaje: 'Equipo no se encuentra en Bodega'
                 })
             } else {
-                // if (mostraCP) {
-                //     try {
-                //         EntradasDB({
-                //             numDoc: numDoc,
-                //             tipDoc: nomTipDoc,
-                //             date: existeCab[0].date,
-                //             tipoInOut: nomTipoIn,
-                //             rut: rut,
-                //             entidad: entidad,
-                //             correo: correo,
-                //             patente: patente,
-                //             price: price,
-                //             cab_id: existeCab[0].id,
-                //             eq_id: existe[0].id,
-                //             familia: existe[0].familia,
-                //             tipo: existe[0].tipo,
-                //             marca: existe[0].marca,
-                //             modelo: existe[0].modelo,
-                //             serie: existe[0].serie,
-                //             rfid: existe[0].rfid,
-                //             tipMov: 0,
-                //             observacion: '',
-                //             status: 'BODEGA',
-                //             userAdd: user.email,
-                //             userMod: user.email,
-                //             fechaAdd: fechaAdd,
-                //             fechaMod: fechaMod,
-                //             emp_id: users.emp_id,
-                //         });
-                //         setPrice('')
-                //         setNumSerie('')
-                //         cambiarEstadoAlerta(true);
-                //         cambiarAlerta({
-                //             tipo: 'exito',
-                //             mensaje: 'Item guardado correctamente'
-                //         })
-                //         setFlag(!flag);
-                //         setBtnConfirmar(false);
-                //         setBtnNuevo(false);
-                //         return;
-                //     } catch (error) {
-                //         cambiarEstadoAlerta(true);
-                //         cambiarAlerta({
-                //             tipo: 'error',
-                //             mensaje: error
-                //         })
-                //     }
-                // } else {
+                const fechaInOut = new Date(date);
+                if (nomTipoOut === 'CLIENTE') {
+                    inOut.current = 'TRANSITO CLIENTE'
+                } else if (nomTipoOut === 'SERVICIO TECNICO') {
+                    inOut.current = 'TRANSITO S.T.'
+                } else {
+                    inOut.current = nomTipoOut
+                }
+                setBtnConfirmar(false);
+
                 try {
-                    EntradasDB({
-                        numDoc: numDoc,
+                    SalidasDB({
+                        emp_id: users.emp_id,
                         tipDoc: nomTipDoc,
-                        date: existeCab[0].date,
-                        tipoInOut: nomTipoIn,
+                        numDoc: numDoc,
+                        date: fechaInOut,
+                        tipoInOut: nomTipoOut,
                         rut: rut,
                         entidad: entidad,
-                        // correo: '',
-                        // patente: '',
-                        price: price,
-                        cab_id: existeCab[0].id,
                         eq_id: existe[0].id,
                         familia: existe[0].familia,
                         tipo: existe[0].tipo,
@@ -575,16 +443,14 @@ const Entradas = () => {
                         modelo: existe[0].modelo,
                         serie: existe[0].serie,
                         rfid: existe[0].rfid,
-                        tipMov: 1,
-                        observacion: '',
-                        // status: 'BODEGA',
+                        cab_id: existeCab[0].id,
                         userAdd: user.email,
                         userMod: user.email,
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
-                        emp_id: users.emp_id,
+                        tipMov: 2,
+                        status: nomTipoOut
                     });
-                    setPrice('')
                     setNumSerie('')
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -605,7 +471,6 @@ const Entradas = () => {
             }
         }
     }
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
@@ -614,7 +479,7 @@ const Entradas = () => {
         const batch = writeBatch(db);
         documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, { status: 'BODEGA', rut: empresa.rut, entidad: empresa.empresa });
+            batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad });
         });
         try {
             await batch.commit();
@@ -623,11 +488,12 @@ const Entradas = () => {
                 tipo: 'exito',
                 mensaje: 'Documentos actualizados correctamente.'
             });
-            await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
+            await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
                 confirmado: true,
                 usermod: user.email,
                 fechamod: fechaMod
             });
+            
             setFlag(!flag)
         } catch (error) {
             cambiarEstadoAlerta(true);
@@ -639,15 +505,28 @@ const Entradas = () => {
         setNomTipDoc('');
         setNumDoc('');
         setDate('');
-        setNomTipoIn('');
+        setNomTipoOut('');
         setRut('');
         setEntidad('');
+        setCorreo('');
+        setPatente('');
         setNumSerie('');
-        setPrice('');
-        setConfirmar(false);
+        setConfirmar(false)
         setBtnConfirmar(true);
         setBtnAgregar(true);
         setBtnGuardar(false)
+        try {           
+        
+            const mensaje = documento.map((item, index)=> `${index+1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n');
+            alertaSalida.forEach((destino)=>{
+                EnviarCorreo(destino.correo,'Alerta Salida de Bodega',mensaje)
+            })
+           
+        } catch (error) {
+            console.log('error', error)
+        }
+        
+        setBtnGuardar(false);
         setBtnNuevo(true);
     };
 
@@ -656,16 +535,14 @@ const Entradas = () => {
         setNumDoc('');
         setNomTipDoc('');
         setDate('');
-        setNomTipoIn('');
+        setNomTipoOut('');
         setRut('');
         setEntidad('');
         setNumSerie('');
-        setPrice('');
-        setPrice('');
-        // setCorreo('');
-        // setPatente('');
+        setCorreo('');
+        setPatente('');
         setConfirmar(false);
-        setBtnGuardar(true);
+        setBtnGuardar(false);
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
@@ -673,28 +550,28 @@ const Entradas = () => {
 
     useEffect(() => {
         getProveedor();
-        // getCliente();
+        getCliente();
         getEquipo();
-        getEntrada();
-        getStatus();
-        getEmpresa();
-        // getUsuarios();
+        getSalida();
+        getAlertasSalidas()       
+        /* getEmpresa(); */
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
     useEffect(() => {
-        getEntrada();
+        getStatus();
+        getSalida();
         getCabecera();
         if (documento.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-
     return (
         <ContenedorProveedor>
-            <Contenedor >
-                <Titulo>Recepcion de Equipos</Titulo>
+            <Contenedor>
+                <Titulo>Salida de Equipos</Titulo>
             </Contenedor>
             <Contenedor>
-                <Formulario action='' /* onSubmit={handleSubmit} */>
+                <Formulario action='' onSubmit={handleSubmit}>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
@@ -733,20 +610,15 @@ const Entradas = () => {
                     </ContentElemenMov>
                     <ContentElemenMov>
                         <ContentElemenSelect>
-                            <Label>Tipo Entrada</Label>
+                            <Label>Tipo Salida</Label>
                             <Select
                                 disabled={confirmar}
-                                value={nomTipoIn}
-                                onChange={(ev) => {
-                                    setNomTipoIn(ev.target.value)
-                                    // detectarTipoIn(ev.target.value)
-                                    // console.log('select', ev.target.value)
-                                }}>
+                                value={nomTipoOut}
+                                onChange={ev => setNomTipoOut(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
-                                {TipoIn.map((d) => {
+                                {TipoOut.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
                                 })}
-
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -765,8 +637,31 @@ const Entradas = () => {
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
-
-                        {/* <BotonGuardar
+                    </ContentElemenMov>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Correo Transportista</Label>
+                            <Input
+                                disabled={confirmar}
+                                type='texto'
+                                placeholder='Ingrese Correo'
+                                name='correo'
+                                value={correo}
+                                onChange={ev => setCorreo(ev.target.value)}
+                            />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label >Patente Vehiculo</Label>
+                            <Input
+                                disabled={confirmar}
+                                type='texto'
+                                placeholder='Ingrese Vehiculo'
+                                name='patente'
+                                value={patente}
+                                onChange={ev => setPatente(ev.target.value)}
+                            />
+                        </ContentElemenSelect>
+                        <BotonGuardar
                             style={{ margin: '35px 10px' }}
                             onClick={addCabeceraIn}
                             checked={confirmar}
@@ -779,68 +674,17 @@ const Entradas = () => {
                             checked={confirmar}
                             onChange={handleCheckboxChange}
                             disabled={btnNuevo}
-                        >Nuevo</BotonGuardar> */}
+                        >Nuevo</BotonGuardar>
                     </ContentElemenMov>
-
-                    {/* {mostraCP &&
-                        <ContentElemenMov>
-                            <ContentElemenSelect>
-                                <Label>Correo Transportista</Label>
-                                <Input
-                                    disabled={confirmar}
-                                    type='texto'
-                                    placeholder='Ingrese Correo'
-                                    name='correo'
-                                    value={correo}
-                                    onChange={ev => setCorreo(ev.target.value)}
-                                />
-                            </ContentElemenSelect>
-                            <ContentElemenSelect>
-                                <Label >Patente Vehiculo</Label>
-                                <Input
-                                    disabled={confirmar}
-                                    type='texto'
-                                    placeholder='Ingrese Vehiculo'
-                                    name='patente'
-                                    value={patente}
-                                    onChange={ev => setPatente(ev.target.value)}
-                                />
-                            </ContentElemenSelect>
-                        </ContentElemenMov>
-                    } */}
-
-                    <BotonGuardar
-                        style={{ margin: '35px 10px' }}
-                        onClick={addCabeceraIn}
-                        checked={confirmar}
-                        onChange={handleCheckboxChange}
-                        disabled={btnGuardar}
-                    >Guardar</BotonGuardar>
-                    <BotonGuardar
-                        style={{ margin: '35px 0' }}
-                        onClick={nuevo}
-                        checked={confirmar}
-                        onChange={handleCheckboxChange}
-                        disabled={btnNuevo}
-                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>
                 <Formulario>
-                    <ContentElemenMov >
-                        <ContentElemenSelect>
-                            <Label style={{ marginRight: '10px' }} >Precio</Label>
-                            <Input
-                                type='number'
-                                name='precio'
-                                placeholder='Ingrese Valor'
-                                value={price}
-                                onChange={e => setPrice(e.target.value)}
-                            />
-                        </ContentElemenSelect>
+                    <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
                             <Input
+                                style={{ width: '500px' }}
                                 type='text'
                                 name='serie'
                                 placeholder='Escanee o ingrese Equipo'
@@ -863,7 +707,6 @@ const Entradas = () => {
                                 <Table.HeaderCell>N°</Table.HeaderCell>
                                 <Table.HeaderCell>Nombre de equipo</Table.HeaderCell>
                                 <Table.HeaderCell>N° Serie</Table.HeaderCell>
-                                <Table.HeaderCell>Precio</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -873,7 +716,6 @@ const Entradas = () => {
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell>${item.price}.-</Table.Cell>
                                     </Table.Row>
                                 )
                             })}
@@ -881,6 +723,7 @@ const Entradas = () => {
                     </Table>
                 </ListarEquipos>
                 <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
+
             </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
@@ -894,15 +737,15 @@ const Entradas = () => {
                             <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Confirmar</Table.HeaderCell>
+                            <Table.HeaderCell>Conf</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {cabecera.map((item, index) => {
+                        {cabecera.map((item) => {
                             if (item.confirmado === false) {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell >{index + 1}</Table.Cell>
+                                        <Table.Cell >{item.id2}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
@@ -910,21 +753,18 @@ const Entradas = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell onClick={() => {
-                                            // detectar(item.tipoinout)
                                             setNumDoc(item.numdoc);
                                             setNomTipDoc(item.tipdoc);
-                                            fechaDate(item.date)
-                                            setNomTipoIn(item.tipoinout);
+                                            setNomTipoOut(item.tipoinout);
                                             setRut(item.rut);
                                             setEntidad(item.entidad);
-                                            // setCorreo(item.correo);
-                                            // setPatente(item.patente);
+                                            fechaDate(item.date)
+                                            setCorreo(item.correo);
+                                            setPatente(item.patente);
                                             setBtnGuardar(true);
                                             setBtnAgregar(false)
                                             setConfirmar(true);
-                                            setBtnNuevo(false)
                                             setFlag(!flag)
-                                            // console.log('hora cabecera', item.date)
                                         }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                     </Table.Row>
                                 )
@@ -942,5 +782,4 @@ const Entradas = () => {
         </ContenedorProveedor>
     );
 };
-
-export default Entradas;
+export default Salidas;
