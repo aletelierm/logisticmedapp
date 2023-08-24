@@ -26,7 +26,7 @@ const Reporte2 = () => {
         const data = await getDocs(dato)
         setEstado(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
+     
     
     useEffect(()=>{
         getStatus();
@@ -37,13 +37,14 @@ const Reporte2 = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
     }
-
+    //agrega campo fecha formateado para exportar
+    const fecha = estado.map((doc)=> ({...doc, fecha: formatearFecha(doc.fechamod)}))   
      //Exportar a excel los equipos
      const ExportarXls = () => {
         //Campos a mostrar en el excel   
-        const columnsToShow = ['tipo', 'status', 'serie','rut', 'entidad', 'fechamod']
+        const columnsToShow = ['tipo','marca','modelo', 'status', 'serie','rut', 'entidad', 'fecha']
         //Llamar a la funcion con props: array equipo y array columnas
-        const excelBlob = ExportarExcel(estado, columnsToShow);
+        const excelBlob = ExportarExcel(fecha, columnsToShow);
         // Crear un objeto URL para el Blob y crear un enlace de descarga
         const excelURL = URL.createObjectURL(excelBlob);
         const downloadLink = document.createElement('a');
