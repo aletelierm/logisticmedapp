@@ -226,7 +226,7 @@ const Proveedores = () => {
         const excelURL = URL.createObjectURL(excelBlob);
         const downloadLink = document.createElement('a');
         downloadLink.href = excelURL;
-        downloadLink.download = 'data.xlsx';
+        downloadLink.download = 'proveedores.xlsx';
         downloadLink.click();
     }
 

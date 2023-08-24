@@ -5,11 +5,12 @@ import { ContentElemen, Input } from '../elementos/CrearEquipos'
 import { ContenedorProveedor, Contenedor, Titulo } from '../elementos/General';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { collection, getDocs, where, query } from 'firebase/firestore';
+import { collection, getDocs, where, query,doc, getDoc } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
+
 
 const Reporte1 = () => {
     const { users } = useContext(UserContext);
@@ -26,8 +27,12 @@ const Reporte1 = () => {
         cambiarAlerta({});
 
         if (e.key === 'Enter' || e.key === 'Tab') {
-            const dato = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', serie));
-            const data = await getDocs(dato);
+            if(serie !==''){
+                //leer por serie
+                const dato = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', serie));
+                const data = await getDocs(dato);
+                //leer por id            
+                const dataid = await getDoc(doc(db, 'equipos', serie));                  
             if (data.docs.length === 1) {
                 //leer entradas por id
                 const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', data.docs[0].id));
@@ -42,18 +47,33 @@ const Reporte1 = () => {
                 /* merge.current = [...entrada, ...salida].sort((a,b) => a.date.localeCompare(b.date)); */
                 merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
                 setMerges(merge.current);
-                console.log('merge.current', merge.current)
-
-            } else {
+            } else if(dataid.exists()){                
+                //leer entradas por id
+                const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie));
+                const dataE = await getDocs(datoE);
+                ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));            
+                //leer salidas por id
+                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie));
+                const dataS = await getDocs(datoS);
+                sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));                               
+                merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
+                setMerges(merge.current);                
+            }else{
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'No existe un Equipo con ese Numero de Serie !!!'
+                    mensaje: 'Numero de serie o Id incorrectos !!!'
                 })
                 return;
-
+                }
+            }else{
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No a ingresado ningun valor !!!'
+                })
+                return;
             }
-
         }
     }
 
@@ -67,7 +87,7 @@ const Reporte1 = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-
+   
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -78,7 +98,7 @@ const Reporte1 = () => {
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
                         type='text'
-                        placeholder='Buscar x Serie'
+                        placeholder='Buscar x Serie o Id del equipo'
                         value={serie}
                         onChange={handleChange}
                         onKeyDown={detectarEquipo}
@@ -89,7 +109,7 @@ const Reporte1 = () => {
             <Contenedor>
                 {
                     merge.current.length > 0 ?
-                        <Titulo style={{ fontSize: '20px' }}>Equipo :{merge.current[0].tipo + " " + merge.current[0].marca + " " + merge.current[0].modelo}</Titulo>
+                        <Titulo style={{ fontSize: '17px' }}>Equipo :{"  "+merge.current[0].tipo + " " + merge.current[0].marca + " " + merge.current[0].modelo+"   N.Serie : "+ merge.current[0].serie}</Titulo>
                         :
                         <Titulo>Equipo:</Titulo>
                 }

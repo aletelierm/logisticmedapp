@@ -272,7 +272,7 @@ const Clientes = () => {
         const excelURL = URL.createObjectURL(excelBlob);
         const downloadLink = document.createElement('a');
         downloadLink.href = excelURL;
-        downloadLink.download = 'data.xlsx';
+        downloadLink.download = 'pacientes.xlsx';
         downloadLink.click();
     }
 

@@ -181,12 +181,13 @@ const Entradas = () => {
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
             } else {
-                const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+                const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
                 if (existeStatus) {
+                    const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo ya se encuentra en Bodega'
+                        mensaje: `Este Equipo ya existe y su Estado es: ${estado.status} `
                     })
                 }
             }
@@ -502,12 +503,14 @@ const Entradas = () => {
             })
         } else {
 
-            const existeStatus = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+            const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
             if (existeStatus) {
+                const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
+                console.log(estado[0].status)
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra en Bodega'
+                    mensaje: `Este Equipo ya existe y su Estado es en : ${estado[0].status} `
                 })
             } else {
                 // if (mostraCP) {

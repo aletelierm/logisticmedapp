@@ -340,7 +340,7 @@ const CrearEquipos = () => {
         const excelURL = URL.createObjectURL(excelBlob);
         const downloadLink = document.createElement('a');
         downloadLink.href = excelURL;
-        downloadLink.download = 'data.xlsx';
+        downloadLink.download = 'equipos.xlsx';
         downloadLink.click();
     }
 

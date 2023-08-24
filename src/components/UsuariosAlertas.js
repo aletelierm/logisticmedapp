@@ -196,7 +196,7 @@ export const UsuariosEnvios = () => {
         const excelURL = URL.createObjectURL(excelBlob);
         const downloadLink = document.createElement('a');
         downloadLink.href = excelURL;
-        downloadLink.download = 'data.xlsx';
+        downloadLink.download = 'alertaXusuarios.xlsx';
         downloadLink.click();
     }
 

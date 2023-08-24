@@ -16,6 +16,9 @@ const GraficoTorta = ({ datos }) => {
           'rgb(51, 215, 255)',
           'rgb(27, 140, 240 )',
           'rgb(16, 191, 226 )',
+          'rgb(51, 255, 134 )',
+          'rgb(16, 191, 150 )',
+          'rgb(16, 191, 100)',
 
           // ... más colores si tienes más datos
         ],
