@@ -21,7 +21,6 @@ const Confirmados = () => {
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
-    // let fechaInOut = new Date(date)
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
@@ -45,12 +44,13 @@ const Confirmados = () => {
     }
     const porEntregar = cabecera.filter(cab => cab.correo === users.correo && cab.entregado === false && cab.confirmado === true)
     const porRetirar = cabecera.filter(cab => cab.correo === users.correo && cab.retirado === false && cab.confirmado === true)
+
     //Lectura movimientos de Salida
     const getSalida = async () => {
         const traerSalida = collection(db, 'salidas');
         const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false, observacion: '' })))
+        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })))
     }
 
     // Cambiar fecha
@@ -59,7 +59,7 @@ const Confirmados = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
     }
-
+    // Modifica Checked Entregado
     const handleCheckboxChange = (itemId) => {
         setIsChecked((prevItems) =>
             prevItems.map((item) =>
@@ -67,8 +67,7 @@ const Confirmados = () => {
             )
         );
     };
-
-    // Guardar campo observaciones
+    // Guardar campo observaciones Entregado
     const handleChange = (e, item) => {
         const nuevoIsChecked = isChecked.map((i) => {
             if (i.id === item.id) {
@@ -79,8 +78,27 @@ const Confirmados = () => {
         setIsChecked(nuevoIsChecked)
     };
 
+    // Modifica Checked Retirado
+    const handleCheckboxChange2 = (itemId) => {
+        setIsChecked2((prevItems) =>
+            prevItems.map((item) =>
+                item.id === itemId ? { ...item, checked: !item.checked } : item
+            )
+        );
+    };
+    // Guardar campo observaciones Retirado
+    const handleChange2 = (e, item) => {
+        const nuevoIsChecked2 = isChecked2.map((i) => {
+            if (i.id === item.id) {
+                return { ...i, observacion: e.target.value };
+            }
+            return i;
+        })
+        setIsChecked2(nuevoIsChecked2)
+    };
+
     // Funcion guardar Cabeceras
-    const CabeceraInDB = async ({ tipDoc, numDoc, date, tipoInOut, rut, entidad, tipMov, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+    const CabeceraInDB = async ({ tipDoc, numDoc, date, tipoInOut, rut, entidad, tipMov, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id, falsos }) => {
         try {
             const cabecera = await addDoc(collection(db, 'cabeceras'), {
                 numdoc: numDoc,
@@ -95,67 +113,120 @@ const Confirmados = () => {
                 usermod: userMod,
                 fechaadd: fechaAdd,
                 fechamod: fechaMod,
-                emp_id: emp_id
+                emp_id: emp_id,
             })
             cabeceraId.current = cabecera.id;
             console.log('cabecera id', cabeceraId.current)
+            console.log('cabecera', cabecera)
         } catch (error) {
             Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
         }
 
-        // Crea una nueva instancia de lote (batch)
-        const batch = writeBatch(db);
-        // Obtiene una referencia a una colección específica en Firestore
-        const entradasRef = collection(db, 'entradas');
-        console.log('cabecera id foreach', cabeceraId.current)
-        // Itera a través de los nuevos documentos y agrégalos al lote
-        falsoCheck.forEach((docs) => {
-            const nuevoDocRef = doc(entradasRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-            batch.set(nuevoDocRef, {
-                numdoc: docs.numdoc,
-                tipdoc: docs.tipdoc,
-                date: fechaAdd,
-                tipoinout: inOut.current,
-                rut: docs.rut,
-                entidad: docs.entidad,
-                cab_id: cabeceraId.current,
-                eq_id: docs.eq_id,
-                familia: docs.familia,
-                tipo: docs.tipo,
-                marca: docs.marca,
-                price: 0,
-                modelo: docs.modelo,
-                serie: docs.serie,
-                rfid: docs.rfid,
-                useradd: user.email,
-                usermod: user.email,
-                fechaadd: fechaAdd,
-                fechamod: fechaMod,
-                tipmov: 1,
-                observacion: docs.observacion,
-                emp_id: users.emp_id,
-            }
-
-            );
-        });
-
-        // Ejecuta el lote
-        batch.commit()
-            .then(() => {
-                console.log('Operaciones en el lote completadas con éxito.');
-            })
-            .catch((error) => {
-                console.error('Error al ejecutar el lote:', error);
+        if (falsos === false) {
+            // Crea una nueva instancia de lote (batch)
+            const batch = writeBatch(db);
+            // Obtiene una referencia a una colección específica en Firestore
+            const entradasRef = collection(db, 'entradas');
+            console.log('cabecera id foreach', cabeceraId.current)
+            // Itera a través de los nuevos documentos y agrégalos al lote
+            falsoCheck.forEach((docs) => {
+                const nuevoDocRef = doc(entradasRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.set(nuevoDocRef, {
+                    numdoc: docs.numdoc,
+                    tipdoc: docs.tipdoc,
+                    date: fechaAdd,
+                    tipoinout: inOut.current,
+                    rut: docs.rut,
+                    entidad: docs.entidad,
+                    cab_id: cabeceraId.current,
+                    eq_id: docs.eq_id,
+                    familia: docs.familia,
+                    tipo: docs.tipo,
+                    marca: docs.marca,
+                    price: 0,
+                    modelo: docs.modelo,
+                    serie: docs.serie,
+                    rfid: docs.rfid,
+                    useradd: user.email,
+                    usermod: user.email,
+                    fechaadd: fechaAdd,
+                    fechamod: fechaMod,
+                    tipmov: 1,
+                    observacion: docs.observacion,
+                    emp_id: users.emp_id,
+                }
+                );
             });
+            // Ejecuta el lote
+            batch.commit()
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Docuemento creado correctamente.'
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Se ha producido un error al crear docuemento de entrada devoluion');
+                });
+
+        } else {
+            // Crea una nueva instancia de lote (batch)
+            const batch = writeBatch(db);
+            // Obtiene una referencia a una colección específica en Firestore
+            const entradasRef = collection(db, 'entradas');
+            console.log('cabecera id foreach', cabeceraId.current)
+            // Itera a través de los nuevos documentos y agrégalos al lote
+            verdaderosRetiro.forEach((docs) => {
+                const nuevoDocRef = doc(entradasRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.set(nuevoDocRef, {
+                    numdoc: docs.numdoc,
+                    tipdoc: docs.tipdoc,
+                    date: fechaAdd,
+                    tipoinout: docs.tipoinout,
+                    rut: docs.rut,
+                    entidad: docs.entidad,
+                    cab_id: cabeceraId.current,
+                    eq_id: docs.eq_id,
+                    familia: docs.familia,
+                    tipo: docs.tipo,
+                    marca: docs.marca,
+                    price: 0,
+                    modelo: docs.modelo,
+                    serie: docs.serie,
+                    rfid: docs.rfid,
+                    useradd: user.email,
+                    usermod: user.email,
+                    fechaadd: fechaAdd,
+                    fechamod: fechaMod,
+                    tipmov: 1,
+                    observacion: docs.observacion,
+                    emp_id: users.emp_id,
+                }
+                );
+            });
+            // Ejecuta el lote
+            batch.commit()
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Docuemento creado correctamente.'
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Se ha producido un error al crear docuemento de entrada retirado');
+                });
+        }
     }
 
+    // Filtros para guardar datos y/o validaciones Entregado
     const verdaderos = isChecked.filter(check => check.checked === true);
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
 
     const confirmaEntrega = async (e) => {
         e.preventDefault();
-        // console.log('Valores del formulario:', isChecked);
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
@@ -166,13 +237,12 @@ const Confirmados = () => {
                 mensaje: 'Ingrese una Observacion'
             })
             return;
-
         } else {
             if (verdaderos.length > 0) {
                 const batch = writeBatch(db);
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad });
+                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
                     await batch.commit();
@@ -182,14 +252,8 @@ const Confirmados = () => {
                         tipo: 'exito',
                         mensaje: 'Documentos actualizados correctamente.'
                     });
-
                 } catch (error) {
-                    console.error('Error al actualizar documentos:', error);
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Error al actualizar documentos:', error
-                    })
+                    Swal.fire('Se ha producido un error al actualizar Status de equipos recibidos');
                 }
             }
 
@@ -214,7 +278,8 @@ const Confirmados = () => {
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
                         tipMov: 1,
-                        confirmado: false
+                        confirmado: false,
+                        falsos: false // devolucion
                     })
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -222,18 +287,14 @@ const Confirmados = () => {
                         mensaje: 'Cabecera creada correctamente.'
                     });
                 } catch (error) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: error
-                    })
+                    Swal.fire('Se ha producido un error al guardar Cabecera de Entrda');
                 }
 
                 // Actualiza Status de equipos
                 const batchf = writeBatch(db);
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad });
+                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
 
                 try {
@@ -243,14 +304,8 @@ const Confirmados = () => {
                         tipo: 'exito',
                         mensaje: 'Documentos actualizados correctamente.'
                     });
-
                 } catch (error) {
-                    console.error('Error al actualizar documentos:', error);
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Error al actualizar documentos:', error
-                    })
+                    Swal.fire('Se ha producido un error al actualizar Status de equipos en devolucion');
                 }
             }
 
@@ -265,16 +320,116 @@ const Confirmados = () => {
                 setIsOpen(!isOpen)
             } catch (error) {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
-                console.log('ERROR', error)
             }
         }
     }
+
+    // Filtros para guardar datos y/o validaciones Retiro
+    const verdaderosRetiro = isChecked2.filter(check => check.checked === true);
+    const falsoCheckRetiro = isChecked2.filter(check => check.checked === false && check.observacion !== '');
+    const falsosRetiro = isChecked2.filter(check => check.observacion === '' && check.checked === false);
+       console.log("verdaderos", verdaderosRetiro );
+
+    const confirmaRetiro = async (e) => {
+        e.preventDefault();
+        console.log('Valores del formulario:', isChecked2);
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (falsosRetiro.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese una Observacion'
+            })
+            return;
+        } else {
+            if (falsoCheckRetiro.length > 0) {
+                const batch = writeBatch(db);
+                falsoCheckRetiro.forEach((docs) => {
+                    const docRef = doc(db, 'salidas', docs.eq_id);
+                    batch.update(docRef, { observacion: docs.observacion, fechamod: fechaMod });
+                });
+                try {
+                    await batch.commit();
+
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documentos actualizados correctamente.'
+                    });
+                } catch (error) {
+                    Swal.fire('Se ha producido un error al guardar observacion');
+                }
+            }
+
+            // Crear Cabecera
+            if (verdaderosRetiro.length > 0) {
+                try {
+                    CabeceraInDB({
+                        emp_id: users.emp_id,
+                        tipDoc: verdaderosRetiro[0].tipdoc,
+                        numDoc: verdaderosRetiro[0].numdoc,
+                        date: fechaAdd,
+                        tipoInOut: verdaderosRetiro[0].tipoinout,
+                        rut: verdaderosRetiro[0].rut,
+                        entidad: verdaderosRetiro[0].entidad,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        tipMov: 1,
+                        confirmado: false,
+                        falsos: true // retiro
+                    })
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Cabecera creada correctamente.'
+                    });
+                } catch (error) {
+                    Swal.fire('Se ha producido un error al guardar Cabecera de Entrda');
+                }
+
+                // Actualiza Status de equipos
+                const batchf = writeBatch(db);
+                verdaderosRetiro.forEach((docs) => {
+                    const docRef = doc(db, 'status', docs.eq_id);
+                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                });
+
+                try {
+                    await batchf.commit();
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documentos actualizados correctamente.'
+                    });
+                } catch (error) {
+                    Swal.fire('Se ha producido un error al Cambiar Status de equipos retirados');
+                }
+            }
+
+            // ACTUALIZAR CABECERA DE CONFIRMADOS
+            try {
+                await updateDoc(doc(db, 'cabecerasout', cab_id), {
+                    retirado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                })
+                setFlag(!flag)
+                setIsOpen(!isOpen)
+            } catch (error) {
+                Swal.fire('Se ha producido un error al actualizar la cabecera');
+            }
+        }
+    }
+
     useEffect(() => {
         getCabecera();
     }, [flag])
 
     useEffect(() => {
-        /* getStatus(); */
         getSalida();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -284,9 +439,6 @@ const Confirmados = () => {
         setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-
-    // console.log('isChecked', isChecked)
-    // console.log('isChecked2', isChecked2)
 
     return (
         <ContenedorProveedor>
@@ -310,7 +462,6 @@ const Confirmados = () => {
                     </Table.Header>
                     <Table.Body>
                         {porEntregar.map((item) => {
-                            // if (item.entregado === false && item.confirmado === true) {
                             return (
                                 <Table.Row key={item.id}>
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
@@ -329,7 +480,6 @@ const Confirmados = () => {
                                 </Table.Row>
                             )
                         }
-                            // }
                         )}
                     </Table.Body>
                 </StyledTable>
@@ -347,7 +497,6 @@ const Confirmados = () => {
                                 <Table.HeaderCell>Observación</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
-
                         <Table.Body>
                             {isChecked.map((item, index) => {
                                 return (
@@ -364,14 +513,9 @@ const Confirmados = () => {
                                         </Table.Cell>
                                         <Table.Cell>
                                             {item.checked === true ?
-                                                <Input
-                                                    disabled
-                                                    type='text'
-                                                    name='observaciones'
-                                                />
+                                                <Input disabled type='text' name='observaciones' />
                                                 :
-                                                <Input
-                                                    type='text'
+                                                <Input type='text'
                                                     name={item.observacion}
                                                     value={item.observacion}
                                                     onChange={(e) => handleChange(e, item)}
@@ -389,8 +533,6 @@ const Confirmados = () => {
                 </Contenedor>
             }
 
-
-
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Retirar</Titulo>
                 <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
@@ -407,7 +549,6 @@ const Confirmados = () => {
                     </Table.Header>
                     <Table.Body>
                         {porRetirar.map((item) => {
-                            // if (item.entregado === false && item.confirmado === true) {
                             return (
                                 <Table.Row key={item.id}>
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
@@ -426,7 +567,6 @@ const Confirmados = () => {
                                 </Table.Row>
                             )
                         }
-                            // }
                         )}
                     </Table.Body>
                 </StyledTable>
@@ -444,12 +584,41 @@ const Confirmados = () => {
                                 <Table.HeaderCell>Observación</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
+                        <Table.Body>
+                            {isChecked2.map((item, index) => {
+                                return (
+                                    <Table.Row key={item.id}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell style={{ textAlign: 'center' }}>
+                                            <Input
+                                                type="checkbox"
+                                                checked={item.checked}
+                                                onChange={() => handleCheckboxChange2(item.id)}
+                                            />
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {item.checked === true ?
+                                                <Input disabled type='text' name='observaciones' />
+                                                :
+                                                <Input type='text'
+                                                    name={item.observacion}
+                                                    value={item.observacion}
+                                                    onChange={(e) => handleChange2(e, item)}
+                                                />
+                                            }
+                                        </Table.Cell>
+                                    </Table.Row>
+                                )
+                            }
+                            )
+                            }
+                        </Table.Body>
                     </StyledTable>
+                    <BotonGuardar onClick={confirmaRetiro} >Confirmar Retiro</BotonGuardar>
                 </Contenedor>
-                // Falta mostrar los campos no retirados
             }
-
-            
 
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
