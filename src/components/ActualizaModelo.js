@@ -11,7 +11,6 @@ import { UserContext } from '../context/UserContext';
 import {ContenedorCliente, Formulario} from '../elementos/CrearEquipos';
 import {Contenedor, ContentElemenAdd, Titulo, InputAdd, BotonGuardar} from '../elementos/General';
 
-
 const ActualizaModelo = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
@@ -53,7 +52,6 @@ const ActualizaModelo = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe esta Modelo'
             })
-
         } else if (nuevoCampo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -77,7 +75,6 @@ const ActualizaModelo = () => {
                     mensaje: 'Modelo Actualizado exitosamente'
                 })
                 return;
-
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -94,7 +91,6 @@ const ActualizaModelo = () => {
         } else {
             navigate('/')
         }
-        console.log('useeffeect',);
     }, [modelo, navigate])
 
     useEffect(() => {
@@ -129,7 +125,6 @@ const ActualizaModelo = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
         </ContenedorCliente >
     )
 }

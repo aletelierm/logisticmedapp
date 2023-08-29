@@ -2,22 +2,22 @@ import React from 'react'
 import styled from 'styled-components';
 import * as IoIcons from 'react-icons/io';
 
-const Modal = ({children, estado, cambiarEstado}) => {
-  return (
-    <>
-    {estado &&
-            <Overlay>
-                <ContenedorModal>
-                    <EncabezadoModal>
-                        <h3>LogisticMed</h3>
-                    </EncabezadoModal>
-                    <BotonCerrar onClick={()=>cambiarEstado(!estado)}><IoIcons.IoMdClose /></BotonCerrar>
-                     {children}
-                </ContenedorModal>
-            </Overlay>
-    }
-    </>
-  )
+const Modal = ({ children, estado, cambiarEstado }) => {
+    return (
+        <>
+            {estado &&
+                <Overlay>
+                    <ContenedorModal>
+                        <EncabezadoModal>
+                            <h3>LogisticMed</h3>
+                        </EncabezadoModal>
+                        <BotonCerrar onClick={() => cambiarEstado(!estado)}><IoIcons.IoMdClose /></BotonCerrar>
+                        {children}
+                    </ContenedorModal>
+                </Overlay>
+            }
+        </>
+    )
 }
 
 export default Modal;

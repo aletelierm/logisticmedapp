@@ -52,7 +52,6 @@ const ActualizaFamilia = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe esta Familia'
             })
-
         } else if (nuevoCampo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -60,7 +59,6 @@ const ActualizaFamilia = () => {
                 mensaje: 'Campo no puede estar vacio'
             })
             return;
-
         } else {
             try {
                 const fam = nuevoCampo.toLocaleUpperCase();
@@ -128,7 +126,6 @@ const ActualizaFamilia = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
         </ContenedorCliente >
     )
 }

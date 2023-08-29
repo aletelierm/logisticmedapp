@@ -13,14 +13,14 @@ const Transaccion = () => {
     const [cabecera, setCabecera] = useState([]);
     const [cabeceraOut, setCabeceraOut] = useState([]);
 
-    // Leer datos de cabecera
+    // Leer datos de cabecera Entradas
     const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id),limit(5));
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
+// Leer datos de cabecera Salidas
     const getCabeceraOut = async ()=>{
         const traerCabeceraOut = collection(db, 'cabecerasout');
         const dato = query(traerCabeceraOut, where('emp_id', '==', users.emp_id),limit(5));
@@ -120,14 +120,3 @@ const Transaccion = () => {
 };
 
 export default Transaccion;
-
-// const ListarProveedor = styled.div`
-//     margin-top: 20px;
-//     padding: 20px;
-//     border: 2px solid #d1d1d1;
-//     border-radius: 20px;
-//     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);;
-// `
-// const Titulo = styled.h2`
-//     color:  #83d394;
-// `

@@ -1,26 +1,20 @@
 import React from 'react'
-import { Route, Routes} from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import Landing from '../components/Landing'
-import {Home} from '../components/Home'
+import { Home } from '../components/Home'
 import Login from '../components/Login'
 import Recover from '../components/ForgotPasswordForm'
 /* import { PrivateRoutes } from './PrivateRoutes' */
 
-
 export const AppRouter = () => {
   return (
     <>
-       <Routes>        
+      <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/recover" element={<Recover />} />       
-        <Route path="/*" element={<Home/> }/>  
-    </Routes>   
+        <Route path="/recover" element={<Recover />} />
+        <Route path="/*" element={<Home />} />
+      </Routes>
     </>
-    
-      )
+  )
 }
-
- 
-
-

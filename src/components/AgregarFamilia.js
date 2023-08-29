@@ -12,8 +12,7 @@ import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import {ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton} from '../elementos/General'
-
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton} from '../elementos/General';
 
 const AgregarFamilia = () => {
     const user = auth.currentUser;
@@ -29,18 +28,13 @@ const AgregarFamilia = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
-    const handleChange = (e) => {
-        setFamilia(e.target.value);
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
         // Consulta si exite campo en el arreglo
-        const existe = leer.filter(fam => fam.familia === familia.toLocaleUpperCase().trim()).length === 0
-
+        const existe = leer.filter(fam => fam.familia === familia.toLocaleUpperCase().trim()).length === 0;
         // Realiza consulta al arreglo leer para ver si existe el nombre del campo
         if (!existe) {
             cambiarEstadoAlerta(true);
@@ -48,7 +42,6 @@ const AgregarFamilia = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe esta Familia'
             })
-
         } else if (familia === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -57,7 +50,6 @@ const AgregarFamilia = () => {
             })
         } else {
             const fam = familia.toLocaleUpperCase().trim()
-            console.log(fam);
             AgregarFamiliaDb({
                 familia: fam,
                 userAdd: user.email,
@@ -74,7 +66,6 @@ const AgregarFamilia = () => {
                     })
                     setFamilia('');
                     setFlag(!flag)
-                    console.log('consulta Flag', flag);
                 })
         }
     }
@@ -85,7 +76,6 @@ const AgregarFamilia = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     const filtroFamilia = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
@@ -93,16 +83,13 @@ const AgregarFamilia = () => {
         const nuevoFiltro = leer.filter(fam => fam.familia.includes(buscar));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
-
     const siguientePag = () => {
         if (leer.filter(fam => fam.familia.includes(buscador)).length > pagina + 5)
             setPagina(pagina + 5);
     }
-
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
     }
-
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
@@ -126,7 +113,7 @@ const AgregarFamilia = () => {
                         placeholder='Ingrese Familia Equipamiento Médico'
                         name='familia'
                         value={familia}
-                        onChange={handleChange}
+                        onChange={e => setFamilia(e.target.value)}
                     />
                     <Boton>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
@@ -140,7 +127,6 @@ const AgregarFamilia = () => {
                     <Titulo>Listado de Familias</Titulo>
                     <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
                 </ContentElemenAdd>
-
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
                     <InputAdd
@@ -150,7 +136,6 @@ const AgregarFamilia = () => {
                         onChange={onBuscarCambios}
                     />
                 </ContentElemenAdd>
-
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -161,7 +146,6 @@ const AgregarFamilia = () => {
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {filtroFamilia().map((item, index) => {
                             return (

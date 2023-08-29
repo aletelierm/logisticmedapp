@@ -16,7 +16,6 @@ import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 
-
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
@@ -112,19 +111,6 @@ const Entradas = () => {
         cambiarAlerta({});
         setBtnGuardar(true)
         if (e.key === 'Enter' || e.key === 'Tab') {
-            // if (nomTipoIn === 'DEVOLUCION CLIENTE') {
-            //     const existeCli = cliente.filter(cli => cli.rut === rut);
-            //     if (existeCli.length === 0) {
-            //         cambiarEstadoAlerta(true);
-            //         cambiarAlerta({
-            //             tipo: 'error',
-            //             mensaje: 'No existe rut del cliente'
-            //         })
-            //     } else {
-            //         setEntidad(existeCli[0].nombre);
-            //         setBtnGuardar(false)
-            //     }
-            // } else {
             const existeProv = proveedor.filter(prov => prov.rut === rut);
             if (existeProv.length === 0) {
                 cambiarEstadoAlerta(true);
@@ -189,7 +175,6 @@ const Entradas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        // const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
         if (numDoc === '') {
             cambiarEstadoAlerta(true);
@@ -346,7 +331,6 @@ const Entradas = () => {
             const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
             if (existeStatus) {
                 const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
-                console.log(estado[0].status)
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',

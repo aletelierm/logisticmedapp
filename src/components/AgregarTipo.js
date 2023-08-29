@@ -14,12 +14,12 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import {ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton} from '../elementos/General'
 
-
 const AgregarTipo = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
     let fechaAdd = new Date();
     let fechaMod = new Date();
+
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [tipo, setTipo] = useState('');
@@ -28,9 +28,6 @@ const AgregarTipo = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
-    const handleChange = (e) => {
-        setTipo(e.target.value);
-    }
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -78,7 +75,6 @@ const AgregarTipo = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     const filtroTipo = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
@@ -86,16 +82,13 @@ const AgregarTipo = () => {
         const nuevoFiltro = leer.filter(tip => tip.tipo.includes(buscar));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
-
     const siguientePag = () => {
         if (leer.filter(tip => tip.tipo.includes(buscador)).length > pagina + 5)
             setPagina(pagina + 5);
     }
-
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
     }
-
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
@@ -118,7 +111,7 @@ const AgregarTipo = () => {
                         placeholder='Ingrese Tipo Equipamiento Médico'
                         name='tipo'
                         value={tipo}
-                        onChange={handleChange}
+                        onChange={e => setTipo(e.target.value)}
                     />
                     <Boton>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />

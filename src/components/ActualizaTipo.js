@@ -11,7 +11,6 @@ import { UserContext } from '../context/UserContext';
 import {ContenedorCliente, Formulario} from '../elementos/CrearEquipos';
 import {Contenedor, ContentElemenAdd, Titulo, InputAdd, BotonGuardar} from '../elementos/General';
 
-
 const ActualizaTipo = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
@@ -52,7 +51,6 @@ const ActualizaTipo = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe esta Tipo de Equipamiento'
             })
-
         } else if (nuevoCampo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -60,7 +58,6 @@ const ActualizaTipo = () => {
                 mensaje: 'Campo no puede estar vacio'
             })
             return;
-
         } else {
             try {
                 const tip = nuevoCampo.toLocaleUpperCase();
@@ -77,7 +74,6 @@ const ActualizaTipo = () => {
                     mensaje: 'Tipo Actualizada exitosamente'
                 })
                 return;
-
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -129,7 +125,6 @@ const ActualizaTipo = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
         </ContenedorCliente >
     )
 }

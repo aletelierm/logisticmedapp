@@ -11,7 +11,6 @@ import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
 
-
 const Reporte1 = () => {
     const { users } = useContext(UserContext);
     const [alerta, cambiarAlerta] = useState({});
@@ -85,7 +84,7 @@ const Reporte1 = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-   
+
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -126,7 +125,6 @@ const Reporte1 = () => {
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {/* {console.log('merge jsx:', merge.current)} */}
                         {
@@ -147,7 +145,6 @@ const Reporte1 = () => {
                             })
                         }
                     </Table.Body>
-
                 </Table>
             </Contenedor>
             <Alerta
@@ -157,7 +154,6 @@ const Reporte1 = () => {
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
         </ContenedorProveedor>
-
     );
 };
 

@@ -6,13 +6,10 @@ import { useNavigate } from "react-router-dom";
 const useObtenerModelo = (id)=>{
     const navigate = useNavigate();
     const [modelo, setModelo] = useState([]);
-    
 
     useEffect(()=>{
         const obtenerModelo = async ()=>{
             const docum = await getDoc(doc(db,'modelos', id));
-            /* console.log(docum.data()) */
-            
             if(docum.exists){
                 setModelo(docum.data());
                 
@@ -21,11 +18,9 @@ const useObtenerModelo = (id)=>{
             }
         }
         obtenerModelo();
-
     },[navigate, id])
 
     return [modelo]
-
 }
 
 export default useObtenerModelo;

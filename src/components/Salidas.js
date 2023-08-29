@@ -230,7 +230,6 @@ const Salidas = () => {
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
-
         if (numDoc === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -238,7 +237,6 @@ const Salidas = () => {
                 mensaje: 'Ingrese N° Documento'
             })
             return;
-
         } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -424,7 +422,6 @@ const Salidas = () => {
                         })
                     }
                 }
-
             } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
@@ -474,8 +471,6 @@ const Salidas = () => {
                         })
                     }
                 }
-
-                // hasta aqui corrigiendo 11:06
             } else {
                 const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
@@ -528,6 +523,7 @@ const Salidas = () => {
             }
         }
     }
+
     //Valida y guarda los detalles del documento
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -593,7 +589,6 @@ const Salidas = () => {
                             rfid: existe[0].rfid,
                             tipMov: 0,
                             observacion: '',
-                            // status: nomTipoOut,
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -648,7 +643,6 @@ const Salidas = () => {
                             rfid: existe[0].rfid,
                             tipMov: 0,
                             observacion: '',
-                            // status: nomTipoOut,
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -681,7 +675,6 @@ const Salidas = () => {
                         mensaje: 'Equipo no se encuentra en Bodega'
                     })
                 } else {
-                    // const fechaInOut = new Date(date);
                     if (nomTipoOut === 'CLIENTE') {
                         inOut.current = 'TRANSITO CLIENTE'
                     } else if (nomTipoOut === 'SERVICIO TECNICO') {
@@ -711,7 +704,6 @@ const Salidas = () => {
                             rfid: existe[0].rfid,
                             tipMov: 2,
                             observacion: '',
-                            // status: nomTipoOut,
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -786,12 +778,10 @@ const Salidas = () => {
         setBtnConfirmar(true);
         setBtnNuevo(true);
         try {
-
             const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n');
             alertaSalida.forEach((destino) => {
                 EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
             })
-
         } catch (error) {
             console.log('error', error)
         }

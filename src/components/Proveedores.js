@@ -51,16 +51,13 @@ const Proveedores = () => {
         const nuevoFiltro = leer.filter(prov => prov.nombre.includes(buscador));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
-
     const siguientePag = () => {
         if (leer.filter(prov => prov.nombre.includes(buscador)).length > pagina + 5)
             setPagina(pagina + 5);
     }
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
-
     }
-
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
@@ -205,7 +202,6 @@ const Proveedores = () => {
                 })
                 setFlag(!flag)
                 return;
-
             } catch (error) {
                 console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
@@ -263,7 +259,6 @@ const Proveedores = () => {
                             placeholder='Ingrese Dirección'
                             value={direccion}
                             onChange={handleChange}
-
                         />
                     </ContentElemen>
                     <ContentElemen>
@@ -282,7 +277,6 @@ const Proveedores = () => {
                             placeholder='Ingrese Correo'
                             value={correo}
                             onChange={handleChange}
-
                         />
                         <Label>Nombre Contacto</Label>
                         <Input
@@ -339,7 +333,6 @@ const Proveedores = () => {
                                             </Link>
                                         </Table.Cell>
                                     </Table.Row>
-
                                 )
                             })
                         }

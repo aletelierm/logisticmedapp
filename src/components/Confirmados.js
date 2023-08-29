@@ -14,7 +14,6 @@ import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar 
 import { Input } from '../elementos/CrearEquipos'
 import moment from 'moment';
 
-
 const Confirmados = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
@@ -52,7 +51,6 @@ const Confirmados = () => {
         const data = await getDocs(dato)
         setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })))
     }
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -116,8 +114,6 @@ const Confirmados = () => {
                 emp_id: emp_id,
             })
             cabeceraId.current = cabecera.id;
-            console.log('cabecera id', cabeceraId.current)
-            console.log('cabecera', cabecera)
         } catch (error) {
             Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
         }
@@ -328,7 +324,6 @@ const Confirmados = () => {
     const verdaderosRetiro = isChecked2.filter(check => check.checked === true);
     const falsoCheckRetiro = isChecked2.filter(check => check.checked === false && check.observacion !== '');
     const falsosRetiro = isChecked2.filter(check => check.observacion === '' && check.checked === false);
-       console.log("verdaderos", verdaderosRetiro );
 
     const confirmaRetiro = async (e) => {
         e.preventDefault();
@@ -443,7 +438,7 @@ const Confirmados = () => {
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Rntregados - Retirados</Titulo>
+                <Titulo>Entregados - Retirados</Titulo>
             </Contenedor>
 
             <ListarProveedor>

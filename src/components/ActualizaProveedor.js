@@ -8,9 +8,7 @@ import { auth } from '../firebase/firebaseConfig';
 import {Contenedor, Titulo, InputUpdate, BotonGuardar} from '../elementos/General'
 import {ContentElemen, Formulario, Label} from '../elementos/CrearEquipos'
 
-
 const ActualizaProveedor = () => {
-
     const user = auth.currentUser;
     let fechaActual = new Date();
 
@@ -42,14 +40,12 @@ const ActualizaProveedor = () => {
         } else {
             navigate('/')
         }
-
     }, [proveedor, navigate])
 
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
 
@@ -118,7 +114,6 @@ const ActualizaProveedor = () => {
                     mensaje: 'Proveedor Actualizado exitosamente'
                 })
                 return;
-
             } catch (error) {
                 console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
@@ -201,7 +196,6 @@ const ActualizaProveedor = () => {
                             placeholder='Modifica Correo'
                             value={correo}
                             onChange={handleChange}
-
                         />
                         <Label>Nombre Contacto</Label>
                         <InputUpdate
@@ -210,7 +204,6 @@ const ActualizaProveedor = () => {
                             placeholder='Modifica Nombre Contacto'
                             value={nomContacto}
                             onChange={handleChange}
-
                         />
                     </ContentElemen>
                     <BotonGuardar >Actualizar</BotonGuardar>
@@ -224,7 +217,6 @@ const ActualizaProveedor = () => {
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
         </ContenedorCliente>
-
     )
 }
 

@@ -88,13 +88,6 @@ export const DataMenu = [
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
   },
-  /* {
-    title: 'Pruebas',
-    path: 'pruebas',
-    icon: <AiIcons.AiFillHome />,
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
-  }, */
   {
     title: 'Reportes',
     path: 'reportes',
@@ -115,18 +108,14 @@ export const DataMenu = [
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
       }
-
     ]
   },
-
   {
     title: 'Servicio Tecnico',
     path: 'serviciotecnico',
     icon: <MdIcons.MdMedicalServices />,
-
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
-
     subNav: [
       {
         title: 'Protocolos',
@@ -180,5 +169,4 @@ export const DataMenu = [
       } 
     ]
   }
-
 ];

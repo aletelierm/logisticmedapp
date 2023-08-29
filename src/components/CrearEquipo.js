@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Alerta from './Alertas'
 import { Table } from 'semantic-ui-react'
 import { db, auth } from '../firebase/firebaseConfig';
-import { collection, getDocs, where, query,addDoc,setDoc,doc,getDoc } from 'firebase/firestore';
+import { collection, getDocs, where, query, addDoc, setDoc, doc, getDoc } from 'firebase/firestore';
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import Modal from './Modal';
@@ -11,8 +11,8 @@ import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 import Swal from 'sweetalert2';
 /* import EnviarCorreo from '../funciones/EnviarCorreo'; */
-import {ContentElemenSelect, Select, Formulario, Input, Label, Contenido} from '../elementos/CrearEquipos'
-import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2} from '../elementos/General';
+import { ContentElemenSelect, Select, Formulario, Input, Label, Contenido } from '../elementos/CrearEquipos'
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2 } from '../elementos/General';
 
 const CrearEquipos = () => {
     const user = auth.currentUser;
@@ -43,7 +43,7 @@ const CrearEquipos = () => {
     /* const [empresa, setEmpresa] = useState([]); */
     const documentoId = useRef('');
     const empresaRut = useRef('');
-    
+
     //Leer los datos de Familia
     const getFamilia = async () => {
         const traerFam = collection(db, 'familias');
@@ -52,11 +52,11 @@ const CrearEquipos = () => {
         setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
     //Leer  Empresa
-    const getEmpresa = async () => {       
-        const traerEmp = await getDoc(doc(db,'empresas', users.emp_id));     
-        /* setEmpresa(traerEmp.data());  */      
-        empresaRut.current = traerEmp.data().rut;       
-    }     
+    const getEmpresa = async () => {
+        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
+        /* setEmpresa(traerEmp.data());  */
+        empresaRut.current = traerEmp.data().rut;
+    }
     //Leer los datos de Tipos
     const getTipo = async () => {
         const traerTip = collection(db, 'tipos');
@@ -93,7 +93,7 @@ const CrearEquipos = () => {
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
     //Funcion Guardar los equipos creados
-    const EquipoDb = async ({ status,nomEntidad,familia, tipo, marca, modelo, serie, rfid, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+    const EquipoDb = async ({ status, nomEntidad, familia, tipo, marca, modelo, serie, rfid, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
         try {
             const documento = await addDoc(collection(db, 'equipos'), {
                 familia: familia,
@@ -108,17 +108,14 @@ const CrearEquipos = () => {
                 fechamod: fechaMod,
                 emp_id: emp_id
             });
-        
             documentoId.current = documento.id;
-            
         } catch (error) {
-          
-            Swal.fire('Se ha producido un error grave. Llame al Administrador',error);
+            Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
         }
-        
+
         try {
             //Guarda el status incial del equipo          
-            await setDoc(doc(db,'status', documentoId.current),{
+            await setDoc(doc(db, 'status', documentoId.current), {
                 emp_id: emp_id,
                 familia: familia,
                 tipo: tipo,
@@ -133,10 +130,10 @@ const CrearEquipos = () => {
                 usermod: userMod,
                 fechaadd: fechaAdd,
                 fechamod: fechaMod
-         });
-        } catch (error) {            
-            Swal.fire('Se ha producido un error grave. Llame al Administrador',error);            
-        }        
+            });
+        } catch (error) {
+            Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
+        }
     }
 
     // Buscador de equipos
@@ -144,23 +141,18 @@ const CrearEquipos = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
             return equipo.slice(pagina, pagina + 5);
-
         if (categoria === 'Familia') {
             const nuevoFiltro = equipo.filter(eq => eq.familia.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
-
         } else if (categoria === 'Tipo') {
             const nuevoFiltro = equipo.filter(eq => eq.tipo.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
-
         } else if (categoria === 'Marca') {
             const nuevoFiltro = equipo.filter(eq => eq.marca.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
-
         } else if (categoria === 'Modelo') {
             const nuevoFiltro = equipo.filter(eq => eq.modelo.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
-
         } else if (categoria === 'N°Serie') {
             const nuevoFiltro = equipo.filter(eq => eq.serie.includes(buscar));
             return nuevoFiltro.slice(pagina, pagina + 5);
@@ -172,29 +164,24 @@ const CrearEquipos = () => {
         if (categoria === 'Familia') {
             if (equipo.filter(eq => eq.familia.includes(buscador)).length > pagina + 5)
                 setPagina(pagina + 5);
-
         } else if (categoria === 'Tipo') {
             if (equipo.filter(eq => eq.tipo.includes(buscador)).length > pagina + 5)
                 setPagina(pagina + 5);
-
         } else if (categoria === 'Marca') {
             if (equipo.filter(eq => eq.marca.includes(buscador)).length > pagina + 5)
                 setPagina(pagina + 5);
-
         } else if (categoria === 'Modelo') {
             if (equipo.filter(eq => eq.modelo.includes(buscador)).length > pagina + 5)
                 setPagina(pagina + 5);
-
         } else if (categoria === 'N°Serie') {
             if (equipo.filter(eq => eq.serie.includes(buscador)).length > pagina + 5)
-            setPagina(pagina + 5);
+                setPagina(pagina + 5);
         }
     }
 
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
     }
-
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
@@ -206,8 +193,7 @@ const CrearEquipos = () => {
         getMarca();
         getModelo();
         getEmpresa();
-        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -216,71 +202,50 @@ const CrearEquipos = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag])
 
-    // Lee input de formulario
-    const handleChange = (e) => {
-        switch (e.target.name) {
-            case 'serie':
-                setSerie(e.target.value);
-                break;
-            case 'rfid':
-                setRfid(e.target.value);
-                break;
-            default:
-                break;
-        }
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         setFlag(false);
 
-        const existeSerie = equipo.filter(equi => equi.serie === serie).length > 0;       
-        
-        if (nomFamilia ==='' || nomFamilia === 'Selecciona Opción:') {
+        const existeSerie = equipo.filter(equi => equi.serie === serie).length > 0;
+        if (nomFamilia === '' || nomFamilia === 'Selecciona Opción:') {
             console.log(nomFamilia);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Familia'
             })
-
         } else if (nomTipo === '' || nomTipo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Tipo Equipamiento'
             })
-
         } else if (nomMarca === '' || nomMarca === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Marca'
             })
-
         } else if (nomModelo === '' || nomModelo === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Seleccionar Modelo'
             })
-
         } else if (serie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Favor Ingresar N° Serie'
             })
-
             // } else if (rfid === '') {
             //     cambiarEstadoAlerta(true);
             //     cambiarAlerta({
             //         tipo: 'error',
             //         mensaje: 'Favor Ingresar RFID'
             //     })
-
         } else if (existeSerie) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -317,11 +282,10 @@ const CrearEquipos = () => {
                     tipo: 'exito',
                     mensaje: 'Equipo creado correctamente'
                 })
-                setFlag(true);                
+                setFlag(true);
             } catch (error) {
                 console.log(error);
             }
-
         }
     }
 
@@ -356,7 +320,6 @@ const CrearEquipos = () => {
                         <ContentElemenSelect>
                             <Label>Familias</Label>
                             <Select defaultValue='' value={nomFamilia} onChange={e => { setNomFamilia(e.target.value); sessionStorage.setItem('familia', e.target.value) }}>
-                                {/* {fami ? <option>{nomFamilia}</option> : <option>Selecciona Opción:</option>} */}
                                 <option>Selecciona Opción:</option>
                                 {familia.map((d) => {
                                     return (<option key={d.id}>{d.familia}</option>)
@@ -398,7 +361,7 @@ const CrearEquipos = () => {
                             placeholder='Ingrese N° Serie'
                             name='serie'
                             value={serie}
-                            onChange={handleChange}
+                            onChange={e => setSerie(e.target.value)}
                         />
                         <Label >RFID</Label>
                         <Input
@@ -406,7 +369,7 @@ const CrearEquipos = () => {
                             placeholder='RFID'
                             name='rfid'
                             value={rfid}
-                            onChange={handleChange}
+                            onChange={e => setRfid(e.target.value)}
                             disabled
                         />
                     </ContentElemenAdd>
@@ -423,7 +386,6 @@ const CrearEquipos = () => {
                 <ContentElemenSelect>
                     <Label>Buscar Por</Label>
                     <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
-                        {/* <option>Selecciona Opción:</option> */}
                         <option>Familia</option>
                         <option>Tipo</option>
                         <option>Marca</option>
@@ -431,7 +393,6 @@ const CrearEquipos = () => {
                         <option>N°Serie</option>
                     </Select>
                 </ContentElemenSelect>
-
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
                     <Input style={{ width: '100%' }}
@@ -456,7 +417,6 @@ const CrearEquipos = () => {
                             <Table.HeaderCell>Ubicación</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {
                             filtro().map((item) => {
@@ -483,7 +443,6 @@ const CrearEquipos = () => {
                             })
                         }
                     </Table.Body>
-
                 </Table>
             </ListarProveedor>
             <Alerta
