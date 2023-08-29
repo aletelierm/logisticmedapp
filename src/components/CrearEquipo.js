@@ -281,7 +281,7 @@ const CrearEquipos = () => {
                     tipo: 'exito',
                     mensaje: 'Equipo creado correctamente'
                 })
-                setFlag(true);
+                setFlag(!flag);
             } catch (error) {
                 console.log(error);
             }

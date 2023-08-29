@@ -324,7 +324,7 @@ const Confirmados = () => {
     const verdaderosRetiro = isChecked2.filter(check => check.checked === true);
     const falsoCheckRetiro = isChecked2.filter(check => check.checked === false && check.observacion !== '');
     const falsosRetiro = isChecked2.filter(check => check.observacion === '' && check.checked === false);
-
+    console.log(falsoCheckRetiro)
     const confirmaRetiro = async (e) => {
         e.preventDefault();
         console.log('Valores del formulario:', isChecked2);
@@ -342,7 +342,7 @@ const Confirmados = () => {
             if (falsoCheckRetiro.length > 0) {
                 const batch = writeBatch(db);
                 falsoCheckRetiro.forEach((docs) => {
-                    const docRef = doc(db, 'salidas', docs.eq_id);
+                    const docRef = doc(db, 'salidas', docs.id);
                     batch.update(docRef, { observacion: docs.observacion, fechamod: fechaMod });
                 });
                 try {
@@ -355,6 +355,24 @@ const Confirmados = () => {
                     });
                 } catch (error) {
                     Swal.fire('Se ha producido un error al guardar observacion');
+                    console.log(error)
+                }
+
+                const batch2 = writeBatch(db);
+                falsoCheckRetiro.forEach((docs) => {
+                    const docRef = doc(db, 'status', docs.eq_id);
+                    batch2.update(docRef, { status: 'CLIENTE', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                });
+                try {
+                    await batch2.commit();
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documentos actualizados correctamente.'
+                    });
+                } catch (error) {
+                    Swal.fire('Se ha producido un error al actualizar Status');
+                    console.log(error)
                 }
             }
 

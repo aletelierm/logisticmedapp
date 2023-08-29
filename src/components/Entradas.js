@@ -76,6 +76,15 @@ const Entradas = () => {
     }
     //Almacena movimientos de entrada del documento
     const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+    // const prueba = async () => {
+    //     const q = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+    //         const entradas = await getDocs(q);
+    //         entradas.forEach((doc) => {
+    //             console.log(doc.data())
+    //         })
+    // }
+    // console.log('entradas', prueba())
+
     //Leer  Empresa
     const getEmpresa = async () => {
         const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
@@ -290,7 +299,7 @@ const Entradas = () => {
     }
 
     //Valida y guarda los detalles del documento
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -328,6 +337,8 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
+            // const esid = await getDoc(doc(db, 'status', id))
+            // console.log(esid)
             const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
             if (existeStatus) {
                 const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')

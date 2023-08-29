@@ -41,7 +41,6 @@ import ActualizaUsuariosAlertas from './ActualizaUsuariosAlertas';
 export const Home = () => {
   return (
     <div> 
-     
     <NavbarSesion />
     <SideBar>     
     <Routes>
