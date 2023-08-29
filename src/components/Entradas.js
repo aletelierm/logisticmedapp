@@ -462,7 +462,7 @@ const Entradas = () => {
         getProveedor();
         getEquipo();
         getEntrada();
-        // getStatus();
+        getStatus();
         getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
