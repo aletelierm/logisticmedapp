@@ -13,5 +13,4 @@ export default async function EnviarCorreo(email, asunto, cuerpo){
         },
     };
     return await addDoc(coleccionRef, contenido);
-
 }

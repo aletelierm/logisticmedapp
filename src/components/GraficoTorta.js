@@ -19,13 +19,11 @@ const GraficoTorta = ({ datos }) => {
           'rgb(51, 255, 134 )',
           'rgb(16, 191, 150 )',
           'rgb(16, 191, 100)',
-
           // ... más colores si tienes más datos
         ],
       },
     ],
   };
-
   return <Pie data={data}/>;
 };
 

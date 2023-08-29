@@ -13,7 +13,6 @@ const SidebarLink = styled(Link)`
   list-style: none;  
   text-decoration: none;
   font-size: 20px;
-  
 
   &:hover {    
       background-color: #16B9CF;
@@ -38,39 +37,38 @@ const DropdownLink = styled(Link)`
   font-size: 15px;
 
   &:hover {
-     background-color: lightblue;
+    background-color: lightblue;
 ;
     cursor: pointer;
   }
 `;
 
-const SubMenu = ({ item,isopen }) => {  
+const SubMenu = ({ item, isopen }) => {
   const [subnav, setSubnav] = useState(false);
   const showSubnav = () => setSubnav(!subnav);
-  //#74C2F1
   return (
     <>
-      <SidebarLink to={item.path} onClick={item.subNav && showSubnav}>  
-        <div style={{color: "#328AC4"}}>
+      <SidebarLink to={item.path} onClick={item.subNav && showSubnav}>
+        <div style={{ color: "#328AC4" }}>
           {item.icon}
         </div>
-        <div style={{display: isopen ? "block" : "none"}}>
-           <SidebarLabel>{item.title}</SidebarLabel>            
-        </div>        
-        <div style={{display: isopen ? "block" : "none"}}>
+        <div style={{ display: isopen ? "block" : "none" }}>
+          <SidebarLabel>{item.title}</SidebarLabel>
+        </div>
+        <div style={{ display: isopen ? "block" : "none" }}>
           {item.subNav && subnav
             ? item.iconOpened
             : item.subNav
-            ? item.iconClosed
-            : null}
+              ? item.iconClosed
+              : null}
         </div>
       </SidebarLink>
       {subnav &&
         item.subNav.map((item, index) => {
           return (
-            <DropdownLink to={item.path} key={index} style={{display: isopen ? "block" : "none",color:"#328AC4"}}>
+            <DropdownLink to={item.path} key={index} style={{ display: isopen ? "block" : "none", color: "#328AC4" }}>
               {item.icon}
-              <SidebarLabel style={{color:"black", fontWeight:"600"}}>{item.title}</SidebarLabel>
+              <SidebarLabel style={{ color: "black", fontWeight: "600" }}>{item.title}</SidebarLabel>
             </DropdownLink>
           );
         })}

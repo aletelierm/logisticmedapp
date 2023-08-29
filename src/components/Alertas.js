@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styled, {keyframes} from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import theme from './../theme';
 
 const slideDown = keyframes`
@@ -7,23 +7,23 @@ const slideDown = keyframes`
         transform: translateY(-1.25rem); /* 20px */
         opacity: 0;
     }
- 
+
     10% {
         transform: translateY(1.25rem);
         opacity: 1;
     }
-    
+
     90% {
         transform: translateY(1.25rem);
         opacity: 1;
     }
- 
+
     100% {
         transform: translateY(1.25rem);
         opacity: 0;
     }
 `;
- 
+
 const ContenedorAlerta = styled.div`
     z-index: 1000;
     width: 100%;
@@ -34,18 +34,17 @@ const ContenedorAlerta = styled.div`
     justify-content: center;
     align-items: center;
     animation: ${slideDown} 4s ease forwards;
- 
+
     p {
- 
         background: ${(props) => {
-            if(props.tipo === 'error'){
-                return theme.rojo;
-            } else if (props.tipo === 'exito') {
-                return theme.verde;
-            } else {
-                return '#000';
-            }
-        }};
+        if (props.tipo === 'error') {
+            return theme.rojo;
+        } else if (props.tipo === 'exito') {
+            return theme.verde;
+        } else {
+            return '#000';
+        }
+    }};
         color: #fff;
         padding: 1.25rem 2.5rem; /* 20px 40px */
         border-radius: 0.31rem; /* 5px */
@@ -54,26 +53,26 @@ const ContenedorAlerta = styled.div`
     }
 `;
 
-const Alertas = ({tipo, mensaje, estadoAlerta, cambiarEstadoAlerta }) => {
+const Alertas = ({ tipo, mensaje, estadoAlerta, cambiarEstadoAlerta }) => {
 
-    useEffect(()=>{
+    useEffect(() => {
         let tiempo;
-        if(estadoAlerta === true){
-            tiempo = setTimeout(()=>{
+        if (estadoAlerta === true) {
+            tiempo = setTimeout(() => {
                 cambiarEstadoAlerta(false);
-            },4000);
+            }, 4000);
         }
-        return(()=> clearTimeout(tiempo));        
-    },[estadoAlerta, cambiarEstadoAlerta]);
-    return ( 
+        return (() => clearTimeout(tiempo));
+    }, [estadoAlerta, cambiarEstadoAlerta]);
+    return (
         <>
-        {estadoAlerta &&
-            <ContenedorAlerta tipo={tipo}>
-                <p>{mensaje}</p>
-            </ContenedorAlerta>
-        }         
+            {estadoAlerta &&
+                <ContenedorAlerta tipo={tipo}>
+                    <p>{mensaje}</p>
+                </ContenedorAlerta>
+            }
         </>
-         );
+    );
 }
- 
-export default Alertas ;
+
+export default Alertas;

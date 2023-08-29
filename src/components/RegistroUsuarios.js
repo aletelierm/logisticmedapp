@@ -65,8 +65,8 @@ export const RegistroUsuarios = () => {
             default:
                 break;
         }
-
     }
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);

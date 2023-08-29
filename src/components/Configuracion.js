@@ -6,7 +6,6 @@ const Configuracion = () => {
         <div>
                 <img style={{ width:"600px"}} src="../../configuracion.png" alt="imagen" />
         </div>            
-      
     );
 };
 

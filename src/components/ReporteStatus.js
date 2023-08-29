@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React ,{useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
@@ -9,31 +9,38 @@ import { UserContext } from '../context/UserContext';
 import moment from 'moment';
 import ExportarExcel from '../funciones/ExportarExcel';
 import * as FaIcons from 'react-icons/fa';
+<<<<<<< HEAD:src/components/ReporteStatus.js
 import {Contenedor, ListarProveedor, Titulo, ContentElemenAdd} from '../elementos/General'
 import {ContentElemenMov, Input} from '../elementos/CrearEquipos'
+=======
+import { Contenedor, ListarProveedor, Titulo } from '../elementos/General'
+import { ContentElemenMov } from '../elementos/CrearEquipos'
+>>>>>>> FormFamily:src/components/Reporte2.js
 
 //Reporte Status Equipos
 const Reporte2 = () => {
-
     const [estado, setEstado] = useState([]);
+<<<<<<< HEAD:src/components/ReporteStatus.js
     const [buscador, setBuscardor] = useState('');
     //lee usuario de autenticado y obtiene fecha actual   
+=======
+    //lee usuario de autenticado y obtiene fecha actual
+>>>>>>> FormFamily:src/components/Reporte2.js
     const { users } = useContext(UserContext);
-
-     //Leer los datos de Status
-     const getStatus = async () => {
+    
+    //Leer los datos de Status
+    const getStatus = async () => {
         const traerStatus = collection(db, 'status');
         const dato = query(traerStatus, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setEstado(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-     
-    
-    useEffect(()=>{
-        getStatus();
-    },[])
 
-    const formatearFecha =(fecha)=>{
+    useEffect(() => {
+        getStatus();
+    }, [])
+
+    const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
@@ -49,11 +56,17 @@ const Reporte2 = () => {
     }
 
     //agrega campo fecha formateado para exportar
+<<<<<<< HEAD:src/components/ReporteStatus.js
     const fecha = filtro().map((doc)=> ({...doc, fecha: formatearFecha(doc.fechamod)}))   
      //Exportar a excel los equipos
      const ExportarXls = () => {
+=======
+    const fecha = estado.map((doc) => ({ ...doc, fecha: formatearFecha(doc.fechamod) }))
+    //Exportar a excel los equipos
+    const ExportarXls = () => {
+>>>>>>> FormFamily:src/components/Reporte2.js
         //Campos a mostrar en el excel   
-        const columnsToShow = ['tipo','marca','modelo', 'status', 'serie','rut', 'entidad', 'fecha']
+        const columnsToShow = ['tipo', 'marca', 'modelo', 'status', 'serie', 'rut', 'entidad', 'fecha']
         //Llamar a la funcion con props: array equipo y array columnas
         const excelBlob = ExportarExcel(fecha, columnsToShow);
         // Crear un objeto URL para el Blob y crear un enlace de descarga
@@ -65,11 +78,12 @@ const Reporte2 = () => {
     }
 
     return (
-       <ContenedorReporte>
+        <ContenedorReporte>
             <Contenedor>
                 <Titulo>Estados de los Equipos</Titulo>
             </Contenedor>
             <ListarProveedor>
+<<<<<<< HEAD:src/components/ReporteStatus.js
                 <ContentElemenMov>                    
                     <Titulo>Listado de Dispositivos Médicos</Titulo>                                     
                 </ContentElemenMov>
@@ -84,26 +98,38 @@ const Reporte2 = () => {
                     <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
                 </ContentElemenAdd>            
                 
+=======
+                <ContentElemenMov>
+                    <Titulo>Listado de Dispositivos Médicos</Titulo>
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', marginTop: '7px' }} title='Exportar Status a Excel' />
+                </ContentElemenMov>
+
+>>>>>>> FormFamily:src/components/Reporte2.js
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>                            
+                            <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Nombre Equipo</Table.HeaderCell>
                             <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Status</Table.HeaderCell>                            
-                                                    
+                            <Table.HeaderCell>Fecha Status</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
+<<<<<<< HEAD:src/components/ReporteStatus.js
                     <Table.Body>      
                       {
                             filtro().map((item) => {
+=======
+                    <Table.Body>
+                        {
+                            estado.map((item) => {
+>>>>>>> FormFamily:src/components/Reporte2.js
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell>{item.id2}</Table.Cell>                                        
-                                        <Table.Cell>{item.tipo+" - "+item.marca+"  - "+item.modelo}</Table.Cell>
+                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{item.tipo + " - " + item.marca + "  - " + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
@@ -112,9 +138,8 @@ const Reporte2 = () => {
                                     </Table.Row>
                                 )
                             })
-                        } 
+                        }
                     </Table.Body>
-
                 </Table>
             </ListarProveedor>
         </ContenedorReporte>

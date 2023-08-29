@@ -28,10 +28,6 @@ const AgregarModelo = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
-    const handleChange = (e) => {
-        setModelo(e.target.value);
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -79,7 +75,6 @@ const AgregarModelo = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-
     const filtroModelo = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
@@ -87,16 +82,13 @@ const AgregarModelo = () => {
         const nuevoFiltro = leer.filter(mod => mod.modelo.includes(buscar));
         return nuevoFiltro.slice(pagina, pagina + 5);
     }
-
     const siguientePag = () => {
         if (leer.filter(mod => mod.modelo.includes(buscador)).length > pagina + 5)
             setPagina(pagina + 5);
     }
-
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
     }
-
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
@@ -119,7 +111,7 @@ const AgregarModelo = () => {
                         placeholder='Ingrese Modelo Equipamiento Médico'
                         name='modelo'
                         value={modelo}
-                        onChange={handleChange}
+                        onChange={e => setModelo(e.target.value)}
                     />
                     <Boton>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />

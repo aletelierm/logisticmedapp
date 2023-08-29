@@ -9,7 +9,6 @@ import ActualizaUsuariosAlertasDb from '../firebase/ActualizarUsuariosAlertasDb'
 import Swal from 'sweetalert2';
 
 export const ActulizaUsuariosAlertas = () => {
-
     const navigate = useNavigate();
     const { id } = useParams();
     const [usuariosAlertas] = useObtenerUsuarioAlertas(id);
@@ -39,9 +38,8 @@ export const ActulizaUsuariosAlertas = () => {
         } else {
             navigate('/')
         }
-
     }, [usuariosAlertas, navigate])  
-      
+
     const handleCheck = (ev, checkboxNumber) =>{
         const isChecked = ev.target.checked;
         switch (checkboxNumber){
@@ -57,8 +55,8 @@ export const ActulizaUsuariosAlertas = () => {
                 default:
                 break;
         }   
-
     }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -99,7 +97,6 @@ export const ActulizaUsuariosAlertas = () => {
                             placeholder='Ingrese Email'
                             value={correo}
                             disabled
-                                              
                         />
                         <Label>Nombre</Label>
                         <Input 
@@ -132,7 +129,6 @@ export const ActulizaUsuariosAlertas = () => {
                             name='rfid'                          
                             onChange={(ev) => handleCheck(ev, 2)}
                             checked={isCheckedRfid}
-
                         />
                         <Label>Confirmacion</Label>
                         <Input
@@ -143,7 +139,6 @@ export const ActulizaUsuariosAlertas = () => {
                             checked={isCheckedConfirma}
                         />
                     </ContentElemen>
-                    
                 </Formulario>
                 <BotonGuardar onClick={handleSubmit}>Actualizar</BotonGuardar>
                 <BotonGuardar onClick={()=> navigate('/configuracion/envios')}>Volver</BotonGuardar>
@@ -158,6 +153,5 @@ export const ActulizaUsuariosAlertas = () => {
         </ContenedorProveedor>
     )
 }
-
 
 export default ActulizaUsuariosAlertas;

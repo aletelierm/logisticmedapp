@@ -41,5 +41,5 @@ const ExcelExporter = (equipo, columnsToShow ) => {
       // Devolvemos el objeto Blob
       return excelBlob;
     };
+    
 export default ExcelExporter;
-

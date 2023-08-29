@@ -11,8 +11,6 @@ const useObtenerMarca = (id)=>{
     useEffect(()=>{
         const obtenerMarca = async ()=>{
             const docum = await getDoc(doc(db,'marcas', id));
-            /* console.log(docum.data()) */
-            
             if(docum.exists){
                 setMarca(docum.data());
                 
@@ -21,11 +19,9 @@ const useObtenerMarca = (id)=>{
             }
         }
         obtenerMarca();
-
     },[navigate, id])
 
     return [marca]
-
 }
 
 export default useObtenerMarca;

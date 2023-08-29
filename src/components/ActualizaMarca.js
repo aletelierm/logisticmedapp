@@ -11,7 +11,6 @@ import { UserContext } from '../context/UserContext';
 import {ContenedorCliente, Formulario} from '../elementos/CrearEquipos';
 import {Contenedor, ContentElemenAdd, Titulo, InputAdd, BotonGuardar} from '../elementos/General';
 
-
 const ActualizaMarca = () => {
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
@@ -53,7 +52,6 @@ const ActualizaMarca = () => {
                 tipo: 'error',
                 mensaje: 'Ya existe esta Marca'
             })
-
         } else if (nuevoCampo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -77,7 +75,6 @@ const ActualizaMarca = () => {
                     mensaje: 'Marca Actualizada exitosamente'
                 })
                 return;
-
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -128,7 +125,6 @@ const ActualizaMarca = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
         </ContenedorCliente >
     )
 }

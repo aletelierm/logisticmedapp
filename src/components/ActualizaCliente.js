@@ -5,14 +5,12 @@ import Alerta from '../components/Alertas';
 import useObtenerCliente from '../hooks/useObtenerCliente';
 import EditarCliente from '../firebase/EditarClientesDb';
 import { auth } from '../firebase/firebaseConfig';
-import {Contenedor, Titulo, InputUpdate, BotonGuardar} from '../elementos/General'
-import {ContentElemen, Formulario, Label} from '../elementos/CrearEquipos'
+import { Contenedor, Titulo, InputUpdate, BotonGuardar } from '../elementos/General'
+import { ContentElemen, Formulario, Label } from '../elementos/CrearEquipos'
 
 const ActualizaCliente = () => {
-
     const user = auth.currentUser;
     let fechaActual = new Date();
-
     const navigate = useNavigate();
     const { id } = useParams();
     const [cliente] = useObtenerCliente(id);
@@ -46,7 +44,6 @@ const ActualizaCliente = () => {
         } else {
             navigate('/')
         }
-
     }, [cliente, navigate])
 
     const handleChek = (e) => {
@@ -96,7 +93,6 @@ const ActualizaCliente = () => {
                 mensaje: 'favor ingresar un correo valido'
             })
             return;
-
         } else {
             try {
                 const nom = nombre.toLocaleUpperCase().trim();
@@ -124,7 +120,6 @@ const ActualizaCliente = () => {
                     mensaje: 'Cliente Actualizado exitosamente'
                 })
                 return;
-
             } catch (error) {
                 console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
@@ -153,7 +148,6 @@ const ActualizaCliente = () => {
             default:
                 break;
         }
-
         if (checked) {
             switch (e.target.name) {
                 case 'nombrersf':
@@ -221,7 +215,6 @@ const ActualizaCliente = () => {
                             placeholder='Modifica Correo'
                             value={correo}
                             onChange={handleChange}
-
                         />
                         <Label>Responsable financiero?</Label>
                         <InputUpdate
@@ -260,7 +253,6 @@ const ActualizaCliente = () => {
                         </ContentElemen>
                         :
                         ''
-
                     }
                     <BotonGuardar >Actualizar</BotonGuardar>
                     <BotonGuardar onClick={volver}>Volver</BotonGuardar>
@@ -272,9 +264,7 @@ const ActualizaCliente = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
         </ContenedorCliente>
-
     )
 }
 

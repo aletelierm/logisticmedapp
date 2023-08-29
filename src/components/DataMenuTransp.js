@@ -11,10 +11,5 @@ export const DataMenuTransp = [
     icon: <IoIcons.IoIosPaper />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />
-
-  
   }
- 
-   
-  
 ];

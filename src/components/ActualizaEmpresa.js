@@ -15,7 +15,6 @@ const ActualizaEmpresa = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [empresas] = useObtenerEmpresa(id);
-
     const [nuevaEmpresa, setNuevaEmpresa] = useState();   
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);   
@@ -25,11 +24,10 @@ const ActualizaEmpresa = () => {
     }
     const handleChange = (e) => {
         setNuevaEmpresa(e.target.value);
-     }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         
@@ -56,7 +54,6 @@ const ActualizaEmpresa = () => {
                 })
                 return;
             } catch (error) {
-                
             }
         }    
     }

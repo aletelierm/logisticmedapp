@@ -5,23 +5,22 @@ import styled from 'styled-components';
 const Protocolos = () => {
 
     const [estadoModal, setEstadoModal] = useState(false);
-
     return (
         <div>
             <h1>Protocolos</h1>
-            <Boton onClick={()=>setEstadoModal(!estadoModal)}>Modal</Boton>
+            <Boton onClick={() => setEstadoModal(!estadoModal)}>Modal</Boton>
             <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
                 <Contenido>
                     <h1>Ventana Modal</h1>
                     <p>reutilizaba</p>
-                 <Boton onClick={()=>setEstadoModal(!estadoModal)}>Aceptar</Boton>
+                    <Boton onClick={() => setEstadoModal(!estadoModal)}>Aceptar</Boton>
                 </Contenido>
             </Modal>
         </div>
     );
 };
 
-export default Protocolos ;
+export default Protocolos;
 
 const Boton = styled.button`
 	display: block;
@@ -44,5 +43,4 @@ const Contenido = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-
 `

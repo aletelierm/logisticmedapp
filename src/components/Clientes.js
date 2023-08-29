@@ -12,8 +12,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
-import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
-
+import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General';
 
 const Clientes = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -60,7 +59,6 @@ const Clientes = () => {
     const paginaAnterior = () => {
         if (pagina > 0) setPagina(pagina - 5)
     }
-
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setPagina(0);
         setBuscardor(target.value)
@@ -96,7 +94,6 @@ const Clientes = () => {
             default:
                 break;
         }
-
         if (checked) {
             switch (e.target.name) {
                 case 'nombrersf':
@@ -128,7 +125,6 @@ const Clientes = () => {
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;       
-       /*  console.log(validarRut(rut)); */
         const temp = rut.split('-');
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
@@ -250,7 +246,6 @@ const Clientes = () => {
                 })
                 setFlag(!flag);
                 return;
-
             } catch (error) {
                 console.log('se produjo un error al guardar', error);
                 cambiarEstadoAlerta(true);
@@ -399,7 +394,6 @@ const Clientes = () => {
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {
                             filtroCliente().map((item, index) => {
@@ -428,7 +422,6 @@ const Clientes = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
         </ContenedorProveedor>
     );
 }

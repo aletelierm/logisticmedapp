@@ -1,31 +1,26 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase/firebaseConfig";
-import { doc, getDoc} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 
-const useObtenerCliente = (id)=>{
+const useObtenerCliente = (id) => {
     const navigate = useNavigate();
     const [cliente, setCliente] = useState([]);
-    
 
-    useEffect(()=>{
-        const obtenerCliente = async ()=>{
-            const docum = await getDoc(doc(db,'clientes', id));
+    useEffect(() => {
+        const obtenerCliente = async () => {
+            const docum = await getDoc(doc(db, 'clientes', id));
             /* console.log(docum.data()) */
-            
-            if(docum.exists){
+            if (docum.exists) {
                 setCliente(docum.data());
-                
-            }else{
+            } else {
                 navigate('/home/clientes')
             }
         }
         obtenerCliente();
-
-    },[navigate, id])
+    }, [navigate, id])
 
     return [cliente]
-
 }
 
 export default useObtenerCliente;

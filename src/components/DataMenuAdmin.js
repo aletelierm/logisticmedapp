@@ -102,10 +102,6 @@ export const DataMenuAdmin = [
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
       }
-
     ]
   }
- 
-   
-  
 ];
