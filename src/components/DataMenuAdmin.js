@@ -91,7 +91,7 @@ export const DataMenuAdmin = [
         cName: 'sub-nav'
       },
       {
-        title: 'Historial por Cliente',
+        title: 'Historial por Paciente',
         path: 'reportes/reporte3',
         icon: <IoIcons.IoIosMedkit />,
         cName: 'sub-nav'

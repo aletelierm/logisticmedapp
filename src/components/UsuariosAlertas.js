@@ -15,12 +15,7 @@ import Swal from 'sweetalert2';
 export const UsuariosEnvios = () => {
     let fechaactual = new Date();
     const userAuth = auth.currentUser.email;
-<<<<<<< HEAD
     const useraddmod = userAuth;  
-=======
-    const useraddmod = userAuth;
-    /*  const { users } = useContext(UserContext); */
->>>>>>> FormFamily
 
     const [correo, setCorreo] = useState('');
     const [isCheckedSalida, setIsCheckedSalida] = useState(false);
@@ -175,10 +170,6 @@ export const UsuariosEnvios = () => {
                 setNombre(existeCorreo[0].nombre);
                 setApellido(existeCorreo[0].apellido);
                 setEntidad(existeCorreo[0].empresa)
-<<<<<<< HEAD
-=======
-                /*  setEmpId(existeCorreo[0].emp_id) */
->>>>>>> FormFamily
             }
         }
     }
@@ -320,8 +311,4 @@ export const UsuariosEnvios = () => {
         </ContenedorProveedor>
     )
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> FormFamily
 export default UsuariosEnvios;

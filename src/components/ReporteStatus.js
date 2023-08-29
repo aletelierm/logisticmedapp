@@ -9,23 +9,14 @@ import { UserContext } from '../context/UserContext';
 import moment from 'moment';
 import ExportarExcel from '../funciones/ExportarExcel';
 import * as FaIcons from 'react-icons/fa';
-<<<<<<< HEAD:src/components/ReporteStatus.js
 import {Contenedor, ListarProveedor, Titulo, ContentElemenAdd} from '../elementos/General'
 import {ContentElemenMov, Input} from '../elementos/CrearEquipos'
-=======
-import { Contenedor, ListarProveedor, Titulo } from '../elementos/General'
-import { ContentElemenMov } from '../elementos/CrearEquipos'
->>>>>>> FormFamily:src/components/Reporte2.js
 
 //Reporte Status Equipos
 const Reporte2 = () => {
     const [estado, setEstado] = useState([]);
-<<<<<<< HEAD:src/components/ReporteStatus.js
     const [buscador, setBuscardor] = useState('');
     //lee usuario de autenticado y obtiene fecha actual   
-=======
-    //lee usuario de autenticado y obtiene fecha actual
->>>>>>> FormFamily:src/components/Reporte2.js
     const { users } = useContext(UserContext);
     
     //Leer los datos de Status
@@ -56,15 +47,9 @@ const Reporte2 = () => {
     }
 
     //agrega campo fecha formateado para exportar
-<<<<<<< HEAD:src/components/ReporteStatus.js
     const fecha = filtro().map((doc)=> ({...doc, fecha: formatearFecha(doc.fechamod)}))   
      //Exportar a excel los equipos
      const ExportarXls = () => {
-=======
-    const fecha = estado.map((doc) => ({ ...doc, fecha: formatearFecha(doc.fechamod) }))
-    //Exportar a excel los equipos
-    const ExportarXls = () => {
->>>>>>> FormFamily:src/components/Reporte2.js
         //Campos a mostrar en el excel   
         const columnsToShow = ['tipo', 'marca', 'modelo', 'status', 'serie', 'rut', 'entidad', 'fecha']
         //Llamar a la funcion con props: array equipo y array columnas
@@ -83,7 +68,6 @@ const Reporte2 = () => {
                 <Titulo>Estados de los Equipos</Titulo>
             </Contenedor>
             <ListarProveedor>
-<<<<<<< HEAD:src/components/ReporteStatus.js
                 <ContentElemenMov>                    
                     <Titulo>Listado de Dispositivos Médicos</Titulo>                                     
                 </ContentElemenMov>
@@ -98,13 +82,6 @@ const Reporte2 = () => {
                     <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
                 </ContentElemenAdd>            
                 
-=======
-                <ContentElemenMov>
-                    <Titulo>Listado de Dispositivos Médicos</Titulo>
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', marginTop: '7px' }} title='Exportar Status a Excel' />
-                </ContentElemenMov>
-
->>>>>>> FormFamily:src/components/Reporte2.js
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -117,15 +94,9 @@ const Reporte2 = () => {
                             <Table.HeaderCell>Fecha Status</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-<<<<<<< HEAD:src/components/ReporteStatus.js
                     <Table.Body>      
                       {
                             filtro().map((item) => {
-=======
-                    <Table.Body>
-                        {
-                            estado.map((item) => {
->>>>>>> FormFamily:src/components/Reporte2.js
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{item.id2}</Table.Cell>

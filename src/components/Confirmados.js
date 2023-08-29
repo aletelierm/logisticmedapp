@@ -424,11 +424,7 @@ const Confirmados = () => {
         getCabecera();
     }, [flag])
 
-<<<<<<< HEAD
     useEffect(() => {    
-=======
-    useEffect(() => {
->>>>>>> FormFamily
         getSalida();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -437,11 +433,7 @@ const Confirmados = () => {
         setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 2))
         setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-<<<<<<< HEAD
     }, [flag, setFlag])  
-=======
-    }, [flag, setFlag])
->>>>>>> FormFamily
 
     return (
         <ContenedorProveedor>
