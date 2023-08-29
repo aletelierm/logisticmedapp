@@ -110,6 +110,12 @@ export const DataMenu = [
         cName: 'sub-nav'
       },
       {
+        title: 'Historial por Cliente',
+        path: 'reportes/reporte3',
+        icon: <IoIcons.IoIosMedkit />,
+        cName: 'sub-nav'
+      },
+      {
         title: 'Status de Equipos',
         path: 'reportes/reporte2',
         icon: <MdIcons.MdOutput />,

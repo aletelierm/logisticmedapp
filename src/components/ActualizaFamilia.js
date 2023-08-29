@@ -93,7 +93,7 @@ const ActualizaFamilia = () => {
         } else {
             navigate('/')
         }
-        console.log('useeffeect', );
+      
     }, [familia, navigate])
 
     useEffect(() => {

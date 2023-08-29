@@ -40,7 +40,6 @@ const CrearEquipos = () => {
     const [estadoModal, setEstadoModal] = useState(false);
     const [status, setStatus] = useState([]);
     const [mostrarSt, setMostrarSt] = useState([]);
-    /* const [empresa, setEmpresa] = useState([]); */
     const documentoId = useRef('');
     const empresaRut = useRef('');
     

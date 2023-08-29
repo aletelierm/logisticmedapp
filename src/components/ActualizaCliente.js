@@ -174,7 +174,7 @@ const ActualizaCliente = () => {
     return (
         <ContenedorCliente>
             <Contenedor>
-                <Titulo>Actuliaza Clientes</Titulo>
+                <Titulo>Actuliaza Pacientes</Titulo>
             </Contenedor>
 
             <Contenedor>
@@ -193,7 +193,8 @@ const ActualizaCliente = () => {
                             name='nombre'
                             placeholder='Modifica Nombre'
                             value={nombre}
-                            onChange={handleChange}
+                            /* onChange={handleChange} */
+                            disabled
                         />
                         <Label >Dirección</Label>
                         <InputUpdate

@@ -9,14 +9,15 @@ import { UserContext } from '../context/UserContext';
 import moment from 'moment';
 import ExportarExcel from '../funciones/ExportarExcel';
 import * as FaIcons from 'react-icons/fa';
-import {Contenedor, ListarProveedor, Titulo} from '../elementos/General'
-import {ContentElemenMov} from '../elementos/CrearEquipos'
+import {Contenedor, ListarProveedor, Titulo, ContentElemenAdd} from '../elementos/General'
+import {ContentElemenMov, Input} from '../elementos/CrearEquipos'
 
+//Reporte Status Equipos
 const Reporte2 = () => {
 
     const [estado, setEstado] = useState([]);
-    //lee usuario de autenticado y obtiene fecha actual
-   
+    const [buscador, setBuscardor] = useState('');
+    //lee usuario de autenticado y obtiene fecha actual   
     const { users } = useContext(UserContext);
 
      //Leer los datos de Status
@@ -37,8 +38,18 @@ const Reporte2 = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm:ss');
         return formatear;
     }
+
+    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {      
+        setBuscardor(target.value)
+    }
+
+    const filtro = () => {       
+        const nuevoFiltro = estado.filter(r => r.rut.includes(buscador))
+        return nuevoFiltro;        
+    }
+
     //agrega campo fecha formateado para exportar
-    const fecha = estado.map((doc)=> ({...doc, fecha: formatearFecha(doc.fechamod)}))   
+    const fecha = filtro().map((doc)=> ({...doc, fecha: formatearFecha(doc.fechamod)}))   
      //Exportar a excel los equipos
      const ExportarXls = () => {
         //Campos a mostrar en el excel   
@@ -53,7 +64,6 @@ const Reporte2 = () => {
         downloadLink.click();
     }
 
-
     return (
        <ContenedorReporte>
             <Contenedor>
@@ -61,10 +71,18 @@ const Reporte2 = () => {
             </Contenedor>
             <ListarProveedor>
                 <ContentElemenMov>                    
-                    <Titulo>Listado de Dispositivos Médicos</Titulo>   
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', marginTop: '7px' }} title='Exportar Status a Excel' />                 
+                    <Titulo>Listado de Dispositivos Médicos</Titulo>                                     
                 </ContentElemenMov>
-                              
+                <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
+                    <Input style={{ width: '100%' }}
+                        type='text'
+                        placeholder={'Buscar Rut'}
+                        value={buscador}
+                        onChange={onBuscarCambios}
+                    />
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
+                </ContentElemenAdd>            
                 
                 <Table singleLine>
                     <Table.Header>
@@ -81,7 +99,7 @@ const Reporte2 = () => {
                     </Table.Header>
                     <Table.Body>      
                       {
-                            estado.map((item) => {
+                            filtro().map((item) => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{item.id2}</Table.Cell>                                        

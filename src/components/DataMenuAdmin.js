@@ -42,7 +42,7 @@ export const DataMenuAdmin = [
     ]
   },
   {
-    title: 'Mis Clientes',
+    title: 'Mis Pacientes',
     path: 'clientes',
     icon: <FaIcons.FaUserNurse />,    
   },
@@ -87,6 +87,12 @@ export const DataMenuAdmin = [
       {
         title: 'Historial por Equipo',
         path: 'reportes/reporte1',
+        icon: <IoIcons.IoIosMedkit />,
+        cName: 'sub-nav'
+      },
+      {
+        title: 'Historial por Cliente',
+        path: 'reportes/reporte3',
         icon: <IoIcons.IoIosMedkit />,
         cName: 'sub-nav'
       },

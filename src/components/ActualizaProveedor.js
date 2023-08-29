@@ -174,7 +174,8 @@ const ActualizaProveedor = () => {
                             name='entidad'
                             placeholder='Modifica Nombre'
                             value={entidad}
-                            onChange={handleChange}
+                           /*  onChange={handleChange} */
+                           disabled
                         />
                         <Label >Dirección</Label>
                         <InputUpdate

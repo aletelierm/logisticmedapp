@@ -1,82 +1,95 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef } from 'react';
-import Alerta from '../components/Alertas';
+import Alerta from './Alertas';
 import { ContentElemen, Input } from '../elementos/CrearEquipos'
 import { ContenedorProveedor, Contenedor, Titulo } from '../elementos/General';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { collection, getDocs, where, query,doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
+import validarRut from '../funciones/validarRut';
 
 
-const Reporte1 = () => {
+const Reporte3 = () => {
+
     const { users } = useContext(UserContext);
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [serie, setSerie] = useState('');
+    const [rut, setRut] = useState('');
     const [merges, setMerges] = useState([]);
     const merge = useRef([]);
     const ent = useRef([]);
     const sal = useRef([]);
-
+   
     const detectarEquipo = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        //Patron para valiar rut
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/; 
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if (digito === 'k' || digito === 'K') digito = -1;
+        const validaR = validarRut(rut);
 
         if (e.key === 'Enter' || e.key === 'Tab') {
-            if(serie !==''){
-                //leer por serie
-                const dato = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', serie));
-                const data = await getDocs(dato);
-                //leer por id            
-                const dataid = await getDoc(doc(db, 'equipos', serie));                  
-            if (data.docs.length === 1) {
-                //leer entradas por id
-                const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', data.docs[0].id));
-                const dataE = await getDocs(datoE);
-                ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));              
+            if (rut === '') {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Campo Rut no puede estar vacio'
+                })
+                return;
+            } else if (!expresionRegularRut.test(rut)) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Formato incorrecto de rut'
+                })
+                return;
+            } else if (validaR !== parseInt(digito)) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Rut no válido'
+                })
+                return;
+            }else {
+                //Buscar si rut existe en pacientes
+                const datoRut = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+                const encuentraRut = await getDocs(datoRut);
+                
+                if(encuentraRut.docs.length !== 0){
+                    //leer entradas por id
+                 const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+                 const dataE = await getDocs(datoE);
+                 ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }))
                 //leer salidas por id
-                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', data.docs[0].id));
+                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
                 const dataS = await getDocs(datoS);
                 sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));  
                 merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
                 const movimientos = merge.current.filter(mov => mov.tipmov !==0)                
                 setMerges(movimientos);
-            } else if(dataid.exists()){                
-                //leer entradas por id
-                const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie));
-                const dataE = await getDocs(datoE);
-                ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));            
-                //leer salidas por id
-                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie));
-                const dataS = await getDocs(datoS);
-                sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));                               
-                merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
-                setMerges(merge.current);                
-            }else{
-                cambiarEstadoAlerta(true);
+                 console.log(merges)
+                }else{
+                    cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'Numero de serie o Id incorrectos !!!'
+                    mensaje: 'No existe un paciente con ese Rut'
                 })
                 return;
                 }
-            }else{
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'No a ingresado ningun valor !!!'
-                })
-                return;
+                
             }
-        }
+            
+    }
     }
 
     const handleChange = (e) => {
-        setSerie(e.target.value);
+        setRut(e.target.value);
     }
 
     // Cambiar fecha
@@ -89,15 +102,15 @@ const Reporte1 = () => {
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Historial por Equipo</Titulo>
+                <Titulo>Historial por Paciente</Titulo>
             </Contenedor>
             <Contenedor>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
                         type='text'
-                        placeholder='Buscar x Serie o Id del equipo'
-                        value={serie}
+                        placeholder='Buscar x Rut'
+                        value={rut}
                         onChange={handleChange}
                         onKeyDown={detectarEquipo}
                     />
@@ -107,7 +120,7 @@ const Reporte1 = () => {
             <Contenedor>
                 {
                     merge.current.length > 0 ?
-                        <Titulo style={{ fontSize: '17px' }}>Equipo :{"  "+merge.current[0].tipo + " " + merge.current[0].marca + " " + merge.current[0].modelo+"   N.Serie : "+ merge.current[0].serie}</Titulo>
+                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" "+merge.current[0].entidad+" ------ Rut: "+merge.current[0].rut}</Titulo>
                         :
                         <Titulo>Equipo:</Titulo>
                 }
@@ -119,11 +132,11 @@ const Reporte1 = () => {
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
                             <Table.HeaderCell>N.Doc</Table.HeaderCell>
                             <Table.HeaderCell>T.Doc</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Salida</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>                            
                         </Table.Row>
                     </Table.Header>
 
@@ -137,11 +150,11 @@ const Reporte1 = () => {
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? '1' : '0'}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? "0" : "1"}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>
-                                        <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>
+                                        <Table.Cell>{item.tipo+" "+item.marca}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell>{item.tipmov === 1 ? '0' : '1'}</Table.Cell>
+                                        <Table.Cell>{item.tipmov === 1 ? "1" : "0"}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>                                       
                                     </Table.Row>
                                 )
                             })
@@ -159,7 +172,7 @@ const Reporte1 = () => {
         </ContenedorProveedor>
 
     );
-};
 
-export default Reporte1;
+}
+export default Reporte3;
 

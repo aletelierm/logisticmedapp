@@ -273,8 +273,7 @@ const Confirmados = () => {
         getCabecera();
     }, [flag])
 
-    useEffect(() => {
-        /* getStatus(); */
+    useEffect(() => {    
         getSalida();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -283,10 +282,7 @@ const Confirmados = () => {
         setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 2))
         setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [flag, setFlag])
-
-    // console.log('isChecked', isChecked)
-    // console.log('isChecked2', isChecked2)
+    }, [flag, setFlag])  
 
     return (
         <ContenedorProveedor>

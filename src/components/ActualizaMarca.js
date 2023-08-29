@@ -93,8 +93,7 @@ const ActualizaMarca = () => {
             setNuevoCampo(marca.marca)
         } else {
             navigate('/')
-        }
-        console.log('useeffeect', );
+        }      
     }, [marca, navigate])
 
     useEffect(() => {
