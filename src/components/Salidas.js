@@ -621,7 +621,7 @@ const Salidas = () => {
                         mensaje: 'Equipo no se encuentra en Servicio Tecnico'
                     })
                 } else {
-                    inOut.current = 'PROCESO RETIRO SERVICIO TECNICO';
+                    inOut.current = 'PROCESO RETIRO S.T.';
                     setBtnConfirmar(false);
                     try {
                         SalidasDB({
