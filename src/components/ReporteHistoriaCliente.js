@@ -136,7 +136,7 @@ const Reporte3 = () => {
                             <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Salida</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>                            
+                            <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>                           
                         </Table.Row>
                     </Table.Header>
 
@@ -154,7 +154,7 @@ const Reporte3 = () => {
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.tipmov === 1 ? '0' : '1'}</Table.Cell>
                                         <Table.Cell>{item.tipmov === 1 ? "1" : "0"}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>                                       
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>                                                                                                                  
                                     </Table.Row>
                                 )
                             })

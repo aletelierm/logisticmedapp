@@ -57,13 +57,13 @@ export default function Login() {
       <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <Card>
           <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} sx={{ mt: 3 }}>
-            {/*  <Grid item xs={12} sm={6} md={4}>
+            <Grid item xs={12} sm={6} md={4}>
             <img
-              height={50}         
-              src="logo.png" alt="imagen" 
-              style={{width:'25%'}}
+              height={200}         
+              src="../../LogoLogisticMed.png" alt="imagen" 
+              style={{width:'100%'}}
               />
-          </Grid> */}
+          </Grid>
           </Grid>
           <CardContent>
             <Typography variant="h5" component="h1" gutterBottom textAlign="center">

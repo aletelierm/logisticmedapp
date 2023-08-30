@@ -16,6 +16,7 @@ import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General';
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import EnviarCorreo from '../funciones/EnviarCorreo';
+import ReactDOMServer from 'react-dom/server';
 
 const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -778,7 +779,8 @@ const Salidas = () => {
         setBtnConfirmar(true);
         setBtnNuevo(true);
         try {
-            const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n');
+            /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
+            const mensaje = cuerpoCorreo(documento);
             alertaSalida.forEach((destino) => {
                 EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
             })
@@ -787,6 +789,29 @@ const Salidas = () => {
         }
     };
 
+    const cuerpoCorreo =(data)=>{
+       
+        return ReactDOMServer.renderToString(
+            <div>
+                <h2>Salida de Bodega</h2>                
+                <p>Numero Documento :{data[0].numdoc} </p>
+                <p>Tipo de Documento:{data[0].tipdoc} </p>
+                <p>Nombre :{data[0].entidad} </p>
+                <p>Rut :{data[0].rut} </p>
+                <br/>
+                <p>Listado de equipos:</p>
+                <ul>
+                    {data.map((item, index)=>(
+                        <li key={index}>
+                            <p>{index +1 + ".-"+item.tipo+" "+item.marca+" "+item.modelo+"    S/N : "+item.serie}</p>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+
+
+    }
     // Agregar una nueva cabecera
     const nuevo = () => {
         setNumDoc('');

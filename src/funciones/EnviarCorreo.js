@@ -8,7 +8,7 @@ export default async function EnviarCorreo(email, asunto, cuerpo){
         message: {
           subject: asunto,
           text: cuerpo,
-          html: `<p>${cuerpo}</p>`
+          html: `${cuerpo}`
           
         },
     };

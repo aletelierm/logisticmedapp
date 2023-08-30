@@ -123,6 +123,7 @@ const Reporte1 = () => {
                             <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Obs.</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -140,6 +141,7 @@ const Reporte1 = () => {
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
+                                        <Table.Cell>{item.observacion}</Table.Cell> 
                                     </Table.Row>
                                 )
                             })
