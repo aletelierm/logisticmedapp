@@ -324,10 +324,10 @@ const Confirmados = () => {
     const verdaderosRetiro = isChecked2.filter(check => check.checked === true);
     const falsoCheckRetiro = isChecked2.filter(check => check.checked === false && check.observacion !== '');
     const falsosRetiro = isChecked2.filter(check => check.observacion === '' && check.checked === false);
-    console.log(falsoCheckRetiro)
+    // console.log(falsoCheckRetiro)
     const confirmaRetiro = async (e) => {
         e.preventDefault();
-        console.log('Valores del formulario:', isChecked2);
+        // console.log('Valores del formulario:', isChecked2);
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
@@ -361,10 +361,11 @@ const Confirmados = () => {
                 const batch2 = writeBatch(db);
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch2.update(docRef, { status: 'CLIENTE', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                    batch2.update(docRef, { status: 'CLIENTE', rut: docs.rut, entidad: docs.entidad });
                 });
                 try {
                     await batch2.commit();
+                    // console.log('se cambi el status a cliente')
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -418,6 +419,8 @@ const Confirmados = () => {
                         tipo: 'exito',
                         mensaje: 'Documentos actualizados correctamente.'
                     });
+                    setFlag(!flag)
+                    setIsOpen(!isOpen)
                 } catch (error) {
                     Swal.fire('Se ha producido un error al Cambiar Status de equipos retirados');
                 }
@@ -430,11 +433,13 @@ const Confirmados = () => {
                     usermod: user.email,
                     fechamod: fechaMod
                 })
-                setFlag(!flag)
-                setIsOpen(!isOpen)
+                // setFlag(!flag)
+                // setIsOpen(!isOpen)
             } catch (error) {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
             }
+            setFlag(!flag)
+            setIsOpenR(!setIsOpenR)
         }
     }
 
@@ -442,7 +447,7 @@ const Confirmados = () => {
         getCabecera();
     }, [flag])
 
-    useEffect(() => {    
+    useEffect(() => {
         getSalida();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -451,7 +456,7 @@ const Confirmados = () => {
         setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 2))
         setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [flag, setFlag])  
+    }, [flag, setFlag])
 
     return (
         <ContenedorProveedor>
