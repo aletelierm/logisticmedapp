@@ -139,6 +139,7 @@ const Entradas = () => {
             // Exite N° serie en Entradas 
             const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
+
             if (almacenar.current === undefined) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -296,6 +297,22 @@ const Entradas = () => {
         const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieEq = await getDocs(traerEq);
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Validar ID en equipo
+        const traerId = await getDoc(doc(db, 'equipos', numSerie));
+            // const existeId = traerId.data()
+            // const arreglo = [existeId]
+            // const existe2 = arreglo.map((doc)=>({...doc, id: numSerie}))
+            // console.log('arreglo', existe2)
+            if (existe.length === 1) {
+                almacenar.current = existe;
+            } else if (traerId.exists()) {
+                const existeId = traerId.data();
+                const arreglo = [existeId];
+                const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+                almacenar.current = existe2;
+            } else {
+                console.log('almacenar', almacenar.current);
+            }
         // Validar en N° Serie en Entradas        
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
@@ -318,7 +335,8 @@ const Entradas = () => {
                 mensaje: 'Ingrese o Scaneé N° Serie'
             })
             return;
-        } else if (existe.length === 0) {
+        // } else if (existe.length === 0) {
+        } else if (almacenar.current === undefined) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -331,15 +349,14 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
-            const traerStatus = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('id', '==', existe[0].id), where('status', '!=', 'PREPARACION'));
-            const status = await getDocs(traerStatus);
-            const existeStatus = (status.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            console.log('existeStatus', existeStatus)
+            // const traerStatus = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('id', '==', almacenar.current[0].id), where('status', '!=', 'PREPARACION'));
+            // const status = await getDocs(traerStatus);
+            // const existeStatus = (status.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // console.log('existeStatus', existeStatus)
 
-
-            // const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
+            const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
             if (existeStatus > 0) {
-                // const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
+                const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -356,13 +373,13 @@ const Entradas = () => {
                         entidad: entidad,
                         price: price,
                         cab_id: existeCab[0].id,
-                        eq_id: existe[0].id,
-                        familia: existe[0].familia,
-                        tipo: existe[0].tipo,
-                        marca: existe[0].marca,
-                        modelo: existe[0].modelo,
-                        serie: existe[0].serie,
-                        rfid: existe[0].rfid,
+                        eq_id: almacenar.current[0].id,
+                        familia: almacenar.current[0].familia,
+                        tipo: almacenar.current[0].tipo,
+                        marca: almacenar.current[0].marca,
+                        modelo: almacenar.current[0].modelo,
+                        serie: almacenar.current[0].serie,
+                        rfid: almacenar.current[0].rfid,
                         tipMov: 1,
                         observacion: '',
                         userAdd: user.email,
@@ -393,6 +410,7 @@ const Entradas = () => {
         }
     }
 
+    // hasta aqui Optimizado 17:17
 
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
