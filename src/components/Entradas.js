@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import EntradasDB from '../firebase/EntradasDB'
 import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
@@ -37,19 +37,20 @@ const Entradas = () => {
     const [entidad, setEntidad] = useState('');
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
+    // const [almacenar, setAlmacenar] = useState([])
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const almacenar = useRef([])
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
         const guardaCab = await getDocs(cab);
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        // console.log('cabecera', existeCab)
         setCabecera(existeCab);
     }
     // Filtar por docuemto de Entrada
@@ -59,7 +60,6 @@ const Entradas = () => {
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setDataEntrada(documento)
     }
-
     //Leer  Empresa
     const getEmpresa = async () => {
         const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
@@ -120,10 +120,26 @@ const Entradas = () => {
             const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
             const serieEq = await getDocs(traerEq);
             const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // Exite ID en equipos
+            const traerId = await getDoc(doc(db, 'equipos', numSerie));
+            // const existeId = traerId.data()
+            // const arreglo = [existeId]
+            // const existe2 = arreglo.map((doc)=>({...doc, id: numSerie}))
+            // console.log('arreglo', existe2)
+            if (existe.length === 1) {
+                almacenar.current = existe;
+            } else if (traerId.exists()) {
+                const existeId = traerId.data();
+                const arreglo = [existeId];
+                const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+                almacenar.current = existe2;
+            } else {
+                console.log('almacenar', almacenar.current);
+            }
             // Exite N° serie en Entradas 
             const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
-            if (existe.length === 0) {
+            if (almacenar.current === undefined) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -136,9 +152,9 @@ const Entradas = () => {
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
             } else {
-                const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
+                const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
                 if (existeStatus) {
-                    const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
+                    const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
@@ -315,13 +331,19 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
-            const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
-            if (existeStatus) {
-                const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
+            const traerStatus = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('id', '==', existe[0].id), where('status', '!=', 'PREPARACION'));
+            const status = await getDocs(traerStatus);
+            const existeStatus = (status.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            console.log('existeStatus', existeStatus)
+
+
+            // const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
+            if (existeStatus > 0) {
+                // const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: `Este Equipo ya existe y su Estado es en : ${estado[0].status} `
+                    mensaje: `Este Equipo ya existe y su Estado es en : ${existeStatus[0].status} `
                 })
             } else {
                 try {
@@ -371,7 +393,6 @@ const Entradas = () => {
         }
     }
 
-    // hasta aqui optimizado
 
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
@@ -380,10 +401,8 @@ const Entradas = () => {
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        console.log('cabecera', existeCab)
+        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
-        // const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         const batch = writeBatch(db);
         dataEntrada.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
@@ -446,7 +465,6 @@ const Entradas = () => {
         getStatus();
         getEmpresa();
         consultarCab();
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -536,14 +554,16 @@ const Entradas = () => {
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnGuardar}
-                    >Guardar</BotonGuardar>
+                    >
+                        Guardar</BotonGuardar>
                     <BotonGuardar
                         style={{ margin: '10px 0' }}
                         onClick={nuevo}
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnNuevo}
-                    >Nuevo</BotonGuardar>
+                    >
+                        Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -620,7 +640,6 @@ const Entradas = () => {
                     </Table.Header>
                     <Table.Body>
                         {cabecera.map((item, index) => {
-                            // if (item.confirmado === false) {
                             return (
                                 <Table.Row key={item.id2}>
                                     <Table.Cell >{index + 1}</Table.Cell>
@@ -646,7 +665,6 @@ const Entradas = () => {
                                 </Table.Row>
                             )
                         }
-                            // }
                         )}
                     </Table.Body>
                 </Table>

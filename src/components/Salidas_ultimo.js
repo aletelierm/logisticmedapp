@@ -28,7 +28,7 @@ const Salidas = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [alertaSalida, setAlertasalida] = useState([]);
-    // const [equipo, setEquipo] = useState([]);
+    const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
     const [dataSalida, setDataSalida] = useState([]);
     const [status, setStatus] = useState([]);
@@ -58,45 +58,29 @@ const Salidas = () => {
         setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    // Filtar por docuemto de Cabecera
-    const consultarCab = async () => {
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
-        const guardaCab = await getDocs(cab);
-        const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        setCabecera(existeCab);
+    //Lectura de equipos filtrado por empresas
+    const getEquipo = async () => {
+        const traerEq = collection(db, 'equipos');
+        const dato = query(traerEq, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-    // Filtar por docuemto de Entrada
-    const consultarOut = async () => {
-        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
-        const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setDataSalida(documento)
+    // Lectura cabecera de documentos
+    const getCabecera = async () => {
+        const traerCabecera = collection(db, 'cabecerasout');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-
-    // //Lectura de equipos filtrado por empresas
-    // const getEquipo = async () => {
-    //     const traerEq = collection(db, 'equipos');
-    //     const dato = query(traerEq, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    // }
-
-    // // Lectura cabecera de documentos
-    // const getCabecera = async () => {
-    //     const traerCabecera = collection(db, 'cabecerasout');
-    //     const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    // }
-    // //Lectura movimientos de Salida
-    // const getSalida = async () => {
-    //     const traerSalida = collection(db, 'salidas');
-    //     const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    // }
+    //Lectura movimientos de Salida
+    const getSalida = async () => {
+        const traerSalida = collection(db, 'salidas');
+        const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
     //Almacena movimientos de entrada del documento
-    // const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+    const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
 
     //Lectura de status
     const getStatus = async () => {
@@ -167,20 +151,15 @@ const Salidas = () => {
             }
         }
     }
-
     // Validar N°serie
-    const detectar = async (e) => {
+    const detectar = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
-            // Exite N° serie en equipos   
-            const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-            const serieEq = await getDocs(traerEq);
-            const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // Exite N° serie en Entradas 
-            const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
-            const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
-
+            // Consulta si exite serie en el arreglo            
+            const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
+            const existeIn = documento.filter(doc => doc.serie === numSerie);
+            const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
             if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -230,9 +209,6 @@ const Salidas = () => {
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-
-    // hasta aqui optimizado
-
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = async (ev) => {
         ev.preventDefault();
@@ -246,14 +222,7 @@ const Salidas = () => {
         const validaR = validarRut(rut);
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-
-        // Filtar por docuemto de Cabecera
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-
-
-        // const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
         if (numDoc === '') {
@@ -334,8 +303,8 @@ const Salidas = () => {
                 mensaje: 'Ingrese Patente del Vehiculo'
             })
             return;
-        } else if (existeCab.length > 0) {
-            if (existeCab[0].confirmado) {
+        } else if (existe.length > 0) {
+            if (existe[0].confirmado) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -563,17 +532,15 @@ const Salidas = () => {
     }
 
     //Valida y guarda los detalles del documento
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Exite N° serie en equipos   
-        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        const serieEq = await getDocs(traerEq);
-        const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // Exite N° serie en Entradas 
-        const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
-        const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
+        // Validar N° Serie en equipo
+        const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
+        // Validar en N° Serie en Salidas
+        const existeIn = documento.filter(doc => doc.serie === numSerie);
+        const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         if (numSerie === '') {
@@ -778,7 +745,7 @@ const Salidas = () => {
         cambiarAlerta({});
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         const batch = writeBatch(db);
-        dataSalida.forEach((docs) => {
+        documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
             batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechaadd });
         });
@@ -819,7 +786,7 @@ const Salidas = () => {
         setBtnNuevo(true);
         try {
             /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
-            const mensaje = cuerpoCorreo(dataSalida);
+            const mensaje = cuerpoCorreo(documento);
             alertaSalida.forEach((destino) => {
                 EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
             })
@@ -870,9 +837,10 @@ const Salidas = () => {
     }
 
     useEffect(() => {
-        // getEquipo();
-        // getSalida();
-        consultarCab();
+        // getProveedor();
+        // getCliente();
+        getEquipo();
+        getSalida();
         getUsuarios();
         getAlertasSalidas()
         /* getEmpresa(); */
@@ -881,11 +849,9 @@ const Salidas = () => {
 
     useEffect(() => {
         getStatus();
-        // getSalida();
-        // getCabecera();
-        consultarCab();
-        consultarOut();
-        if (dataSalida.length > 0) setBtnConfirmar(false);
+        getSalida();
+        getCabecera();
+        if (documento.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
     return (
@@ -1033,7 +999,7 @@ const Salidas = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {dataSalida.map((item, index) => {
+                            {documento.map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{index + 1}</Table.Cell>
