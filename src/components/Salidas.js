@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
@@ -28,7 +28,6 @@ const Salidas = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [alertaSalida, setAlertasalida] = useState([]);
-    // const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
     const [dataSalida, setDataSalida] = useState([]);
     const [status, setStatus] = useState([]);
@@ -49,6 +48,7 @@ const Salidas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const inOut = useRef('');
+    const almacenar = useRef([]);
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -57,7 +57,6 @@ const Salidas = () => {
         const data = await getDocs(dato);
         setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
@@ -72,32 +71,6 @@ const Salidas = () => {
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setDataSalida(documento)
     }
-
-    // //Lectura de equipos filtrado por empresas
-    // const getEquipo = async () => {
-    //     const traerEq = collection(db, 'equipos');
-    //     const dato = query(traerEq, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    // }
-
-    // // Lectura cabecera de documentos
-    // const getCabecera = async () => {
-    //     const traerCabecera = collection(db, 'cabecerasout');
-    //     const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    // }
-    // //Lectura movimientos de Salida
-    // const getSalida = async () => {
-    //     const traerSalida = collection(db, 'salidas');
-    //     const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    // }
-    //Almacena movimientos de entrada del documento
-    // const documento = dataSalida.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
-
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -110,7 +83,6 @@ const Salidas = () => {
         const dataUsuarios = await getDocs(collection(db, "usuarios"));
         setUsuarios(dataUsuarios.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
     }
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -167,7 +139,6 @@ const Salidas = () => {
             }
         }
     }
-
     // Validar N°serie
     const detectar = async (e) => {
         cambiarEstadoAlerta(false);
@@ -177,11 +148,23 @@ const Salidas = () => {
             const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
             const serieEq = await getDocs(traerEq);
             const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // Exite ID en equipos
+            const traerId = await getDoc(doc(db, 'equipos', numSerie));
+            if (existe.length === 1) {
+                almacenar.current = existe;
+            } else if (traerId.exists()) {
+                const existeId = traerId.data();
+                const arreglo = [existeId];
+                const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+                almacenar.current = existe2;
+            } else {
+                console.log('almacenar', almacenar.current);
+            }
             // Exite N° serie en Entradas 
             const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
 
-            if (existe.length === 0) {
+            if (almacenar.current === undefined) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -194,10 +177,9 @@ const Salidas = () => {
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
             } else {
-                console.log('tipo salida validar serie', nomTipoOut)
-                const existeStatusCli = status.filter(st => st.id === existe[0].id && st.status === 'CLIENTE').length === 1;
-                const existeStatusST = status.filter(st => st.id === existe[0].id && st.status === 'SERVICIO TECNICO').length === 1;
-                const existeStatusBod = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
+                const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
+                const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
+                const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
                 if (nomTipoOut === 'RETIRO CLIENTE') {
                     if (!existeStatusCli) {
                         cambiarEstadoAlerta(true);
@@ -226,13 +208,9 @@ const Salidas = () => {
             }
         }
     }
-
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-
-    // hasta aqui optimizado
-
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = async (ev) => {
         ev.preventDefault();
@@ -246,14 +224,11 @@ const Salidas = () => {
         const validaR = validarRut(rut);
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-
-
-        // const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
         if (numDoc === '') {
@@ -359,7 +334,6 @@ const Salidas = () => {
 
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'CLIENTE') {
-                // const existeCli = cliente.filter(cli => cli.rut === rut);
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -368,7 +342,6 @@ const Salidas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
-                    console.log('cliente', existeCli[0].nombre)
                     try {
                         CabeceraOutDB({
                             numDoc: numDoc,
@@ -409,7 +382,6 @@ const Salidas = () => {
                     }
                 }
             } else if (nomTipoOut === 'RETIRO CLIENTE') {
-                // const existeCli = cliente.filter(cli => cli.rut === rut);
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -418,7 +390,6 @@ const Salidas = () => {
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
-                    console.log('retiro cliente', existeCli[0].nombre)
                     try {
                         CabeceraOutDB({
                             numDoc: numDoc,
@@ -459,7 +430,6 @@ const Salidas = () => {
                     }
                 }
             } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-                // const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -468,7 +438,6 @@ const Salidas = () => {
                     })
                 } else {
                     setEntidad(existeProv[0].nombre);
-                    console.log('retiro S.T.', existeProv[0].nombre)
                     try {
                         CabeceraOutDB({
                             numDoc: numDoc,
@@ -509,7 +478,6 @@ const Salidas = () => {
                     }
                 }
             } else {
-                // const existeProv = proveedor.filter(prov => prov.rut === rut);
                 if (existeProv.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -518,7 +486,6 @@ const Salidas = () => {
                     })
                 } else {
                     setEntidad(existeProv[0].nombre);
-                    console.log('S.T.', existeProv[0].nombre)
                     try {
                         CabeceraOutDB({
                             numDoc: numDoc,
@@ -561,7 +528,6 @@ const Salidas = () => {
             }
         }
     }
-
     //Valida y guarda los detalles del documento
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -571,11 +537,24 @@ const Salidas = () => {
         const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieEq = await getDocs(traerEq);
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Validar ID en equipo
+        const traerId = await getDoc(doc(db, 'equipos', numSerie));
+        if (existe.length === 1) {
+            almacenar.current = existe;
+        } else if (traerId.exists()) {
+            const existeId = traerId.data();
+            const arreglo = [existeId];
+            const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+            almacenar.current = existe2;
+        } else {
+            console.log('almacenar', almacenar.current);
+        }
         // Exite N° serie en Entradas 
         const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -583,7 +562,7 @@ const Salidas = () => {
                 mensaje: 'Ingrese o Scaneé N° Serie'
             })
             return;
-        } else if (existe.length === 0) {
+        } else if (almacenar.current === undefined) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -596,9 +575,9 @@ const Salidas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
-            const existeStatusBod = status.filter(st => st.id === existe[0].id && st.status === 'BODEGA').length === 1;
-            const existeStatusCli = status.filter(st => st.id === existe[0].id && st.status === 'CLIENTE').length === 1;
-            const existeStatusST = status.filter(st => st.id === existe[0].id && st.status === 'SERVICIO TECNICO').length === 1;
+            const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
+            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
+            const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
             if (nomTipoOut === 'RETIRO CLIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
@@ -620,13 +599,13 @@ const Salidas = () => {
                             correo: correo,
                             patente: patente,
                             cab_id: existeCab[0].id,
-                            eq_id: existe[0].id,
-                            familia: existe[0].familia,
-                            tipo: existe[0].tipo,
-                            marca: existe[0].marca,
-                            modelo: existe[0].modelo,
-                            serie: existe[0].serie,
-                            rfid: existe[0].rfid,
+                            eq_id: almacenar.current[0].id,
+                            familia: almacenar.current[0].familia,
+                            tipo: almacenar.current[0].tipo,
+                            marca: almacenar.current[0].marca,
+                            modelo: almacenar.current[0].modelo,
+                            serie: almacenar.current[0].serie,
+                            rfid: almacenar.current[0].rfid,
                             tipMov: 0,
                             observacion: '',
                             userAdd: user.email,
@@ -674,13 +653,13 @@ const Salidas = () => {
                             correo: correo,
                             patente: patente,
                             cab_id: existeCab[0].id,
-                            eq_id: existe[0].id,
-                            familia: existe[0].familia,
-                            tipo: existe[0].tipo,
-                            marca: existe[0].marca,
-                            modelo: existe[0].modelo,
-                            serie: existe[0].serie,
-                            rfid: existe[0].rfid,
+                            eq_id: almacenar.current[0].id,
+                            familia: almacenar.current[0].familia,
+                            tipo: almacenar.current[0].tipo,
+                            marca: almacenar.current[0].marca,
+                            modelo: almacenar.current[0].modelo,
+                            serie: almacenar.current[0].serie,
+                            rfid: almacenar.current[0].rfid,
                             tipMov: 0,
                             observacion: '',
                             userAdd: user.email,
@@ -735,13 +714,13 @@ const Salidas = () => {
                             correo: correo,
                             patente: patente,
                             cab_id: existeCab[0].id,
-                            eq_id: existe[0].id,
-                            familia: existe[0].familia,
-                            tipo: existe[0].tipo,
-                            marca: existe[0].marca,
-                            modelo: existe[0].modelo,
-                            serie: existe[0].serie,
-                            rfid: existe[0].rfid,
+                            eq_id: almacenar.current[0].id,
+                            familia: almacenar.current[0].familia,
+                            tipo: almacenar.current[0].tipo,
+                            marca: almacenar.current[0].marca,
+                            modelo: almacenar.current[0].modelo,
+                            serie: almacenar.current[0].serie,
+                            rfid: almacenar.current[0].rfid,
                             tipMov: 2,
                             observacion: '',
                             userAdd: user.email,
@@ -771,7 +750,6 @@ const Salidas = () => {
             }
         }
     }
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
@@ -848,9 +826,8 @@ const Salidas = () => {
                 </ul>
             </div>
         )
-
-
     }
+
     // Agregar una nueva cabecera
     const nuevo = () => {
         setNumDoc('');
@@ -870,19 +847,14 @@ const Salidas = () => {
     }
 
     useEffect(() => {
-        // getEquipo();
-        // getSalida();
         consultarCab();
         getUsuarios();
         getAlertasSalidas()
-        /* getEmpresa(); */
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         getStatus();
-        // getSalida();
-        // getCabecera();
         consultarCab();
         consultarOut();
         if (dataSalida.length > 0) setBtnConfirmar(false);
@@ -894,7 +866,7 @@ const Salidas = () => {
                 <Titulo>Salida de Equipos</Titulo>
             </Contenedor>
             <Contenedor>
-                <Formulario action='' onSubmit={handleSubmit}>
+                <Formulario action=''>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>

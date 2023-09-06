@@ -37,14 +37,13 @@ const Entradas = () => {
     const [entidad, setEntidad] = useState('');
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
-    // const [almacenar, setAlmacenar] = useState([])
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
-    const almacenar = useRef([])
+    const almacenar = useRef([]);
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -88,7 +87,6 @@ const Entradas = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
-
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -110,7 +108,6 @@ const Entradas = () => {
             }
         }
     }
-
     // Validar N°serie
     const detectar = async (e) => {
         cambiarEstadoAlerta(false);
@@ -122,10 +119,6 @@ const Entradas = () => {
             const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
             // Exite ID en equipos
             const traerId = await getDoc(doc(db, 'equipos', numSerie));
-            // const existeId = traerId.data()
-            // const arreglo = [existeId]
-            // const existe2 = arreglo.map((doc)=>({...doc, id: numSerie}))
-            // console.log('arreglo', existe2)
             if (existe.length === 1) {
                 almacenar.current = existe;
             } else if (traerId.exists()) {
@@ -165,7 +158,6 @@ const Entradas = () => {
             }
         }
     }
-
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -287,7 +279,6 @@ const Entradas = () => {
             }
         }
     }
-
     //Valida y guarda los detalles del documento
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -299,20 +290,16 @@ const Entradas = () => {
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         // Validar ID en equipo
         const traerId = await getDoc(doc(db, 'equipos', numSerie));
-            // const existeId = traerId.data()
-            // const arreglo = [existeId]
-            // const existe2 = arreglo.map((doc)=>({...doc, id: numSerie}))
-            // console.log('arreglo', existe2)
-            if (existe.length === 1) {
-                almacenar.current = existe;
-            } else if (traerId.exists()) {
-                const existeId = traerId.data();
-                const arreglo = [existeId];
-                const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-                almacenar.current = existe2;
-            } else {
-                console.log('almacenar', almacenar.current);
-            }
+        if (existe.length === 1) {
+            almacenar.current = existe;
+        } else if (traerId.exists()) {
+            const existeId = traerId.data();
+            const arreglo = [existeId];
+            const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+            almacenar.current = existe2;
+        } else {
+            console.log('almacenar', almacenar.current);
+        }
         // Validar en N° Serie en Entradas        
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
@@ -335,7 +322,6 @@ const Entradas = () => {
                 mensaje: 'Ingrese o Scaneé N° Serie'
             })
             return;
-        // } else if (existe.length === 0) {
         } else if (almacenar.current === undefined) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -349,18 +335,13 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
-            // const traerStatus = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('id', '==', almacenar.current[0].id), where('status', '!=', 'PREPARACION'));
-            // const status = await getDocs(traerStatus);
-            // const existeStatus = (status.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // console.log('existeStatus', existeStatus)
-
             const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
             if (existeStatus > 0) {
                 const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: `Este Equipo ya existe y su Estado es en : ${existeStatus[0].status} `
+                    mensaje: `Este Equipo ya existe y su Estado es en : ${estado[0].status} `
                 })
             } else {
                 try {
@@ -409,8 +390,6 @@ const Entradas = () => {
             }
         }
     }
-
-    // hasta aqui Optimizado 17:17
 
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
@@ -600,6 +579,7 @@ const Entradas = () => {
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
                             <Input
+                                style={{ width: '300px' }}
                                 type='text'
                                 name='serie'
                                 placeholder='Escanee o ingrese Equipo'
