@@ -860,6 +860,7 @@ const Salidas = () => {
         if (dataSalida.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
+    
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -1018,7 +1019,6 @@ const Salidas = () => {
                     </Table>
                 </ListarEquipos>
                 <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
-
             </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
@@ -1037,34 +1037,32 @@ const Salidas = () => {
                     </Table.Header>
                     <Table.Body>
                         {cabecera.map((item, index) => {
-                            if (item.confirmado === false) {
-                                return (
-                                    <Table.Row key={item.id2}>
-                                        <Table.Cell >{index + 1}</Table.Cell>
-                                        <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>
-                                        <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>
-                                        <Table.Cell onClick={() => {
-                                            setNumDoc(item.numdoc);
-                                            setNomTipDoc(item.tipdoc);
-                                            setNomTipoOut(item.tipoinout);
-                                            setRut(item.rut);
-                                            setEntidad(item.entidad);
-                                            fechaDate(item.date);
-                                            setCorreo(item.correo);
-                                            setPatente(item.patente);
-                                            setBtnGuardar(true);
-                                            setBtnAgregar(false);
-                                            setConfirmar(true);
-                                            setBtnNuevo(true);
-                                            setFlag(!flag)
-                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                                    </Table.Row>
-                                )
-                            }
+                            return (
+                                <Table.Row key={item.id2}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipoinout}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell onClick={() => {
+                                        setNumDoc(item.numdoc);
+                                        setNomTipDoc(item.tipdoc);
+                                        setNomTipoOut(item.tipoinout);
+                                        setRut(item.rut);
+                                        setEntidad(item.entidad);
+                                        fechaDate(item.date);
+                                        setCorreo(item.correo);
+                                        setPatente(item.patente);
+                                        setBtnGuardar(true);
+                                        setBtnAgregar(false);
+                                        setConfirmar(true);
+                                        setBtnNuevo(true);
+                                        setFlag(!flag)
+                                    }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                </Table.Row>
+                            )
                         }
                         )}
                     </Table.Body>

@@ -34,54 +34,23 @@ const Confirmados = () => {
     const cabeceraId = useRef('');
     const inOut = useRef('');
 
-    // // Lectura cabecera de documentos
-    // const getCabecera = async () => {
-    //     const traerCabecera = collection(db, 'cabecerasout');
-    //     const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
-    // }
-    // const porEntregar = cabecera.filter(cab => cab.correo === users.correo && cab.entregado === false && cab.confirmado === true)
-    // const porRetirar = cabecera.filter(cab => cab.correo === users.correo && cab.retirado === false && cab.confirmado === true)
-
-    // //Lectura movimientos de Salida
-    // const getSalida = async () => {
-    //     const traerSalida = collection(db, 'salidas');
-    //     const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })))
-    // }
-    console.log('cab_id', cab_id)
-    // Filtar por docuemto de Cabecera
-    const consultarCab = async () => {
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true), where('correo', '==', users.correo));
-        const guardaCab = await getDocs(cab);
-        const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        setCabecera(existeCab);
+    // Lectura cabecera de documentos
+    const getCabecera = async () => {
+        const traerCabecera = collection(db, 'cabecerasout');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
     }
-    const porEntregar = cabecera.filter(cab => cab.correo === users.correo && cab.entregado === false)
-    const porRetirar = cabecera.filter(cab => cab.correo === users.correo && cab.retirado === false)
+    const porEntregar = cabecera.filter(cab => cab.correo === users.correo && cab.entregado === false && cab.confirmado === true)
+    const porRetirar = cabecera.filter(cab => cab.correo === users.correo && cab.retirado === false && cab.confirmado === true)
 
-    // Filtar por docuemto de Entrada campo entregado
-    const consultarOutEntrega = async () => {
-        console.log('cab id dentro de solsulta salidas',cab_id)
-        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('cab_id', '==', cab_id), where('tipmov', '==', 2));
-        const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setIsChecked(documento)
+    //Lectura movimientos de Salida
+    const getSalida = async () => {
+        const traerSalida = collection(db, 'salidas');
+        const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })))
     }
-
-    // Filtar por docuemto de Entrada campo retirado
-    const consultarOutRetiro = async () => {
-        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('cab_id', '==', cab_id), where('tipmov', '==', 0));
-        const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setIsChecked2(documento)
-        // console.log('isChecked2', isChecked2)
-    }
-
-
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -474,24 +443,18 @@ const Confirmados = () => {
         }
     }
 
-    // useEffect(() => {
-    //     getCabecera();
-    // }, [flag])
+    useEffect(() => {
+        getCabecera();
+    }, [flag])
 
     useEffect(() => {
-        // getSalida();
-        consultarCab();
-        // consultarOutEntrega();
-        // consultarOutRetiro();
+        getSalida();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        // setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 2))
-        // setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
-        consultarOutEntrega();
-        consultarOutRetiro();
-        consultarCab();
+        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 2))
+        setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -554,7 +517,6 @@ const Confirmados = () => {
                         </Table.Header>
                         <Table.Body>
                             {isChecked.map((item, index) => {
-                                console.log('ischecked', isChecked)
                                 return (
                                     <Table.Row key={item.id}>
                                         <Table.Cell>{index + 1}</Table.Cell>
