@@ -270,12 +270,12 @@ const CrearEquipos = () => {
                     nomEntidad: users.empresa,
                     status: 'PREPARACION'
                 })
-                setNomFamilia('');
+              /*   setNomFamilia('');
                 setNomMarca('');
                 setNomModelo('');
                 setNomTipo('');
                 setSerie('');
-                setRfid('');
+                setRfid(''); */
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
