@@ -793,13 +793,16 @@ const Salidas = () => {
        
         return ReactDOMServer.renderToString(
             <div>
-                <h2>Salida de Bodega</h2>                
-                <p>Numero Documento :{data[0].numdoc} </p>
-                <p>Tipo de Documento:{data[0].tipdoc} </p>
-                <p>Nombre :{data[0].entidad} </p>
-                <p>Rut :{data[0].rut} </p>
+                <h2>Salida de Bodega</h2>
+                <div style={{backgroundColor:'#EEF2EF'}}>
+                    <p>Tipo de Salida :{data[0].tipoinout}</p>              
+                    <p>Numero Documento :{data[0].numdoc} </p>
+                    <p>Tipo de Documento:{data[0].tipdoc} </p>
+                    <p>Nombre :{data[0].entidad} </p>
+                    <p>Rut :{data[0].rut} </p>
+                </div>
                 <br/>
-                <p>Listado de equipos:</p>
+                <h3>Listado de equipos:</h3>
                 <ul style={{listStyle:'none'}}>
                     {data.map((item, index)=>(
                         <li key={index}>
