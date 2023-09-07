@@ -8,7 +8,7 @@ import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
-import { TipDoc, TipoOut } from './TipDoc';
+import { TipDocOut, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
 import moment from 'moment';
 import { useContext } from 'react';
@@ -887,7 +887,7 @@ const Salidas = () => {
                                 value={nomTipDoc}
                                 onChange={ev => setNomTipDoc(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
-                                {TipDoc.map((d) => {
+                                {TipDocOut.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
