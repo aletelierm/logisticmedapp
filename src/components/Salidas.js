@@ -800,10 +800,10 @@ const Salidas = () => {
                 <p>Rut :{data[0].rut} </p>
                 <br/>
                 <p>Listado de equipos:</p>
-                <ul>
+                <ul style={{listStyle:'none'}}>
                     {data.map((item, index)=>(
                         <li key={index}>
-                            <p>{index +1 + ".-"+item.tipo+" "+item.marca+" "+item.modelo+"    S/N : "+item.serie}</p>
+                            <h5>{index +1 + ".-"+item.tipo+" "+item.marca+" "+item.modelo+"    S/N : "+item.serie}</h5>
                         </li>
                     ))}
                 </ul>

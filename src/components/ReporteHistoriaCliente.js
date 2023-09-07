@@ -76,7 +76,7 @@ const Reporte3 = () => {
                  console.log(merges)
                 }else{
                     cambiarEstadoAlerta(true);
-                cambiarAlerta({
+                    cambiarAlerta({
                     tipo: 'error',
                     mensaje: 'No existe un paciente con ese Rut'
                 })
