@@ -778,15 +778,18 @@ const Salidas = () => {
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
-        try {
-            /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
-            const mensaje = cuerpoCorreo(documento);
-            alertaSalida.forEach((destino) => {
-                EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
-            })
-        } catch (error) {
-            console.log('error', error)
+        if(nomTipoOut !== 'RETIRO CLIENTE' || nomTipoOut !=='RETIRO SERVICIO TECNICO'){
+            try {
+                /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
+                const mensaje = cuerpoCorreo(documento);
+                alertaSalida.forEach((destino) => {
+                    EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
+                })
+            } catch (error) {
+                console.log('error', error)
+            }
         }
+        
     };
 
     const cuerpoCorreo =(data)=>{
