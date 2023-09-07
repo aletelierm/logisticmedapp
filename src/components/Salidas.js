@@ -164,7 +164,7 @@ const Salidas = () => {
             const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
 
-            if (almacenar.current === undefined) {
+            if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -562,7 +562,7 @@ const Salidas = () => {
                 mensaje: 'Ingrese o Scaneé N° Serie'
             })
             return;
-        } else if (almacenar.current === undefined) {
+        } else if (almacenar.current.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
