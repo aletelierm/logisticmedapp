@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import EntradasDB from '../firebase/EntradasDB'
 import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
@@ -25,6 +25,8 @@ const Entradas = () => {
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
+    const [proveedor, setProveedor] = useState([]);
+    const [equipo, setEquipo] = useState([]);
     const [cabecera, setCabecera] = useState([]);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [empresa, setEmpresa] = useState([]);
@@ -43,22 +45,46 @@ const Entradas = () => {
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
-    const almacenar = useRef([]);
 
-    // Filtar por docuemto de Cabecera
-    const consultarCab = async () => {
-        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
-        const guardaCab = await getDocs(cab);
-        const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        setCabecera(existeCab);
+    //Lectura de proveedores filtrados por empresa
+    const getProveedor = async () => {
+        const traerProveedor = collection(db, 'proveedores');
+        const dato = query(traerProveedor, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setProveedor(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-    // Filtar por docuemto de Entrada
-    const consultarIn = async () => {
-        const doc = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
-        const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setDataEntrada(documento)
+    //Lectura de equipos filtrado por empresas
+    const getEquipo = async () => {
+        const traerEq = collection(db, 'equipos');
+        const dato = query(traerEq, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setEquipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
+    // Lectura cabecera de documentos
+    const getCabecera = async () => {
+        const traerCabecera = collection(db, 'cabeceras');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
+    //Lectura movimientos de entrada
+    const getEntrada = async () => {
+        const traerEntrada = collection(db, 'entradas');
+        const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setDataEntrada(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
+    //Almacena movimientos de entrada del documento
+    const documento = dataEntrada.filter(de => de.numdoc === numDoc && de.tipdoc === nomTipDoc && de.rut === rut);
+    // const prueba = async () => {
+    //     const q = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+    //         const entradas = await getDocs(q);
+    //         entradas.forEach((doc) => {
+    //             console.log(doc.data())
+    //         })
+    // }
+    // console.log('entradas', prueba())
+
     //Leer  Empresa
     const getEmpresa = async () => {
         const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
@@ -87,53 +113,37 @@ const Entradas = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
+
     // Validar rut
-    const detectarCli = async (e) => {
+    const detectarCli = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         setBtnGuardar(true)
         if (e.key === 'Enter' || e.key === 'Tab') {
-            const p = query(collection(db, 'proveedores'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-            const rutProv = await getDocs(p)
-            const final = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            if (rutProv.docs.length === 0) {
+            const existeProv = proveedor.filter(prov => prov.rut === rut);
+            if (existeProv.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
                     mensaje: 'No existe rut de proveedor'
                 })
             } else {
-                setEntidad(final[0].nombre);
+                setEntidad(existeProv[0].nombre);
                 setBtnGuardar(false)
             }
         }
     }
+
     // Validar N°serie
-    const detectar = async (e) => {
+    const detectar = (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
-            // Exite N° serie en equipos   
-            const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-            const serieEq = await getDocs(traerEq);
-            const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // Exite ID en equipos
-            const traerId = await getDoc(doc(db, 'equipos', numSerie));
-            if (existe.length === 1) {
-                almacenar.current = existe;
-            } else if (traerId.exists()) {
-                const existeId = traerId.data();
-                const arreglo = [existeId];
-                const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-                almacenar.current = existe2;
-            } else {
-                console.log('almacenar', almacenar.current);
-            }
-            // Exite N° serie en Entradas 
-            const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
-            const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
-
-            if (almacenar.current === undefined) {
+            // Consulta si exite numero de serie en el arreglo de equipos        
+            const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
+            const existeIn = documento.filter(doc => doc.serie === numSerie);
+            const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
+            if (existe.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -146,23 +156,24 @@ const Entradas = () => {
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
             } else {
-                const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
+                const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
                 if (existeStatus) {
-                    const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
+                    const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: `Este Equipo ya existe y su Estado es: ${estado[0].status} `
+                        mensaje: `Este Equipo ya existe y su Estado es: ${estado.status} `
                     })
                 }
             }
         }
     }
+
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
-    const addCabeceraIn = async (ev) => {
+    const addCabeceraIn = (ev) => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -172,10 +183,7 @@ const Entradas = () => {
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
-        // Filtar por docuemto de Cabecera
-        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const existe = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
         if (numDoc === '') {
             cambiarEstadoAlerta(true);
@@ -227,8 +235,8 @@ const Entradas = () => {
                 mensaje: 'Rut no válido'
             })
             return;
-        } else if (existeCab.length > 0) {
-            if (existeCab[0].confirmado) {
+        } else if (existe.length > 0) {
+            if (existe[0].confirmado) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -242,72 +250,66 @@ const Entradas = () => {
                 })
             }
         } else {
-            const fechaInOut = new Date(date);
-            try {
-                CabeceraInDB({
-                    numDoc: numDoc,
-                    tipDoc: nomTipDoc,
-                    date: fechaInOut,
-                    tipoInOut: nomTipoIn,
-                    rut: rut,
-                    entidad: entidad,
-                    tipMov: 1,
-                    confirmado: false,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    emp_id: users.emp_id
-                })
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Ingreso realizado exitosamente'
-                })
-                setFlag(!flag);
-                setConfirmar(true);
-                setBtnAgregar(false);
-                setBtnGuardar(true);
-                setBtnNuevo(false);
-                return;
-            } catch (error) {
+            const existeProv = proveedor.filter(prov => prov.rut === rut);
+            if (existeProv.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: error
+                    mensaje: 'No existe rut de proveedor'
                 })
+            } else {
+                const fechaInOut = new Date(date);
+                setEntidad(existeProv[0].nombre);
+                try {
+                    CabeceraInDB({
+                        numDoc: numDoc,
+                        tipDoc: nomTipDoc,
+                        date: fechaInOut,
+                        tipoInOut: nomTipoIn,
+                        rut: rut,
+                        entidad: entidad,
+                        tipMov: 1,
+                        confirmado: false,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id
+                    })
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Ingreso realizado exitosamente'
+                    })
+                    setFlag(!flag);
+                    setConfirmar(true);
+                    setBtnAgregar(false);
+                    setBtnGuardar(true);
+                    setBtnNuevo(false);
+                    return;
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: error
+                    })
+                }
             }
         }
     }
+
     //Valida y guarda los detalles del documento
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Validar N° Serie en equipo
-        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        const serieEq = await getDocs(traerEq);
-        const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // Validar ID en equipo
-        const traerId = await getDoc(doc(db, 'equipos', numSerie));
-        if (existe.length === 1) {
-            almacenar.current = existe;
-        } else if (traerId.exists()) {
-            const existeId = traerId.data();
-            const arreglo = [existeId];
-            const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-            almacenar.current = existe2;
-        } else {
-            console.log('almacenar', almacenar.current);
-        }
-        // Validar en N° Serie en Entradas        
-        const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
-        const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
-        // Filtar por docuemto de Cabecera
-        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-
+        const existe = equipo.filter(eq => eq.serie === numSerie || eq.id === numSerie);
+        // Validar en N° Serie en Entradas
+        const existeIn = documento.filter(doc => doc.serie === numSerie);
+        const existeIn2 = documento.filter(doc => doc.eq_id === numSerie);
+        // Validar Id de Cabecera en Entradas
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut)
         if (price === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -322,7 +324,7 @@ const Entradas = () => {
                 mensaje: 'Ingrese o Scaneé N° Serie'
             })
             return;
-        } else if (almacenar.current === undefined) {
+        } else if (existe.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -335,9 +337,11 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
         } else {
-            const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
-            if (existeStatus > 0) {
-                const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
+            // const esid = await getDoc(doc(db, 'status', id))
+            // console.log(esid)
+            const existeStatus = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION').length === 1;
+            if (existeStatus) {
+                const estado = status.filter(st => st.id === existe[0].id && st.status !== 'PREPARACION')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -354,13 +358,13 @@ const Entradas = () => {
                         entidad: entidad,
                         price: price,
                         cab_id: existeCab[0].id,
-                        eq_id: almacenar.current[0].id,
-                        familia: almacenar.current[0].familia,
-                        tipo: almacenar.current[0].tipo,
-                        marca: almacenar.current[0].marca,
-                        modelo: almacenar.current[0].modelo,
-                        serie: almacenar.current[0].serie,
-                        rfid: almacenar.current[0].rfid,
+                        eq_id: existe[0].id,
+                        familia: existe[0].familia,
+                        tipo: existe[0].tipo,
+                        marca: existe[0].marca,
+                        modelo: existe[0].modelo,
+                        serie: existe[0].serie,
+                        rfid: existe[0].rfid,
                         tipMov: 1,
                         observacion: '',
                         userAdd: user.email,
@@ -395,13 +399,9 @@ const Entradas = () => {
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Filtar por docuemto de Cabecera
-        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         const batch = writeBatch(db);
-        dataEntrada.forEach((docs) => {
+        documento.forEach((docs) => {
             const docRef = doc(db, 'status', docs.eq_id);
             batch.update(docRef, { status: 'BODEGA', rut: empresa.rut, entidad: empresa.empresa });
         });
@@ -459,15 +459,17 @@ const Entradas = () => {
     }
 
     useEffect(() => {
+        getProveedor();
+        getEquipo();
+        getEntrada();
         getStatus();
         getEmpresa();
-        consultarCab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
-        consultarIn();
-        consultarCab();
-        if (dataEntrada.length > 0) setBtnConfirmar(false);
+        getEntrada();
+        getCabecera();
+        if (documento.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -477,7 +479,7 @@ const Entradas = () => {
                 <Titulo>Recepcion de Equipos</Titulo>
             </Contenedor>
             <Contenedor>
-                <Formulario action=''>
+                <Formulario action='' /* onSubmit={handleSubmit} */>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° de Documento</Label>
@@ -551,16 +553,14 @@ const Entradas = () => {
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnGuardar}
-                    >
-                        Guardar</BotonGuardar>
+                    >Guardar</BotonGuardar>
                     <BotonGuardar
                         style={{ margin: '10px 0' }}
                         onClick={nuevo}
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnNuevo}
-                    >
-                        Nuevo</BotonGuardar>
+                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -579,7 +579,6 @@ const Entradas = () => {
                         <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
                             <Input
-                                style={{ width: '300px' }}
                                 type='text'
                                 name='serie'
                                 placeholder='Escanee o ingrese Equipo'
@@ -606,7 +605,7 @@ const Entradas = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {dataEntrada.map((item, index) => {
+                            {documento.map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{index + 1}</Table.Cell>
@@ -638,30 +637,32 @@ const Entradas = () => {
                     </Table.Header>
                     <Table.Body>
                         {cabecera.map((item, index) => {
-                            return (
-                                <Table.Row key={item.id2}>
-                                    <Table.Cell >{index + 1}</Table.Cell>
-                                    <Table.Cell>{item.tipdoc}</Table.Cell>
-                                    <Table.Cell>{item.numdoc}</Table.Cell>
-                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{item.tipoinout}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
-                                    <Table.Cell onClick={() => {
-                                        setNumDoc(item.numdoc);
-                                        setNomTipDoc(item.tipdoc);
-                                        fechaDate(item.date)
-                                        setNomTipoIn(item.tipoinout);
-                                        setRut(item.rut);
-                                        setEntidad(item.entidad);
-                                        setBtnGuardar(true);
-                                        setBtnAgregar(false)
-                                        setConfirmar(true);
-                                        setBtnNuevo(false)
-                                        setFlag(!flag)
-                                    }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                                </Table.Row>
-                            )
+                            if (item.confirmado === false) {
+                                return (
+                                    <Table.Row key={item.id2}>
+                                        <Table.Cell >{index + 1}</Table.Cell>
+                                        <Table.Cell>{item.tipdoc}</Table.Cell>
+                                        <Table.Cell>{item.numdoc}</Table.Cell>
+                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>
+                                        <Table.Cell>{item.rut}</Table.Cell>
+                                        <Table.Cell>{item.entidad}</Table.Cell>
+                                        <Table.Cell onClick={() => {
+                                            setNumDoc(item.numdoc);
+                                            setNomTipDoc(item.tipdoc);
+                                            fechaDate(item.date)
+                                            setNomTipoIn(item.tipoinout);
+                                            setRut(item.rut);
+                                            setEntidad(item.entidad);
+                                            setBtnGuardar(true);
+                                            setBtnAgregar(false)
+                                            setConfirmar(true);
+                                            setBtnNuevo(false)
+                                            setFlag(!flag)
+                                        }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                    </Table.Row>
+                                )
+                            }
                         }
                         )}
                     </Table.Body>

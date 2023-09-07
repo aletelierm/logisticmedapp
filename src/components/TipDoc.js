@@ -2,6 +2,9 @@ export const TipDoc = [
     { key: '1', value: '1', text: 'FACTURA' },
     { key: '2', value: '2', text: 'GUÍA' },
 ];
+export const TipDocOut = [
+    { key: '1', value: '1', text: 'GUÍA' },
+];
 export const TipTransaccion = [
     { key: '1', value: '1', text: 'ENTRADA' },
     { key: '2', value: '2', text: 'SALIDA' }

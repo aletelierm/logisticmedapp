@@ -24,6 +24,7 @@ const Confirmados = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
+    const [dataSalida, setDataSalida] = useState([]);
     const [flag, setFlag] = useState(false);
     const [cab_id, setCab_id] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -33,29 +34,22 @@ const Confirmados = () => {
     const cabeceraId = useRef('');
     const inOut = useRef('');
 
-    // Filtar por docuemto de Cabecera
-    const consultarCab = async () => {
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true), where('correo', '==', users.correo));
-        const guardaCab = await getDocs(cab);
-        const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        setCabecera(existeCab);
+    // Lectura cabecera de documentos
+    const getCabecera = async () => {
+        const traerCabecera = collection(db, 'cabecerasout');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
     }
-    const porEntregar = cabecera.filter(cab => cab.entregado === false)
-    const porRetirar = cabecera.filter(cab => cab.retirado === false)
+    const porEntregar = cabecera.filter(cab => cab.correo === users.correo && cab.entregado === false && cab.confirmado === true)
+    const porRetirar = cabecera.filter(cab => cab.correo === users.correo && cab.retirado === false && cab.confirmado === true)
 
-    // Filtar por docuemto de Entrada campo entregado
-    const consultarOutEntrega = async () => {
-        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('cab_id', '==', cab_id), where('tipmov', '==', 2));
-        const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })));
-        setIsChecked(documento)
-    }
-    // Filtar por docuemto de Entrada campo retirado
-    const consultarOutRetiro = async () => {
-        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('cab_id', '==', cab_id), where('tipmov', '==', 0));
-        const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })));
-        setIsChecked2(documento)
+    //Lectura movimientos de Salida
+    const getSalida = async () => {
+        const traerSalida = collection(db, 'salidas');
+        const dato = query(traerSalida, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setDataSalida(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })))
     }
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -177,6 +171,7 @@ const Confirmados = () => {
             const batch = writeBatch(db);
             // Obtiene una referencia a una colección específica en Firestore
             const entradasRef = collection(db, 'entradas');
+            console.log('cabecera id foreach', cabeceraId.current)
             // Itera a través de los nuevos documentos y agrégalos al lote
             verdaderosRetiro.forEach((docs) => {
                 const nuevoDocRef = doc(entradasRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
@@ -225,6 +220,7 @@ const Confirmados = () => {
     const verdaderos = isChecked.filter(check => check.checked === true);
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
+
     const confirmaEntrega = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -242,7 +238,7 @@ const Confirmados = () => {
                 const batch = writeBatch(db);
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad });
+                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
                     await batch.commit();
@@ -294,8 +290,7 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    console.log('id equipo',docs.eq_id)
-                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad });
+                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
 
                 try {
@@ -329,8 +324,10 @@ const Confirmados = () => {
     const verdaderosRetiro = isChecked2.filter(check => check.checked === true);
     const falsoCheckRetiro = isChecked2.filter(check => check.checked === false && check.observacion !== '');
     const falsosRetiro = isChecked2.filter(check => check.observacion === '' && check.checked === false);
+    // console.log(falsoCheckRetiro)
     const confirmaRetiro = async (e) => {
         e.preventDefault();
+        // console.log('Valores del formulario:', isChecked2);
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
@@ -343,11 +340,6 @@ const Confirmados = () => {
             return;
         } else {
             if (falsoCheckRetiro.length > 0) {
-                if (falsoCheckRetiro[0].tipoinout === 'RETIRO CLIENTE') {
-                    inOut.current = 'CLIENTE'
-                } else {
-                    inOut.current = 'SERVICIO TECNICO'
-                }
                 const batch = writeBatch(db);
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'salidas', docs.id);
@@ -369,10 +361,11 @@ const Confirmados = () => {
                 const batch2 = writeBatch(db);
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch2.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad });
+                    batch2.update(docRef, { status: 'CLIENTE', rut: docs.rut, entidad: docs.entidad });
                 });
                 try {
                     await batch2.commit();
+                    // console.log('se cambi el status a cliente')
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -416,7 +409,7 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 verdaderosRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad });
+                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
 
                 try {
@@ -451,14 +444,17 @@ const Confirmados = () => {
     }
 
     useEffect(() => {
-        consultarCab();
+        getCabecera();
+    }, [flag])
+
+    useEffect(() => {
+        getSalida();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        consultarOutEntrega();
-        consultarOutRetiro();
-        consultarCab();
+        setIsChecked(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 2))
+        setIsChecked2(dataSalida.filter(ds => ds.cab_id === cab_id && ds.tipmov === 0))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -467,6 +463,7 @@ const Confirmados = () => {
             <Contenedor>
                 <Titulo>Entregados - Retirados</Titulo>
             </Contenedor>
+
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Entregar</Titulo>
                 <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
@@ -494,7 +491,6 @@ const Confirmados = () => {
                                     <Table.Cell onClick={() => {
                                         setCab_id(item.id)
                                         setIsOpen(!isOpen)
-                                        setIsOpenR(false)
                                         setFlag(!flag)
                                     }} >
                                         <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
@@ -506,6 +502,7 @@ const Confirmados = () => {
                     </Table.Body>
                 </StyledTable>
             </ListarProveedor >
+
             {isOpen &&
                 <Contenedor>
                     <StyledTable striped celled unstackable responsive>
@@ -580,7 +577,6 @@ const Confirmados = () => {
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell onClick={() => {
                                         setCab_id(item.id)
-                                        setIsOpen(false)
                                         setIsOpenR(!isOpenR)
                                         setFlag(!flag)
                                     }} >
@@ -593,6 +589,7 @@ const Confirmados = () => {
                     </Table.Body>
                 </StyledTable>
             </ListarProveedor >
+
             {isOpenR &&
                 <Contenedor>
                     <StyledTable striped celled unstackable responsive>
@@ -659,10 +656,10 @@ const StyledTable = styled(Table)`
 
     /* Ajusta el tamaño de las celdas para pantallas pequeñas */
     &&&.celled tbody tr > td {
-        padding: 4px 10px; /* Ajusta el relleno (padding) de las celdas */
-        font-size: 0.7rem ;
+      padding: 4px 10px; /* Ajusta el relleno (padding) de las celdas */
+      font-size: 0.7rem ;
     }
-}
+  }
 `
 
 export default Confirmados;
