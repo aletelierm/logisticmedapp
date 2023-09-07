@@ -117,7 +117,7 @@ export const DataMenu = [
     ]
   },
   {
-    title: 'Servicio Tecnico',
+    title: 'Mantenciones',
     path: 'serviciotecnico',
     icon: <MdIcons.MdMedicalServices />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
@@ -134,7 +134,7 @@ export const DataMenu = [
         icon: <IoIcons.IoIosTimer />
       },
       {
-        title: 'Certificados',
+        title: 'Reportes',
         path: 'serviciotecnico/certificados',
         icon: <FaIcons.FaCertificate />
       },
