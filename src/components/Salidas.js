@@ -795,10 +795,10 @@ const Salidas = () => {
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
-        if(nomTipoOut === 'CLIENTE' || nomTipoOut === 'SERVICIO TECNICO'){
+       if(nomTipoOut === 'CLIENTE' || nomTipoOut === 'SERVICIO TECNICO'){ 
             try {
                 /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
-                const mensaje = cuerpoCorreo(documento);
+                const mensaje = cuerpoCorreo(dataSalida);
                 alertaSalida.forEach((destino) => {
                     EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
                 })
