@@ -19,11 +19,10 @@ const Protocolos = () => {
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Protocolos</Titulo>
+                <Titulo>Crear Protocolos</Titulo>
             </Contenedor>
 
             <Contenedor>
-                <Titulo>Crear Protocolo</Titulo>
                 <FormularioAdd action='' /* onSubmit={handleSubmit} */ >
                     <InputAdd
                         type='text'
