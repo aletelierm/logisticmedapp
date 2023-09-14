@@ -36,6 +36,7 @@ import { Reportes } from './Reportes';
 import Confirmados from './Confirmados';
 import UsuariosEnvios from './UsuariosAlertas';
 import ActualizaUsuariosAlertas from './ActualizaUsuariosAlertas';
+import AgregarItems from './AgregarItems';
 /* import FormularioDinamico from './Pruebas'; */
 
 export const Home = () => {
@@ -63,6 +64,7 @@ export const Home = () => {
             <Route path="reportes/reporte2" element={<ReporteStatus/>}/>
             <Route path="reportes/reporte3" element={<ReporteHistoriaCliente/>}/>
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>
+            <Route path="serviciotecnico/items" element={<AgregarItems/>}/>            
             <Route path="serviciotecnico/protocolos" element={<Protocolos/>}/>            
             <Route path="serviciotecnico/programas" element={<Programas/>}/>
             <Route path="serviciotecnico/certificados" element={<Certificados/>}/>

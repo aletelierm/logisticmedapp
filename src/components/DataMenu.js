@@ -124,6 +124,11 @@ export const DataMenu = [
     iconOpened: <RiIcons.RiArrowUpSFill />,
     subNav: [
       {
+        title: 'Items',
+        path: 'serviciotecnico/items',
+        icon: <IoIcons.IoIosAlbums />
+      },
+      {
         title: 'Protocolos',
         path: 'serviciotecnico/protocolos',
         icon: <IoIcons.IoIosAlbums />
