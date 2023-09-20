@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState /*, useEffect */ } from 'react';
 import Alerta from './Alertas'
 import { Table } from 'semantic-ui-react'
-import { db, auth } from '../firebase/firebaseConfig';
-import * as MdIcons from 'react-icons/md';
-import * as FaIcons from 'react-icons/fa';
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
-import { ContentElemenSelect, Select, Formulario, Input, Label, Contenido } from '../elementos/CrearEquipos'
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2 } from '../elementos/General';
+// import { auth } from '../firebase/firebaseConfig';
+// import * as MdIcons from 'react-icons/md';
+// import * as FaIcons from 'react-icons/fa';
+// import { useContext } from 'react';
+// import { UserContext } from '../context/UserContext';
+import { ContentElemenSelect, Formulario, Input, Label } from '../elementos/CrearEquipos'
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General';
 
 
 const Programas = () => {
-    const user = auth.currentUser;
-    const { users } = useContext(UserContext);
-    let fechaAdd = new Date();
-    let fechaMod = new Date();
+    // const user = auth.currentUser;
+    // const { users } = useContext(UserContext);
+    // let fechaAdd = new Date();
+    // let fechaMod = new Date();
 
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [nombre, setNombre] = useState('');
-    const [flag, setFlag] = useState(false);
+    // const [nombre, setNombre] = useState('');
+    // const [flag, setFlag] = useState(false);
 
     // useEffect(() => {
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
