@@ -467,7 +467,8 @@ const Entradas = () => {
     useEffect(() => {
         consultarIn();
         consultarCab();
-        if (dataEntrada.length > 0) setBtnConfirmar(false);
+        console.log(dataEntrada.length)
+        if (dataEntrada.length > 0) setBtnConfirmar(!btnConfirmar);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
