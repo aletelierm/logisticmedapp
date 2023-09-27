@@ -3,12 +3,12 @@ import Alertas from './Alertas';
 import AgregarItemsDb from '../firebase/AgregarItemsDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
-import { FaRegEdit } from "react-icons/fa";
+// import { Link } from 'react-router-dom';
+// import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -24,7 +24,7 @@ const AgregarItems = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [item, setItem] = useState('');
     const [leer, setLeer] = useState([]);
-    const [pagina, setPagina] = useState(0);
+    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
@@ -76,22 +76,35 @@ const AgregarItems = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
+
+    leer.sort((a, b) => {
+        const nameA = a.nombre;
+        const nameB = b.nombre;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
-            return leer.slice(pagina, pagina + 5);
+            return leer.slice( /* pagina, pagina + 5 */);
         const nuevoFiltro = leer.filter(it => it.nombre.includes(buscar));
-        return nuevoFiltro.slice(pagina, pagina + 5);
+        return nuevoFiltro.slice( /* pagina, pagina + 5 */);
     }
-    const siguientePag = () => {
-        if (leer.filter(it => it.nombre.includes(buscador)).length > pagina + 5)
-            setPagina(pagina + 5);
-    }
-    const paginaAnterior = () => {
-        if (pagina > 0) setPagina(pagina - 5)
-    }
+    // const siguientePag = () => {
+    //     if (leer.filter(it => it.nombre.includes(buscador)).length > pagina + 5)
+    //         setPagina(pagina + 5);
+    // }
+    // const paginaAnterior = () => {
+    //     if (pagina > 0) setPagina(pagina - 5)
+    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setPagina(0);
+        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -101,7 +114,7 @@ const AgregarItems = () => {
     }, [flag, setFlag])
 
     return (
-        <ContenedorProveedor>
+        <ContenedorProveedor style={{width: '90%'}}>
             <Contenedor>
                 <Titulo>Items</Titulo>
             </Contenedor>
@@ -123,17 +136,17 @@ const AgregarItems = () => {
 
             <ListarProveedor>
                 <ContentElemenAdd>
-                    <Boton onClick={paginaAnterior} ><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={paginaAnterior} ><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Items</Titulo>
-                    <Boton onClick={siguientePag} ><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={siguientePag} ><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
                     <InputAdd
                         type='text'
                         placeholder='Buscar Item'
-                    value={buscador}
-                    onChange={onBuscarCambios}
+                        value={buscador}
+                        onChange={onBuscarCambios}
                     />
                 </ContentElemenAdd>
                 <Table singleLine>
@@ -142,7 +155,7 @@ const AgregarItems = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Item</Table.HeaderCell>
                             <Table.HeaderCell>Agregado por</Table.HeaderCell>
-                            <Table.HeaderCell>Accion</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Accion</Table.HeaderCell> */}
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -150,14 +163,14 @@ const AgregarItems = () => {
                             return (
                                 <Table.Row key={index}>
                                     <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell style={{whiteSpace: 'normal', wordWrap: 'break-word'}}>{item.nombre}</Table.Cell>
+                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                     <Table.Cell>{item.useradd}</Table.Cell>
                                     {/* <Table.Cell>{item.usermod}</Table.Cell> */}
-                                    <Table.Cell style={{textAlign: 'center'}}>
+                                    {/* <Table.Cell style={{textAlign: 'center'}}>
                                         <Link disabled to={`/actualizafamilia/${item.id}`}>
                                             <FaRegEdit disabled style={{ fontSize: '20px', color: '#328AC4' }} />
                                         </Link>
-                                    </Table.Cell>
+                                    </Table.Cell> */}
                                 </Table.Row>
                             )
                         })}
