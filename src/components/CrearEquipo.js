@@ -418,10 +418,10 @@ const CrearEquipos = () => {
                     </Table.Header>
                     <Table.Body>
                         {
-                            filtro().map((item) => {
+                            filtro().map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.familia}</Table.Cell>
                                         <Table.Cell>{item.tipo}</Table.Cell>
                                         <Table.Cell>{item.marca}</Table.Cell>

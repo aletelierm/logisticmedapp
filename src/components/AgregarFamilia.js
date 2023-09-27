@@ -150,7 +150,7 @@ const AgregarFamilia = () => {
                         {filtroFamilia().map((item, index) => {
                             return (
                                 <Table.Row key={index}>
-                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell>{item.familia}</Table.Cell>
                                     <Table.Cell>{item.useradd}</Table.Cell>
                                     <Table.Cell>{item.usermod}</Table.Cell>

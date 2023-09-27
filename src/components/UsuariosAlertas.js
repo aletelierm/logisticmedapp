@@ -283,7 +283,7 @@ export const UsuariosEnvios = () => {
                             usuarioAlert.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.correo}</Table.Cell>
                                         <Table.Cell>{item.nombre}</Table.Cell>
                                         <Table.Cell>{item.empresa}</Table.Cell>
