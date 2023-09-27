@@ -6,7 +6,7 @@ export const Section = () => {
         <>
             <div className='section'>
                 {/* <img src='./construccion.png' alt='Construccion' /> */}
-                <h2> LogisticMed... Una Nueva forma de administrar sus dispositivos medicos! </h2>
+                <h2>Una Nueva forma de administrar sus dispositivos médicos! </h2>
             </div>
         </>
     )

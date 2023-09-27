@@ -1,11 +1,15 @@
 .section {
-    background-color: #C8DDDF;
+    /* background-color: #C8DDDF; */
+    background-image: linear-gradient(rgba(255, 255, 255, 0.493), rgba(255, 255, 255, 0.527)), url('../../public/Fondo.jpg');
+    background-size: cover;
+    /* opacity: .9; */
     display: flex;
     text-align: center;
     align-items: center;
     justify-content: center;
     height: 91vh;
     width: 100%;
+
 }
 
 /* .section img {
@@ -19,8 +23,10 @@
 .section h2 {
     font-size: 40px;
     font-weight: 400;
-    padding-right: 100px;
+    /* padding-right: 100px; */
     text-align: center;
+    color: #004AAD;
+    float: left;
 }
 
 @media screen and (max-width: 576px) {
