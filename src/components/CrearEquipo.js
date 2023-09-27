@@ -12,7 +12,7 @@ import ExportarExcel from '../funciones/ExportarExcel';
 import Swal from 'sweetalert2';
 /* import EnviarCorreo from '../funciones/EnviarCorreo'; */
 import { ContentElemenSelect, Select, Formulario, Input, Label, Contenido } from '../elementos/CrearEquipos'
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2 } from '../elementos/General';
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar, Boton2 } from '../elementos/General';
 
 const CrearEquipos = () => {
     const user = auth.currentUser;
@@ -33,7 +33,7 @@ const CrearEquipos = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [equipo, setEquipo] = useState([]);
-    const [pagina, setPagina] = useState(0);
+    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
     const [flag, setFlag] = useState(false);

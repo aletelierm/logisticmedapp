@@ -5,14 +5,14 @@ import { auth, db } from '../firebase/firebaseConfig';
 import Alerta from '../components/Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
 import { getDocs, collection, where, query } from 'firebase/firestore';
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
-import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General';
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General';
 
 const Clientes = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -29,7 +29,7 @@ const Clientes = () => {
     const [correo, setCorreo] = useState('')
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [pagina, setPagina] = useState(0);
+    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
     const [flag, setFlag] = useState(false)
