@@ -12,7 +12,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
 import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
-import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General';
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General';
 
 const Clientes = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -34,9 +34,9 @@ const Clientes = () => {
     const [leer, setLeer] = useState([]);
     const [flag, setFlag] = useState(false)
     const [checked, setChecked] = useState();
-    const [nomRsf, setNomRsf] = useState('')
-    const [dirRsf, setDirRsf] = useState('')
-    const [telRsf, setTelRsf] = useState('')
+    const [nomRsf, setNomRsf] = useState('');
+    const [dirRsf, setDirRsf] = useState('');
+    const [telRsf, setTelRsf] = useState('');
 
     //Lectura de datots filtrados por empresa
     const getData = async () => {
@@ -45,22 +45,35 @@ const Clientes = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
+
+    leer.sort((a, b) => {
+        const nameA = a.nombre;
+        const nameB = b.nombre;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
     //filtrar para paginacion
     const filtroCliente = () => {
         if (buscador.length === 0)
-            return leer.slice(pagina, pagina + 5);
+            return leer.slice(/* pagina, pagina + 5 */);
         const nuevoFiltro = leer.filter(cli => cli.nombre.includes(buscador));
-        return nuevoFiltro.slice(pagina, pagina + 5);
+        return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
     }
-    const siguientePag = () => {
-        if (leer.filter(cli => cli.nombre.includes(buscador)).length > pagina + 5)
-            setPagina(pagina + 5);
-    }
-    const paginaAnterior = () => {
-        if (pagina > 0) setPagina(pagina - 5)
-    }
+    // const siguientePag = () => {
+    //     if (leer.filter(cli => cli.nombre.includes(buscador)).length > pagina + 5)
+    //         setPagina(pagina + 5);
+    // }
+    // const paginaAnterior = () => {
+    //     if (pagina > 0) setPagina(pagina - 5)
+    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setPagina(0);
+        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -360,19 +373,18 @@ const Clientes = () => {
                                 onChange={handleChange}
                             />
                         </ContentElemen>
-                        :
-                        ''
+                        : ''
                     }
 
                 </Formulario>
                 <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
             </Contenedor>
             <ListarProveedor>
-                <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                <ContentElemenAdd>
+                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Pacientes</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
-                </ContentElemen>
+                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
+                </ContentElemenAdd>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
