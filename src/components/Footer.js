@@ -9,8 +9,8 @@ const Footer = () => {
             <div className='footer'>
                 <h2>Contactanos</h2>
                 <ul className='contact'>
-                    <li><FaWhatsapp />  +569 54016368</li>
-                    <li><TfiEmail />  almlogistico@gmail.com</li>
+                    <li><FaWhatsapp style={{color:'green'}}/>  +569 54016368</li>
+                    <li><TfiEmail style={{color: 'yellow'}}/>  almlogistico@gmail.com</li>
                     <li><FiPhoneCall />  +569 54016368</li>
                 </ul>
                 <div className='reserved-right'>

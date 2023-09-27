@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FaBars } from 'react-icons/fa'
-import { DataMenu } from './DataMenu'
+import { FaBars } from 'react-icons/fa';
+import { DataMenu } from './DataMenu';
+import { DataMenuJadmin } from './DataMenuJ';
 import { DataMenuAdmin } from './DataMenuAdmin';
 import { DataMenuSup } from './DataMenuSup';
 import { DataMenuTransp } from './DataMenuTransp';
@@ -16,6 +17,7 @@ const SideBar = ({ children }) => {
 
     useEffect(() => {
         if (users.rol === 'DADMIN') setMenu(DataMenu)
+        if (users.rol === 'JADMIN') setMenu(DataMenuJadmin)
         if (users.rol === 'ADMIN') setMenu(DataMenuAdmin)
         if (users.rol === 'SUPERVISOR') setMenu(DataMenuSup)
         if (users.rol === 'TRANSPORTE') setMenu(DataMenuTransp)
