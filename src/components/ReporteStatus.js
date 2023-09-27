@@ -41,6 +41,43 @@ const Reporte2 = () => {
         setBuscardor(target.value)
     }
 
+    // estado.sort((a, b) => {
+    //     const nameA = a.status;
+    //     const nameB = b.status;
+    //     if (nameA < nameB) {
+    //         return -1;
+    //     }
+    //     if (nameA > nameB) {
+    //         return 1;
+    //     }
+    //     return 0;
+    // });
+
+    function ordenar(a, b) {
+        // Primero, comparar por Status
+        const statusA = a.status;
+        const statusB = b.status;
+        if (statusA < statusB) {
+            return -1;
+        }
+        if (statusA > statusB) {
+            return 1;
+        }
+        // Si los Status son iguales, comparar por Entidad
+        const nameA = a.entidad;
+        const nameB = b.entidad;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        // Si las Entidad son iguales, no se cambia el orden
+        return 0;
+    }
+    // Ordenar el arreglo de objetos por múltiples campos
+    estado.sort(ordenar);
+
     const filtro = () => {       
         const nuevoFiltro = estado.filter(r => r.rut.includes(buscador))
         return nuevoFiltro;        
@@ -63,7 +100,7 @@ const Reporte2 = () => {
     }
 
     return (
-        <ContenedorReporte>
+        <ContenedorReporte >
             <Contenedor>
                 <Titulo>Estados de los Equipos</Titulo>
             </Contenedor>
@@ -82,11 +119,14 @@ const Reporte2 = () => {
                     <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
                 </ContentElemenAdd>            
                 
-                <Table singleLine>
+                <Table singleLine style={{fontSize: '13px'}}>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Nombre Equipo</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Nombre Equipo</Table.HeaderCell> */}
+                            <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                            <Table.HeaderCell>Marca</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
                             <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
@@ -96,15 +136,18 @@ const Reporte2 = () => {
                     </Table.Header>
                     <Table.Body>      
                       {
-                            filtro().map((item) => {
+                            filtro().map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
-                                        <Table.Cell>{item.tipo + " - " + item.marca + "  - " + item.modelo}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        {/* <Table.Cell>{item.tipo + " - " + item.marca + "  - " + item.modelo}</Table.Cell> */}
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.tipo}</Table.Cell>
+                                        <Table.Cell>{item.marca}</Table.Cell>
+                                        <Table.Cell>{item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.entidad}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
                                     </Table.Row>
                                 )
