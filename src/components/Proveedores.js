@@ -5,14 +5,14 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import Alerta from '../components/Alertas';
 import AgregarProveedorDb from '../firebase/AgregarProveedorDb';
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { FaRegEdit } from "react-icons/fa";
 import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
-import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar} from '../elementos/General'
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General'
 import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
 
 const Proveedores = () => {
@@ -31,7 +31,7 @@ const Proveedores = () => {
     const [nomContacto, setNomContacto] = useState('')
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [pagina, setPagina] = useState(0);
+    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
     const [flag, setFlag] = useState(false)
@@ -44,22 +44,34 @@ const Proveedores = () => {
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
 
+    leer.sort((a, b) => {
+        const nameA = a.nombre;
+        const nameB = b.nombre;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
     //filtrar para paginacion
     const filtroProveedor = () => {
         if (buscador.length === 0)
-            return leer.slice(pagina, pagina + 5);
+            return leer.slice( /* pagina, pagina + 5 */ );
         const nuevoFiltro = leer.filter(prov => prov.nombre.includes(buscador));
-        return nuevoFiltro.slice(pagina, pagina + 5);
+        return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
     }
-    const siguientePag = () => {
-        if (leer.filter(prov => prov.nombre.includes(buscador)).length > pagina + 5)
-            setPagina(pagina + 5);
-    }
-    const paginaAnterior = () => {
-        if (pagina > 0) setPagina(pagina - 5)
-    }
+    // const siguientePag = () => {
+    //     if (leer.filter(prov => prov.nombre.includes(buscador)).length > pagina + 5)
+    //         setPagina(pagina + 5);
+    // }
+    // const paginaAnterior = () => {
+    //     if (pagina > 0) setPagina(pagina - 5)
+    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setPagina(0);
+        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -291,11 +303,11 @@ const Proveedores = () => {
                 </Formulario>
             </Contenedor>
             <ListarProveedor>
-                <ContentElemen>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                <ContentElemenAdd>
+                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado Proveedores</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
-                </ContentElemen>
+                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
+                </ContentElemenAdd>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
@@ -322,7 +334,7 @@ const Proveedores = () => {
                             filtroProveedor().map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.nombre}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.direccion}</Table.Cell>

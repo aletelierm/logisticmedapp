@@ -12,7 +12,7 @@ import ExportarExcel from '../funciones/ExportarExcel';
 import Swal from 'sweetalert2';
 /* import EnviarCorreo from '../funciones/EnviarCorreo'; */
 import { ContentElemenSelect, Select, Formulario, Input, Label, Contenido } from '../elementos/CrearEquipos'
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, Boton, BotonGuardar, Boton2 } from '../elementos/General';
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar, Boton2 } from '../elementos/General';
 
 const CrearEquipos = () => {
     const user = auth.currentUser;
@@ -33,7 +33,7 @@ const CrearEquipos = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [equipo, setEquipo] = useState([]);
-    const [pagina, setPagina] = useState(0);
+    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
     const [flag, setFlag] = useState(false);
@@ -82,7 +82,7 @@ const CrearEquipos = () => {
         const traerEq = collection(db, 'equipos');
         const dato = query(traerEq, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setEquipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
     }
     //Leer los datos de Equipos
     const getStatus = async () => {
@@ -135,54 +135,80 @@ const CrearEquipos = () => {
         }
     }
 
+    function ordenar(a, b) {
+        // Primero, comparar por Familia
+        const familiaA = a.familia;
+        const familiaB = b.familia;
+        if (familiaA < familiaB) {
+            return -1;
+        }
+        if (familiaA > familiaB) {
+            return 1;
+        }
+        // Si las Familias son iguales, comparar por Tipo
+        const tipoA = a.tipo;
+        const tipoB = b.tipo;
+        if (tipoA < tipoB) {
+            return -1;
+        }
+        if (tipoA > tipoB) {
+            return 1;
+        }
+        // Si los apellidos y nombres son iguales, no se cambia el orden
+        return 0;
+    }
+    // Ordenar el arreglo de objetos por múltiples campos
+    equipo.sort(ordenar);
+
     // Buscador de equipos
     const filtro = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
-            return equipo.slice(pagina, pagina + 5);
+            return equipo.slice(/*pagina, pagina + 5*/);
         if (categoria === 'Familia') {
-            const nuevoFiltro = equipo.filter(eq => eq.familia.includes(buscar));
-            return nuevoFiltro.slice(pagina, pagina + 5);
+            const nuevoFiltroFamilia = equipo.filter(eq => eq.familia.includes(buscar));
+            return nuevoFiltroFamilia.slice(/*pagina, pagina + 5*/);
         } else if (categoria === 'Tipo') {
-            const nuevoFiltro = equipo.filter(eq => eq.tipo.includes(buscar));
-            return nuevoFiltro.slice(pagina, pagina + 5);
+            const nuevoFiltroTipo = equipo.filter(eq => eq.tipo.includes(buscar));
+            return nuevoFiltroTipo.slice(/*pagina, pagina + 5*/);
         } else if (categoria === 'Marca') {
             const nuevoFiltro = equipo.filter(eq => eq.marca.includes(buscar));
-            return nuevoFiltro.slice(pagina, pagina + 5);
+            return nuevoFiltro.slice(/*pagina, pagina + 5*/);
         } else if (categoria === 'Modelo') {
             const nuevoFiltro = equipo.filter(eq => eq.modelo.includes(buscar));
-            return nuevoFiltro.slice(pagina, pagina + 5);
+            return nuevoFiltro.slice(/*pagina, pagina + 5*/);
         } else if (categoria === 'N°Serie') {
             const nuevoFiltro = equipo.filter(eq => eq.serie.includes(buscar));
-            return nuevoFiltro.slice(pagina, pagina + 5);
+            return nuevoFiltro.slice(/*pagina, pagina + 5*/);
         }
     }
 
     // Paginacion
-    const siguientePag = () => {
-        if (categoria === 'Familia') {
-            if (equipo.filter(eq => eq.familia.includes(buscador)).length > pagina + 5)
-                setPagina(pagina + 5);
-        } else if (categoria === 'Tipo') {
-            if (equipo.filter(eq => eq.tipo.includes(buscador)).length > pagina + 5)
-                setPagina(pagina + 5);
-        } else if (categoria === 'Marca') {
-            if (equipo.filter(eq => eq.marca.includes(buscador)).length > pagina + 5)
-                setPagina(pagina + 5);
-        } else if (categoria === 'Modelo') {
-            if (equipo.filter(eq => eq.modelo.includes(buscador)).length > pagina + 5)
-                setPagina(pagina + 5);
-        } else if (categoria === 'N°Serie') {
-            if (equipo.filter(eq => eq.serie.includes(buscador)).length > pagina + 5)
-                setPagina(pagina + 5);
-        }
-    }
+    // const siguientePag = () => {
+    //     const buscar = buscador.toLocaleUpperCase();
+    //     if (categoria === 'Familia') {
+    //         if (equipo.filter(eq => eq.familia.includes(buscar)).length > pagina + 5)
+    //             setPagina(pagina + 5);
+    //     } else if (categoria === 'Tipo') {
+    //         if (equipo.filter(eq => eq.tipo.includes(buscar)).length > pagina + 5)
+    //             setPagina(pagina + 5);
+    //     } else if (categoria === 'Marca') {
+    //         if (equipo.filter(eq => eq.marca.includes(buscar)).length > pagina + 5)
+    //             setPagina(pagina + 5);
+    //     } else if (categoria === 'Modelo') {
+    //         if (equipo.filter(eq => eq.modelo.includes(buscar)).length > pagina + 5)
+    //             setPagina(pagina + 5);
+    //     } else if (categoria === 'N°Serie') {
+    //         if (equipo.filter(eq => eq.serie.includes(buscar)).length > pagina + 5)
+    //             setPagina(pagina + 5);
+    //     }
+    // }
 
-    const paginaAnterior = () => {
-        if (pagina > 0) setPagina(pagina - 5)
-    }
+    // const paginaAnterior = () => {
+    //     if (pagina > 0) setPagina(pagina - 5)
+    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setPagina(0);
+        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -270,7 +296,7 @@ const CrearEquipos = () => {
                     nomEntidad: users.empresa,
                     status: 'PREPARACION'
                 })
-              /*   setNomFamilia('');
+                /*   setNomFamilia('');
                 setNomMarca('');
                 setNomModelo('');
                 setNomTipo('');
@@ -306,6 +332,54 @@ const CrearEquipos = () => {
         downloadLink.download = 'equipos.xlsx';
         downloadLink.click();
     }
+
+    familia.sort((a, b) => {
+        const nameA = a.familia;
+        const nameB = b.familia;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
+    tipo.sort((a, b) => {
+        const nameA = a.tipo;
+        const nameB = b.tipo;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
+    marca.sort((a, b) => {
+        const nameA = a.marca;
+        const nameB = b.marca;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
+    modelo.sort((a, b) => {
+        const nameA = a.modelo;
+        const nameB = b.modelo;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
 
     return (
         <ContenedorProveedor>
@@ -378,9 +452,9 @@ const CrearEquipos = () => {
 
             <ListarProveedor>
                 <ContentElemenAdd>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Dispositivos Médicos</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenSelect>
                     <Label>Buscar Por</Label>
@@ -418,10 +492,10 @@ const CrearEquipos = () => {
                     </Table.Header>
                     <Table.Body>
                         {
-                            filtro().map((item) => {
+                            filtro().map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.familia}</Table.Cell>
                                         <Table.Cell>{item.tipo}</Table.Cell>
                                         <Table.Cell>{item.marca}</Table.Cell>

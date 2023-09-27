@@ -41,6 +41,18 @@ export const UsuariosEnvios = () => {
         setUsuarioAlert(dataAlert.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
     }
 
+    usuarioAlert.sort((a, b) => {
+        const nameA = a.nombre;
+        const nameB = b.nombre;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
     useEffect(() => {
         getUsuarios();
         getUsuarioAlert();
@@ -283,7 +295,7 @@ export const UsuariosEnvios = () => {
                             usuarioAlert.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.correo}</Table.Cell>
                                         <Table.Cell>{item.nombre}</Table.Cell>
                                         <Table.Cell>{item.empresa}</Table.Cell>

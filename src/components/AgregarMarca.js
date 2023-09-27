@@ -8,7 +8,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -24,7 +24,7 @@ const AgregarMarca = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [marca, setMarca] = useState('');
     const [leer, setLeer] = useState([]);
-    const [pagina, setPagina] = useState(0);
+    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
@@ -75,22 +75,35 @@ const AgregarMarca = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
+
+    leer.sort((a, b) => {
+        const nameA = a.marca;
+        const nameB = b.marca;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
     const filtroMarca = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
-            return leer.slice(pagina, pagina + 5);
+            return leer.slice( /* pagina, pagina + 5 */ );
         const nuevoFiltro = leer.filter(mar => mar.marca.includes(buscar));
-        return nuevoFiltro.slice(pagina, pagina + 5);
+        return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
     }
-    const siguientePag = () => {
-        if (leer.filter(mar => mar.marca.includes(buscador)).length > pagina + 5)
-            setPagina(pagina + 5);
-    }
-    const paginaAnterior = () => {
-        if (pagina > 0) setPagina(pagina - 5)
-    }
+    // const siguientePag = () => {
+    //     if (leer.filter(mar => mar.marca.includes(buscador)).length > pagina + 5)
+    //         setPagina(pagina + 5);
+    // }
+    // const paginaAnterior = () => {
+    //     if (pagina > 0) setPagina(pagina - 5)
+    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setPagina(0);
+        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -121,9 +134,9 @@ const AgregarMarca = () => {
             </Contenedor>
             <ListarProveedor>
                 <ContentElemenAdd>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Marcas</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
@@ -148,7 +161,7 @@ const AgregarMarca = () => {
                         {filtroMarca().map((item, index) => {
                             return (
                                 <Table.Row key={index}>
-                                    <Table.Cell>{item.id2}</Table.Cell>
+                                    <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell>{item.marca}</Table.Cell>
                                     <Table.Cell>{item.useradd}</Table.Cell>
                                     <Table.Cell>{item.usermod}</Table.Cell>
