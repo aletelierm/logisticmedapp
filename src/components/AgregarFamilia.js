@@ -76,22 +76,35 @@ const AgregarFamilia = () => {
         const data = await getDocs(dato)
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
+
+    leer.sort((a, b) => {
+        const nameA = a.familia;
+        const nameB = b.familia;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
     const filtroFamilia = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
-            return leer.slice(pagina, pagina + 5);
+            return leer.slice(/* pagina, pagina + 5 */ );
         const nuevoFiltro = leer.filter(fam => fam.familia.includes(buscar));
-        return nuevoFiltro.slice(pagina, pagina + 5);
+        return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
     }
-    const siguientePag = () => {
-        if (leer.filter(fam => fam.familia.includes(buscador)).length > pagina + 5)
-            setPagina(pagina + 5);
-    }
-    const paginaAnterior = () => {
-        if (pagina > 0) setPagina(pagina - 5)
-    }
+    // const siguientePag = () => {
+    //     if (leer.filter(fam => fam.familia.includes(buscador)).length > pagina + 5)
+    //         setPagina(pagina + 5);
+    // }
+    // const paginaAnterior = () => {
+    //     if (pagina > 0) setPagina(pagina - 5)
+    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setPagina(0);
+        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -123,9 +136,9 @@ const AgregarFamilia = () => {
 
             <ListarProveedor>
                 <ContentElemenAdd>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Familias</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
