@@ -5,13 +5,13 @@ import AgregarEmpresaDb from '../firebase/AgregarEmpresaDb';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import Alerta from './Alertas';
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
 import { Link } from 'react-router-dom';
 import { FaRegEdit } from "react-icons/fa";
 import validarRut from '../funciones/validarRut';
-import { ContenedorProveedor, Contenedor, ListarProveedor, FormularioAdd, Titulo, Boton } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, FormularioAdd, Titulo, Boton } from '../elementos/General'
 import { ContentElemenEmp, InputEmp } from '../elementos/Configuracion'
 
 const AgregarEmpresa = () => {
@@ -25,7 +25,7 @@ const AgregarEmpresa = () => {
     const [leer, setLeer] = useState([])
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [pagina, setPagina] = useState(0);
+    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
@@ -118,25 +118,36 @@ const AgregarEmpresa = () => {
         setLeer(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
 
+    leer.sort((a, b) => {
+        const nameA = a.empresa;
+        const nameB = b.empresa;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
     const filtroEmpresa = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
-            return leer.slice(pagina, pagina + 5);
+            return leer.slice( /* pagina, pagina + 5 */ );
         const nuevoFiltro = leer.filter(emp => emp.empresa.includes(buscar));
-        return nuevoFiltro.slice(pagina, pagina + 5);
+        return nuevoFiltro.slice(/* pagina, pagina + 5 */ );
     }
 
-    const siguientePag = () => {
-        if (leer.filter(emp => emp.empresa.includes(buscador)).length > pagina + 5)
-            setPagina(pagina + 5);
-    }
-
-    const paginaAnterior = () => {
-        if (pagina > 0) setPagina(pagina - 5)
-    }
+    // const siguientePag = () => {
+    //     if (leer.filter(emp => emp.empresa.includes(buscador)).length > pagina + 5)
+    //         setPagina(pagina + 5);
+    // }
+    // const paginaAnterior = () => {
+    //     if (pagina > 0) setPagina(pagina - 5)
+    // }
 
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setPagina(0);
+        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -177,11 +188,11 @@ const AgregarEmpresa = () => {
             </Contenedor>
 
             <ListarProveedor>
-                <ContentElemenEmp>
-                    <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                <ContentElemenAdd>
+                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Empresas</Titulo>
-                    <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
-                </ContentElemenEmp>
+                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
+                </ContentElemenAdd>
 
                 <ContentElemenEmp>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />

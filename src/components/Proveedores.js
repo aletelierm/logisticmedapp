@@ -12,7 +12,7 @@ import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
-import {ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General'
+import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General'
 import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
 
 const Proveedores = () => {
@@ -303,11 +303,11 @@ const Proveedores = () => {
                 </Formulario>
             </Contenedor>
             <ListarProveedor>
-                <ContentElemen>
+                <ContentElemenAdd>
                     {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado Proveedores</Titulo>
                     {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
-                </ContentElemen>
+                </ContentElemenAdd>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}
