@@ -17,6 +17,7 @@ import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonG
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
+import Swal from 'sweetalert2';
 
 const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -754,59 +755,63 @@ const Salidas = () => {
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        const batch = writeBatch(db);
-        dataSalida.forEach((docs) => {
-            const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechaadd });
-        });
-        try {
-            await batch.commit();
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Documentos actualizados correctamente.'
-            });
-            await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
-                confirmado: true,
-                usermod: user.email,
-                fechamod: fechaMod
-            });
 
-            setFlag(!flag)
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al actualizar documentos:', error
-            })
-        }
-        setNomTipDoc('');
-        setNumDoc('');
-        setDate('');
-        setNomTipoOut('');
-        setRut('');
-        setEntidad('');
-        setCorreo('');
-        setPatente('');
-        setNumSerie('');
-        setConfirmar(false);
-        setBtnGuardar(true);
-        setBtnAgregar(true);
-        setBtnConfirmar(true);
-        setBtnNuevo(true);
-       if(nomTipoOut === 'CLIENTE' || nomTipoOut === 'SERVICIO TECNICO'){ 
+        if (dataSalida.length === 0) {
+            Swal.fire('No hay Datos pr confirmar en este documento');
+        } else {
+            const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+            const batch = writeBatch(db);
+            dataSalida.forEach((docs) => {
+                const docRef = doc(db, 'status', docs.eq_id);
+                batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechaadd });
+            });
             try {
-                /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
-                const mensaje = cuerpoCorreo(dataSalida);
-                alertaSalida.forEach((destino) => {
-                    EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
-                })
+                await batch.commit();
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Documentos actualizados correctamente.'
+                });
+                await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
+                    confirmado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+
+                setFlag(!flag)
             } catch (error) {
-                console.log('error', error)
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar documentos:', error
+                })
+            }
+            setNomTipDoc('');
+            setNumDoc('');
+            setDate('');
+            setNomTipoOut('');
+            setRut('');
+            setEntidad('');
+            setCorreo('');
+            setPatente('');
+            setNumSerie('');
+            setConfirmar(false);
+            setBtnGuardar(false);
+            setBtnAgregar(true);
+            setBtnConfirmar(true);
+            setBtnNuevo(true);
+            if (nomTipoOut === 'CLIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
+                try {
+                    /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
+                    const mensaje = cuerpoCorreo(dataSalida);
+                    alertaSalida.forEach((destino) => {
+                        EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
+                    })
+                } catch (error) {
+                    console.log('error', error)
+                }
             }
         }
-        
     };
 
     const cuerpoCorreo = (data) => {
@@ -814,19 +819,19 @@ const Salidas = () => {
         return ReactDOMServer.renderToString(
             <div>
                 <h2>Salida de Bodega</h2>
-                <div style={{backgroundColor:'#EEF2EF'}}>
-                    <p>Tipo de Salida :{data[0].tipoinout}</p>              
+                <div style={{ backgroundColor: '#EEF2EF' }}>
+                    <p>Tipo de Salida :{data[0].tipoinout}</p>
                     <p>Numero Documento :{data[0].numdoc} </p>
                     <p>Tipo de Documento:{data[0].tipdoc} </p>
                     <p>Nombre :{data[0].entidad} </p>
                     <p>Rut :{data[0].rut} </p>
                 </div>
-                <br/>
+                <br />
                 <h3>Listado de equipos:</h3>
-                <ul style={{listStyle:'none'}}>
-                    {data.map((item, index)=>(
+                <ul style={{ listStyle: 'none' }}>
+                    {data.map((item, index) => (
                         <li key={index}>
-                            <h5>{index +1 + ".-"+item.tipo+" "+item.marca+" "+item.modelo+"    S/N : "+item.serie}</h5>
+                            <h5>{index + 1 + ".-" + item.tipo + " " + item.marca + " " + item.modelo + "    S/N : " + item.serie}</h5>
                         </li>
                     ))}
                 </ul>
@@ -863,10 +868,10 @@ const Salidas = () => {
         getStatus();
         consultarCab();
         consultarOut();
-        if (dataSalida.length > 0) setBtnConfirmar(false);
+        // if (dataSalida.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-    
+
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -1064,7 +1069,8 @@ const Salidas = () => {
                                         setBtnGuardar(true);
                                         setBtnAgregar(false);
                                         setConfirmar(true);
-                                        setBtnNuevo(true);
+                                        setBtnNuevo(false);
+                                        setBtnConfirmar(false);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>

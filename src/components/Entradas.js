@@ -15,6 +15,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
+import Swal from 'sweetalert2';
 
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -395,49 +396,55 @@ const Entradas = () => {
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Filtar por docuemto de Cabecera
-        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
-        const batch = writeBatch(db);
-        dataEntrada.forEach((docs) => {
-            const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, { status: 'BODEGA', rut: empresa.rut, entidad: empresa.empresa });
-        });
-        try {
-            await batch.commit();
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Documentos actualizados correctamente.'
+        console.log(dataEntrada)
+        if (dataEntrada.length === 0) {
+            Swal.fire('No hay Datos pr confirmar en este documento');
+        } else {
+            // Filtar por docuemto de Cabecera
+            const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+            const cabecera = await getDocs(cab);
+            const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+
+            const batch = writeBatch(db);
+            dataEntrada.forEach((docs) => {
+                const docRef = doc(db, 'status', docs.eq_id);
+                batch.update(docRef, { status: 'BODEGA', rut: empresa.rut, entidad: empresa.empresa });
             });
-            await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
-                confirmado: true,
-                usermod: user.email,
-                fechamod: fechaMod
-            });
-            setFlag(!flag)
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al actualizar documentos:', error
-            })
+            try {
+                await batch.commit();
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Documentos actualizados correctamente.'
+                });
+                await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
+                    confirmado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+                setFlag(!flag)
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar documentos:', error
+                })
+            }
+            setNomTipDoc('');
+            setNumDoc('');
+            setDate('');
+            setNomTipoIn('');
+            setRut('');
+            setEntidad('');
+            setNumSerie('');
+            setPrice('');
+            setConfirmar(false);
+            setBtnConfirmar(true);
+            setBtnAgregar(true);
+            setBtnGuardar(false)
+            setBtnNuevo(true);
         }
-        setNomTipDoc('');
-        setNumDoc('');
-        setDate('');
-        setNomTipoIn('');
-        setRut('');
-        setEntidad('');
-        setNumSerie('');
-        setPrice('');
-        setConfirmar(false);
-        setBtnConfirmar(true);
-        setBtnAgregar(true);
-        setBtnGuardar(false)
-        setBtnNuevo(true);
     };
 
     // Agregar una nueva cabecera
@@ -467,8 +474,8 @@ const Entradas = () => {
     useEffect(() => {
         consultarIn();
         consultarCab();
-        console.log(dataEntrada.length)
-        if (dataEntrada.length > 0) setBtnConfirmar(!btnConfirmar);
+        console.log(dataEntrada)
+        // if (dataEntrada.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -659,7 +666,10 @@ const Entradas = () => {
                                         setBtnAgregar(false)
                                         setConfirmar(true);
                                         setBtnNuevo(false)
+                                        setBtnConfirmar(false)
                                         setFlag(!flag)
+                                        // if (dataEntrada.length > 0) setBtnConfirmar(false);
+                                        // console.log(dataEntrada)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
