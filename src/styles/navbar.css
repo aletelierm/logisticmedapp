@@ -24,6 +24,7 @@
 }
 
 .imageLogo img {
+    cursor: none;
     width: 200px;
     height: 60;
 }
