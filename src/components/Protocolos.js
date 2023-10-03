@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect } from 'react';
-// import EntradasDB from '../firebase/EntradasDB'
-// import ProtocoloDB  from '../firebase/ProtocoloDB'
+import React, { useState, useEffect, useRef } from 'react';
+import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
+// import EntradasDB from '../firebase/EntradasDB';
 import Alertas from './Alertas';
 // import Modal from './Modal';
 // import styled from 'styled-components';
@@ -17,6 +17,7 @@ import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Tit
 import { ContentElemenMov, ContentElemenSelect, Select, Formulario, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+
 // import Swal from 'sweetalert2';
 
 const Protocolos = () => {
@@ -33,14 +34,15 @@ const Protocolos = () => {
     const [tipo, setTipo] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
-    const [programa, setPrograma] = useState('');
+    const [programa, setPrograma] = useState([]);
     const [nomProtocolo, setNomProtocolo] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnGuardar, setBtnGuardar] = useState(true);
+    const [btnGuardar, setBtnGuardar] = useState(false);
     // const [btnAgregar, setBtnAgregar] = useState(true);
     // const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const dias = useRef('');
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -80,16 +82,118 @@ const Protocolos = () => {
         }
         return 0;
     });
+    const handleCheckboxChange = (event) => {
+        setConfirmar(event.target.checked);
+    };
 
-    // // Filtar por docuemto de Cabecera
-    // const consultarCab = async () => {
-    //     const cab = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
-    //     const guardaCab = await getDocs(cab);
-    //     const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    //     setCabecera(existeCab);
-    // }
+    const addCabProtocolo = async (ev) => {
+        ev.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // Filtar por docuemto de Cabecera de Protocolo
+        const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        const cabecera = await getDocs(cabProtocolo);
+        const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        console.log(existeCabProtocolo);
 
+        if (nomProtocolo === '' ) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese Nombre Protocolo'
+            })
+            return;
+        } else if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccine Familia'
+            })
+            return;
+        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Tipo de Equipamiento'
+            })
+            return;
+        } else if (programa.length === 0 || programa === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Programa'
+            })
+            return;
+        } else if (existeCabProtocolo.length > 0) {
+            if (existeCabProtocolo[0].confirmado) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este Protocolo y se encuentra confirmado'
+                })
+            } else {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este Protocolo. Falta confirmar'
+                })
+            }
+        } else {
+            if (programa === 'ANUAL') {
+                dias.current = 365
+            }else if (programa === 'SEMESTRAL') {
+                dias.current = 180
+            } else {
+                dias.current = 90
+            }
+            const nomProt = nomProtocolo.toLocaleUpperCase().trim()
+            try {
+                ProtocoloCabDB({
+                    nombre: nomProt,
+                    familia: nomFamilia,
+                    tipo: nomTipo,
+                    programa: programa,
+                    dias: dias.current,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                    confirmado:false
+                })
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Ingreso realizado exitosamente'
+                })
+                setFlag(!flag);
+                setConfirmar(true);
+                // setBtnAgregar(false);
+                setBtnGuardar(true);
+                setBtnNuevo(false);
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
+        }
+    }
 
+    // Agregar una nueva cabecera
+    const nuevo = () => {
+        setNomProtocolo('');
+        setNomFamilia('');
+        setNomTipo('');
+        setPrograma('');
+        setConfirmar(false);
+        setBtnGuardar(false);
+        // setBtnAgregar(true);
+        // setBtnConfirmar(true);
+        setBtnNuevo(true);
+    }
 
     useEffect(() => {
         getFamilia();
@@ -108,6 +212,7 @@ const Protocolos = () => {
                 <Formulario action=''>
                     <ContentElemenMov>
                         <InputAdd
+                            disabled={confirmar}
                             type='text'
                             placeholder='Ingrese Nombre Protocolo'
                             name='nomprotocolo'
@@ -119,7 +224,7 @@ const Protocolos = () => {
                         <ContentElemenSelect>
                             <Label>Familia</Label>
                             <Select
-                                // disabled={confirmar}
+                                disabled={confirmar}
                                 value={nomFamilia}
                                 onChange={ev => setNomFamilia(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
@@ -131,7 +236,7 @@ const Protocolos = () => {
                         <ContentElemenSelect>
                             <Label>Tipo de Equipamiento</Label>
                             <Select
-                                // disabled={confirmar}
+                                disabled={confirmar}
                                 value={nomTipo}
                                 onChange={ev => setNomTipo(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
@@ -143,7 +248,7 @@ const Protocolos = () => {
                         <ContentElemenSelect>
                             <Label>Programa</Label>
                             <Select
-                                // disabled={confirmar}
+                                disabled={confirmar}
                                 value={programa}
                                 onChange={ev => setPrograma(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
@@ -153,23 +258,20 @@ const Protocolos = () => {
                             </Select>
                         </ContentElemenSelect>
                     </ContentElemenMov>
-
                     <BotonGuardar
                         style={{ margin: '10px 10px' }}
-                    // onClick={addCabProtocolo}
-                    // checked={confirmar}
-                    // onChange={handleCheckboxChange}
-                    disabled={btnGuardar}
-                    >
-                        Guardar</BotonGuardar>
+                        onClick={addCabProtocolo}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnGuardar}
+                    >Guardar</BotonGuardar>
                     <BotonGuardar
                         style={{ margin: '10px 0' }}
-                    // onClick={nuevo}
-                    // checked={confirmar}
-                    // onChange={handleCheckboxChange}
-                    disabled={btnNuevo}
-                    >
-                        Nuevo</BotonGuardar>
+                        onClick={nuevo}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnNuevo}
+                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
