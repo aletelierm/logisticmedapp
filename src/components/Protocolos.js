@@ -1,20 +1,20 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 // import EntradasDB from '../firebase/EntradasDB'
-// import CabeceraInDB from '../firebase/CabeceraInDB'
+// import ProtocoloDB  from '../firebase/ProtocoloDB'
 import Alertas from './Alertas';
 // import Modal from './Modal';
 // import styled from 'styled-components';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs /*getDoc*/, collection, where, query, /* updateDoc, doc, writeBatch */ } from 'firebase/firestore';
 // import { FaRegEdit } from "react-icons/fa";
 // import { BiAddToQueue } from "react-icons/bi";
 import { Programa } from './TipDoc'
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, Boton, BotonGuardar } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar } from '../elementos/General'
+import { ContentElemenMov, ContentElemenSelect, Select, Formulario, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 // import Swal from 'sweetalert2';
@@ -33,8 +33,14 @@ const Protocolos = () => {
     const [tipo, setTipo] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
-    const [nomPrograma, setNomPrograma] = useState('');
+    const [programa, setPrograma] = useState('');
     const [nomProtocolo, setNomProtocolo] = useState('');
+    const [flag, setFlag] = useState(false);
+    const [confirmar, setConfirmar] = useState(false);
+    const [btnGuardar, setBtnGuardar] = useState(true);
+    // const [btnAgregar, setBtnAgregar] = useState(true);
+    // const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnNuevo, setBtnNuevo] = useState(true);
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -42,13 +48,6 @@ const Protocolos = () => {
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-    }
-    //Leer los datos de Tipos
-    const getTipo = async () => {
-        const traerTip = collection(db, 'tipos');
-        const dato = query(traerTip, where('emp_id', '==', users.emp_id));
-        const data = await getDocs(dato)
-        setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
     // Ordenar Listado por Familia
     familia.sort((a, b) => {
@@ -62,6 +61,13 @@ const Protocolos = () => {
         }
         return 0;
     });
+    //Leer los datos de Tipos
+    const getTipo = async () => {
+        const traerTip = collection(db, 'tipos');
+        const dato = query(traerTip, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
     // Ordenar Listado por Tipo
     tipo.sort((a, b) => {
         const nameA = a.tipo;
@@ -74,6 +80,16 @@ const Protocolos = () => {
         }
         return 0;
     });
+
+    // // Filtar por docuemto de Cabecera
+    // const consultarCab = async () => {
+    //     const cab = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
+    //     const guardaCab = await getDocs(cab);
+    //     const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    //     setCabecera(existeCab);
+    // }
+
+
 
     useEffect(() => {
         getFamilia();
@@ -90,6 +106,15 @@ const Protocolos = () => {
 
             <Contenedor>
                 <Formulario action=''>
+                    <ContentElemenMov>
+                        <InputAdd
+                            type='text'
+                            placeholder='Ingrese Nombre Protocolo'
+                            name='nomprotocolo'
+                            value={nomProtocolo}
+                            onChange={e => setNomProtocolo(e.target.value)}
+                        />
+                    </ContentElemenMov>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Familia</Label>
@@ -119,8 +144,8 @@ const Protocolos = () => {
                             <Label>Programa</Label>
                             <Select
                                 // disabled={confirmar}
-                                value={nomPrograma}
-                                onChange={ev => setNomPrograma(ev.target.value)}>
+                                value={programa}
+                                onChange={ev => setPrograma(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {Programa.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
@@ -131,10 +156,10 @@ const Protocolos = () => {
 
                     <BotonGuardar
                         style={{ margin: '10px 10px' }}
-                    // onClick={addCabeceraIn}
+                    // onClick={addCabProtocolo}
                     // checked={confirmar}
                     // onChange={handleCheckboxChange}
-                    // disabled={btnGuardar}
+                    disabled={btnGuardar}
                     >
                         Guardar</BotonGuardar>
                     <BotonGuardar
@@ -142,7 +167,7 @@ const Protocolos = () => {
                     // onClick={nuevo}
                     // checked={confirmar}
                     // onChange={handleCheckboxChange}
-                    // disabled={btnNuevo}
+                    disabled={btnNuevo}
                     >
                         Nuevo</BotonGuardar>
                 </Formulario>
@@ -150,9 +175,9 @@ const Protocolos = () => {
 
             <ListarProveedor>
                 <ContentElemenAdd>
-                    <Boton ><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton ><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Items</Titulo>
-                    <Boton ><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton>
+                    {/* <Boton ><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
