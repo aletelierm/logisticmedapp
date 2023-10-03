@@ -22,3 +22,8 @@ export const TipoOut= [
     { key: '6', value: '6', text: 'RETIRO SERVICIO TECNICO' }
 ];
 
+export const Programa= [
+    { key: '1', value: '1', text: 'ANUAL', dias: '365' },
+    { key: '2', value: '2', text: 'SEMESTRAL', dias: '180' },
+    { key: '3', value: '3', text: 'TRIMESTRAL', dias: '90' },
+];

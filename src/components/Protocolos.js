@@ -1,20 +1,86 @@
-import React, { useState } from 'react';
+/* eslint-disable array-callback-return */
+import React, { useState, useEffect } from 'react';
+// import EntradasDB from '../firebase/EntradasDB'
+// import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
 // import Modal from './Modal';
 // import styled from 'styled-components';
 import { Table } from 'semantic-ui-react';
+import { auth, db } from '../firebase/firebaseConfig';
+import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 // import { FaRegEdit } from "react-icons/fa";
 // import { BiAddToQueue } from "react-icons/bi";
+import { Programa } from './TipDoc'
 import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton, BotonGuardar } from '../elementos/General';
-import { Input } from '../elementos/CrearEquipos';
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, Boton, BotonGuardar } from '../elementos/General'
+import { ContentElemenMov, ContentElemenSelect, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
+// import Swal from 'sweetalert2';
 
 const Protocolos = () => {
+    //lee usuario de autenticado y obtiene fecha actual
+    const user = auth.currentUser;
+    const { users } = useContext(UserContext);
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
+
     // const [estadoModal, setEstadoModal] = useState(false);
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
+    const [familia, setFamilia] = useState([]);
+    const [tipo, setTipo] = useState([]);
+    const [nomFamilia, setNomFamilia] = useState('');
+    const [nomTipo, setNomTipo] = useState('');
+    const [nomPrograma, setNomPrograma] = useState('');
     const [nomProtocolo, setNomProtocolo] = useState('');
+
+    //Leer los datos de Familia
+    const getFamilia = async () => {
+        const traerFam = collection(db, 'familias');
+        const dato = query(traerFam, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+    //Leer los datos de Tipos
+    const getTipo = async () => {
+        const traerTip = collection(db, 'tipos');
+        const dato = query(traerTip, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+    // Ordenar Listado por Familia
+    familia.sort((a, b) => {
+        const nameA = a.familia;
+        const nameB = b.familia;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    // Ordenar Listado por Tipo
+    tipo.sort((a, b) => {
+        const nameA = a.tipo;
+        const nameB = b.tipo;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+
+    useEffect(() => {
+        getFamilia();
+        getTipo();
+        // getEmpresa();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <ContenedorProveedor>
@@ -23,50 +89,63 @@ const Protocolos = () => {
             </Contenedor>
 
             <Contenedor>
-                <FormularioAdd action='' /* onSubmit={handleSubmit} */ >
-                    <InputAdd
-                        type='text'
-                        placeholder='Ingrese Nombre Protocolo'
-                        name='nomprotocolo'
-                        value={nomProtocolo}
-                        onChange={e => setNomProtocolo(e.target.value)}
-                    />
-                </FormularioAdd>
-                <ListarProveedor>
-                    <Table singleLine>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Item</Table.HeaderCell>
-                                <Table.HeaderCell>Pasa</Table.HeaderCell>
-                                <Table.HeaderCell>No Pasa</Table.HeaderCell>
-                                <Table.HeaderCell>N/A</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            <Table.Row>
-                                <Table.Cell>Sanitización</Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                            </Table.Row>
+                <Formulario action=''>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Familia</Label>
+                            <Select
+                                // disabled={confirmar}
+                                value={nomFamilia}
+                                onChange={ev => setNomFamilia(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {familia.map((d) => {
+                                    return (<option key={d.id}>{d.familia}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Tipo de Equipamiento</Label>
+                            <Select
+                                // disabled={confirmar}
+                                value={nomTipo}
+                                onChange={ev => setNomTipo(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {tipo.map((d) => {
+                                    return (<option key={d.id}>{d.tipo}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Programa</Label>
+                            <Select
+                                // disabled={confirmar}
+                                value={nomPrograma}
+                                onChange={ev => setNomPrograma(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {Programa.map((d) => {
+                                    return (<option key={d.key}>{d.text}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                    </ContentElemenMov>
 
-                            <Table.Row>
-                                <Table.Cell>Inspección visual carcasa, verificar golpes o quemaduras</Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                            </Table.Row>
-
-                            <Table.Row>
-                                <Table.Cell>Inspección visual de cable eléctrico, verificar roturas o conductores expuestos</Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                            </Table.Row>
-                        </Table.Body>
-                    </Table>
-                </ListarProveedor>
-                <BotonGuardar style={{ marginTop: '30px' }}>Guardar</BotonGuardar>
+                    <BotonGuardar
+                        style={{ margin: '10px 10px' }}
+                    // onClick={addCabeceraIn}
+                    // checked={confirmar}
+                    // onChange={handleCheckboxChange}
+                    // disabled={btnGuardar}
+                    >
+                        Guardar</BotonGuardar>
+                    <BotonGuardar
+                        style={{ margin: '10px 0' }}
+                    // onClick={nuevo}
+                    // checked={confirmar}
+                    // onChange={handleCheckboxChange}
+                    // disabled={btnNuevo}
+                    >
+                        Nuevo</BotonGuardar>
+                </Formulario>
             </Contenedor>
 
             <ListarProveedor>
