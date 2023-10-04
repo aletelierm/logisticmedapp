@@ -40,7 +40,7 @@ export default function Login() {
       } catch (error) {
         console.log('Error de usuario', error)
       }
-      const lastPath = localStorage.getItem('lastPath') || '/misequipos'
+      const lastPath = localStorage.getItem('lastPath') || '/home'
       navigate(lastPath);
     } catch (error) {
       console.log(error.message)

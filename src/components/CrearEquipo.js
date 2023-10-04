@@ -280,12 +280,13 @@ const CrearEquipos = () => {
         } else {
             try {
                 //llama a la funcion guardar equipos y status, pasando los props
+                const ser = serie.trim()
                 EquipoDb({
                     familia: nomFamilia,
                     tipo: nomTipo,
                     marca: nomMarca,
                     modelo: nomModelo,
-                    serie: serie,
+                    serie: ser,
                     rfid: rfid,
                     userAdd: user.email,
                     userMod: user.email,

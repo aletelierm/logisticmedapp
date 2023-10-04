@@ -36,6 +36,7 @@ const ContenedorAlerta = styled.div`
     animation: ${slideDown} 4s ease forwards;
 
     p {
+        font-size: 18px;
         background: ${(props) => {
         if (props.tipo === 'error') {
             return theme.rojo;
