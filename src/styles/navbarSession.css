@@ -24,9 +24,12 @@
 }
 
 .imageLogo {
-    padding-left: 10px;
+    padding-left: 1px;
 }
 
+.imageLogo2 {
+    padding-left: 1px;
+}
 .imageLogo img {
     width: 288px;
     height: 50;
