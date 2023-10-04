@@ -750,6 +750,9 @@ const Salidas = () => {
                 }
             }
         }
+        setPrice('');
+        setNumSerie('');
+        almacenar.current = [];
     }
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
