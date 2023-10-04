@@ -6,10 +6,11 @@ import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch, deleteDoc } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDocOut, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
+import { MdDeleteForever } from "react-icons/md";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -816,6 +817,31 @@ const Salidas = () => {
         }
     };
 
+    const borrarItem = async (id) => {
+        await deleteDoc(doc(db, "salidas", id));
+    }
+    // Función para eliminar Item por linea
+    const deleteItem = (id) => {
+        Swal.fire({
+            title: 'Esta seguro que desea eliminar Item?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                borrarItem(id);
+                Swal.fire(
+                    'Eliminado!',
+                    'Item eliminado con exito!',
+                    'success'
+                )
+            }
+            setFlag(!flag)
+        })
+    }
+
     const cuerpoCorreo = (data) => {
 
         return ReactDOMServer.renderToString(
@@ -1016,6 +1042,7 @@ const Salidas = () => {
                                 <Table.HeaderCell>N°</Table.HeaderCell>
                                 <Table.HeaderCell>Nombre de equipo</Table.HeaderCell>
                                 <Table.HeaderCell>N° Serie</Table.HeaderCell>
+                                <Table.HeaderCell style={{ textAlign: 'center' }}>Eliminar</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -1025,6 +1052,13 @@ const Salidas = () => {
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell style={{ textAlign: 'center' }}>
+                                            <MdDeleteForever
+                                                style={{ fontSize: '22px', color: '#69080A', }}
+                                                onClick={() => deleteItem(item.id)}
+                                                title='Eliminar Item'
+                                            />
+                                        </Table.Cell>
                                     </Table.Row>
                                 )
                             })}
