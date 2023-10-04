@@ -750,7 +750,6 @@ const Salidas = () => {
                 }
             }
         }
-        setPrice('');
         setNumSerie('');
         almacenar.current = [];
     }
