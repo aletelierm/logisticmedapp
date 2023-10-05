@@ -29,7 +29,6 @@ const Entradas = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
     const [dataEntrada, setDataEntrada] = useState([]);
-    const [dataEntradaSN, setDataEntradaSN] = useState([]);
     const [empresa, setEmpresa] = useState([]);
     const [status, setStatus] = useState([]);
     const [numDoc, setNumDoc] = useState('');
@@ -139,7 +138,6 @@ const Entradas = () => {
             const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
             const serieIn = await getDocs(traerserie);
             const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            console.log(existeSerie);
 
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);

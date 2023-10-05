@@ -165,6 +165,10 @@ const Salidas = () => {
             // Exite N° serie en Entradas 
             const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
+            // Validar en N° Serie en todos los documento de Entradas
+            const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+            const serieIn = await getDocs(traerserie);
+            const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
@@ -177,6 +181,12 @@ const Salidas = () => {
                 cambiarAlerta({
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
+                })
+            } else if (existeSerie.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
                 })
             } else {
                 const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
@@ -554,8 +564,13 @@ const Salidas = () => {
         // Exite N° serie en Entradas 
         const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
+        // Validar en N° Serie en todos los documento de Entradas
+        const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        const serieIn = await getDocs(traerserie);
+        const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+
 
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
@@ -575,6 +590,12 @@ const Salidas = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
+            })
+        } else if (existeSerie.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
             })
         } else {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
