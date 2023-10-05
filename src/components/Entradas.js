@@ -290,18 +290,14 @@ const Entradas = () => {
         const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieEq = await getDocs(traerEq);
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log('existe', existe);
-        console.log('N° Serie', numSerie);
         // Validar ID en equipo
         const traerId = await getDoc(doc(db, 'equipos', numSerie));
-        console.log('traerId', traerId.data());
         if (existe.length === 1) {
             almacenar.current = existe;
         } else if (traerId.exists()) {
             const existeId = traerId.data();
             const arreglo = [existeId];
             const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-            console.log('existe2', existe2);
             almacenar.current = existe2;
         } else {
             console.log('almacenar', almacenar.current);
@@ -398,13 +394,7 @@ const Entradas = () => {
         }
         setPrice('');
         setNumSerie('');
-
-        console.log('pasa por salida');
-        console.log('N° Serie salida', numSerie);
-        console.log('existe salida', existe);
-        console.log('almacenar salida', almacenar.current)
         almacenar.current = [];
-        console.log('almacenar limpiado', almacenar.current)
     }
 
     // Función para actualizar varios documentos por lotes
@@ -663,10 +653,10 @@ const Entradas = () => {
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>${item.price}.-</Table.Cell>
                                         <Table.Cell style={{ textAlign: 'center' }}>
-                                            <MdDeleteForever 
-                                            style={{fontSize: '22px', color: '#69080A',  }}
-                                            onClick={() => deleteItem(item.id)}
-                                            title='Eliminar Item'
+                                            <MdDeleteForever
+                                                style={{ fontSize: '22px', color: '#69080A', }}
+                                                onClick={() => deleteItem(item.id)}
+                                                title='Eliminar Item'
                                             />
                                         </Table.Cell>
                                     </Table.Row>

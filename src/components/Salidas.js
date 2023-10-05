@@ -547,7 +547,7 @@ const Salidas = () => {
             const existeId = traerId.data();
             const arreglo = [existeId];
             const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-            almacenar.current = existe2;
+            console.log('existe2', existe2)
         } else {
             console.log('almacenar', almacenar.current);
         }
@@ -616,7 +616,8 @@ const Salidas = () => {
                             fechaMod: fechaMod,
                             emp_id: users.emp_id,
                         });
-                        setNumSerie('')
+                        setNumSerie('');
+                        almacenar.current = [];
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
@@ -670,7 +671,8 @@ const Salidas = () => {
                             fechaMod: fechaMod,
                             emp_id: users.emp_id,
                         });
-                        setNumSerie('')
+                        setNumSerie('');
+                        almacenar.current = [];
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
@@ -704,7 +706,6 @@ const Salidas = () => {
                         inOut.current = nomTipoOut
                     }
                     setBtnConfirmar(false);
-
                     try {
                         SalidasDB({
                             numDoc: numDoc,
@@ -731,7 +732,8 @@ const Salidas = () => {
                             fechaMod: fechaMod,
                             emp_id: users.emp_id,
                         });
-                        setNumSerie('')
+                        setNumSerie('');
+                        almacenar.current = [];
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
