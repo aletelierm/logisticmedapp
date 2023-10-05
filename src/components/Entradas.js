@@ -29,6 +29,7 @@ const Entradas = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
     const [dataEntrada, setDataEntrada] = useState([]);
+    const [dataEntradaSN, setDataEntradaSN] = useState([]);
     const [empresa, setEmpresa] = useState([]);
     const [status, setStatus] = useState([]);
     const [numDoc, setNumDoc] = useState('');
@@ -59,7 +60,7 @@ const Entradas = () => {
         const doc = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setDataEntrada(documento)
+        setDataEntrada(documento);
     }
     //Leer  Empresa
     const getEmpresa = async () => {
@@ -134,7 +135,12 @@ const Entradas = () => {
             // Exite N° serie en Entradas 
             const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
-            console.log(almacenar.current.length === 0);
+            // Validar en N° Serie en todos los documento de Entradas
+            const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+            const serieIn = await getDocs(traerserie);
+            const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            console.log(existeSerie);
+
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -146,6 +152,12 @@ const Entradas = () => {
                 cambiarAlerta({
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
+                })
+            } else if (existeSerie.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
                 })
             } else {
                 const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
@@ -302,9 +314,14 @@ const Entradas = () => {
         } else {
             console.log('almacenar', almacenar.current);
         }
-        // Validar en N° Serie en Entradas        
+        // Validar en N° Serie en el documento de Entradas que se esta trabatando     
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
+        // Validar en N° Serie en todos los documento de Entradas
+        const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        const serieIn = await getDocs(traerserie);
+        const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log(existeSerie);
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
@@ -335,6 +352,12 @@ const Entradas = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
+            })
+        } else if (existeSerie.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
             })
         } else {
             const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
@@ -401,8 +424,6 @@ const Entradas = () => {
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
-        console.log(dataEntrada)
         if (dataEntrada.length === 0) {
             Swal.fire('No hay Datos pr confirmar en este documento');
         } else {
@@ -449,6 +470,7 @@ const Entradas = () => {
             setBtnAgregar(true);
             setBtnGuardar(false)
             setBtnNuevo(true);
+            setFlag(!flag)
         }
     };
 
