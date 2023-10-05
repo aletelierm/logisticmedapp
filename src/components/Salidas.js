@@ -571,7 +571,6 @@ const Salidas = () => {
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
-
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -866,7 +865,6 @@ const Salidas = () => {
     }
 
     const cuerpoCorreo = (data) => {
-
         return ReactDOMServer.renderToString(
             <div>
                 <h2>Salida de Bodega</h2>

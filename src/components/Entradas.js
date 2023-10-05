@@ -319,7 +319,6 @@ const Entradas = () => {
         const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieIn = await getDocs(traerserie);
         const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(existeSerie);
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
@@ -524,7 +523,6 @@ const Entradas = () => {
     useEffect(() => {
         consultarIn();
         consultarCab();
-        console.log('data entrada useefect', dataEntrada)
         // if (dataEntrada.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -726,8 +724,6 @@ const Entradas = () => {
                                         setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
-                                        // if (dataEntrada.length > 0) setBtnConfirmar(false);
-                                        // console.log(dataEntrada)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
