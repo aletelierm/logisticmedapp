@@ -4,7 +4,6 @@ import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
 // import EntradasDB from '../firebase/EntradasDB';
 import Alertas from './Alertas';
 // import Modal from './Modal';
-// import styled from 'styled-components';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs /*getDoc*/, collection, where, query, /* updateDoc, doc, writeBatch */ } from 'firebase/firestore';
@@ -17,7 +16,6 @@ import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Tit
 import { ContentElemenMov, ContentElemenSelect, Select, Formulario, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-
 // import Swal from 'sweetalert2';
 
 const Protocolos = () => {
@@ -32,10 +30,12 @@ const Protocolos = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
+    const [item, setItem] = useState([]);
+    const [programa, setPrograma] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
-    const [programa, setPrograma] = useState([]);
     const [nomProtocolo, setNomProtocolo] = useState('');
+    const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
@@ -82,6 +82,35 @@ const Protocolos = () => {
         }
         return 0;
     });
+
+    const getItem = async () => {
+        const traerit = collection(db, 'items');
+        const dato = query(traerit, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setItem(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+    item.sort((a, b) => {
+        const nameA = a.nombre;
+        const nameB = b.nombre;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    const filtroItem = () => {
+        const buscar = buscador.toLocaleUpperCase();
+        if (buscar.length === 0)
+            return item.slice();
+        const nuevoFiltro = item.filter(it => it.nombre.includes(buscar));
+        return nuevoFiltro.slice();
+    }
+    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
+        setBuscardor(target.value)
+    }
+
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -96,7 +125,7 @@ const Protocolos = () => {
         const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         console.log(existeCabProtocolo);
 
-        if (nomProtocolo === '' ) {
+        if (nomProtocolo === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -141,7 +170,7 @@ const Protocolos = () => {
         } else {
             if (programa === 'ANUAL') {
                 dias.current = 365
-            }else if (programa === 'SEMESTRAL') {
+            } else if (programa === 'SEMESTRAL') {
                 dias.current = 180
             } else {
                 dias.current = 90
@@ -159,7 +188,7 @@ const Protocolos = () => {
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
                     emp_id: users.emp_id,
-                    confirmado:false
+                    confirmado: false
                 })
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -198,6 +227,7 @@ const Protocolos = () => {
     useEffect(() => {
         getFamilia();
         getTipo();
+        getItem();
         // getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -286,8 +316,8 @@ const Protocolos = () => {
                     <InputAdd
                         type='text'
                         placeholder='Buscar Item'
-                    // value={buscador}
-                    // onChange={onBuscarCambios}
+                        value={buscador}
+                        onChange={onBuscarCambios}
                     />
                 </ContentElemenAdd>
                 <Table singleLine>
@@ -299,53 +329,17 @@ const Protocolos = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>1</Table.Cell>
-                            <Table.Cell>Inspección visual conector de entrada de voltaje AC</Table.Cell>
-                            <Table.Cell style={{ textAlign: 'center' }}>
-                                <BotonGuardar>Agregar</BotonGuardar>
-                            </Table.Cell>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Cell>2</Table.Cell>
-                            <Table.Cell>Inspección visual switch ON/OFF verificar encendido y apagado</Table.Cell>
-                            <Table.Cell style={{ textAlign: 'center' }}>
-                                <BotonGuardar>Agregar</BotonGuardar>
-                            </Table.Cell>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Cell>3</Table.Cell>
-                            <Table.Cell>Inspección visual de manómetro verificar estado y funcionamiento</Table.Cell>
-                            <Table.Cell style={{ textAlign: 'center' }}>
-                                <BotonGuardar>Agregar</BotonGuardar>
-                            </Table.Cell>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Cell>4</Table.Cell>
-                            <Table.Cell>Verificar estado de mangueras y frasco</Table.Cell>
-                            <Table.Cell style={{ textAlign: 'center' }}>
-                                <BotonGuardar>Agregar</BotonGuardar>
-                            </Table.Cell>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Cell>5</Table.Cell>
-                            <Table.Cell>Desarme de equipo y revisión de motor</Table.Cell>
-                            <Table.Cell style={{ textAlign: 'center' }}>
-                                <BotonGuardar>Agregar</BotonGuardar>
-                            </Table.Cell>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Cell>6</Table.Cell>
-                            <Table.Cell>Lubricación de partes móviles</Table.Cell>
-                            <Table.Cell style={{ textAlign: 'center' }}>
-                                <BotonGuardar>Agregar</BotonGuardar>
-                            </Table.Cell>
-                        </Table.Row>
+                        {filtroItem().map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }}>
+                                        <BotonGuardar>Agregar</BotonGuardar>
+                                    </Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
 
                     </Table.Body>
                 </Table>
@@ -376,26 +370,3 @@ const Protocolos = () => {
 // };
 
 export default Protocolos;
-
-// const Boton = styled.button`
-// 	display: block;
-// 	padding: 10px 30px;
-// 	border-radius: 100px;
-// 	color: #fff;
-// 	border: none;
-// 	background: #1766DC;
-// 	cursor: pointer;
-// 	font-family: 'Roboto', sans-serif;
-// 	font-weight: 500;
-// 	transition: .3s ease all;
-
-// 	&:hover {
-// 		background: #0066FF;
-// 	}
-// `
-
-// const Contenido = styled.div`
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-// `

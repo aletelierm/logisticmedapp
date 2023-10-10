@@ -40,13 +40,13 @@ const AgregarItems = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Ya existe esta Familia'
+                mensaje: 'Ya existe este Item'
             })
         } else if (item === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'No ha ingresado una Familia'
+                mensaje: 'No ha ingresado un Item'
             })
         } else {
             const it = item.toLocaleUpperCase().trim()
