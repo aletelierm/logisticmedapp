@@ -51,6 +51,7 @@ const Salidas = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const inOut = useRef('');
     const almacenar = useRef([]);
+    const salidaid = useRef([]);
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -568,6 +569,18 @@ const Salidas = () => {
         const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieIn = await getDocs(traerserie);
         const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Validar ID de Entrada
+        const traeId = await getDoc(doc(db, 'salidas', numSerie));
+        if (existeSerie.length === 1) {
+            salidaid.current = existe;
+        } else if (traeId.exists()) {
+            const existeIdIn = traeId.data();
+            const arreglo = [existeIdIn];
+            const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+            salidaid.current = inid;
+        } else {
+            console.log('id entrada', salidaid.current);
+        }
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
@@ -590,7 +603,7 @@ const Salidas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-        } else if (existeSerie.length > 0) {
+        } else if (entradaid.current.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',

@@ -46,6 +46,8 @@ const Entradas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const almacenar = useRef([]);
+    const entradaid = useRef([]);
+
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -319,6 +321,19 @@ const Entradas = () => {
         const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieIn = await getDocs(traerserie);
         const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Validar ID de Entrada
+        const traeId = await getDoc(doc(db, 'entradas', numSerie));
+        if (existeSerie.length === 1) {
+            entradaid.current = existe;
+        } else if (traeId.exists()) {
+            const existeIdIn = traeId.data();
+            const arreglo = [existeIdIn];
+            const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+            entradaid.current = inid;
+        } else {
+            console.log('id entrada', entradaid.current);
+        }
+
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
@@ -350,7 +365,7 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-        } else if (existeSerie.length > 0) {
+        } else if (entradaid.current.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
