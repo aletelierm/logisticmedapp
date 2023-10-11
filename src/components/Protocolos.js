@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 // import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs /*getDoc*/, collection, where, query, /* updateDoc, doc, writeBatch */ } from 'firebase/firestore';
+import { getDocs, /*getDoc,*/ collection, where, query /*, doc,  updateDoc, writeBatch */ } from 'firebase/firestore';
 // import { FaRegEdit } from "react-icons/fa";
 // import { BiAddToQueue } from "react-icons/bi";
 import { Programa } from './TipDoc'
@@ -82,7 +82,6 @@ const Protocolos = () => {
         }
         return 0;
     });
-
     const getItem = async () => {
         const traerit = collection(db, 'items');
         const dato = query(traerit, where('emp_id', '==', users.emp_id));
@@ -110,11 +109,10 @@ const Protocolos = () => {
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setBuscardor(target.value)
     }
-
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-
+    // Agregar Cabecera de Protocolo
     const addCabProtocolo = async (ev) => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
@@ -210,6 +208,57 @@ const Protocolos = () => {
             }
         }
     }
+    // // Agregar Item a Protocolo
+    // const AgregarItem = async (id) => {
+    //     // ev.preventDefault();
+    //     cambiarEstadoAlerta(false);
+    //     cambiarAlerta({});
+    //     // Consultar si Item se encuentra en Documento
+    //     const traerId = await getDoc(doc(db, 'equipos', id));
+    //     if (traerId.exists()) {
+    //         const existeId = traerId.data();
+    //         const arreglo = [existeId];
+    //         const existe = arreglo.map((doc) => ({ ...doc, id: id }));
+    //         almacenar.current = existe;
+    //     } else {
+    //         console.log('almacenar', almacenar.current);
+    //     }
+
+    //     // Filtar por docuemto de Cabecera de Protocolo
+    //     const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+    //     const cabecera = await getDocs(cabProtocolo);
+    //     const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    //     console.log('existeCabProtocolo', existeCabProtocolo)
+    //     // try {
+    //     //     ProtocoloDB({
+    //     //         nombre: nomProt,
+    //     //         familia: nomFamilia,
+    //     //         tipo: nomTipo,
+    //     //         programa: programa,
+    //     //         // dias: dias.current,
+    //     //         item: item.nombre,
+    //     //         userAdd: user.email,
+    //     //         userMod: user.email,
+    //     //         fechaAdd: fechaAdd,
+    //     //         fechaMod: fechaMod,
+    //     //         emp_id: users.emp_id,
+    //     //         confirmado: false
+    //     //     });
+    //     //     cambiarEstadoAlerta(true);
+    //     //     cambiarAlerta({
+    //     //         tipo: 'exito',
+    //     //         mensaje: 'Item Agregado correctamente'
+    //     //     })
+    //     //     setFlag(!flag);
+    //     //     return;
+    //     // } catch (error) {
+    //     //     cambiarEstadoAlerta(true);
+    //     //     cambiarAlerta({
+    //     //         tipo: 'error',
+    //     //         mensaje: error
+    //     //     })
+    //     // }
+    // }
 
     // Agregar una nueva cabecera
     const nuevo = () => {
@@ -303,6 +352,11 @@ const Protocolos = () => {
                         disabled={btnNuevo}
                     >Nuevo</BotonGuardar>
                 </Formulario>
+            </Contenedor>
+
+            <Contenedor>
+                <Titulo>Items Agregados a Protocolo</Titulo>
+
             </Contenedor>
 
             <ListarProveedor>
