@@ -788,7 +788,7 @@ const Salidas = () => {
             const batch = writeBatch(db);
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechaadd });
+                batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechamod });
             });
             try {
                 await batch.commit();

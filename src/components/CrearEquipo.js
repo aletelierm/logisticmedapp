@@ -123,6 +123,8 @@ const CrearEquipos = () => {
                 status: status,
                 entidad: nomEntidad,
                 serie: serie,
+                precio: '',
+                tipoinout: '',
                 flag: true,
                 rut: empresaRut.current,
                 useradd: userAdd,

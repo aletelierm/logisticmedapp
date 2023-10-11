@@ -428,11 +428,23 @@ const Entradas = () => {
             const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
             const cabecera = await getDocs(cab);
             const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            // Filtar por docuemto de Entrada
+            const entra = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+            const entrada = await getDocs(entra);
+            const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            console.log('existein', existein)
 
             const batch = writeBatch(db);
             dataEntrada.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, { status: 'BODEGA', rut: empresa.rut, entidad: empresa.empresa });
+                batch.update(docRef, {
+                    status: 'BODEGA',
+                    rut: empresa.rut,
+                    entidad: empresa.empresa,
+                    price: existein[0].price,
+                    tipoinout: existein[0].tipoinout,
+                    fechamod: existeCab[0].fechaadd
+                });
             });
             try {
                 await batch.commit();
