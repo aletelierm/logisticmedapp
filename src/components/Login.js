@@ -60,7 +60,7 @@ export default function Login() {
             <Grid item xs={12} sm={6} md={4}>
             <img
               height={200}         
-              src="../../LogoLogisticMed.png" alt="imagen" 
+              src="../../logo.png" alt="imagen" 
               style={{width:'100%'}}
               />
           </Grid>

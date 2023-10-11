@@ -23,16 +23,17 @@
     width: 100%;
 }
 
-.imageLogo {
-    padding-left: 1px;
+.imageLogo {   
+    width: 15%;
+    height: 70px;
 }
 
 .imageLogo2 {
     padding-left: 1px;
 }
 .imageLogo img {
-    width: 288px;
-    height: 50;
+       width: 70%;
+    /* height: 10; */
 }
 
 .user {

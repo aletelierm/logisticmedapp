@@ -20,13 +20,12 @@
 }
 
 .imageLogo {
-    padding-left: 10px;
+    width: 15%;
+    height: 70px;
 }
 
 .imageLogo img {
-    cursor: none;
-    width: 200px;
-    height: 60;
+    width: 70%;
 }
 
 .user {
