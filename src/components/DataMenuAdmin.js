@@ -77,6 +77,13 @@ export const DataMenuAdmin = [
     ]
   },
   {
+    title: 'Confirmados',
+    path: 'confirmados',
+    icon: <AiIcons.AiFillHome />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+  },
+  {
     title: 'Reportes',
     path: 'reportes',
     icon: <IoIcons.IoIosInformationCircle />,
