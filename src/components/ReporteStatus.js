@@ -129,6 +129,8 @@ const Reporte2 = () => {
                             <Table.HeaderCell>Modelo</Table.HeaderCell>
                             <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Precio</Table.HeaderCell> */}
+                            {/* <Table.HeaderCell>Estado</Table.HeaderCell> */}
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Status</Table.HeaderCell>
@@ -146,6 +148,8 @@ const Reporte2 = () => {
                                         <Table.Cell>{item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
+                                        {/* <Table.Cell>{item.price}</Table.Cell> */}
+                                        {/* <Table.Cell>{item.tipoinout}</Table.Cell> */}
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.entidad}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>

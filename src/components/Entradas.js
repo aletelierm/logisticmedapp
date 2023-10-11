@@ -46,6 +46,8 @@ const Entradas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const almacenar = useRef([]);
+    const entradaid = useRef([]);
+
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -59,7 +61,7 @@ const Entradas = () => {
         const doc = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setDataEntrada(documento)
+        setDataEntrada(documento);
     }
     //Leer  Empresa
     const getEmpresa = async () => {
@@ -134,7 +136,11 @@ const Entradas = () => {
             // Exite N° serie en Entradas 
             const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
-            console.log(almacenar.current.length === 0);
+            // Validar en N° Serie en todos los documento de Entradas
+            const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+            const serieIn = await getDocs(traerserie);
+            const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -146,6 +152,12 @@ const Entradas = () => {
                 cambiarAlerta({
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
+                })
+            } else if (existeSerie.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
                 })
             } else {
                 const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
@@ -302,9 +314,26 @@ const Entradas = () => {
         } else {
             console.log('almacenar', almacenar.current);
         }
-        // Validar en N° Serie en Entradas        
+        // Validar en N° Serie en el documento de Entradas que se esta trabatando     
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
+        // Validar en N° Serie en todos los documento de Entradas
+        const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        const serieIn = await getDocs(traerserie);
+        const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Validar ID de Entrada
+        const traeId = await getDoc(doc(db, 'entradas', numSerie));
+        if (existeSerie.length === 1) {
+            entradaid.current = existe;
+        } else if (traeId.exists()) {
+            const existeIdIn = traeId.data();
+            const arreglo = [existeIdIn];
+            const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+            entradaid.current = inid;
+        } else {
+            console.log('id entrada', entradaid.current);
+        }
+
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
@@ -335,6 +364,12 @@ const Entradas = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
+            })
+        } else if (entradaid.current.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
             })
         } else {
             const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
@@ -401,8 +436,6 @@ const Entradas = () => {
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
-        console.log(dataEntrada)
         if (dataEntrada.length === 0) {
             Swal.fire('No hay Datos pr confirmar en este documento');
         } else {
@@ -410,11 +443,23 @@ const Entradas = () => {
             const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
             const cabecera = await getDocs(cab);
             const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            // Filtar por docuemto de Entrada
+            const entra = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+            const entrada = await getDocs(entra);
+            const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            console.log('existein', existein)
 
             const batch = writeBatch(db);
             dataEntrada.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, { status: 'BODEGA', rut: empresa.rut, entidad: empresa.empresa });
+                batch.update(docRef, {
+                    status: 'BODEGA',
+                    rut: empresa.rut,
+                    entidad: empresa.empresa,
+                    price: existein[0].price,
+                    tipoinout: existein[0].tipoinout,
+                    fechamod: new Date()
+                });
             });
             try {
                 await batch.commit();
@@ -449,6 +494,7 @@ const Entradas = () => {
             setBtnAgregar(true);
             setBtnGuardar(false)
             setBtnNuevo(true);
+            setFlag(!flag)
         }
     };
 
@@ -504,7 +550,6 @@ const Entradas = () => {
     useEffect(() => {
         consultarIn();
         consultarCab();
-        console.log('data entrada useefect', dataEntrada)
         // if (dataEntrada.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -652,13 +697,19 @@ const Entradas = () => {
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>${item.price}.-</Table.Cell>
-                                        <Table.Cell style={{ textAlign: 'center' }}>
+                                        {
+                                            item.tipoinout === 'COMPRA' || item.tipoinout === 'ARRIENDO' || item.tipoinout === 'COMODATO' ?
+                                            <Table.Cell style={{ textAlign: 'center' }}>
                                             <MdDeleteForever
                                                 style={{ fontSize: '22px', color: '#69080A', }}
                                                 onClick={() => deleteItem(item.id)}
                                                 title='Eliminar Item'
                                             />
                                         </Table.Cell>
+                                        :
+                                            ''
+                                        }
+                                        
                                     </Table.Row>
                                 )
                             })}
@@ -706,8 +757,6 @@ const Entradas = () => {
                                         setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
-                                        // if (dataEntrada.length > 0) setBtnConfirmar(false);
-                                        // console.log(dataEntrada)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )

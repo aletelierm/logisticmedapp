@@ -51,6 +51,7 @@ const Salidas = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const inOut = useRef('');
     const almacenar = useRef([]);
+    const salidaid = useRef([]);
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -165,6 +166,10 @@ const Salidas = () => {
             // Exite N° serie en Entradas 
             const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
+            // Validar en N° Serie en todos los documento de Entradas
+            const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+            const serieIn = await getDocs(traerserie);
+            const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
@@ -177,6 +182,12 @@ const Salidas = () => {
                 cambiarAlerta({
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
+                })
+            } else if (existeSerie.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
                 })
             } else {
                 const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
@@ -554,6 +565,22 @@ const Salidas = () => {
         // Exite N° serie en Entradas 
         const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
+        // Validar en N° Serie en todos los documento de Entradas
+        const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        const serieIn = await getDocs(traerserie);
+        const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Validar ID de Entrada
+        const traeId = await getDoc(doc(db, 'salidas', numSerie));
+        if (existeSerie.length === 1) {
+            salidaid.current = existe;
+        } else if (traeId.exists()) {
+            const existeIdIn = traeId.data();
+            const arreglo = [existeIdIn];
+            const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+            salidaid.current = inid;
+        } else {
+            console.log('id entrada', salidaid.current);
+        }
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
@@ -575,6 +602,12 @@ const Salidas = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
+            })
+        } else if (entradaid.current.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
             })
         } else {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
@@ -768,7 +801,7 @@ const Salidas = () => {
             const batch = writeBatch(db);
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechaadd });
+                batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechamod });
             });
             try {
                 await batch.commit();
@@ -845,7 +878,6 @@ const Salidas = () => {
     }
 
     const cuerpoCorreo = (data) => {
-
         return ReactDOMServer.renderToString(
             <div>
                 <h2>Salida de Bodega</h2>

@@ -242,7 +242,7 @@ const Confirmados = () => {
                 const batch = writeBatch(db);
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad });
+                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
                     await batch.commit();
@@ -295,7 +295,7 @@ const Confirmados = () => {
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     console.log('id equipo',docs.eq_id)
-                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad });
+                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
 
                 try {
@@ -369,7 +369,7 @@ const Confirmados = () => {
                 const batch2 = writeBatch(db);
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch2.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad });
+                    batch2.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
                     await batch2.commit();
