@@ -443,7 +443,7 @@ const Entradas = () => {
                     entidad: empresa.empresa,
                     price: existein[0].price,
                     tipoinout: existein[0].tipoinout,
-                    fechamod: existeCab[0].fechaadd
+                    fechamod: new Date()
                 });
             });
             try {
@@ -682,13 +682,19 @@ const Entradas = () => {
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>${item.price}.-</Table.Cell>
-                                        <Table.Cell style={{ textAlign: 'center' }}>
+                                        {
+                                            item.tipoinout === 'COMPRA' || item.tipoinout === 'ARRIENDO' || item.tipoinout === 'COMODATO' ?
+                                            <Table.Cell style={{ textAlign: 'center' }}>
                                             <MdDeleteForever
                                                 style={{ fontSize: '22px', color: '#69080A', }}
                                                 onClick={() => deleteItem(item.id)}
                                                 title='Eliminar Item'
                                             />
                                         </Table.Cell>
+                                        :
+                                            ''
+                                        }
+                                        
                                     </Table.Row>
                                 )
                             })}

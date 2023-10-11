@@ -242,7 +242,7 @@ const Confirmados = () => {
                 const batch = writeBatch(db);
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad });
+                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
                     await batch.commit();
