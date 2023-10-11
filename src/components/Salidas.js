@@ -603,7 +603,7 @@ const Salidas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-        } else if (entradaid.current.length > 0) {
+        } else if (salidaid.current.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -651,6 +651,7 @@ const Salidas = () => {
                         });
                         setNumSerie('');
                         almacenar.current = [];
+                        salidaid.current = [];
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
@@ -706,6 +707,7 @@ const Salidas = () => {
                         });
                         setNumSerie('');
                         almacenar.current = [];
+                        salidaid.current = [];
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
@@ -767,6 +769,7 @@ const Salidas = () => {
                         });
                         setNumSerie('');
                         almacenar.current = [];
+                        salidaid.current = [];
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
@@ -788,6 +791,7 @@ const Salidas = () => {
         }
         setNumSerie('');
         almacenar.current = [];
+        salidaid.current = [];
     }
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {

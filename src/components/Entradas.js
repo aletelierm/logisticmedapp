@@ -409,6 +409,7 @@ const Entradas = () => {
                     setPrice('');
                     setNumSerie('');
                     almacenar.current = [];
+                    entradaid.current = [];
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -430,6 +431,7 @@ const Entradas = () => {
         setPrice('');
         setNumSerie('');
         almacenar.current = [];
+        entradaid.current = [];
     }
 
     // Función para actualizar varios documentos por lotes
