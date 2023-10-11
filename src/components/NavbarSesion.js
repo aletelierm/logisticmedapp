@@ -22,11 +22,12 @@ const NavbarSesion = () => {
         <>
             <div className='navbar'>
                 <div className='imageLogo'>
-                    <img src='../../LogoLogisticMed.png' alt='LogoLogisticMed' style={{ height: '240px' }} />
+                    {/* <img src='../../LogoLogisticMed.png' alt='LogoLogisticMed' style={{ height: '240px' }} /> */}
+                    <img src='../../logo.png' alt='LogoLogisticMed' /* style={{ height: '140px' }} */ />
                 </div>
-                {/* <div className='imageLogo2'>
-                    <img src='../../EshoJNBwJlw1Sh3mIBYv.png' alt='LogoLogisticMed' style={{ height: '70px',width:'100px' }} />
-                </div>  */}              
+                <div className='imageLogo2'>
+                    <img src={`../../${users.emp_id}.png`} alt='LogoLogisticMed' style={{ height: '70px',width:'100px' }} />
+                </div>             
                 
                 <div>                   
                     v1.0 Beta
