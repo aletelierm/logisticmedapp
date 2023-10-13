@@ -317,23 +317,27 @@ const Entradas = () => {
         // Validar en N° Serie en el documento de Entradas que se esta trabatando     
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
+
+        // Pendiente revisar
         // Validar en N° Serie en todos los documento de Entradas
-        const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
         const serieIn = await getDocs(traerserie);
         const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log('existeSerie', existeSerie)
         // Validar ID de Entrada
         const traeId = await getDoc(doc(db, 'entradas', numSerie));
-        if (existeSerie.length === 1) {
-            entradaid.current = existe;
+        if (existeSerie.length > 0) {
+            entradaid.current = existeSerie;
         } else if (traeId.exists()) {
             const existeIdIn = traeId.data();
             const arreglo = [existeIdIn];
             const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
             entradaid.current = inid;
         } else {
-            console.log('id entrada', entradaid.current);
+            console.log('entrada', entradaid.current);
         }
-
+        // Pendiente revisar hasta aqui
+        
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
@@ -369,7 +373,7 @@ const Entradas = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
+                mensaje: 'Equipo ya se encuentra Ingresado en otro documento'
             })
         } else {
             const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
