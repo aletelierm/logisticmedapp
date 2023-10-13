@@ -61,7 +61,7 @@ export default function Login() {
             <img
               height={200}         
               src="../../logo.png" alt="imagen" 
-              style={{width:'100%'}}
+              style={{width:'60%',marginLeft:'60px'}}
               />
           </Grid>
           </Grid>
