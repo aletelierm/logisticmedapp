@@ -183,12 +183,12 @@ const Salidas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-            } else if (existeSerie.length > 0) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
-                })
+                // } else if (existeSerie.length > 0) {
+                //     cambiarEstadoAlerta(true);
+                //     cambiarAlerta({
+                //         tipo: 'error',
+                //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
+                //     })
             } else {
                 const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
                 const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
@@ -550,6 +550,7 @@ const Salidas = () => {
         const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieEq = await getDocs(traerEq);
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log('existe', existe)
         // Validar ID en equipo
         const traerId = await getDoc(doc(db, 'equipos', numSerie));
         if (existe.length === 1) {
@@ -562,10 +563,12 @@ const Salidas = () => {
         } else {
             console.log('almacenar', almacenar.current);
         }
-        // Exite N° serie en Entradas 
+        // Exite N° serie en Salidas 
         const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
-        // Validar en N° Serie en todos los documento de Entradas
+
+        // Pendiente revisar
+        // Validar en N° Serie en todos los documento de Salidas
         const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieIn = await getDocs(traerserie);
         const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
@@ -579,10 +582,19 @@ const Salidas = () => {
             const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
             salidaid.current = inid;
         } else {
-            console.log('id entrada', salidaid.current);
+            console.log('salida.current', salidaid.current);
         }
+        // Pendiente revisar hasta aqui
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+
+        // Validar que equipo pertenezca a proveedor y que este en arriendo
+        const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
+        const valida = await getDocs(traer);
+        const existeeqprov = (valida.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log('existeeqprov', existeeqprov)
+
+
 
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
@@ -603,22 +615,23 @@ const Salidas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-        } else if (salidaid.current.length > 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
-            })
+            // } else if (salidaid.current.length > 0) {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
+            //     })
         } else {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
-            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
-            const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
+            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE' && st.rut === rut).length === 1;
+            const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
+            
             if (nomTipoOut === 'RETIRO CLIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Cliente'
+                        mensaje: 'Equipo no se encuentra en este Cliente'
                     })
                 } else {
                     inOut.current = 'PROCESO RETIRO CLIENTE';
@@ -726,17 +739,28 @@ const Salidas = () => {
                     }
                 }
             } else {
-                if (!existeStatusBod) {
+                if (nomTipoOut === 'DEVOLUCION PROVEEDOR' && existeeqprov.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Equipo no pertenece a este Proveedor o no ha sido arrendado'
+                    })
+                    console.log('pasa por existe prov')
+                } else if (!existeStatusBod) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
                         mensaje: 'Equipo no se encuentra en Bodega'
                     })
+                    console.log('PASA POR CONSULTA DE BODEGA')
                 } else {
                     if (nomTipoOut === 'CLIENTE') {
                         inOut.current = 'TRANSITO CLIENTE'
                     } else if (nomTipoOut === 'SERVICIO TECNICO') {
                         inOut.current = 'TRANSITO S.T.'
+                    } else if (nomTipoOut === 'DEVOLUCION PROVEEDOR') {
+                        inOut.current = 'DEVOLUCION PROVEEDOR'
+                        console.log('paso por devolucion proveedor')
                     } else {
                         inOut.current = nomTipoOut
                     }
@@ -773,7 +797,7 @@ const Salidas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Item guardado correctamente'
+                            mensaje: 'Item guardado correctamente la devolucion'
                         })
                         setFlag(!flag);
                         setBtnConfirmar(false);
