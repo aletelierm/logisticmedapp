@@ -40,6 +40,7 @@ const Entradas = () => {
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
     const [flag, setFlag] = useState(false);
+    const [flag2, setFlag2] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
@@ -112,7 +113,7 @@ const Entradas = () => {
             }
         }
     }
-    // Validar N°serie
+    // Validar N°serie //Falta Revisar
     const detectar = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -330,7 +331,7 @@ const Entradas = () => {
         // en revision
 
 
-        // Filtar por docuemto de Cabecera
+        // Filtar por docuemto de Cabecera para guardar el id de cabecera y Date
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
@@ -369,7 +370,8 @@ const Entradas = () => {
             })
         } else {
             const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
-            if (existeStatus > 0) {
+            console.log('existeStatus', existeStatus)
+            if (existeStatus) {
                 const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -446,6 +448,14 @@ const Entradas = () => {
             const entrada = await getDocs(entra);
             const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
+            // Filtar por Status Preparacion Pendiente
+            const traerStatus = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
+            const status = await getDocs(traerStatus);
+            const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+
+
+
+
             const batch = writeBatch(db);
             dataEntrada.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
@@ -470,7 +480,8 @@ const Entradas = () => {
                     usermod: user.email,
                     fechamod: fechaMod
                 });
-                setFlag(!flag)
+                setFlag(!flag);
+                setFlag2(!flag2);
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -491,7 +502,8 @@ const Entradas = () => {
             setBtnAgregar(true);
             setBtnGuardar(false)
             setBtnNuevo(true);
-            setFlag(!flag)
+            setFlag(!flag);
+            setFlag2(!flag2);
         }
     };
 
@@ -544,6 +556,10 @@ const Entradas = () => {
         consultarCab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+    useEffect(() => {
+        getStatus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag2, setFlag2])
     useEffect(() => {
         consultarIn();
         consultarCab();
