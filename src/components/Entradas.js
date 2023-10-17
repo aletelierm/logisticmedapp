@@ -318,26 +318,18 @@ const Entradas = () => {
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
 
-        // Pendiente revisar
+        // en revision
         // Validar en N° Serie en todos los documento de Entradas
         const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
         const serieIn = await getDocs(traerserie);
         const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log('existeSerie', existeSerie)
-        // Validar ID de Entrada
-        const traeId = await getDoc(doc(db, 'entradas', numSerie));
-        if (existeSerie.length > 0) {
-            entradaid.current = existeSerie;
-        } else if (traeId.exists()) {
-            const existeIdIn = traeId.data();
-            const arreglo = [existeIdIn];
-            const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-            entradaid.current = inid;
-        } else {
-            console.log('entrada', entradaid.current);
-        }
-        // Pendiente revisar hasta aqui
-        
+        // Validar en Eq_id en todos los documento de Entradas
+        const traerEq_id = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
+        const inEq_id = await getDocs(traerEq_id);
+        const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // en revision
+
+
         // Filtar por docuemto de Cabecera
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
@@ -369,7 +361,7 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-        } else if (entradaid.current.length > 0) {
+        } else if (existeSerie.length > 0 || existeEq_idIn.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -453,7 +445,6 @@ const Entradas = () => {
             const entra = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
             const entrada = await getDocs(entra);
             const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-            console.log('existein', existein)
 
             const batch = writeBatch(db);
             dataEntrada.forEach((docs) => {
@@ -705,17 +696,17 @@ const Entradas = () => {
                                         <Table.Cell>${item.price}.-</Table.Cell>
                                         {
                                             item.tipoinout === 'COMPRA' || item.tipoinout === 'ARRIENDO' || item.tipoinout === 'COMODATO' ?
-                                            <Table.Cell style={{ textAlign: 'center' }}>
-                                            <MdDeleteForever
-                                                style={{ fontSize: '22px', color: '#69080A', }}
-                                                onClick={() => deleteItem(item.id)}
-                                                title='Eliminar Item'
-                                            />
-                                        </Table.Cell>
-                                        :
-                                            ''
+                                                <Table.Cell style={{ textAlign: 'center' }}>
+                                                    <MdDeleteForever
+                                                        style={{ fontSize: '22px', color: '#69080A', }}
+                                                        onClick={() => deleteItem(item.id)}
+                                                        title='Eliminar Item'
+                                                    />
+                                                </Table.Cell>
+                                                :
+                                                ''
                                         }
-                                        
+
                                     </Table.Row>
                                 )
                             })}

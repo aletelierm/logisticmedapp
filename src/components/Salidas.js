@@ -183,12 +183,12 @@ const Salidas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-                // } else if (existeSerie.length > 0) {
-                //     cambiarEstadoAlerta(true);
-                //     cambiarAlerta({
-                //         tipo: 'error',
-                //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
-                //     })
+                } else if (existeSerie.length > 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
+                    })
             } else {
                 const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
                 const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
@@ -550,7 +550,7 @@ const Salidas = () => {
         const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieEq = await getDocs(traerEq);
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log('existe', existe)
+        // console.log('existe', existe)
         // Validar ID en equipo
         const traerId = await getDoc(doc(db, 'equipos', numSerie));
         if (existe.length === 1) {
@@ -570,21 +570,24 @@ const Salidas = () => {
         // Pendiente revisar
         // Validar en N° Serie en todos los documento de Salidas
         const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        const serieIn = await getDocs(traerserie);
-        const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        const serieout = await getDocs(traerserie);
+        const existeSerie = (serieout.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log('existeSerie', existeSerie)
+
         // Validar ID de Entrada
-        const traeId = await getDoc(doc(db, 'salidas', numSerie));
-        if (existeSerie.length === 1) {
-            salidaid.current = existe;
-        } else if (traeId.exists()) {
-            const existeIdIn = traeId.data();
-            const arreglo = [existeIdIn];
-            const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-            salidaid.current = inid;
-        } else {
-            console.log('salida.current', salidaid.current);
-        }
+        // const traeId = await getDoc(doc(db, 'salidas', numSerie));
+        // if (existeSerie.length === 1) {
+        //     salidaid.current = existe;
+        // } else if (traeId.exists()) {
+        //     const existeIdIn = traeId.data();
+        //     const arreglo = [existeIdIn];
+        //     const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
+        //     salidaid.current = inid;
+        // } else {
+        //     console.log('salida.current', salidaid.current);
+        // }
         // Pendiente revisar hasta aqui
+
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
 
@@ -592,9 +595,6 @@ const Salidas = () => {
         const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
         const valida = await getDocs(traer);
         const existeeqprov = (valida.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log('existeeqprov', existeeqprov)
-
-
 
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
@@ -615,7 +615,7 @@ const Salidas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-            // } else if (salidaid.current.length > 0) {
+            // } else if (existeSerie.length > 0) {
             //     cambiarEstadoAlerta(true);
             //     cambiarAlerta({
             //         tipo: 'error',
