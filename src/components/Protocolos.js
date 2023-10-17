@@ -1,12 +1,12 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useRef } from 'react';
 import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
-// import EntradasDB from '../firebase/EntradasDB';
+import ProtocoloDB from '../firebase/ProtocoloDB';
 import Alertas from './Alertas';
 // import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, /*getDoc,*/ collection, where, query /*, doc,  updateDoc, writeBatch */ } from 'firebase/firestore';
+import { getDocs, getDoc, collection, where, query , doc /*,  updateDoc, writeBatch */ } from 'firebase/firestore';
 // import { FaRegEdit } from "react-icons/fa";
 // import { BiAddToQueue } from "react-icons/bi";
 import { Programa } from './TipDoc'
@@ -43,6 +43,7 @@ const Protocolos = () => {
     // const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const dias = useRef('');
+    const almacenar = useRef('');
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -208,57 +209,58 @@ const Protocolos = () => {
             }
         }
     }
-    // // Agregar Item a Protocolo
-    // const AgregarItem = async (id) => {
-    //     // ev.preventDefault();
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-    //     // Consultar si Item se encuentra en Documento
-    //     const traerId = await getDoc(doc(db, 'equipos', id));
-    //     if (traerId.exists()) {
-    //         const existeId = traerId.data();
-    //         const arreglo = [existeId];
-    //         const existe = arreglo.map((doc) => ({ ...doc, id: id }));
-    //         almacenar.current = existe;
-    //     } else {
-    //         console.log('almacenar', almacenar.current);
-    //     }
+    // Agregar Item a Protocolo
+    const AgregarItem = async (id) => {
+        // ev.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // Consultar si Item se encuentra en Documento
+        const traerId = await getDoc(doc(db, 'equipos', id));
+        if (traerId.exists()) {
+            const existeId = traerId.data();
+            const arreglo = [existeId];
+            const existe = arreglo.map((doc) => ({ ...doc, id: id }));
+            almacenar.current = existe;
+        } else {
+            console.log('almacenar', almacenar.current);
+        }
 
-    //     // Filtar por docuemto de Cabecera de Protocolo
-    //     const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
-    //     const cabecera = await getDocs(cabProtocolo);
-    //     const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-    //     console.log('existeCabProtocolo', existeCabProtocolo)
-    //     // try {
-    //     //     ProtocoloDB({
-    //     //         nombre: nomProt,
-    //     //         familia: nomFamilia,
-    //     //         tipo: nomTipo,
-    //     //         programa: programa,
-    //     //         // dias: dias.current,
-    //     //         item: item.nombre,
-    //     //         userAdd: user.email,
-    //     //         userMod: user.email,
-    //     //         fechaAdd: fechaAdd,
-    //     //         fechaMod: fechaMod,
-    //     //         emp_id: users.emp_id,
-    //     //         confirmado: false
-    //     //     });
-    //     //     cambiarEstadoAlerta(true);
-    //     //     cambiarAlerta({
-    //     //         tipo: 'exito',
-    //     //         mensaje: 'Item Agregado correctamente'
-    //     //     })
-    //     //     setFlag(!flag);
-    //     //     return;
-    //     // } catch (error) {
-    //     //     cambiarEstadoAlerta(true);
-    //     //     cambiarAlerta({
-    //     //         tipo: 'error',
-    //     //         mensaje: error
-    //     //     })
-    //     // }
-    // }
+        // Filtar por docuemto de Cabecera de Protocolo
+        const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        const cabecera = await getDocs(cabProtocolo);
+        const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        console.log('existeCabProtocolo', existeCabProtocolo)
+        try {
+            const nomProt = nomProtocolo.toLocaleUpperCase().trim();
+            ProtocoloDB({
+                nombre: nomProt,
+                familia: nomFamilia,
+                tipo: nomTipo,
+                programa: programa,
+                dias: dias.current,
+                item: item.nombre,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id,
+                confirmado: false
+            });
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Item Agregado correctamente'
+            })
+            setFlag(!flag);
+            return;
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: error
+            })
+        }
+    }
 
     // Agregar una nueva cabecera
     const nuevo = () => {
@@ -389,7 +391,7 @@ const Protocolos = () => {
                                     <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}>
-                                        <BotonGuardar>Agregar</BotonGuardar>
+                                        <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar>
                                     </Table.Cell>
                                 </Table.Row>
                             )
@@ -407,20 +409,5 @@ const Protocolos = () => {
         </ContenedorProveedor>
     );
 };
-
-//         <div>
-//             <h1>Protocolos</h1>
-//             {/* <Boton onClick={() => setEstadoModal(!estadoModal)}>Modal</Boton>
-//             <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
-//                 <Contenido>
-//                     <h1>Ventana Modal</h1>
-//                     <p>reutilizaba</p>
-//                     <Boton onClick={() => setEstadoModal(!estadoModal)}>Aceptar</Boton>
-//                 </Contenido>
-//             </Modal> */}
-
-//         </div>
-//     );
-// };
 
 export default Protocolos;

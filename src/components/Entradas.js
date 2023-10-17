@@ -365,7 +365,7 @@ const Entradas = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Equipo ya se encuentra Ingresado en otro documento'
+                mensaje: 'Equipo ya se encuentra Ingresado como Compra'
             })
         } else {
             const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
