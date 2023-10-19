@@ -26,7 +26,7 @@ const NavbarSesion = () => {
                     <img src='../../logo.png' alt='LogoLogisticMed' /* style={{ height: '140px' }} */ />
                 </div>
                 <div className='imageLogo2'>
-                    <img src={`../../${users.emp_id}.png`} alt='LogoLogisticMed' style={{ height: '70px',width:'100px' }} />
+                    <img src={`../../${users.emp_id}.png`} alt='LogoEmprsa' style={{ height: '70px',width:'100px' }} />
                 </div>             
                 
                 <div>                   
