@@ -125,9 +125,11 @@ const Reporte2 = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             {/* <Table.HeaderCell>Nombre Equipo</Table.HeaderCell> */}
                             <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-                            <Table.HeaderCell>Marca</Table.HeaderCell>
-                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Marca</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell> */}
                             <Table.HeaderCell>Serie</Table.HeaderCell>
+                            <Table.HeaderCell>Precio</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             {/* <Table.HeaderCell>Precio</Table.HeaderCell> */}
                             {/* <Table.HeaderCell>Estado</Table.HeaderCell> */}
@@ -144,9 +146,11 @@ const Reporte2 = () => {
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         {/* <Table.Cell>{item.tipo + " - " + item.marca + "  - " + item.modelo}</Table.Cell> */}
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.tipo}</Table.Cell>
-                                        <Table.Cell>{item.marca}</Table.Cell>
-                                        <Table.Cell>{item.modelo}</Table.Cell>
+                                        {/* <Table.Cell>{item.marca}</Table.Cell>
+                                        <Table.Cell>{item.modelo}</Table.Cell> */}
                                         <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell>{item.price}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
                                         {/* <Table.Cell>{item.price}</Table.Cell> */}
                                         {/* <Table.Cell>{item.tipoinout}</Table.Cell> */}
