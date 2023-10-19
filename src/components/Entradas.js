@@ -18,7 +18,7 @@ import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonG
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
 // import AgregarCampoB from '../herramientas/AgregarCampoB';
-import AgregarCampo from '../firebase/AgregarCampo';
+// import AgregarCampo from '../firebase/AgregarCampo';
 
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -48,7 +48,6 @@ const Entradas = () => {
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
-    const [leer, setLeer] = useState([]);
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 
@@ -321,7 +320,6 @@ const Entradas = () => {
         // Validar en N° Serie en el documento de Entradas que se esta trabatando     
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
-
         // Validar en N° Serie en todos los documento de Entradas
         const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
         const serieIn = await getDocs(traerserie);
@@ -330,7 +328,6 @@ const Entradas = () => {
         const traerSC = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
         const confirmadoS = await getDocs(traerSC);
         const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(existeconfirmado)
         // Validar en Eq_id en todos los documento de Entradas
         const traerEq_id = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
         const inEq_id = await getDocs(traerEq_id);
@@ -339,7 +336,6 @@ const Entradas = () => {
         const traerID = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
         const confirmadoID = await getDocs(traerID);
         const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log(existeID)
         // Filtar por docuemto de Cabecera para guardar el id de cabecera y Date
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
@@ -378,12 +374,6 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra Ingresado como Compra'
             })
-        // } else if (!existeStatusAoC) {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'Equipo ya se encuentra Arrendado o en Comodato'
-        //     })
         } else if (existeconfirmado.length > 0 || existeID.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -475,10 +465,6 @@ const Entradas = () => {
             // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
             // const status = await getDocs(traerStatusPrep);
             // const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-
-            // const traerStatusDP = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
-            // const statusDP = await getDocs(traerStatusDP);
-            // const existeStatusDP = (statusDP.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
             const batch = writeBatch(db);
             dataEntrada.forEach((docs) => {
@@ -598,26 +584,26 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    const agregarCampo = async () => {
-        // console.log('se ejecuta')
-        // const data = await getDocs(collection(db, "status"));
-        // setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        const docu = query(collection(db, 'status'), where('emp_id', '==', users.emp_id));
-        const docum = await getDocs(docu);
-        const documento = (docum.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        const batch = writeBatch(db);
-        documento.forEach((docs) => {
-            const docRef = doc(db, 'status', docs.id);
-            batch.update(docRef, {
-                status: 'PREPARACION'
-            });
-        });
-        try {
-            await batch.commit();
-        } catch (error) {
-            console.log("Error al guardar", error);
-        }
-    }
+    // const agregarCampo = async () => {
+    //     // console.log('se ejecuta')
+    //     // const data = await getDocs(collection(db, "status"));
+    //     // setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    //     const docu = query(collection(db, 'status'), where('emp_id', '==', users.emp_id));
+    //     const docum = await getDocs(docu);
+    //     const documento = (docum.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    //     const batch = writeBatch(db);
+    //     documento.forEach((docs) => {
+    //         const docRef = doc(db, 'status', docs.id);
+    //         batch.update(docRef, {
+    //             status: 'PREPARACION'
+    //         });
+    //     });
+    //     try {
+    //         await batch.commit();
+    //     } catch (error) {
+    //         console.log("Error al guardar", error);
+    //     }
+    // }
 
 
     return (
