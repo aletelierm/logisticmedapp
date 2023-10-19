@@ -25,7 +25,7 @@ collectionRef.get()
 
       // Actualiza el campo en cada documento
       docRef.update({
-        price: admin.firestore.FieldValue.delete()        
+        precio: admin.firestore.FieldValue.delete()        
       })
       .then(() => {
         console.log(`Documento con ID ${id} eliminado con éxito.`);
