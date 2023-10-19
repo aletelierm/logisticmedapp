@@ -17,6 +17,8 @@ import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
+// import AgregarCampoB from '../herramientas/AgregarCampoB';
+import AgregarCampo from '../firebase/AgregarCampo';
 
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -46,6 +48,7 @@ const Entradas = () => {
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const [leer, setLeer] = useState([]);
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 
@@ -398,6 +401,7 @@ const Entradas = () => {
                         rfid: almacenar.current[0].rfid,
                         tipMov: 1,
                         observacion: '',
+                        confirmado: false,
                         userAdd: user.email,
                         userMod: user.email,
                         fechaAdd: fechaAdd,
@@ -449,11 +453,13 @@ const Entradas = () => {
             const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
             // Filtar por Status Preparacion Pendiente
-            const traerStatus = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
-            const status = await getDocs(traerStatus);
+            const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
+            const status = await getDocs(traerStatusPrep);
             const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
-
+            const traerStatusDP = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
+            const statusDP = await getDocs(traerStatusDP);
+            const existeStatusDP = (statusDP.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
 
             const batch = writeBatch(db);
@@ -468,12 +474,19 @@ const Entradas = () => {
                     fechamod: new Date()
                 });
             });
+            dataEntrada.forEach((docs) => {
+                const docRef = doc(db, 'entradas', docs.id);
+                batch.update(docRef, {
+                    confirmado: true,
+                    fechamod: new Date()
+                });
+            });
             try {
                 await batch.commit();
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
-                    mensaje: 'Documentos actualizados correctamente.'
+                    mensaje: 'Documentos actualizados correctamente. LOS DOS.'
                 });
                 await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
                     confirmado: true,
@@ -567,6 +580,27 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
+    // const agregarCampo = async () => {
+    //     const data = await getDocs(collection(db, "entradas"));
+    //     setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    //         // AgregarCampo(docs.id);
+    //         // await updateDoc(doc(db, 'entradas', id),{
+    //         //     confirmado: false
+    //         const batch = writeBatch(db);
+    //         leer.forEach((doc) => {
+    //             const docRef = doc(db, 'entradas', doc.id);
+    //             batch.update(docRef, {
+    //                 confirmado: false
+    //             });
+    //         });
+    //         try {
+    //             await batch.commit();
+    //         } catch {
+    //             console.log("Error al guardar");
+    //         }
+    //     }
+    
+
     return (
         <ContenedorProveedor>
             <Contenedor >
@@ -657,6 +691,8 @@ const Entradas = () => {
                         disabled={btnNuevo}
                     >
                         Nuevo</BotonGuardar>
+                        {/* <AgregarCampoB /> */}
+                        {/* <BotonGuardar onClick={() => agregarCampo()}>Agregar Campo</BotonGuardar> */}
                 </Formulario>
             </Contenedor>
             <Contenedor>
