@@ -8,7 +8,7 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-const collectionRef = db.collection('entradas'); // Reemplaza con tu colección específica
+const collectionRef = db.collection('status'); // Reemplaza con tu colección específica
 
 // Realiza una consulta para obtener los documentos
 collectionRef.get()
@@ -25,10 +25,10 @@ collectionRef.get()
 
       // Actualiza el campo en cada documento
       docRef.update({
-        confirmado: true
+        price: admin.firestore.FieldValue.delete()        
       })
       .then(() => {
-        console.log(`Documento con ID ${id} actualizado con éxito.`);
+        console.log(`Documento con ID ${id} eliminado con éxito.`);
       })
       .catch(error => {
         console.error(`Error al actualizar el documento con ID ${id}:`, error);
