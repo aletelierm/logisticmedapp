@@ -322,7 +322,6 @@ const Entradas = () => {
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
 
-        // en revision
         // Validar en N° Serie en todos los documento de Entradas
         const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
         const serieIn = await getDocs(traerserie);
@@ -330,14 +329,17 @@ const Entradas = () => {
         // Validar en Eq_id en todos los documento de Entradas
         const traerEq_id = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
         const inEq_id = await getDocs(traerEq_id);
-        const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // en revision
-
+        const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 
         // Filtar por docuemto de Cabecera para guardar el id de cabecera y Date
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+
+        // Validar en entrdas que equipos esten en Arriendo/Comodato
+        const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
+        console.log('existeStatusAoC', existeStatusAoC)
+
 
         if (price === '') {
             cambiarEstadoAlerta(true);
@@ -371,63 +373,59 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra Ingresado como Compra'
             })
+        } else if (!existeStatusAoC) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra Arrendado o en Comodato'
+            })
+
         } else {
-            const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
-            console.log('existeStatus', existeStatus)
-            if (existeStatus) {
-                const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
+            try {
+                EntradasDB({
+                    numDoc: numDoc,
+                    tipDoc: nomTipDoc,
+                    date: existeCab[0].date,
+                    tipoInOut: nomTipoIn,
+                    rut: rut,
+                    entidad: entidad,
+                    price: price,
+                    cab_id: existeCab[0].id,
+                    eq_id: almacenar.current[0].id,
+                    familia: almacenar.current[0].familia,
+                    tipo: almacenar.current[0].tipo,
+                    marca: almacenar.current[0].marca,
+                    modelo: almacenar.current[0].modelo,
+                    serie: almacenar.current[0].serie,
+                    rfid: almacenar.current[0].rfid,
+                    tipMov: 1,
+                    observacion: '',
+                    confirmado: false,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                });
+                setPrice('');
+                setNumSerie('');
+                almacenar.current = [];
+                entradaid.current = [];
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Item guardado correctamente'
+                })
+                setFlag(!flag);
+                setBtnConfirmar(false);
+                setBtnNuevo(false);
+                return;
+            } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: `Este Equipo ya existe y su Estado es en : ${estado[0].status} `
+                    mensaje: error
                 })
-            } else {
-                try {
-                    EntradasDB({
-                        numDoc: numDoc,
-                        tipDoc: nomTipDoc,
-                        date: existeCab[0].date,
-                        tipoInOut: nomTipoIn,
-                        rut: rut,
-                        entidad: entidad,
-                        price: price,
-                        cab_id: existeCab[0].id,
-                        eq_id: almacenar.current[0].id,
-                        familia: almacenar.current[0].familia,
-                        tipo: almacenar.current[0].tipo,
-                        marca: almacenar.current[0].marca,
-                        modelo: almacenar.current[0].modelo,
-                        serie: almacenar.current[0].serie,
-                        rfid: almacenar.current[0].rfid,
-                        tipMov: 1,
-                        observacion: '',
-                        confirmado: false,
-                        userAdd: user.email,
-                        userMod: user.email,
-                        fechaAdd: fechaAdd,
-                        fechaMod: fechaMod,
-                        emp_id: users.emp_id,
-                    });
-                    setPrice('');
-                    setNumSerie('');
-                    almacenar.current = [];
-                    entradaid.current = [];
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Item guardado correctamente'
-                    })
-                    setFlag(!flag);
-                    setBtnConfirmar(false);
-                    setBtnNuevo(false);
-                    return;
-                } catch (error) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: error
-                    })
-                }
             }
         }
         setPrice('');
@@ -452,15 +450,14 @@ const Entradas = () => {
             const entrada = await getDocs(entra);
             const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
-            // Filtar por Status Preparacion Pendiente
-            const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
-            const status = await getDocs(traerStatusPrep);
-            const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+            // // Filtar por Status Preparacion Pendiente
+            // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
+            // const status = await getDocs(traerStatusPrep);
+            // const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
-            const traerStatusDP = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
-            const statusDP = await getDocs(traerStatusDP);
-            const existeStatusDP = (statusDP.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-
+            // const traerStatusDP = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
+            // const statusDP = await getDocs(traerStatusDP);
+            // const existeStatusDP = (statusDP.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
             const batch = writeBatch(db);
             dataEntrada.forEach((docs) => {
@@ -486,7 +483,7 @@ const Entradas = () => {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
-                    mensaje: 'Documentos actualizados correctamente. LOS DOS.'
+                    mensaje: 'Documento confirmado exitosamente.'
                 });
                 await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
                     confirmado: true,
@@ -599,7 +596,7 @@ const Entradas = () => {
     //             console.log("Error al guardar");
     //         }
     //     }
-    
+
 
     return (
         <ContenedorProveedor>
@@ -691,8 +688,8 @@ const Entradas = () => {
                         disabled={btnNuevo}
                     >
                         Nuevo</BotonGuardar>
-                        {/* <AgregarCampoB /> */}
-                        {/* <BotonGuardar onClick={() => agregarCampo()}>Agregar Campo</BotonGuardar> */}
+                    {/* <AgregarCampoB /> */}
+                    {/* <BotonGuardar onClick={() => agregarCampo()}>Agregar Campo</BotonGuardar> */}
                 </Formulario>
             </Contenedor>
             <Contenedor>
