@@ -3,8 +3,8 @@ import { updateDoc,doc } from "firebase/firestore";
 
 const AgregarCampo = async  (id) => {
 
-    return await updateDoc(doc(db, 'entradas', id),{
-        confirmado: false
+    return await updateDoc(doc(db, 'status', id),{
+        status: 'PREPARACION'
     })
 }
 

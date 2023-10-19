@@ -7,8 +7,8 @@ import AgregarCampo from '../firebase/AgregarCampo'
 const AgregarCampoB = () => {
     const [leer, setLeer] = useState([])
 
-    const getEntrada = async () => {
-        const data = await getDocs(collection(db, "entradas"));
+    const getData = async () => {
+        const data = await getDocs(collection(db, "status"));
         setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         leer.forEach((docs) => {
             AgregarCampo(docs.id);
@@ -17,8 +17,8 @@ const AgregarCampoB = () => {
 
     
     return (
-        <BotonGuardar onClick={() => getEntrada()}>Agregar Campo</BotonGuardar>
+        <BotonGuardar onClick={() => getData()}>Agregar Campo</BotonGuardar>
     )
 }
 
-export default AgregarCampoB
+export default AgregarCampoB;
