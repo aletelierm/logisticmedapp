@@ -316,7 +316,7 @@ const Entradas = () => {
             const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
             almacenar.current = existe2;
         } else {
-            console.log('almacenar', almacenar.current);
+            console.log('almacenar', almacenar.current.length);
         }
         // Validar en N° Serie en el documento de Entradas que se esta trabatando     
         const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
@@ -336,7 +336,7 @@ const Entradas = () => {
         const inEq_id = await getDocs(traerEq_id);
         const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         // Validar en Eq_id en todos los documento de Entradas confirmado
-        const traerID= query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
+        const traerID = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
         const confirmadoID = await getDocs(traerID);
         const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         console.log(existeID)
@@ -344,11 +344,6 @@ const Entradas = () => {
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-
-        // Validar en entrdas que equipos esten en Arriendo/Comodato
-        const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
-        console.log('existeStatusAoC', existeStatusAoC)
-
 
         if (price === '') {
             cambiarEstadoAlerta(true);
@@ -365,6 +360,7 @@ const Entradas = () => {
             })
             return;
         } else if (almacenar.current.length === 0) {
+            console.log('Validacion', almacenar.current.length)
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -382,12 +378,12 @@ const Entradas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra Ingresado como Compra'
             })
-        } else if (!existeStatusAoC) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Equipo ya se encuentra Arrendado o en Comodato'
-            })
+        // } else if (!existeStatusAoC) {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Equipo ya se encuentra Arrendado o en Comodato'
+        //     })
         } else if (existeconfirmado.length > 0 || existeID.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -395,51 +391,62 @@ const Entradas = () => {
                 mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
             })
         } else {
-            try {
-                EntradasDB({
-                    numDoc: numDoc,
-                    tipDoc: nomTipDoc,
-                    date: existeCab[0].date,
-                    tipoInOut: nomTipoIn,
-                    rut: rut,
-                    entidad: entidad,
-                    price: price,
-                    cab_id: existeCab[0].id,
-                    eq_id: almacenar.current[0].id,
-                    familia: almacenar.current[0].familia,
-                    tipo: almacenar.current[0].tipo,
-                    marca: almacenar.current[0].marca,
-                    modelo: almacenar.current[0].modelo,
-                    serie: almacenar.current[0].serie,
-                    rfid: almacenar.current[0].rfid,
-                    tipMov: 1,
-                    observacion: '',
-                    confirmado: false,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    emp_id: users.emp_id,
-                });
-                setPrice('');
-                setNumSerie('');
-                almacenar.current = [];
-                entradaid.current = [];
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Item guardado correctamente'
-                })
-                setFlag(!flag);
-                setBtnConfirmar(false);
-                setBtnNuevo(false);
-                return;
-            } catch (error) {
+            // Validar en entrdas que equipos esten en Arriendo/Comodato
+            const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
+            console.log('existeStatusAoC', existeStatusAoC)
+            if (!existeStatusAoC) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: error
+                    mensaje: 'Equipo ya se encuentra Arrendado o en Comodato'
                 })
+            } else {
+                try {
+                    EntradasDB({
+                        numDoc: numDoc,
+                        tipDoc: nomTipDoc,
+                        date: existeCab[0].date,
+                        tipoInOut: nomTipoIn,
+                        rut: rut,
+                        entidad: entidad,
+                        price: price,
+                        cab_id: existeCab[0].id,
+                        eq_id: almacenar.current[0].id,
+                        familia: almacenar.current[0].familia,
+                        tipo: almacenar.current[0].tipo,
+                        marca: almacenar.current[0].marca,
+                        modelo: almacenar.current[0].modelo,
+                        serie: almacenar.current[0].serie,
+                        rfid: almacenar.current[0].rfid,
+                        tipMov: 1,
+                        observacion: '',
+                        confirmado: false,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id,
+                    });
+                    setPrice('');
+                    setNumSerie('');
+                    almacenar.current = [];
+                    entradaid.current = [];
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Item guardado correctamente'
+                    })
+                    setFlag(!flag);
+                    setBtnConfirmar(false);
+                    setBtnNuevo(false);
+                    return;
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: error
+                    })
+                }
             }
         }
         setPrice('');
