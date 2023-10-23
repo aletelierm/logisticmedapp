@@ -10,7 +10,7 @@ import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch, 
 import { IoMdAdd } from "react-icons/io";
 import { TipDocOut, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
-import { MdDeleteForever } from "react-icons/md";
+import { MdDataUsage, MdDeleteForever } from "react-icons/md";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -83,8 +83,10 @@ const Salidas = () => {
     }
     //Lee datos de los usuarios
     const getUsuarios = async () => {
-        const dataUsuarios = await getDocs(collection(db, "usuarios"));
-        setUsuarios(dataUsuarios.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
+        const dataUsuarios = collection(db, "usuarios");
+        const dato = query(dataUsuarios, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setUsuarios(data.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
     }
     // Cambiar fecha
     const formatearFecha = (fecha) => {
