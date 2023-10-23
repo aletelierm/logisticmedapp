@@ -473,7 +473,7 @@ const Confirmados = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>N° Docuemtno</Table.HeaderCell>
+                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
@@ -560,7 +560,7 @@ const Confirmados = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>N° Docuemtno</Table.HeaderCell>
+                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>

@@ -10,7 +10,7 @@ import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch, 
 import { IoMdAdd } from "react-icons/io";
 import { TipDocOut, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
-import { MdDataUsage, MdDeleteForever } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
