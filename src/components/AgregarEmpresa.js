@@ -49,6 +49,7 @@ const AgregarEmpresa = () => {
 
         // Consulta si exite campo en el arreglo
         const existe = leer.filter(emp => emp.empresa === empresa.toLocaleUpperCase().trim()).length === 0;
+        const existe2 = leer.filter(emp => emp.rut === rut).length === 0;
         //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         /*  console.log(validarRut(rut)); */
@@ -79,17 +80,23 @@ const AgregarEmpresa = () => {
                 mensaje: 'Rut no válido'
             })
             return;
-        } else if (!existe) {
+        } else if (!existe2) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Ya existe esta Empresa'
+                mensaje: 'Ya existe una Empresa registrada con ese Rut'
             })
         } else if (empresa === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'No ha ingresado una Empresa.'
+            })
+        } else if (!existe) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ya existe esta Empresa'
             })
         } else {
             const emp = empresa.toLocaleUpperCase().trim()
