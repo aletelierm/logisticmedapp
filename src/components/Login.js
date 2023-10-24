@@ -48,7 +48,10 @@ export default function Login() {
         setError('Usuario o Contraseña incorrecta');
         return;
       } else if (error.code === 'auth/user-not-found') {
-        setError('No existe esta cuenta de usuario')
+        setError('No existe esta cuenta de usuario');
+        return;
+      }else if(error.code === 'auth/invalid-login-credentials'){
+        setError('Usuario o Contraseñas incorrectos');
         return;
       }
     }
