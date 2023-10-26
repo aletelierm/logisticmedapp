@@ -34,6 +34,7 @@ const Salidas = () => {
     const [dataSalida, setDataSalida] = useState([]);
     const [status, setStatus] = useState([]);
     const [usuario, setUsuarios] = useState([]);
+    const [transport, setTransport] = useState([]);
     const [numDoc, setNumDoc] = useState('');
     const [nomTipDoc, setNomTipDoc] = useState('');
     const [date, setDate] = useState('');
@@ -74,6 +75,13 @@ const Salidas = () => {
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setDataSalida(documento)
     }
+    // Filtar usuario transportista
+    const transportista = async () => {
+        const trans = query(collection(db, 'usuarios'), where('emp_id', '==', users.emp_id), where('rol', '==', 'TRANSPORTE'));
+        const transporte = await getDocs(trans);
+        const transportista = (transporte.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
+        setTransport(transportista);
+    }
     //Lectura de status
     const getStatus = async () => {
         const traerEntrada = collection(db, 'status');
@@ -88,6 +96,7 @@ const Salidas = () => {
         const data = await getDocs(dato)
         setUsuarios(data.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
     }
+
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -951,6 +960,7 @@ const Salidas = () => {
 
     useEffect(() => {
         consultarCab();
+        transportista();
         getUsuarios();
         getAlertasSalidas()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -960,6 +970,7 @@ const Salidas = () => {
         getStatus();
         consultarCab();
         consultarOut();
+        transportista();
         // if (dataSalida.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -1040,14 +1051,23 @@ const Salidas = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Correo Transportista</Label>
-                            <Input
+                            {/* <Input
                                 disabled={confirmar}
                                 type='texto'
                                 placeholder='Ingrese Correo'
                                 name='correo'
                                 value={correo}
                                 onChange={ev => setCorreo(ev.target.value)}
-                            />
+                            /> */}
+                            <Select
+                                disabled={confirmar}
+                                value={correo}
+                                onChange={ev => setCorreo(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {transport.map((d) => {
+                                    return (<option key={d.id}>{d.correo}</option>)
+                                })}
+                            </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label >Patente Vehiculo</Label>
