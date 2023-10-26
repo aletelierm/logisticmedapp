@@ -178,6 +178,16 @@ const Entradas = () => {
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
+
+    // Opcion 1
+    // Poner miles en el precio
+    // // Crear un objeto Intl.NumberFormat para español en Chile
+    // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
+    // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
+    // const numeroFormateadoChile = formatoNumeroChile.format(price);
+    // console.log(numeroFormateadoChile); // Salida: "1.234.567"
+
+
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = async (ev) => {
         ev.preventDefault();
@@ -450,7 +460,7 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (dataEntrada.length === 0) {
-            Swal.fire('No hay Datos pr confirmar en este documento');
+            Swal.fire('No hay Datos por confirmar en este documento');
         } else {
             // Filtar por docuemto de Cabecera
             const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
@@ -585,6 +595,7 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
+
     // const agregarCampo = async () => {
     //     // console.log('se ejecuta')
     //     // const data = await getDocs(collection(db, "status"));
@@ -606,6 +617,25 @@ const Entradas = () => {
     //     }
     // }
 
+    // Opcion 2
+    // const handleInputChange = (e) => {
+    //     let nuevoPrecio = e.target.value;
+    //     // Elimina cualquier punto existente y reemplaza las comas por puntos
+    //     nuevoPrecio = nuevoPrecio.replace(/\./g, "").replace(",", ".");
+    //     // Agrega un punto cada tres dígitos
+    //     nuevoPrecio = nuevoPrecio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    //     // Verifica si el precio tiene un formato válido (números, un punto opcional y al menos un dígito antes del punto)
+    //     if (/^\d{1,3}(\.\d{3})* $/.test(nuevoPrecio) || nuevoPrecio === "") {
+    //         setPrice(nuevoPrecio);
+    //     }
+    // };
+    // const handleBlur = () => {
+    //     // Formatea el número con separadores de miles antes de mostrarlo en el input
+    //     if (price !== "") {
+    //         const numeroFormateado = parseFloat(price).toLocaleString("es-ES");
+    //         setPrice(numeroFormateado);
+    //     }
+    // };
 
     return (
         <ContenedorProveedor>
@@ -712,6 +742,8 @@ const Entradas = () => {
                                 placeholder='Ingrese Valor'
                                 value={price}
                                 onChange={e => setPrice(e.target.value)}
+                                // onChange={handleInputChange}
+                                // onBlur={handleBlur}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
