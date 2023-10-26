@@ -539,6 +539,7 @@ const Entradas = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 borrarItem(id);
+                setFlag(!flag)
                 Swal.fire(
                     'Eliminado!',
                     'Item eliminado con exito!',

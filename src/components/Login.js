@@ -53,6 +53,9 @@ export default function Login() {
       }else if(error.code === 'auth/invalid-login-credentials'){
         setError('Usuario o Contraseñas incorrectos');
         return;
+      }else if(error.code === 'auth/invalid-email'){
+        setError('Tipo de email Incorrecto');
+        return;
       }
     }
   }
@@ -64,7 +67,7 @@ export default function Login() {
           <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} sx={{ mt: 3 }}>
             <Grid item xs={12} sm={6} md={4}>
             <img
-              height={200}         
+              height={150}         
               src="../../logo.png" alt="imagen" 
               style={{width:'60%',marginLeft:'60px'}}
               />

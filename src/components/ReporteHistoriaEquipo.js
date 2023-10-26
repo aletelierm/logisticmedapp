@@ -136,8 +136,8 @@ const Reporte1 = () => {
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? '1' : '0'}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? "0" : "1"}</Table.Cell>
+                                        <Table.Cell>{item.tipmov === 1 ? '1' : ''}</Table.Cell>
+                                        <Table.Cell>{item.tipmov === 1 ? "" : "1"}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
