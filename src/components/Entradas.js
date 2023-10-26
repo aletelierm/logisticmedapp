@@ -549,7 +549,6 @@ const Entradas = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 borrarItem(id);
-                setFlag(!flag)
                 Swal.fire(
                     'Eliminado!',
                     'Item eliminado con exito!',
@@ -741,7 +740,7 @@ const Entradas = () => {
                                 name='precio'
                                 placeholder='Ingrese Valor'
                                 value={price}
-                                onChange={e => setPrice(e.target.value)}
+                                // onChange={e => setPrice(e.target.value)}
                                 // onChange={handleInputChange}
                                 // onBlur={handleBlur}
                             />
