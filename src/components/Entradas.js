@@ -65,6 +65,7 @@ const Entradas = () => {
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setDataEntrada(documento);
+        console.log('en consultarIN',dataEntrada)
     }
     //Leer  Empresa
     const getEmpresa = async () => {
@@ -549,12 +550,14 @@ const Entradas = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 borrarItem(id);
-                setFlag(!flag)
                 Swal.fire(
                     'Eliminado!',
                     'Item eliminado con exito!',
                     'success'
                 )
+                console.log(dataEntrada)
+                setFlag(!flag)
+                console.log('segunda vez',dataEntrada)
             }
             setFlag(!flag)
         })
@@ -591,6 +594,7 @@ const Entradas = () => {
     useEffect(() => {
         consultarIn();
         consultarCab();
+        console.log('se ejecuta use effect para consultarIn')
         // if (dataEntrada.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
