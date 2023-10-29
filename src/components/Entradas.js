@@ -652,11 +652,26 @@ const Entradas = () => {
                             <Label>N° de Documento</Label>
                             <Input
                                 disabled={confirmar}
-                                type='text'
+                                type='number'
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
-                                onChange={ev => setNumDoc(ev.target.value)}
+                                onChange={ev => {
+                                    
+                                            if(/^[1-9]\d*$/.test(ev.target.value))
+                                            {
+                                                setNumDoc(ev.target.value)
+                                            }else{
+                                                cambiarEstadoAlerta(true);
+                                                cambiarAlerta({
+                                                    tipo: 'error',
+                                                    mensaje: 'Por favor ingrese un numero positivo'})
+                                                    setNumDoc('')
+                                            }
+                                            
+                                            }
+                                        }
+                                    
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -745,7 +760,19 @@ const Entradas = () => {
                                 name='precio'
                                 placeholder='Ingrese Valor'
                                 value={price}
-                                onChange={e => setPrice(e.target.value)}
+                                onChange={e => {
+                                    if(/^[1-9]\d*$/.test(e.target.value))
+                                    {
+                                        setPrice(e.target.value)
+                                    }else{
+                                        cambiarEstadoAlerta(true);
+                                        cambiarAlerta({
+                                            tipo: 'error',
+                                            mensaje: 'Por favor ingrese un numero positivo'})
+                                            setPrice('')
+                                    }
+                                        
+                                }}
                                 // onChange={handleInputChange}
                                 // onBlur={handleBlur}
                             />
