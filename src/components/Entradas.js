@@ -594,7 +594,7 @@ const Entradas = () => {
     useEffect(() => {
         consultarIn();
         consultarCab();
-        console.log('se ejecuta use effect para consultarIn')
+        // Agregar where o useref
         // if (dataEntrada.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
