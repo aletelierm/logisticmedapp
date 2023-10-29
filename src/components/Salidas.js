@@ -987,11 +987,25 @@ const Salidas = () => {
                             <Label>N° de Documento</Label>
                             <Input
                                 disabled={confirmar}
-                                type='text'
+                                type='number'
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
-                                onChange={ev => setNumDoc(ev.target.value)}
+                                onChange={ev =>{
+                                    
+                                    if(/^[1-9]\d*$/.test(ev.target.value))
+                                    {
+                                        setNumDoc(ev.target.value)
+                                    }else{
+                                        cambiarEstadoAlerta(true);
+                                        cambiarAlerta({
+                                            tipo: 'error',
+                                            mensaje: 'Por favor ingrese un numero positivo'})
+                                            setNumDoc('')
+                                    }
+                                    
+                                    }
+                                }
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
