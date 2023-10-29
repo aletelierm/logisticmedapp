@@ -50,7 +50,7 @@ const Entradas = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const almacenar = useRef([]);
     const entradaid = useRef([]);
-
+  
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -64,7 +64,7 @@ const Entradas = () => {
         const doc = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setDataEntrada(documento);
+        setDataEntrada(documento);        
         console.log('en consultarIN',dataEntrada)
     }
     //Leer  Empresa
@@ -540,6 +540,9 @@ const Entradas = () => {
     }
     // Función para eliminar Item por linea
     const deleteItem = (id) => {
+        borrarItem(id);
+        setFlag(!flag)
+        /*
         Swal.fire({
             title: 'Esta seguro que desea eliminar Item?',
             icon: 'warning',
@@ -554,13 +557,10 @@ const Entradas = () => {
                     'Eliminado!',
                     'Item eliminado con exito!',
                     'success'
-                )
-                console.log(dataEntrada)
-                setFlag(!flag)
-                console.log('segunda vez',dataEntrada)
+                )                
             }
             setFlag(!flag)
-        })
+        }) */
     }
 
     // Agregar una nueva cabecera
@@ -591,10 +591,9 @@ const Entradas = () => {
         getStatus();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag2, setFlag2])
-    useEffect(() => {
+    useEffect(() =>  {      
         consultarIn();
-        consultarCab();
-        console.log('se ejecuta use effect para consultarIn')
+        consultarCab();        
         // if (dataEntrada.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -742,6 +741,7 @@ const Entradas = () => {
                             <Label style={{ marginRight: '10px' }} >Precio</Label>
                             <Input
                                 type='number'
+                                min='1'
                                 name='precio'
                                 placeholder='Ingrese Valor'
                                 value={price}
@@ -793,7 +793,7 @@ const Entradas = () => {
                                                 <Table.Cell style={{ textAlign: 'center' }}>
                                                     <MdDeleteForever
                                                         style={{ fontSize: '22px', color: '#69080A', }}
-                                                        onClick={() => deleteItem(item.id)}
+                                                        onClick={() => deleteItem(item.id) }
                                                         title='Eliminar Item'
                                                     />
                                                 </Table.Cell>
