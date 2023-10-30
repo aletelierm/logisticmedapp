@@ -51,7 +51,6 @@ const Entradas = () => {
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 
-
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
         const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
@@ -178,16 +177,6 @@ const Entradas = () => {
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-
-    // // Opcion 1
-    // // Poner miles en el precio
-    // // Crear un objeto Intl.NumberFormat para español en Chile
-    // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
-    // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
-    // const numeroFormateadoChile = formatoNumeroChile.format(price);
-    // console.log(numeroFormateadoChile); // Salida: "1.234.567"
-
-
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = async (ev) => {
         ev.preventDefault();
@@ -619,6 +608,14 @@ const Entradas = () => {
     //     }
     // }
 
+    // // Opcion 1
+    // // Poner miles en el precio
+    // // Crear un objeto Intl.NumberFormat para español en Chile
+    // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
+    // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
+    // const numeroFormateadoChile = formatoNumeroChile.format(price);
+    // console.log(numeroFormateadoChile); // Salida: "1.234.567"
+
     // Opcion 2
     // const handleInputChange = (e) => {
     //     let nuevoPrecio = e.target.value;
@@ -638,8 +635,6 @@ const Entradas = () => {
     //         setPrice(numeroFormateado);
     //     }
     // };
-
-
 
     return (
         <ContenedorProveedor>

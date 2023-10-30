@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 // import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, collection, where, query , doc /*,  updateDoc, writeBatch */ } from 'firebase/firestore';
+import { getDocs, collection, where, query /*, doc ,  updateDoc, writeBatch */ } from 'firebase/firestore';
 // import { FaRegEdit } from "react-icons/fa";
 // import { BiAddToQueue } from "react-icons/bi";
 import { Programa } from './TipDoc'
@@ -30,6 +30,7 @@ const Protocolos = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
+    const [protocolCab, setProtocolCab] = useState([]);
     const [item, setItem] = useState([]);
     const [programa, setPrograma] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
@@ -43,7 +44,6 @@ const Protocolos = () => {
     // const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const dias = useRef('');
-    const almacenar = useRef('');
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -83,11 +83,18 @@ const Protocolos = () => {
         }
         return 0;
     });
+    // Filtar por docuemto de Entrada
+    const consultarCabProt = async () => {
+        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
+        const docu = await getDocs(doc);
+        const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
+        setProtocolCab(documento);
+    }
     const getItem = async () => {
         const traerit = collection(db, 'items');
         const dato = query(traerit, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setItem(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setItem(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
     }
     item.sort((a, b) => {
         const nameA = a.nombre;
@@ -214,21 +221,11 @@ const Protocolos = () => {
         // ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Consultar si Item se encuentra en Documento
-        const traerId = await getDoc(doc(db, 'equipos', id));
-        if (traerId.exists()) {
-            const existeId = traerId.data();
-            const arreglo = [existeId];
-            const existe = arreglo.map((doc) => ({ ...doc, id: id }));
-            almacenar.current = existe;
-        } else {
-            console.log('almacenar', almacenar.current);
-        }
 
         // Filtar por docuemto de Cabecera de Protocolo
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
-        const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
         console.log('existeCabProtocolo', existeCabProtocolo)
         try {
             const nomProt = nomProtocolo.toLocaleUpperCase().trim();
@@ -282,6 +279,11 @@ const Protocolos = () => {
         // getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        consultarCabProt();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag, setFlag])
 
     return (
         <ContenedorProveedor>
@@ -358,7 +360,6 @@ const Protocolos = () => {
 
             <Contenedor>
                 <Titulo>Items Agregados a Protocolo</Titulo>
-
             </Contenedor>
 
             <ListarProveedor>
@@ -396,11 +397,55 @@ const Protocolos = () => {
                                 </Table.Row>
                             )
                         })}
-
                     </Table.Body>
                 </Table>
-
             </ListarProveedor>
+
+
+            <ListarProveedor>
+                <ContentElemenAdd>
+                    <Titulo>Protocolos por terminar</Titulo>
+                </ContentElemenAdd>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Familia</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                            <Table.HeaderCell>Programa</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {protocolCab.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell >{item.nombre}</Table.Cell>
+                                    <Table.Cell >{item.familia}</Table.Cell>
+                                    <Table.Cell >{item.tipo}</Table.Cell>
+                                    <Table.Cell >{item.programa}</Table.Cell>
+                                    <Table.Cell onClick={() => {
+                                        setNomProtocolo(item.nombre);
+                                        setNomFamilia(item.familia);
+                                        setNomTipo(item.tipo)
+                                        setPrograma(item.programa);
+                                        setBtnGuardar(true);
+                                        setConfirmar(true);
+                                        setBtnNuevo(false)
+                                        // setBtnConfirmar(false)
+                                        setFlag(!flag)
+                                    }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
+
+
+
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}

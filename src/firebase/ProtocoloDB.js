@@ -2,9 +2,9 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc } from "firebase/firestore";
 
-const ProtocoloCabDB = async ({ nombre, familia, tipo, programa, dias, item, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+const ProtocoloDB = async ({ nombre, familia, tipo, programa, dias, item, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
 
-    return await addDoc(collection(db, 'protocoloscab'), {
+    return await addDoc(collection(db, 'protocolos'), {
         nombre: nombre,
         familia: familia,
         tipo: tipo,
@@ -19,4 +19,4 @@ const ProtocoloCabDB = async ({ nombre, familia, tipo, programa, dias, item, use
     })
 }
 
-export default ProtocoloCabDB;
+export default ProtocoloDB;
