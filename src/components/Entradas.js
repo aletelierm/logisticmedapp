@@ -761,9 +761,16 @@ const Entradas = () => {
                                 placeholder='Ingrese Valor'
                                 value={price}
                                 onChange={e => {
-                                    if(/^[1-9]\d*$/.test(e.target.value))
+                                    if(/^(?:[1-9]\d*|1)(?:\.\d+)?$/.test(e.target.value) || e.target.value === "1")
                                     {
-                                        setPrice(e.target.value)
+                                        const formatPrecio = parseFloat(e.target.value).toLocaleString('es',{
+                                            useGrouping: true,
+                                            maximumFractionDigits:2,
+                                            minimumFractionDigits:2
+                                        }                        
+                                            
+                                        );
+                                        setPrice(formatPrecio)
                                     }else{
                                         cambiarEstadoAlerta(true);
                                         cambiarAlerta({
