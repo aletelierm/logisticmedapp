@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 // import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query /*, doc ,  updateDoc, writeBatch */ } from 'firebase/firestore';
+import { getDocs, collection, where, query /*,  updateDoc, writeBatch */ } from 'firebase/firestore';
 // import { FaRegEdit } from "react-icons/fa";
 // import { BiAddToQueue } from "react-icons/bi";
 import { Programa } from './TipDoc'
@@ -83,18 +83,19 @@ const Protocolos = () => {
         }
         return 0;
     });
-    // Filtar por docuemto de Entrada
+    // Filtar por Cabecera de Protocolo
     const consultarCabProt = async () => {
         const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
         const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
+        const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolCab(documento);
     }
     const getItem = async () => {
         const traerit = collection(db, 'items');
         const dato = query(traerit, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setItem(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
+        setItem(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+        console.log(item)
     }
     item.sort((a, b) => {
         const nameA = a.nombre;
@@ -221,21 +222,22 @@ const Protocolos = () => {
         // ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        // Consultar si Item se encuentra en Documento
+        const item_id = item.filter(it => it.id === id);
 
         // Filtar por docuemto de Cabecera de Protocolo
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
-        const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-        console.log('existeCabProtocolo', existeCabProtocolo)
+        const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         try {
-            const nomProt = nomProtocolo.toLocaleUpperCase().trim();
             ProtocoloDB({
-                nombre: nomProt,
-                familia: nomFamilia,
-                tipo: nomTipo,
-                programa: programa,
-                dias: dias.current,
-                item: item.nombre,
+                nombre: existeCabProtocolo[0].nombre,
+                familia: existeCabProtocolo[0].familia,
+                tipo: existeCabProtocolo[0].tipo,
+                programa: existeCabProtocolo[0].nombre,
+                dias: existeCabProtocolo[0].dias,
+                item: item[0].nombre,
+                item_id: item_id[0].id,
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
@@ -281,6 +283,7 @@ const Protocolos = () => {
     }, [])
 
     useEffect(() => {
+        getItem();
         consultarCabProt();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -358,9 +361,33 @@ const Protocolos = () => {
                 </Formulario>
             </Contenedor>
 
-            <Contenedor>
-                <Titulo>Items Agregados a Protocolo</Titulo>
-            </Contenedor>
+            <ListarProveedor>
+                <Contenedor>
+                    <Titulo>Items Agregados a Protocolo</Titulo>
+                </Contenedor>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Item</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {item.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }}>
+                                        <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar>
+                                    </Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
 
             <ListarProveedor>
                 <ContentElemenAdd>
