@@ -50,7 +50,6 @@ const Entradas = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const almacenar = useRef([]);
     const entradaid = useRef([]);
-  
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -64,8 +63,7 @@ const Entradas = () => {
         const doc = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setDataEntrada(documento);        
-        console.log('en consultarIN',dataEntrada)
+        setDataEntrada(documento);
     }
     //Leer  Empresa
     const getEmpresa = async () => {
@@ -179,16 +177,6 @@ const Entradas = () => {
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-
-    // Opcion 1
-    // Poner miles en el precio
-    // // Crear un objeto Intl.NumberFormat para español en Chile
-    // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
-    // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
-    // const numeroFormateadoChile = formatoNumeroChile.format(price);
-    // console.log(numeroFormateadoChile); // Salida: "1.234.567"
-
-
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = async (ev) => {
         ev.preventDefault();
@@ -591,9 +579,9 @@ const Entradas = () => {
         getStatus();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag2, setFlag2])
-    useEffect(() =>  {      
+    useEffect(() => {
         consultarIn();
-        consultarCab();        
+        consultarCab();
         // if (dataEntrada.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -620,6 +608,14 @@ const Entradas = () => {
     //     }
     // }
 
+    // // Opcion 1
+    // // Poner miles en el precio
+    // // Crear un objeto Intl.NumberFormat para español en Chile
+    // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
+    // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
+    // const numeroFormateadoChile = formatoNumeroChile.format(price);
+    // console.log(numeroFormateadoChile); // Salida: "1.234.567"
+
     // Opcion 2
     // const handleInputChange = (e) => {
     //     let nuevoPrecio = e.target.value;
@@ -628,7 +624,7 @@ const Entradas = () => {
     //     // Agrega un punto cada tres dígitos
     //     nuevoPrecio = nuevoPrecio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     //     // Verifica si el precio tiene un formato válido (números, un punto opcional y al menos un dígito antes del punto)
-    //     if (/^\d{1,3}(\.\d{3})* $/.test(nuevoPrecio) || nuevoPrecio === "") {
+    //     if (/^\d{1,3}(\.\d{7})* $/.test(nuevoPrecio) || nuevoPrecio === "") {
     //         setPrice(nuevoPrecio);
     //     }
     // };
@@ -657,21 +653,21 @@ const Entradas = () => {
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
                                 onChange={ev => {
-                                    
-                                            if(/^[1-9]\d*$/.test(ev.target.value))
-                                            {
-                                                setNumDoc(ev.target.value)
-                                            }else{
-                                                cambiarEstadoAlerta(true);
-                                                cambiarAlerta({
-                                                    tipo: 'error',
-                                                    mensaje: 'Por favor ingrese un numero positivo'})
-                                                    setNumDoc('')
-                                            }
-                                            
-                                            }
-                                        }
-                                    
+
+                                    if (/^[1-9]\d*$/.test(ev.target.value)) {
+                                        setNumDoc(ev.target.value)
+                                    } else {
+                                        cambiarEstadoAlerta(true);
+                                        cambiarAlerta({
+                                            tipo: 'error',
+                                            mensaje: 'Por favor ingrese un numero positivo'
+                                        })
+                                        setNumDoc('')
+                                    }
+
+                                }
+                                }
+
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -746,7 +742,6 @@ const Entradas = () => {
                     >
                         Nuevo</BotonGuardar>
                     {/* <AgregarCampoB /> */}
-
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -761,27 +756,25 @@ const Entradas = () => {
                                 placeholder='Ingrese Valor'
                                 value={price}
                                 onChange={e => {
-                                    if(/^(?:[1-9]\d*|1)(?:\.\d+)?$/.test(e.target.value) || e.target.value === "1")
-                                    {
-                                        const formatPrecio = parseFloat(e.target.value).toLocaleString('es',{
-                                            useGrouping: true,
-                                            maximumFractionDigits:2,
-                                            minimumFractionDigits:2
-                                        }                        
-                                            
-                                        );
-                                        setPrice(formatPrecio)
-                                    }else{
+
+                                    if (/^[1-9]\d*$/.test(e.target.value)) {
+                                        // Crear un objeto Intl.NumberFormat para español en Chile
+                                        // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
+                                        // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
+                                        // const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(e.target.value);
+                                        // console.log(numeroFormateadoChile); // Salida: "1.234.567"
+                                        setPrice(e.target.value)
+                                    } else {
                                         cambiarEstadoAlerta(true);
                                         cambiarAlerta({
                                             tipo: 'error',
-                                            mensaje: 'Por favor ingrese un numero positivo'})
-                                            setPrice('')
+                                            mensaje: 'Por favor ingrese un numero positivo'
+                                        })
+                                        setPrice('')
                                     }
-                                        
                                 }}
-                                // onChange={handleInputChange}
-                                // onBlur={handleBlur}
+                            // onChange={handleInputChange}
+                            // onBlur={handleBlur}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -827,14 +820,13 @@ const Entradas = () => {
                                                 <Table.Cell style={{ textAlign: 'center' }}>
                                                     <MdDeleteForever
                                                         style={{ fontSize: '22px', color: '#69080A', }}
-                                                        onClick={() => deleteItem(item.id) }
+                                                        onClick={() => deleteItem(item.id)}
                                                         title='Eliminar Item'
                                                     />
                                                 </Table.Cell>
                                                 :
                                                 ''
                                         }
-
                                     </Table.Row>
                                 )
                             })}
