@@ -14,7 +14,7 @@ import { MdDeleteForever } from "react-icons/md";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay} from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
 // import AgregarCampoB from '../herramientas/AgregarCampoB';
@@ -28,6 +28,8 @@ const Entradas = () => {
     let fechaMod = new Date();
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [itemDelete, setItemdelete] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
     const [dataEntrada, setDataEntrada] = useState([]);
@@ -47,7 +49,7 @@ const Entradas = () => {
     const [btnGuardar, setBtnGuardar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
-    const [btnNuevo, setBtnNuevo] = useState(true);
+    const [btnNuevo, setBtnNuevo] = useState(true);  
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 
@@ -523,33 +525,40 @@ const Entradas = () => {
         }
     };
 
-    const borrarItem = async (id) => {
-        await deleteDoc(doc(db, "entradas", id));
+    const handleDelete = (itemId)=>{
+        setItemdelete(itemId);
+        setShowConfirmation(true);
     }
-    // Función para eliminar Item por linea
-    const deleteItem = (id) => {
-        borrarItem(id);
-        setFlag(!flag)
-        /*
-        Swal.fire({
-            title: 'Esta seguro que desea eliminar Item?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                borrarItem(id);
-                Swal.fire(
-                    'Eliminado!',
-                    'Item eliminado con exito!',
-                    'success'
-                )                
+
+    const cancelDelete = ()=>{
+        setShowConfirmation(false);
+    }
+    const borrarItem = async () => {
+        if(itemDelete){
+            try {
+                await deleteDoc(doc(db, "entradas", itemDelete));
+                setFlag(!flag);
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Item eliminado exitosamente.'
+                });                
+            } catch (error) {
+                console.log('Error al eliminar items');
             }
-            setFlag(!flag)
-        }) */
+        }
+        setShowConfirmation(false);
     }
+
+  /*   // Función para eliminar Item por linea
+    const deleteItem = (id) => {
+        const confirma = window.confirm("Estas seguro ??");
+        if (confirma){
+            borrarItem(id);
+            setFlag(!flag)
+        }       
+      
+    } */
 
     // Agregar una nueva cabecera
     const nuevo = () => {
@@ -820,7 +829,7 @@ const Entradas = () => {
                                                 <Table.Cell style={{ textAlign: 'center' }}>
                                                     <MdDeleteForever
                                                         style={{ fontSize: '22px', color: '#69080A', }}
-                                                        onClick={() => deleteItem(item.id)}
+                                                        onClick={() => handleDelete(item.id)}                                                      
                                                         title='Eliminar Item'
                                                     />
                                                 </Table.Cell>
@@ -881,13 +890,25 @@ const Entradas = () => {
                         )}
                     </Table.Body>
                 </Table>
-            </ListarProveedor>
+            </ListarProveedor>            
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
-            />
-            {/* <BotonGuardar onClick={() => agregarCampo()}>Agregar Campo</BotonGuardar> */}
+            /> 
+            {
+                  showConfirmation && (
+                    <Overlay>
+                    <ConfirmaModal className="confirmation-modal">
+                      <h2>¿Estás seguro de que deseas eliminar este elemento?</h2>
+                      <ConfirmaBtn className="confirmation-buttons">
+                        <Boton2  style={{backgroundColor:'red'}} onClick={borrarItem}>Aceptar</Boton2>
+                        <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+                      </ConfirmaBtn>
+                    </ConfirmaModal>
+                    </Overlay>
+                  )
+            }          
         </ContenedorProveedor>
 
     );
