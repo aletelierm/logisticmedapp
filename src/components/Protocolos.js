@@ -374,7 +374,7 @@ const Protocolos = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {item.map((item, index) => {
+                        {/* {item.map((item, index) => {
                             return (
                                 <Table.Row key={index}>
                                     <Table.Cell>{index + 1}</Table.Cell>
@@ -384,16 +384,14 @@ const Protocolos = () => {
                                     </Table.Cell>
                                 </Table.Row>
                             )
-                        })}
+                        })} */}
                     </Table.Body>
                 </Table>
             </ListarProveedor>
 
             <ListarProveedor>
                 <ContentElemenAdd>
-                    {/* <Boton ><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Items</Titulo>
-                    {/* <Boton ><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />

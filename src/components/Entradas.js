@@ -46,7 +46,7 @@ const Entradas = () => {
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
     const [btnAgregar, setBtnAgregar] = useState(true);
-    const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const almacenar = useRef([]);
     const entradaid = useRef([]);
@@ -565,7 +565,7 @@ const Entradas = () => {
         setConfirmar(false);
         setBtnGuardar(true);
         setBtnAgregar(true);
-        setBtnConfirmar(true);
+        setBtnConfirmar(false);
         setBtnNuevo(true);
     }
 
@@ -608,32 +608,26 @@ const Entradas = () => {
     //     }
     // }
 
-    // // Opcion 1
-    // // Poner miles en el precio
-    // // Crear un objeto Intl.NumberFormat para español en Chile
+    // Opcion 1
+    // Poner miles en el precio
+    // Crear un objeto Intl.NumberFormat para español en Chile
     // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
-    // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
-    // const numeroFormateadoChile = formatoNumeroChile.format(price);
+    // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
+    // const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(price);
+    // setPrice(numeroFormateadoChile)
     // console.log(numeroFormateadoChile); // Salida: "1.234.567"
 
-    // Opcion 2
-    // const handleInputChange = (e) => {
-    //     let nuevoPrecio = e.target.value;
-    //     // Elimina cualquier punto existente y reemplaza las comas por puntos
-    //     nuevoPrecio = nuevoPrecio.replace(/\./g, "").replace(",", ".");
-    //     // Agrega un punto cada tres dígitos
-    //     nuevoPrecio = nuevoPrecio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    //     // Verifica si el precio tiene un formato válido (números, un punto opcional y al menos un dígito antes del punto)
-    //     if (/^\d{1,3}(\.\d{7})* $/.test(nuevoPrecio) || nuevoPrecio === "") {
-    //         setPrice(nuevoPrecio);
-    //     }
-    // };
-    // const handleBlur = () => {
-    //     // Formatea el número con separadores de miles antes de mostrarlo en el input
-    //     if (price !== "") {
-    //         const numeroFormateado = parseFloat(price).toLocaleString("es-ES");
-    //         setPrice(numeroFormateado);
-    //     }
+    // const numero = 10000000;
+    // const numeroComoTexto = numero.toString();
+    // const numeroConSeparador = numeroComoTexto.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    // console.log(numeroConSeparador); // Output: "1.000.000"
+
+    // const handleInputChange = (event) => {
+    //     const numeroIngresado = event.target.value;
+    //     const numeroSinSeparadores = parseFloat(numeroIngresado.replace(/\./g, '').replace(/,/g, ''));
+    //     const numeroConSeparador = numeroSinSeparadores.toLocaleString('es-CL');
+    //     console.log(numeroConSeparador)
+    //     setPrice(numeroConSeparador);
     // };
 
     return (
@@ -756,13 +750,13 @@ const Entradas = () => {
                                 placeholder='Ingrese Valor'
                                 value={price}
                                 onChange={e => {
-
                                     if (/^[1-9]\d*$/.test(e.target.value)) {
                                         // Crear un objeto Intl.NumberFormat para español en Chile
                                         // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
-                                        // // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
-                                        // const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(e.target.value);
-                                        // console.log(numeroFormateadoChile); // Salida: "1.234.567"
+                                        // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
+                                        const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(e.target.value);
+                                        console.log(numeroFormateadoChile); // Salida: "1.234.567"
+                                        // setPrice(numeroFormateadoChile)
                                         setPrice(e.target.value)
                                     } else {
                                         cambiarEstadoAlerta(true);
@@ -773,8 +767,6 @@ const Entradas = () => {
                                         setPrice('')
                                     }
                                 }}
-                            // onChange={handleInputChange}
-                            // onBlur={handleBlur}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
