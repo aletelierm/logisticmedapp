@@ -138,6 +138,37 @@ const Boton2 = styled.button`
 	&:hover {
 		background: #0066FF;
 	}
+
+`
+const ConfirmaModal =styled.div`
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 30px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    text-align: center;
+    border-radius: 5px;
+`
+const ConfirmaBtn = styled.div`
+        margin-top: 20px;        
+        display: flex;
+        justify-content: space-between;
+`
+const Overlay = styled.div`
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top:0;
+    left:0;
+    background: rgba(0,0,0,.5);
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `
 
-export {ContenedorProveedor, Contenedor, ContenedorElementos, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd ,InputUpdate , Boton, BotonGuardar, Boton2};
+export {ContenedorProveedor, Contenedor, ContenedorElementos, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd ,InputUpdate , Boton, BotonGuardar, Boton2, ConfirmaModal, ConfirmaBtn, Overlay};
