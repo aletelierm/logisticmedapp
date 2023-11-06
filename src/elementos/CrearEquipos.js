@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import theme from '../theme2';
 
 const ContenedorCliente = styled.div`
 width: 70%;
@@ -62,5 +62,41 @@ const Contenido = styled.div`
     align-items: center;
 `
 
+const ContenedorInput = styled.div`
+position: relative;
 
-export {ContenedorCliente, ContentElemen, ContentElemenUser, ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, Contenido};
+    // input {
+    //     font-family: 'Work Sans', sans-serif;
+    //     box-sizing: border-box;
+    //     background: ${theme.grisClaro};
+    //     cursor: pointer;
+    //     border-radius: 0.625rem; /* 10px */
+    //     width: 100%;
+    //     text-align: center;
+    //     outline: none;
+    // }
+    .rdp {
+        position: absolute;
+    }
+    .rdp-months {
+        display: flex;
+        justify-content: center;
+        margin-left: -1.75rem;
+    }
+
+    .rdp-month {
+        background: #fff;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    @media (max-width: 60rem) {
+        /* 950px */
+        & > * {
+            width: 100%;
+        }
+    }
+`
+
+export { ContenedorCliente, ContentElemen, ContentElemenUser, ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, Contenido, ContenedorInput };

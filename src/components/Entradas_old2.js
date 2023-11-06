@@ -4,15 +4,19 @@ import EntradasDB from '../firebase/EntradasDB'
 import CabeceraInDB from '../firebase/CabeceraInDB'
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
-// import DatePicker from './DatePicker';
-import { Table } from 'semantic-ui-react'
+import DatePicker from './DatePicker';
+import fromUnixTime from 'date-fns/fromUnixTime';
+import getUnixTime from 'date-fns/getUnixTime';
+import {format} from 'date-fns';
+import { es } from 'date-fns/locale'
+import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch, deleteDoc } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import { MdDeleteForever } from "react-icons/md";
-import moment from 'moment';
+// import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General'
@@ -36,8 +40,8 @@ const Entradas = () => {
     const [status, setStatus] = useState([]);
     const [numDoc, setNumDoc] = useState('');
     const [nomTipDoc, setNomTipDoc] = useState('');
-    const [date, setDate] = useState('');
-    // const [date, setDate] = useState(new Date()); // DatePicker
+    // const [date, setDate] = useState('');
+    const [date, setDate] = useState(new Date()); // DatePicker
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
@@ -80,21 +84,24 @@ const Entradas = () => {
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     // Cambiar fecha
+    // const formatearFecha = (fecha) => {
+    //     const dateObj = fecha.toDate();
+    //     const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+    //     return formatear;
+    // }
     const formatearFecha = (fecha) => {
-        const dateObj = fecha.toDate();
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-        return formatear;
-    }
-    // Transformar fecha de moment a date
-    const fechaDate = (fecha) => {
-        // Convierte a milisegundos
-        const nuevaFecha = fecha.seconds * 1000
-        // Crea un objeto Date a partir del timestamp en milisegundos
-        const fechas = new Date(nuevaFecha);
-        // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
-        const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
-        setDate(formatoDatetimeLocal)
-    }
+		return format(fromUnixTime(fecha), "dd 'de' MMMM 'de' yyyy", {locale: es})
+	}
+    // // Transformar fecha de moment a date
+    // const fechaDate = (fecha) => {
+    //     // Convierte a milisegundos
+    //     const nuevaFecha = fecha.seconds * 1000
+    //     // Crea un objeto Date a partir del timestamp en milisegundos
+    //     const fechas = new Date(nuevaFecha);
+    //     // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
+    //     const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
+    //     setDate(formatoDatetimeLocal)
+    // }
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -179,11 +186,15 @@ const Entradas = () => {
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
+    console.log('date', date)
     // Guardar Cabecera de Documento en Coleccion CabeceraInDB
     const addCabeceraIn = async (ev) => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        // console.log('get', getUnixTime(date));
+        // console.log('date', date)
+
         // Validar Rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
@@ -260,12 +271,13 @@ const Entradas = () => {
                 })
             }
         } else {
-            const fechaInOut = new Date(date);
+            // const fechaInOut = new Date(date);
             try {
                 CabeceraInDB({
                     numDoc: numDoc,
                     tipDoc: nomTipDoc,
-                    date: fechaInOut,
+                    date: getUnixTime(date),
+                    // date: date,
                     tipoInOut: nomTipoIn,
                     rut: rut,
                     entidad: entidad,
@@ -557,7 +569,7 @@ const Entradas = () => {
     const nuevo = () => {
         setNumDoc('');
         setNomTipDoc('');
-        setDate('');
+        setDate(new Date());
         setNomTipoIn('');
         setRut('');
         setEntidad('');
@@ -679,17 +691,16 @@ const Entradas = () => {
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
-                            <Label>Fecha Ingreso</Label>
-                            <Input
+                            {/* <Label>Fecha Ingreso</Label> */}
+                            {/* <Input
                                 disabled={confirmar}
-                                // type='datetime-local'
-                                type='date'
+                                type='datetime-local'
                                 placeholder='Seleccione Fecha'
                                 name='date'
                                 value={date}
                                 onChange={ev => setDate(ev.target.value)}
-                            />
-                            {/* <DatePicker date={date} setDate={setDate} /> */}
+                            /> */}
+                            <DatePicker date={date} setDate={setDate} />
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <ContentElemenMov>
@@ -854,13 +865,15 @@ const Entradas = () => {
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
                                     <Table.Cell>{item.numdoc}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    {/* <Table.Cell>{item.date}</Table.Cell> */}
                                     <Table.Cell>{item.tipoinout}</Table.Cell>
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell onClick={() => {
                                         setNumDoc(item.numdoc);
                                         setNomTipDoc(item.tipdoc);
-                                        fechaDate(item.date)
+                                        // fechaDate(item.date)
+                                        // setDate(item.date)
                                         setNomTipoIn(item.tipoinout);
                                         setRut(item.rut);
                                         setEntidad(item.entidad);
