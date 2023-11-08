@@ -15,7 +15,7 @@ import { MdDeleteForever } from "react-icons/md";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay} from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
 // import AgregarCampoB from '../herramientas/AgregarCampoB';
@@ -146,6 +146,18 @@ const Entradas = () => {
             const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
             const serieIn = await getDocs(traerserie);
             const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // Validar en N° Serie en todos los documento de Entradas confirmado
+            const traerSC = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
+            const confirmadoS = await getDocs(traerSC);
+            const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // Validar en Eq_id en todos los documento de Entradas
+            const traerEq_id = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
+            const inEq_id = await getDocs(traerEq_id);
+            const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            // Validar en Eq_id en todos los documento de Entradas confirmado
+            const traerID = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
+            const confirmadoID = await getDocs(traerID);
+            const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
@@ -159,25 +171,33 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-            } else if (existeSerie.length > 0) {
+            } else if (existeSerie.length > 0 || existeEq_idIn.length > 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
+                    mensaje: 'Equipo ya se encuentra Ingresado como Compra'
+                })
+            } else if (existeconfirmado.length > 0 || existeID.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
                 })
             } else {
-                const existeStatus = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION').length === 1;
-                if (existeStatus) {
-                    const estado = status.filter(st => st.id === almacenar.current[0].id && st.status !== 'PREPARACION')
+                // Validar en entrdas que equipos esten en Arriendo/Comodato
+                const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
+                console.log('existeStatusAoC', existeStatusAoC)
+                if (!existeStatusAoC) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: `Este Equipo ya existe y su Estado es: ${estado[0].status} `
+                        mensaje: 'Equipo ya se encuentra Arrendado o en Comodato'
                     })
                 }
             }
         }
     }
+
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -527,16 +547,16 @@ const Entradas = () => {
         }
     };
 
-    const handleDelete = (itemId)=>{
+    const handleDelete = (itemId) => {
         setItemdelete(itemId);
         setShowConfirmation(true);
     }
 
-    const cancelDelete = ()=>{
+    const cancelDelete = () => {
         setShowConfirmation(false);
     }
     const borrarItem = async () => {
-        if(itemDelete){
+        if (itemDelete) {
             try {
                 await deleteDoc(doc(db, "entradas", itemDelete));
                 setFlag(!flag);
@@ -544,7 +564,7 @@ const Entradas = () => {
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Item eliminado exitosamente.'
-                });                
+                });
             } catch (error) {
                 console.log('Error al eliminar items');
             }
@@ -552,15 +572,15 @@ const Entradas = () => {
         setShowConfirmation(false);
     }
 
-  /*   // Función para eliminar Item por linea
-    const deleteItem = (id) => {
-        const confirma = window.confirm("Estas seguro ??");
-        if (confirma){
-            borrarItem(id);
-            setFlag(!flag)
-        }       
-      
-    } */
+    /*   // Función para eliminar Item por linea
+      const deleteItem = (id) => {
+          const confirma = window.confirm("Estas seguro ??");
+          if (confirma){
+              borrarItem(id);
+              setFlag(!flag)
+          }       
+        
+      } */
 
     // Agregar una nueva cabecera
     const nuevo = () => {
@@ -825,7 +845,7 @@ const Entradas = () => {
                                                 <Table.Cell style={{ textAlign: 'center' }}>
                                                     <MdDeleteForever
                                                         style={{ fontSize: '22px', color: '#69080A', }}
-                                                        onClick={() => handleDelete(item.id)}                                                      
+                                                        onClick={() => handleDelete(item.id)}
                                                         title='Eliminar Item'
                                                     />
                                                 </Table.Cell>
@@ -886,25 +906,25 @@ const Entradas = () => {
                         )}
                     </Table.Body>
                 </Table>
-            </ListarProveedor>            
+            </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
-            /> 
+            />
             {
-                  showConfirmation && (
+                showConfirmation && (
                     <Overlay>
-                    <ConfirmaModal className="confirmation-modal">
-                      <h2>¿Estás seguro de que deseas eliminar este elemento?</h2>
-                      <ConfirmaBtn className="confirmation-buttons">
-                        <Boton2  style={{backgroundColor:'red'}} onClick={borrarItem}>Aceptar</Boton2>
-                        <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
-                      </ConfirmaBtn>
-                    </ConfirmaModal>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas eliminar este elemento?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={borrarItem}>Aceptar</Boton2>
+                                <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
                     </Overlay>
-                  )
-            }          
+                )
+            }
         </ContenedorProveedor>
 
     );

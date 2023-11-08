@@ -178,9 +178,9 @@ const Salidas = () => {
             const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
             // Validar en N° Serie en todos los documento de Entradas
-            const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-            const serieIn = await getDocs(traerserie);
-            const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+            // const serieIn = await getDocs(traerserie);
+            // const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
@@ -194,12 +194,12 @@ const Salidas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-                } else if (existeSerie.length > 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
-                    })
+                // } else if (existeSerie.length > 0) {
+                //     cambiarEstadoAlerta(true);
+                //     cambiarAlerta({
+                //         tipo: 'error',
+                //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
+                //     })
             } else {
                 const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
                 const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
@@ -584,19 +584,12 @@ const Salidas = () => {
         const serieout = await getDocs(traerserie);
         const existeSerie = (serieout.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         console.log('existeSerie', existeSerie)
+        // // Validar en Eq_id en todos los documento de Salidas
+        // const traerEq_id = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
+        // const inEq_id = await getDocs(traerEq_id);
+        // const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 
-        // Validar ID de Entrada
-        // const traeId = await getDoc(doc(db, 'salidas', numSerie));
-        // if (existeSerie.length === 1) {
-        //     salidaid.current = existe;
-        // } else if (traeId.exists()) {
-        //     const existeIdIn = traeId.data();
-        //     const arreglo = [existeIdIn];
-        //     const inid = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-        //     salidaid.current = inid;
-        // } else {
-        //     console.log('salida.current', salidaid.current);
-        // }
+        
         // Pendiente revisar hasta aqui
 
         // Validar Id de Cabecera en Salidas
@@ -1024,7 +1017,8 @@ const Salidas = () => {
                             <Label>Fecha Ingreso</Label>
                             <Input
                                 disabled={confirmar}
-                                type='datetime-local'
+                                // type='datetime-local'
+                                type='date'
                                 placeholder='Seleccione Fecha'
                                 name='date'
                                 value={date}
