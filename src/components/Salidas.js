@@ -867,6 +867,13 @@ const Salidas = () => {
                 const docRef = doc(db, 'status', docs.eq_id);
                 batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechamod });
             });
+            dataSalida.forEach((docs) => {
+                const docRef = doc(db, 'salidas', docs.id);
+                batch.update(docRef, {
+                    confirmado: true,
+                    fechamod: new Date()
+                });
+            });
             try {
                 await batch.commit();
                 cambiarEstadoAlerta(true);
