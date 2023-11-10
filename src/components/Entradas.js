@@ -96,6 +96,7 @@ const Entradas = () => {
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
+        console.log(formatoDatetimeLocal)
     }
     // Validar rut
     const detectarCli = async (e) => {
@@ -713,8 +714,8 @@ const Entradas = () => {
                             <Label>Fecha Ingreso</Label>
                             <Input
                                 disabled={confirmar}
-                                // type='datetime-local'
-                                type='date'
+                                type='datetime-local'
+                                // type='date'
                                 placeholder='Seleccione Fecha'
                                 name='date'
                                 value={date}
@@ -901,6 +902,7 @@ const Entradas = () => {
                                         setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
+                                        console.log(item.data)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )

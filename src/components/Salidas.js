@@ -1068,8 +1068,7 @@ const Salidas = () => {
                             <Label>Fecha Ingreso</Label>
                             <Input
                                 disabled={confirmar}
-                                // type='datetime-local'
-                                type='date'
+                                type='datetime-local'
                                 placeholder='Seleccione Fecha'
                                 name='date'
                                 value={date}
