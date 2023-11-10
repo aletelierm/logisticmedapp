@@ -865,7 +865,11 @@ const Salidas = () => {
             const batch = writeBatch(db);
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, { status: inOut.current, rut: rut, entidad: entidad, fechamod: docs.fechamod });
+                batch.update(docRef, { 
+                    status: inOut.current, 
+                    rut: rut, 
+                    entidad: entidad, 
+                    fechamod: docs.fechamod });
             });
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'salidas', docs.id);
@@ -881,13 +885,19 @@ const Salidas = () => {
                     tipo: 'exito',
                     mensaje: 'Documentos actualizados correctamente.'
                 });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar documentos:', error
+                })
+            }
+            try {
                 await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
                     confirmado: true,
                     usermod: user.email,
                     fechamod: fechaMod
                 });
-
-                setFlag(!flag)
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -909,6 +919,7 @@ const Salidas = () => {
             setBtnAgregar(true);
             setBtnConfirmar(true);
             setBtnNuevo(true);
+            setFlag(!flag);
             if (nomTipoOut === 'CLIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
                 try {
                     /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
@@ -920,6 +931,7 @@ const Salidas = () => {
                     console.log('error', error)
                 }
             }
+            setFlag(!flag);
         }
     };
 

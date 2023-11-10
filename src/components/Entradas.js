@@ -143,17 +143,17 @@ const Entradas = () => {
             const existeIn = dataEntrada.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataEntrada.filter(doc => doc.eq_id === numSerie);
             // Validar en N° Serie en todos los documento de Entradas
-            const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+            const traerserie = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
             const serieIn = await getDocs(traerserie);
             const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // Validar en N° Serie en todos los documento de Entradas confirmado
-            const traerSC = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
-            const confirmadoS = await getDocs(traerSC);
-            const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
             // Validar en Eq_id en todos los documento de Entradas
             const traerEq_id = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
             const inEq_id = await getDocs(traerEq_id);
             const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            // Validar en N° Serie en todos los documento de Entradas confirmado
+            const traerSC = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
+            const confirmadoS = await getDocs(traerSC);
+            const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
             // Validar en Eq_id en todos los documento de Entradas confirmado
             const traerID = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
             const confirmadoID = await getDocs(traerID);
@@ -478,11 +478,11 @@ const Entradas = () => {
             // Filtar por docuemto de Cabecera
             const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
             const cabecera = await getDocs(cab);
-            const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
             // Filtar por docuemto de Entrada
             const entra = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
             const entrada = await getDocs(entra);
-            const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+            const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
 
             // // Filtar por Status Preparacion Pendiente
             // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
@@ -515,8 +515,6 @@ const Entradas = () => {
                     tipo: 'exito',
                     mensaje: 'Documento confirmado exitosamente.'
                 });
-                setFlag(!flag);
-                setFlag2(!flag2);
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
