@@ -9,6 +9,7 @@ import { collection, getDocs, where, query,doc, getDoc } from 'firebase/firestor
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
+import { AiFillCheckCircle } from "react-icons/ai";
 import moment from 'moment';
 
 const Reporte1 = () => {
@@ -136,8 +137,8 @@ const Reporte1 = () => {
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? '1' : ''}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? "" : "1"}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} /> : ''}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? "" : <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} />}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>

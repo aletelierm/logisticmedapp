@@ -1,6 +1,6 @@
 var admin = require("firebase-admin");
 
-var serviceAccount = require("../../../herramientasScript/logisticmedappdesa-firebase-adminsdk-9tt67-94cb85303c.json");
+var serviceAccount = require("../../../herramientasScript/logisticmedappdesa-firebase-adminsdk-9tt67-d0d3a9613d.json");
 /* var serviceAccount = require(process.env.SERVICE_ACCOUNT); */
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -25,7 +25,7 @@ collectionRef.get()
 
       // Actualiza el campo en cada documento
       docRef.update({
-        price: "1"
+        price: ""
       })
       .then(() => {
         console.log(`Documento con ID ${id} actualizado con éxito.`);
