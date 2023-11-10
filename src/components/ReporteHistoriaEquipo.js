@@ -47,11 +47,11 @@ const Reporte1 = () => {
                 setMerges(movimientos);
             } else if(dataid.exists()){                
                 //leer entradas por id
-                const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie));
+                const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie),where('confirmado','==',true));
                 const dataE = await getDocs(datoE);
                 ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));            
                 //leer salidas por id
-                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie));
+                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie),where('confirmado','==',true));
                 const dataS = await getDocs(datoS);
                 sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));                               
                 merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);

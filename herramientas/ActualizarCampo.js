@@ -1,6 +1,10 @@
 var admin = require("firebase-admin");
 
+<<<<<<< HEAD
 var serviceAccount = require("../../../herramientasScript/logisticmedappdesa-firebase-adminsdk-9tt67-d0d3a9613d.json");
+=======
+var serviceAccount = require("../../herramientasScript/logisticmedappdesa-firebase-adminsdk-9tt67-94cb85303c.json");
+>>>>>>> master
 /* var serviceAccount = require(process.env.SERVICE_ACCOUNT); */
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
