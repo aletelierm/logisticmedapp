@@ -715,7 +715,6 @@ const Entradas = () => {
                             <Input
                                 disabled={confirmar}
                                 type='datetime-local'
-                                // type='date'
                                 placeholder='Seleccione Fecha'
                                 name='date'
                                 value={date}
