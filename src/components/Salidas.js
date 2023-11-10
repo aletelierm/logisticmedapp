@@ -14,7 +14,7 @@ import { MdDeleteForever } from "react-icons/md";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar } from '../elementos/General';
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay } from '../elementos/General';
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
@@ -28,6 +28,8 @@ const Salidas = () => {
     let fechaMod = new Date();
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [itemDelete, setItemdelete] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [alertaSalida, setAlertasalida] = useState([]);
     const [cabecera, setCabecera] = useState([]);
@@ -577,7 +579,6 @@ const Salidas = () => {
         const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
         const serieEq = await getDocs(traerEq);
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // console.log('existe', existe)
         // Validar ID en equipo
         const traerId = await getDoc(doc(db, 'equipos', numSerie));
         if (existe.length === 1) {
@@ -865,11 +866,12 @@ const Salidas = () => {
             const batch = writeBatch(db);
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, { 
-                    status: inOut.current, 
-                    rut: rut, 
-                    entidad: entidad, 
-                    fechamod: docs.fechamod });
+                batch.update(docRef, {
+                    status: inOut.current,
+                    rut: rut,
+                    entidad: entidad,
+                    fechamod: docs.fechamod
+                });
             });
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'salidas', docs.id);
@@ -934,31 +936,50 @@ const Salidas = () => {
             setFlag(!flag);
         }
     };
-
-    const borrarItem = async (id) => {
-        await deleteDoc(doc(db, "salidas", id));
+    const handleDelete = (itemId) => {
+        setItemdelete(itemId);
+        setShowConfirmation(true);
     }
-    // Función para eliminar Item por linea
-    const deleteItem = (id) => {
-        Swal.fire({
-            title: 'Esta seguro que desea eliminar Item?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                borrarItem(id);
-                Swal.fire(
-                    'Eliminado!',
-                    'Item eliminado con exito!',
-                    'success'
-                )
+    const cancelDelete = () => {
+        setShowConfirmation(false);
+    }
+    const borrarItem = async () => {
+        if (itemDelete) {
+            try {
+                await deleteDoc(doc(db, "salidas", itemDelete));
+                setFlag(!flag);
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Item eliminado exitosamente.'
+                });
+            } catch (error) {
+                console.log('Error al eliminar items');
             }
-            setFlag(!flag)
-        })
+        }
+        setShowConfirmation(false);
     }
+    // // Función para eliminar Item por linea
+    // const deleteItem = (id) => {
+    //     Swal.fire({
+    //         title: 'Esta seguro que desea eliminar Item?',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Si, eliminar!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             borrarItem(id);
+    //             Swal.fire(
+    //                 'Eliminado!',
+    //                 'Item eliminado con exito!',
+    //                 'success'
+    //             )
+    //         }
+    //         setFlag(!flag)
+    //     })
+    // }
 
     const cuerpoCorreo = (data) => {
         return ReactDOMServer.renderToString(
@@ -1036,7 +1057,6 @@ const Salidas = () => {
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
                                 onChange={ev => {
-
                                     if (/^[1-9]\d*$/.test(ev.target.value)) {
                                         setNumDoc(ev.target.value)
                                     } else {
@@ -1047,7 +1067,6 @@ const Salidas = () => {
                                         })
                                         setNumDoc('')
                                     }
-
                                 }
                                 }
                             />
@@ -1197,7 +1216,7 @@ const Salidas = () => {
                                         <Table.Cell style={{ textAlign: 'center' }}>
                                             <MdDeleteForever
                                                 style={{ fontSize: '22px', color: '#69080A', }}
-                                                onClick={() => deleteItem(item.id)}
+                                                onClick={() => handleDelete(item.id)}
                                                 title='Eliminar Item'
                                             />
                                         </Table.Cell>
@@ -1263,6 +1282,19 @@ const Salidas = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
+            {
+                showConfirmation && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas eliminar este elemento?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={borrarItem}>Aceptar</Boton2>
+                                <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
         </ContenedorProveedor>
     );
 };
