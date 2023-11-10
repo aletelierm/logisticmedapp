@@ -140,21 +140,22 @@ const Confirmados = () => {
                     tipoinout: inOut.current,
                     rut: docs.rut,
                     entidad: docs.entidad,
+                    price: 0,
                     cab_id: cabeceraId.current,
                     eq_id: docs.eq_id,
                     familia: docs.familia,
                     tipo: docs.tipo,
                     marca: docs.marca,
-                    price: 0,
                     modelo: docs.modelo,
                     serie: docs.serie,
                     rfid: docs.rfid,
+                    tipmov: 1,
+                    observacion: docs.observacion,
+                    confirmado: false,
                     useradd: user.email,
                     usermod: user.email,
                     fechaadd: fechaAdd,
                     fechamod: fechaMod,
-                    tipmov: 1,
-                    observacion: docs.observacion,
                     emp_id: users.emp_id,
                 }
                 );
@@ -224,6 +225,7 @@ const Confirmados = () => {
     // Filtros para guardar datos y/o validaciones Entregado
     const verdaderos = isChecked.filter(check => check.checked === true);
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
+    console.log('falsoCheck', falsoCheck)
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
     const confirmaEntrega = async (e) => {
         e.preventDefault();
@@ -294,10 +296,9 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    console.log('id equipo',docs.eq_id)
+                    // console.log('id equipo',docs.eq_id)
                     batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
-
                 try {
                     await batchf.commit();
                     cambiarEstadoAlerta(true);
