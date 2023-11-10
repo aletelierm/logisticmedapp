@@ -515,11 +515,6 @@ const Entradas = () => {
                     tipo: 'exito',
                     mensaje: 'Documento confirmado exitosamente.'
                 });
-                await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
-                    confirmado: true,
-                    usermod: user.email,
-                    fechamod: fechaMod
-                });
                 setFlag(!flag);
                 setFlag2(!flag2);
             } catch (error) {
@@ -527,6 +522,19 @@ const Entradas = () => {
                 cambiarAlerta({
                     tipo: 'error',
                     mensaje: 'Error al actualizar documentos:', error
+                })
+            }
+            try {
+                await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
+                    confirmado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al confirmar Cabecera:', error
                 })
             }
             setNomTipDoc('');
@@ -572,15 +580,14 @@ const Entradas = () => {
         setShowConfirmation(false);
     }
 
-    /*   // Función para eliminar Item por linea
-      const deleteItem = (id) => {
-          const confirma = window.confirm("Estas seguro ??");
-          if (confirma){
-              borrarItem(id);
-              setFlag(!flag)
-          }       
-        
-      } */
+    // // Función para eliminar Item por linea
+    // const deleteItem = (id) => {
+    //     const confirma = window.confirm("Estas seguro ??");
+    //     if (confirma){
+    //         borrarItem(id);
+    //         setFlag(!flag)
+    //     }       
+    // }
 
     // Agregar una nueva cabecera
     const nuevo = () => {
@@ -678,7 +685,6 @@ const Entradas = () => {
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
                                 onChange={ev => {
-
                                     if (/^[1-9]\d*$/.test(ev.target.value)) {
                                         setNumDoc(ev.target.value)
                                     } else {
@@ -689,10 +695,8 @@ const Entradas = () => {
                                         })
                                         setNumDoc('')
                                     }
-
                                 }
                                 }
-
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -926,7 +930,6 @@ const Entradas = () => {
                 )
             }
         </ContenedorProveedor>
-
     );
 };
 

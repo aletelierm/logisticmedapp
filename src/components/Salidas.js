@@ -79,7 +79,7 @@ const Salidas = () => {
     const transportista = async () => {
         const trans = query(collection(db, 'usuarios'), where('emp_id', '==', users.emp_id), where('rol', '==', 'TRANSPORTE'));
         const transporte = await getDocs(trans);
-        const transportista = (transporte.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
+        const transportista = (transporte.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setTransport(transportista);
     }
     //Lectura de status
@@ -182,6 +182,15 @@ const Salidas = () => {
             // const serieIn = await getDocs(traerserie);
             // const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
+            // Validar en N° Serie en todos los documento de Entradas confirmado
+            const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
+            const confirmadoS = await getDocs(traerSC);
+            const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // Validar en Eq_id en todos los documento de Entradas confirmado
+            const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
+            const confirmadoID = await getDocs(traerID);
+            const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -200,6 +209,12 @@ const Salidas = () => {
                 //         tipo: 'error',
                 //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
                 //     })
+            } else if (existeconfirmado.length > 0 || existeID.length > 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
+                })
             } else {
                 const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
                 const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
@@ -348,10 +363,11 @@ const Salidas = () => {
                 })
             }
         } else {
+            // Validar Rut Paciente
             const traerClie = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutCli = await getDocs(traerClie)
             const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
+            // Validar Rut Proveedor
             const traerProv = query(collection(db, 'proveedores'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutProv = await getDocs(traerProv)
             const existeProv = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
@@ -571,6 +587,7 @@ const Salidas = () => {
             const arreglo = [existeId];
             const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
             console.log('existe2', existe2)
+            almacenar.current = existe2;
         } else {
             console.log('almacenar', almacenar.current);
         }
@@ -580,17 +597,23 @@ const Salidas = () => {
 
         // Pendiente revisar
         // Validar en N° Serie en todos los documento de Salidas
-        const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        const serieout = await getDocs(traerserie);
-        const existeSerie = (serieout.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log('existeSerie', existeSerie)
+        // const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        // const serieout = await getDocs(traerserie);
+        // const existeSerie = (serieout.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         // // Validar en Eq_id en todos los documento de Salidas
         // const traerEq_id = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
         // const inEq_id = await getDocs(traerEq_id);
         // const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-
-        
         // Pendiente revisar hasta aqui
+
+        // Validar en N° Serie en todos los documento de Entradas confirmado
+        const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
+        const confirmadoS = await getDocs(traerSC);
+        const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Validar en Eq_id en todos los documento de Entradas confirmado
+        const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
+        const confirmadoID = await getDocs(traerID);
+        const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
@@ -625,11 +648,17 @@ const Salidas = () => {
             //         tipo: 'error',
             //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
             //     })
+        } else if (existeconfirmado.length > 0 || existeID.length > 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
+            })
         } else {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
             const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE' && st.rut === rut).length === 1;
             const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
-            
+
             if (nomTipoOut === 'RETIRO CLIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
@@ -660,6 +689,7 @@ const Salidas = () => {
                             rfid: almacenar.current[0].rfid,
                             tipMov: 0,
                             observacion: '',
+                            confirmado: false,
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -716,6 +746,7 @@ const Salidas = () => {
                             rfid: almacenar.current[0].rfid,
                             tipMov: 0,
                             observacion: '',
+                            confirmado: false,
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -789,6 +820,7 @@ const Salidas = () => {
                             rfid: almacenar.current[0].rfid,
                             tipMov: 2,
                             observacion: '',
+                            confirmado: false,
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -984,20 +1016,20 @@ const Salidas = () => {
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
-                                onChange={ev =>{
-                                    
-                                    if(/^[1-9]\d*$/.test(ev.target.value))
-                                    {
+                                onChange={ev => {
+
+                                    if (/^[1-9]\d*$/.test(ev.target.value)) {
                                         setNumDoc(ev.target.value)
-                                    }else{
+                                    } else {
                                         cambiarEstadoAlerta(true);
                                         cambiarAlerta({
                                             tipo: 'error',
-                                            mensaje: 'Por favor ingrese un numero positivo'})
-                                            setNumDoc('')
+                                            mensaje: 'Por favor ingrese un numero positivo'
+                                        })
+                                        setNumDoc('')
                                     }
-                                    
-                                    }
+
+                                }
                                 }
                             />
                         </ContentElemenSelect>
