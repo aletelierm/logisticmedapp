@@ -1,7 +1,7 @@
 var admin = require("firebase-admin");
 
-var serviceAccount = require("../../../herramientasScript/logisticmedappdesa-firebase-adminsdk-9tt67-94cb85303c.json");
-/* var serviceAccount = require(process.env.SERVICE_ACCOUNT); */
+var serviceAccount = require("../../herramientasScript/logisticmedappdesa-firebase-adminsdk-9tt67-94cb85303c.json");
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://logisticmedappdesa-default-rtdb.firebaseio.com"
@@ -25,10 +25,10 @@ collectionRef.get()
 
       // Actualiza el campo en cada documento
       docRef.update({
-        price: "1"
+        precio: admin.firestore.FieldValue.delete()        
       })
       .then(() => {
-        console.log(`Documento con ID ${id} actualizado con éxito.`);
+        console.log(`Documento con ID ${id} eliminado con éxito.`);
       })
       .catch(error => {
         console.error(`Error al actualizar el documento con ID ${id}:`, error);
