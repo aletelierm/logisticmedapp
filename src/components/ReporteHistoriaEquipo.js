@@ -133,7 +133,7 @@ const Reporte1 = () => {
                             merges.map((item, index) => {
                                 return (
                                     <Table.Row key={index + 1}>
-                                        <Table.Cell>{item.id2}</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>

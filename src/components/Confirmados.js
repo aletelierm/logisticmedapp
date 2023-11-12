@@ -262,8 +262,10 @@ const Confirmados = () => {
             if (falsoCheck.length > 0) {
                 if (falsoCheck[0].tipoinout === 'CLIENTE') {
                     inOut.current = 'DEVOLUCION CLIENTE'
-                } else {
+                } else if (falsoCheck[0].tipoinout === 'SERVICIO TECNICO'){
                     inOut.current = 'DEVOLUCION SERVICIO TECNICO'
+                } else {
+                    inOut.current = 'DEVOLUCION DEL PROVEEDOR'
                 }
                 // crea cabecera
                 try {
