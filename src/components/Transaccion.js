@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, limit } from 'firebase/firestore';
+import { getDocs, collection, where, query, limit,orderBy } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ListarProveedor, Titulo } from '../elementos/General';
@@ -16,14 +16,14 @@ const Transaccion = () => {
     // Leer datos de cabecera Entradas
     const getCabecera = async () => {
         const traerCabecera = collection(db, 'cabeceras');
-        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id),limit(5));
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
 // Leer datos de cabecera Salidas
     const getCabeceraOut = async ()=>{
         const traerCabeceraOut = collection(db, 'cabecerasout');
-        const dato = query(traerCabeceraOut, where('emp_id', '==', users.emp_id),limit(5));
+        const dato = query(traerCabeceraOut, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setCabeceraOut(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
@@ -41,9 +41,11 @@ const Transaccion = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const OrdenaPorNumDoc = (a, b) => {
-        return  b.numdoc - a.numdoc ;
+   const OrdenaPorNumDoc = (a, b) => {
+        return  b.date - a.date ;
     }
+    
+
     const ordenado = cabecera.sort(OrdenaPorNumDoc);
     const ordenadoOut = cabeceraOut.sort(OrdenaPorNumDoc);
 
@@ -68,7 +70,7 @@ const Transaccion = () => {
                             if (item.confirmado === true) {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell >{index + 1}</Table.Cell>
+                                        <Table.Cell >{index}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
