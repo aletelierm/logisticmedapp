@@ -18,8 +18,6 @@ import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
-// import AgregarCampoB from '../herramientas/AgregarCampoB';
-// import AgregarCampo from '../firebase/AgregarCampo';
 
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -96,7 +94,6 @@ const Entradas = () => {
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
-        console.log(formatoDatetimeLocal)
     }
     // Validar rut
     const detectarCli = async (e) => {
@@ -187,7 +184,6 @@ const Entradas = () => {
             } else {
                 // Validar en entrdas que equipos esten en Arriendo/Comodato
                 const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
-                console.log('existeStatusAoC', existeStatusAoC)
                 if (!existeStatusAoC) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -407,7 +403,6 @@ const Entradas = () => {
         } else {
             // Validar en entrdas que equipos esten en Arriendo/Comodato
             const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
-            console.log('existeStatusAoC', existeStatusAoC)
             if (!existeStatusAoC) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -623,28 +618,6 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-
-    // const agregarCampo = async () => {
-    //     // console.log('se ejecuta')
-    //     // const data = await getDocs(collection(db, "status"));
-    //     // setLeer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    //     const docu = query(collection(db, 'status'), where('emp_id', '==', users.emp_id));
-    //     const docum = await getDocs(docu);
-    //     const documento = (docum.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    //     const batch = writeBatch(db);
-    //     documento.forEach((docs) => {
-    //         const docRef = doc(db, 'status', docs.id);
-    //         batch.update(docRef, {
-    //             status: 'PREPARACION'
-    //         });
-    //     });
-    //     try {
-    //         await batch.commit();
-    //     } catch (error) {
-    //         console.log("Error al guardar", error);
-    //     }
-    // }
-
     // Opcion 1
     // Poner miles en el precio
     // Crear un objeto Intl.NumberFormat para español en Chile
@@ -653,19 +626,6 @@ const Entradas = () => {
     // const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(price);
     // setPrice(numeroFormateadoChile)
     // console.log(numeroFormateadoChile); // Salida: "1.234.567"
-
-    // const numero = 10000000;
-    // const numeroComoTexto = numero.toString();
-    // const numeroConSeparador = numeroComoTexto.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    // console.log(numeroConSeparador); // Output: "1.000.000"
-
-    // const handleInputChange = (event) => {
-    //     const numeroIngresado = event.target.value;
-    //     const numeroSinSeparadores = parseFloat(numeroIngresado.replace(/\./g, '').replace(/,/g, ''));
-    //     const numeroConSeparador = numeroSinSeparadores.toLocaleString('es-CL');
-    //     console.log(numeroConSeparador)
-    //     setPrice(numeroConSeparador);
-    // };
 
     return (
         <ContenedorProveedor>
@@ -770,7 +730,6 @@ const Entradas = () => {
                         disabled={btnNuevo}
                     >
                         Nuevo</BotonGuardar>
-                    {/* <AgregarCampoB /> */}
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -789,8 +748,8 @@ const Entradas = () => {
                                         // Crear un objeto Intl.NumberFormat para español en Chile
                                         // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
                                         // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
-                                        const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(e.target.value);
-                                        console.log(numeroFormateadoChile); // Salida: "1.234.567"
+                                        // const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(e.target.value);
+                                        // console.log(numeroFormateadoChile); // Salida: "1.234.567"
                                         // setPrice(numeroFormateadoChile)
                                         setPrice(e.target.value)
                                     } else {
@@ -901,7 +860,6 @@ const Entradas = () => {
                                         setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
-                                        console.log(item.data)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )

@@ -9,6 +9,7 @@ import { collection, getDocs, where, query,doc, getDoc } from 'firebase/firestor
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
+import { AiFillCheckCircle } from "react-icons/ai";
 import moment from 'moment';
 
 const Reporte1 = () => {
@@ -50,7 +51,7 @@ const Reporte1 = () => {
                 const dataE = await getDocs(datoE);
                 ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));            
                 //leer salidas por id
-                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie),where('confirmado','==',true);
+                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', serie),where('confirmado','==',true));
                 const dataS = await getDocs(datoS);
                 sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));                               
                 merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
@@ -136,8 +137,8 @@ const Reporte1 = () => {
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? '1' : ''}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? "" : "1"}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} /> : ''}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? "" : <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} />}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>

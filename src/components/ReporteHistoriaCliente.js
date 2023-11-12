@@ -9,6 +9,7 @@ import { collection, getDocs, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import * as FaIcons from 'react-icons/fa';
+import { AiFillCheckCircle } from "react-icons/ai";
 import moment from 'moment';
 import validarRut from '../funciones/validarRut';
 
@@ -152,8 +153,8 @@ const Reporte3 = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.tipo+" "+item.marca}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? '0' : '1'}</Table.Cell>
-                                        <Table.Cell>{item.tipmov === 1 ? "1" : "0"}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}} >{item.tipmov === 1 ? '' : <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} />}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}} >{item.tipmov === 1 ? <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} /> : ''}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>                                                                                                                  
                                     </Table.Row>
                                 )
