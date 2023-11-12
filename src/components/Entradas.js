@@ -474,50 +474,87 @@ const Entradas = () => {
             // Filtar por docuemto de Cabecera
             const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
             const cabecera = await getDocs(cab);
-            const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
+            const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
             // Filtar por docuemto de Entrada
             const entra = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
             const entrada = await getDocs(entra);
-            const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
+            const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
             // // Filtar por Status Preparacion Pendiente
             // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
             // const status = await getDocs(traerStatusPrep);
             // const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+            console.log(nomTipoIn)
+            if (nomTipoIn === 'COMPRA' || nomTipoIn === 'ARRIENDO' || nomTipoIn === 'COMODATO') {
+                const batch = writeBatch(db);
+                dataEntrada.forEach((docs) => {
+                    const docRef = doc(db, 'status', docs.eq_id);
+                    batch.update(docRef, {
+                        status: 'BODEGA',
+                        rut: empresa.rut,
+                        entidad: empresa.empresa,
+                        price: existein[0].price,
+                        tipoinout: existein[0].tipoinout,
+                        fechamod: new Date()
+                    });
+                });
+                dataEntrada.forEach((docs) => {
+                    const docRef = doc(db, 'entradas', docs.id);
+                    batch.update(docRef, {
+                        confirmado: true,
+                        fechamod: new Date()
+                    });
+                });
+                try {
+                    await batch.commit();
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documento confirmado exitosamente.'
+                    });
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al actualizar documentos:', error
+                    })
+                }
 
-            const batch = writeBatch(db);
-            dataEntrada.forEach((docs) => {
-                const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, {
-                    status: 'BODEGA',
-                    rut: empresa.rut,
-                    entidad: empresa.empresa,
-                    price: existein[0].price,
-                    tipoinout: existein[0].tipoinout,
-                    fechamod: new Date()
+            } else {
+                const batch = writeBatch(db);
+                dataEntrada.forEach((docs) => {
+                    const docRef = doc(db, 'status', docs.eq_id);
+                    batch.update(docRef, {
+                        status: 'BODEGA',
+                        rut: empresa.rut,
+                        entidad: empresa.empresa,
+                        price: existein[0].price,
+                        fechamod: new Date()
+                    });
                 });
-            });
-            dataEntrada.forEach((docs) => {
-                const docRef = doc(db, 'entradas', docs.id);
-                batch.update(docRef, {
-                    confirmado: true,
-                    fechamod: new Date()
+                dataEntrada.forEach((docs) => {
+                    const docRef = doc(db, 'entradas', docs.id);
+                    batch.update(docRef, {
+                        confirmado: true,
+                        fechamod: new Date()
+                    });
                 });
-            });
-            try {
-                await batch.commit();
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Documento confirmado exitosamente.'
-                });
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Error al actualizar documentos:', error
-                })
+                try {
+                    await batch.commit();
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documento confirmado exitosamente.'
+                    });
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al actualizar documentos:', error
+                    })
+                }
             }
+
             try {
                 await updateDoc(doc(db, 'cabeceras', existeCab[0].id), {
                     confirmado: true,
