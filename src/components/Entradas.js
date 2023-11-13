@@ -26,6 +26,14 @@ const Entradas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
+// Calcular la fecha mínima (3 días hacia atrás)
+  const fechaMinima = new Date();
+  fechaMinima.setDate(fechaAdd.getDate() - 1);
+
+  // Calcular la fecha máxima (3 días hacia adelante)
+  const fechaMaxima = new Date();
+  fechaMaxima.setDate(fechaAdd.getDate() + 1);
+
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [itemDelete, setItemdelete] = useState(false);
@@ -204,6 +212,7 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Validar Rut
+        
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
@@ -279,7 +288,9 @@ const Entradas = () => {
                 })
             }
         } else {
+            
             const fechaInOut = new Date(date);
+            console.log('fecha actual con new date', fechaInOut)
             try {
                 CabeceraInDB({
                     numDoc: numDoc,
@@ -585,7 +596,8 @@ const Entradas = () => {
             setFlag2(!flag2);
         }
     };
-
+ 
+    
     const handleDelete = (itemId) => {
         setItemdelete(itemId);
         setShowConfirmation(true);
@@ -716,6 +728,8 @@ const Entradas = () => {
                                 name='date'
                                 value={date}
                                 onChange={ev => setDate(ev.target.value)}
+                                min={fechaMinima.toISOString().slice(0, 16)}
+                                max={fechaMaxima.toISOString().slice(0, 16)}
                             />
                             {/* <DatePicker date={date} setDate={setDate} /> */}
                         </ContentElemenSelect>

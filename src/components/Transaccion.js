@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, limit,orderBy } from 'firebase/firestore';
+import { getDocs, collection, where, query} from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ListarProveedor, Titulo } from '../elementos/General';
@@ -45,9 +45,10 @@ const Transaccion = () => {
         return  b.date - a.date ;
     }
     
-
-    const ordenado = cabecera.sort(OrdenaPorNumDoc);
-    const ordenadoOut = cabeceraOut.sort(OrdenaPorNumDoc);
+    const ordena = cabecera.sort(OrdenaPorNumDoc);
+    const ordenaOut = cabeceraOut.sort(OrdenaPorNumDoc);
+    const ordenado = ordena.filter(doc => doc.confirmado === true).slice(0,5);
+    const ordenadoOut = ordenaOut.filter(doc => doc.confirmado === true).slice(0,5);
 
     return (
         <div>
@@ -66,11 +67,11 @@ const Transaccion = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {ordenado.map((item, index) => {
-                            if (item.confirmado === true) {
+                        {ordenado.map((item, index) => {                            
+                          
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell >{index}</Table.Cell>
+                                        <Table.Cell >{index+1}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
@@ -79,7 +80,8 @@ const Transaccion = () => {
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                     </Table.Row>
                                 )
-                            }
+                               
+                                                   
                         })}
                     </Table.Body>
                 </Table>
@@ -99,8 +101,7 @@ const Transaccion = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {ordenadoOut.map((item, index) => {
-                            if (item.confirmado === true) {
+                        {ordenadoOut.map((item, index) => {                           
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell >{index + 1}</Table.Cell>
@@ -111,8 +112,7 @@ const Transaccion = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                     </Table.Row>
-                                )
-                            }
+                                )                         
                         })}
                     </Table.Body>
                 </Table>
