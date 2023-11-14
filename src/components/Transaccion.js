@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, limit,orderBy } from 'firebase/firestore';
+import { getDocs, collection, where, query /*, limit, orderBy */ } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ListarProveedor, Titulo } from '../elementos/General';
@@ -70,7 +70,7 @@ const Transaccion = () => {
                             if (item.confirmado === true) {
                                 return (
                                     <Table.Row key={item.id2}>
-                                        <Table.Cell >{index}</Table.Cell>
+                                        <Table.Cell >{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
