@@ -196,7 +196,7 @@ const Entradas = () => {
                 })
             } else {
                 // Validar en entrdas que equipos esten en Arriendo/Comodato
-                const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
+                const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION A PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
                 if (!existeStatusAoC) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -503,13 +503,13 @@ const Entradas = () => {
             console.log(nomTipoIn)
             if (nomTipoIn === 'COMPRA' || nomTipoIn === 'ARRIENDO' || nomTipoIn === 'COMODATO') {
                 const batch = writeBatch(db);
-                dataEntrada.forEach((docs) => {
+                dataEntrada.forEach((docs, index) => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     batch.update(docRef, {
                         status: 'BODEGA',
                         rut: empresa.rut,
                         entidad: empresa.empresa,
-                        price: existein[0].price,
+                        price: existein[index].price,
                         tipoinout: existein[0].tipoinout,
                         fechamod: new Date()
                     });
