@@ -68,11 +68,16 @@ const Entradas = () => {
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         setCabecera(existeCab);
     }
+    //Funcion ordena x fecha
+    const OrdenaFecha = (a, b) => {
+        return  b.date.seconds - a.date.seconds ;
+    }
     // Filtar por docuemto de Entrada
     const consultarIn = async () => {
         const doc = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documento = documen.sort(OrdenaFecha);
         setDataEntrada(documento);
     }
     //Leer  Empresa
@@ -864,6 +869,7 @@ const Entradas = () => {
                                                 :
                                                 ''
                                         }
+                                     
                                     </Table.Row>
                                 )
                             })}
