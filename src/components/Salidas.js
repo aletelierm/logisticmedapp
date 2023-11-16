@@ -27,6 +27,14 @@ const Salidas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
+    // Calcular la fecha mínima (3 días hacia atrás)
+    const fechaMinima = new Date();
+    fechaMinima.setDate(fechaAdd.getDate() - 1);
+
+    // Calcular la fecha máxima (3 días hacia adelante)
+    const fechaMaxima = new Date();
+    fechaMaxima.setDate(fechaAdd.getDate() + 1);
+
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [itemDelete, setItemdelete] = useState(false);
@@ -46,6 +54,7 @@ const Salidas = () => {
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
     const [numSerie, setNumSerie] = useState('');
+    // const [nomrut, setNomrut] = useState('Rut');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
@@ -55,6 +64,7 @@ const Salidas = () => {
     const inOut = useRef('');
     const almacenar = useRef([]);
     const salidaid = useRef([]);
+    const nomRut = useRef('Rut');
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -70,11 +80,16 @@ const Salidas = () => {
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         setCabecera(existeCab);
     }
-    // Filtar por docuemto de Entrada
+    //Funcion ordena x fecha
+    const OrdenaFecha = (a, b) => {
+        return b.date.seconds - a.date.seconds;
+    }
+    // Filtar por docuemto de Salida
     const consultarOut = async () => {
         const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documento = documen.sort(OrdenaFecha);
         setDataSalida(documento)
     }
     // Filtar usuario transportista
@@ -115,13 +130,21 @@ const Salidas = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
+    // Cambiar Label de Rut
+    if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
+        nomRut.current = 'Rut Paciente';
+    } else if (nomTipoOut === 'SERVICIO TECNICO' || nomTipoOut === 'RETIRO SERVICIO TECNICO') {
+        nomRut.current = 'Rut Servicio Tecnico';
+    } else {
+        nomRut.current = 'Rut Proveedor';
+    }
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
-            if (nomTipoOut === 'CLIENTE' || nomTipoOut === 'RETIRO CLIENTE') {
-                // Filtrar rut de Clientes
+            if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
+                // Filtrar rut de Pacientes
                 const traerClie = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
                 const rutCli = await getDocs(traerClie)
                 const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
@@ -130,7 +153,7 @@ const Salidas = () => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
+                        mensaje: 'No existe rut del Paciente'
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
@@ -218,15 +241,15 @@ const Salidas = () => {
                     mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
                 })
             } else {
-                const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
+                const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE').length === 1;
                 const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
                 const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
-                if (nomTipoOut === 'RETIRO CLIENTE') {
+                if (nomTipoOut === 'RETIRO PACIENTE') {
                     if (!existeStatusCli) {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Cliente'
+                            mensaje: 'Equipo no se encuentra en Paciente'
                         })
                     }
                 } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
@@ -375,12 +398,12 @@ const Salidas = () => {
             const existeProv = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
             const fechaInOut = new Date(date);
-            if (nomTipoOut === 'CLIENTE') {
+            if (nomTipoOut === 'PACIENTE') {
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
+                        mensaje: 'No existe rut del Paciente'
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
@@ -423,12 +446,12 @@ const Salidas = () => {
                         })
                     }
                 }
-            } else if (nomTipoOut === 'RETIRO CLIENTE') {
+            } else if (nomTipoOut === 'RETIRO PACIENTE') {
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
+                        mensaje: 'No existe rut del Paciente'
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
@@ -551,7 +574,7 @@ const Salidas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente'
+                            mensaje: 'Cabecera Documento guadada exitosamente'
                         })
                         setFlag(!flag);
                         setConfirmar(true)
@@ -595,18 +618,6 @@ const Salidas = () => {
         // Exite N° serie en Salidas 
         const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
-
-        // Pendiente revisar
-        // Validar en N° Serie en todos los documento de Salidas
-        // const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        // const serieout = await getDocs(traerserie);
-        // const existeSerie = (serieout.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // // Validar en Eq_id en todos los documento de Salidas
-        // const traerEq_id = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('tipoinout', '==', 'COMPRA'));
-        // const inEq_id = await getDocs(traerEq_id);
-        // const existeEq_idIn = (inEq_id.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        // Pendiente revisar hasta aqui
-
         // Validar en N° Serie en todos los documento de Entradas confirmado
         const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
         const confirmadoS = await getDocs(traerSC);
@@ -615,10 +626,8 @@ const Salidas = () => {
         const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
         const confirmadoID = await getDocs(traerID);
         const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-
         // Validar que equipo pertenezca a proveedor y que este en arriendo
         const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
         const valida = await getDocs(traer);
@@ -643,12 +652,6 @@ const Salidas = () => {
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-            // } else if (existeSerie.length > 0) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
-            //     })
         } else if (existeconfirmado.length > 0 || existeID.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -657,18 +660,18 @@ const Salidas = () => {
             })
         } else {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
-            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE' && st.rut === rut).length === 1;
+            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.rut === rut).length === 1;
             const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
 
-            if (nomTipoOut === 'RETIRO CLIENTE') {
+            if (nomTipoOut === 'RETIRO PACIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en este Cliente'
+                        mensaje: 'Equipo no se encuentra en este Paciente'
                     })
                 } else {
-                    inOut.current = 'PROCESO RETIRO CLIENTE';
+                    inOut.current = 'PROCESO RETIRO PACIENTE';
                     setBtnConfirmar(false);
                     try {
                         SalidasDB({
@@ -690,6 +693,7 @@ const Salidas = () => {
                             rfid: almacenar.current[0].rfid,
                             tipMov: 0,
                             observacion: '',
+                            historial: 0, // = transito
                             confirmado: false,
                             userAdd: user.email,
                             userMod: user.email,
@@ -747,6 +751,7 @@ const Salidas = () => {
                             rfid: almacenar.current[0].rfid,
                             tipMov: 0,
                             observacion: '',
+                            historial: 0,
                             confirmado: false,
                             userAdd: user.email,
                             userMod: user.email,
@@ -781,22 +786,19 @@ const Salidas = () => {
                         tipo: 'error',
                         mensaje: 'Equipo no pertenece a este Proveedor o no ha sido arrendado'
                     })
-                    console.log('pasa por existe prov')
                 } else if (!existeStatusBod) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
                         mensaje: 'Equipo no se encuentra en Bodega'
                     })
-                    console.log('PASA POR CONSULTA DE BODEGA')
                 } else {
-                    if (nomTipoOut === 'CLIENTE') {
-                        inOut.current = 'TRANSITO CLIENTE'
+                    if (nomTipoOut === 'PACIENTE') {
+                        inOut.current = 'TRANSITO PACIENTE'
                     } else if (nomTipoOut === 'SERVICIO TECNICO') {
                         inOut.current = 'TRANSITO S.T.'
-                    } else if (nomTipoOut === 'DEVOLUCION PROVEEDOR') {
-                        inOut.current = 'DEVOLUCION PROVEEDOR'
-                        console.log('paso por devolucion proveedor')
+                    } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR') {
+                        inOut.current = 'DEVOLUCION A PROVEEDOR'
                     } else {
                         inOut.current = nomTipoOut
                     }
@@ -821,6 +823,7 @@ const Salidas = () => {
                             rfid: almacenar.current[0].rfid,
                             tipMov: 2,
                             observacion: '',
+                            historial: 0,
                             confirmado: false,
                             userAdd: user.email,
                             userMod: user.email,
@@ -834,7 +837,7 @@ const Salidas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Item guardado correctamente la devolucion'
+                            mensaje: 'Item guardado correctamente'
                         })
                         setFlag(!flag);
                         setBtnConfirmar(false);
@@ -922,7 +925,7 @@ const Salidas = () => {
             setBtnConfirmar(true);
             setBtnNuevo(true);
             setFlag(!flag);
-            if (nomTipoOut === 'CLIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
+            if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
                 try {
                     /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
                     const mensaje = cuerpoCorreo(dataSalida);
@@ -1092,6 +1095,8 @@ const Salidas = () => {
                                 name='date'
                                 value={date}
                                 onChange={ev => setDate(ev.target.value)}
+                                min={fechaMinima.toISOString().slice(0, 16)}
+                                max={fechaMaxima.toISOString().slice(0, 16)}
                             />
                         </ContentElemenSelect>
                     </ContentElemenMov>
@@ -1101,7 +1106,7 @@ const Salidas = () => {
                             <Select
                                 disabled={confirmar}
                                 value={nomTipoOut}
-                                onChange={ev => setNomTipoOut(ev.target.value)}>
+                                onChange={ev => {setNomTipoOut(ev.target.value)}}>
                                 <option>Selecciona Opción:</option>
                                 {TipoOut.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
@@ -1109,7 +1114,7 @@ const Salidas = () => {
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
-                            <Label >Rut</Label>
+                            <Label >{nomRut.current}</Label>
                             <Input
                                 disabled={confirmar}
                                 type='numero'

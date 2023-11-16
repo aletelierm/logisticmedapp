@@ -24,12 +24,12 @@ const Reporte3 = () => {
     const merge = useRef([]);
     const ent = useRef([]);
     const sal = useRef([]);
-   
+
     const detectarEquipo = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Patron para valiar rut
-        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/; 
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
@@ -57,36 +57,36 @@ const Reporte3 = () => {
                     mensaje: 'Rut no válido'
                 })
                 return;
-            }else {
+            } else {
                 //Buscar si rut existe en pacientes
                 const datoRut = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
                 const encuentraRut = await getDocs(datoRut);
-                
-                if(encuentraRut.docs.length !== 0){
+
+                if (encuentraRut.docs.length !== 0) {
                     //leer entradas por id
-                 const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-                 const dataE = await getDocs(datoE);
-                 ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }))
-                //leer salidas por id
-                const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-                const dataS = await getDocs(datoS);
-                sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));  
-                merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
-                const movimientos = merge.current.filter(mov => mov.tipmov !==0)                
-                setMerges(movimientos);
-                 console.log(merges)
-                }else{
+                    const datoE = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+                    const dataE = await getDocs(datoE);
+                    ent.current = dataE.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }))
+                    //leer salidas por id
+                    const datoS = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+                    const dataS = await getDocs(datoS);
+                    sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));
+                    merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
+                    const movimientos = merge.current.filter(mov => mov.tipmov !== 0)
+                    setMerges(movimientos);
+                    console.log(merges)
+                } else {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'No existe un paciente con ese Rut'
-                })
-                return;
+                        tipo: 'error',
+                        mensaje: 'No existe un paciente con ese Rut'
+                    })
+                    return;
                 }
-                
+
             }
-            
-    }
+
+        }
     }
 
     const handleChange = (e) => {
@@ -99,7 +99,7 @@ const Reporte3 = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-   
+
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -121,7 +121,7 @@ const Reporte3 = () => {
             <Contenedor>
                 {
                     merge.current.length > 0 ?
-                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" "+merge.current[0].entidad+" ------ Rut: "+merge.current[0].rut}</Titulo>
+                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" " + merge.current[0].entidad + " ------ Rut: " + merge.current[0].rut}</Titulo>
                         :
                         <Titulo>Equipo:</Titulo>
                 }
@@ -137,7 +137,7 @@ const Reporte3 = () => {
                             <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Entrada</Table.HeaderCell>
                             <Table.HeaderCell>Salida</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>                           
+                            <Table.HeaderCell>Tipo Mov.</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -151,11 +151,11 @@ const Reporte3 = () => {
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.tipo+" "+item.marca}</Table.Cell>
+                                        <Table.Cell>{item.tipo + " " + item.marca}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center'}} >{item.tipmov === 1 ? '' : <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} />}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center'}} >{item.tipmov === 1 ? <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} /> : ''}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>                                                                                                                  
+                                        <Table.Cell style={{ textAlign: 'center' }} >{item.tipmov === 1 ? '' : <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} />}</Table.Cell>
+                                        <Table.Cell style={{ textAlign: 'center' }} >{item.tipmov === 1 ? <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} /> : ''}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>
                                     </Table.Row>
                                 )
                             })

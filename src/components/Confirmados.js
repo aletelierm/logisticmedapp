@@ -7,10 +7,11 @@ import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, doc, writeBatch, addDoc, updateDoc } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
+import { FaSyncAlt } from "react-icons/fa";
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, Boton } from '../elementos/General'
 import { Input } from '../elementos/CrearEquipos'
 import moment from 'moment';
 
@@ -151,6 +152,7 @@ const Confirmados = () => {
                     rfid: docs.rfid,
                     tipmov: 1,
                     observacion: docs.observacion,
+                    historial: 0,
                     confirmado: false,
                     useradd: user.email,
                     usermod: user.email,
@@ -188,21 +190,22 @@ const Confirmados = () => {
                     tipoinout: docs.tipoinout,
                     rut: docs.rut,
                     entidad: docs.entidad,
+                    price: 0,
                     cab_id: cabeceraId.current,
                     eq_id: docs.eq_id,
                     familia: docs.familia,
                     tipo: docs.tipo,
                     marca: docs.marca,
-                    price: 0,
                     modelo: docs.modelo,
                     serie: docs.serie,
                     rfid: docs.rfid,
+                    tipmov: 1,
+                    observacion: docs.observacion,
+                    confirmado: false,
                     useradd: user.email,
                     usermod: user.email,
                     fechaadd: fechaAdd,
                     fechamod: fechaMod,
-                    tipmov: 1,
-                    observacion: docs.observacion,
                     emp_id: users.emp_id,
                 }
                 );
@@ -225,7 +228,6 @@ const Confirmados = () => {
     // Filtros para guardar datos y/o validaciones Entregado
     const verdaderos = isChecked.filter(check => check.checked === true);
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
-    console.log('falsoCheck', falsoCheck)
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
     const confirmaEntrega = async (e) => {
         e.preventDefault();
@@ -246,9 +248,13 @@ const Confirmados = () => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
+                verdaderos.forEach((docs) => {
+                    const docRef = doc(db, 'salidas', docs.id);
+                    console.log('docs.id confirmar entrega', docs.id)
+                    batch.update(docRef, { historial: 1 }); // Indica que se recepciono el equipo en paciente
+                });
                 try {
                     await batch.commit();
-
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -260,9 +266,9 @@ const Confirmados = () => {
             }
 
             if (falsoCheck.length > 0) {
-                if (falsoCheck[0].tipoinout === 'CLIENTE') {
-                    inOut.current = 'DEVOLUCION CLIENTE'
-                } else if (falsoCheck[0].tipoinout === 'SERVICIO TECNICO'){
+                if (falsoCheck[0].tipoinout === 'PACIENTE') {
+                    inOut.current = 'DEVOLUCION PACIENTE'
+                } else if (falsoCheck[0].tipoinout === 'SERVICIO TECNICO') {
                     inOut.current = 'DEVOLUCION SERVICIO TECNICO'
                 } else {
                     inOut.current = 'DEVOLUCION DEL PROVEEDOR'
@@ -285,11 +291,11 @@ const Confirmados = () => {
                         confirmado: false,
                         falsos: false // devolucion
                     })
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Cabecera creada correctamente.'
-                    });
+                    // cambiarEstadoAlerta(true);
+                    // cambiarAlerta({
+                    //     tipo: 'exito',
+                    //     mensaje: 'Cabecera creada correctamente.'
+                    // });
                 } catch (error) {
                     Swal.fire('Se ha producido un error al guardar Cabecera de Entrda');
                 }
@@ -298,8 +304,12 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    // console.log('id equipo',docs.eq_id)
                     batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                });
+                falsoCheck.forEach((docs) => {
+                    const docRef = doc(db, 'salidas', docs.id);
+                    console.log('docs.id no confirma entrega', docs.id)
+                    batchf.update(docRef, { historial: 1 }); // Indica que no se recepciono el equipo en paciente
                 });
                 try {
                     await batchf.commit();
@@ -346,8 +356,8 @@ const Confirmados = () => {
             return;
         } else {
             if (falsoCheckRetiro.length > 0) {
-                if (falsoCheckRetiro[0].tipoinout === 'RETIRO CLIENTE') {
-                    inOut.current = 'CLIENTE'
+                if (falsoCheckRetiro[0].tipoinout === 'RETIRO PACIENTE') {
+                    inOut.current = 'PACIENTE'
                 } else {
                     inOut.current = 'SERVICIO TECNICO'
                 }
@@ -356,26 +366,12 @@ const Confirmados = () => {
                     const docRef = doc(db, 'salidas', docs.id);
                     batch.update(docRef, { observacion: docs.observacion, fechamod: fechaMod });
                 });
-                try {
-                    await batch.commit();
-
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Documentos actualizados correctamente.'
-                    });
-                } catch (error) {
-                    Swal.fire('Se ha producido un error al guardar observacion');
-                    console.log(error)
-                }
-
-                const batch2 = writeBatch(db);
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch2.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                    batch.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
-                    await batch2.commit();
+                    await batch.commit();
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -406,13 +402,13 @@ const Confirmados = () => {
                         confirmado: false,
                         falsos: true // retiro
                     })
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Cabecera creada correctamente.'
-                    });
+                    // cambiarEstadoAlerta(true);
+                    // cambiarAlerta({
+                    //     tipo: 'exito',
+                    //     mensaje: 'Cabecera creada correctamente.'
+                    // });
                 } catch (error) {
-                    Swal.fire('Se ha producido un error al guardar Cabecera de Entrda');
+                    Swal.fire('Se ha producido un error al guardar Cabecera de Entrada');
                 }
 
                 // Actualiza Status de equipos
@@ -429,8 +425,6 @@ const Confirmados = () => {
                         tipo: 'exito',
                         mensaje: 'Documentos actualizados correctamente.'
                     });
-                    setFlag(!flag)
-                    setIsOpen(!isOpen)
                 } catch (error) {
                     Swal.fire('Se ha producido un error al Cambiar Status de equipos retirados');
                 }
@@ -443,13 +437,13 @@ const Confirmados = () => {
                     usermod: user.email,
                     fechamod: fechaMod
                 })
-                // setFlag(!flag)
-                // setIsOpen(!isOpen)
+                setFlag(!flag)
+                setIsOpenR(!isOpenR)
             } catch (error) {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
             }
-            setFlag(!flag)
-            setIsOpenR(!setIsOpenR)
+            // setFlag(!flag)
+            // setIsOpenR(!setIsOpenR)
         }
     }
 
@@ -467,8 +461,13 @@ const Confirmados = () => {
 
     return (
         <ContenedorProveedor>
-            <Contenedor>
+            {/* <BotonGuardar style={{textAlign: 'left'}}>Actualizar Informacion</BotonGuardar> */}
+            <Contenedor style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Titulo>Entregados - Retirados</Titulo>
+                <Boton /* style={{background: '#328AC4'}} */ onClick={() => setFlag(!flag)}>
+                    <FaSyncAlt style={{ fontSize: '20px', color: '#328AC4' }} />
+                </Boton>
+
             </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Entregar</Titulo>

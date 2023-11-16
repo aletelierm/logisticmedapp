@@ -68,9 +68,9 @@ const Entradas = () => {
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         setCabecera(existeCab);
     }
-    //Funcion ordena x fecha
+    // Funcion ordena x fecha
     const OrdenaFecha = (a, b) => {
-        return  b.date.seconds - a.date.seconds ;
+        return b.date.seconds - a.date.seconds;
     }
     // Filtar por docuemto de Entrada
     const consultarIn = async () => {
@@ -217,7 +217,7 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Validar Rut
-        
+
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
@@ -293,7 +293,7 @@ const Entradas = () => {
                 })
             }
         } else {
-            
+
             const fechaInOut = new Date(date);
             console.log('fecha actual con new date', fechaInOut)
             try {
@@ -445,6 +445,7 @@ const Entradas = () => {
                         rfid: almacenar.current[0].rfid,
                         tipMov: 1,
                         observacion: '',
+                        historial: 1,
                         confirmado: false,
                         userAdd: user.email,
                         userMod: user.email,
@@ -500,7 +501,7 @@ const Entradas = () => {
             // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
             // const status = await getDocs(traerStatusPrep);
             // const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-            console.log(nomTipoIn)
+            
             if (nomTipoIn === 'COMPRA' || nomTipoIn === 'ARRIENDO' || nomTipoIn === 'COMODATO') {
                 const batch = writeBatch(db);
                 dataEntrada.forEach((docs, index) => {
@@ -518,7 +519,7 @@ const Entradas = () => {
                     const docRef = doc(db, 'entradas', docs.id);
                     batch.update(docRef, {
                         confirmado: true,
-                        fechamod: new Date()
+                        fechamod: new Date(),
                     });
                 });
                 try {
@@ -544,7 +545,6 @@ const Entradas = () => {
                         status: 'BODEGA',
                         rut: empresa.rut,
                         entidad: empresa.empresa,
-                        price: existein[0].price,
                         fechamod: new Date()
                     });
                 });
@@ -552,9 +552,11 @@ const Entradas = () => {
                     const docRef = doc(db, 'entradas', docs.id);
                     batch.update(docRef, {
                         confirmado: true,
-                        fechamod: new Date()
+                        fechamod: new Date(),
+                        historial: 1
                     });
                 });
+                console.log('Se cambia historial a 1')
                 try {
                     await batch.commit();
                     cambiarEstadoAlerta(true);
@@ -601,8 +603,7 @@ const Entradas = () => {
             setFlag2(!flag2);
         }
     };
- 
-    
+
     const handleDelete = (itemId) => {
         setItemdelete(itemId);
         setShowConfirmation(true);
@@ -653,6 +654,7 @@ const Entradas = () => {
         setBtnAgregar(true);
         setBtnConfirmar(false);
         setBtnNuevo(true);
+        setFlag(!flag)
     }
 
     useEffect(() => {
@@ -753,7 +755,7 @@ const Entradas = () => {
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
-                            <Label >Rut</Label>
+                            <Label >Rut Proveedor</Label>
                             <Input
                                 disabled={confirmar}
                                 type='numero'
@@ -869,7 +871,7 @@ const Entradas = () => {
                                                 :
                                                 ''
                                         }
-                                     
+
                                     </Table.Row>
                                 )
                             })}

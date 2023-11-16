@@ -9,8 +9,10 @@ import { UserContext } from '../context/UserContext';
 import moment from 'moment';
 import ExportarExcel from '../funciones/ExportarExcel';
 import * as FaIcons from 'react-icons/fa';
-import {Contenedor, ListarProveedor, Titulo, ContentElemenAdd} from '../elementos/General'
-import {ContentElemenMov, Input} from '../elementos/CrearEquipos'
+// import { FaArrowUp } from "react-icons/fa";
+// import { FaArrowDown } from "react-icons/fa";
+import { Contenedor, ListarProveedor, Titulo, ContentElemenAdd } from '../elementos/General'
+import { ContentElemenMov, Input } from '../elementos/CrearEquipos'
 
 //Reporte Status Equipos
 const Reporte2 = () => {
@@ -18,7 +20,7 @@ const Reporte2 = () => {
     const [buscador, setBuscardor] = useState('');
     //lee usuario de autenticado y obtiene fecha actual   
     const { users } = useContext(UserContext);
-    
+
     //Leer los datos de Status
     const getStatus = async () => {
         const traerStatus = collection(db, 'status');
@@ -37,7 +39,7 @@ const Reporte2 = () => {
         return formatear;
     }
 
-    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {      
+    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setBuscardor(target.value)
     }
 
@@ -71,15 +73,15 @@ const Reporte2 = () => {
     // Ordenar el arreglo de objetos por múltiples campos
     estado.sort(ordenar);
 
-    const filtro = () => {       
+    const filtro = () => {
         const nuevoFiltro = estado.filter(r => r.rut.includes(buscador))
-        return nuevoFiltro;        
+        return nuevoFiltro;
     }
 
     //agrega campo fecha formateado para exportar
-    const fecha = filtro().map((doc)=> ({...doc, fecha: formatearFecha(doc.fechamod)}))   
-     //Exportar a excel los equipos
-     const ExportarXls = () => {
+    const fecha = filtro().map((doc) => ({ ...doc, fecha: formatearFecha(doc.fechamod) }))
+    //Exportar a excel los equipos
+    const ExportarXls = () => {
         //Campos a mostrar en el excel   
         const columnsToShow = ['tipo', 'marca', 'modelo', 'status', 'serie', 'rut', 'entidad', 'fecha']
         //Llamar a la funcion con props: array equipo y array columnas
@@ -98,8 +100,8 @@ const Reporte2 = () => {
                 <Titulo>Estados de los Equipos</Titulo>
             </Contenedor>
             <ListarProveedor>
-                <ContentElemenMov>                    
-                    <Titulo>Listado de Dispositivos Médicos</Titulo>                                     
+                <ContentElemenMov>
+                    <Titulo>Listado de Dispositivos Médicos</Titulo>
                 </ContentElemenMov>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
@@ -110,9 +112,9 @@ const Reporte2 = () => {
                         onChange={onBuscarCambios}
                     />
                     <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
-                </ContentElemenAdd>            
-                
-                <Table singleLine style={{fontSize: '13px'}}>
+                </ContentElemenAdd>
+
+                <Table singleLine style={{ fontSize: '13px' }}>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
@@ -131,8 +133,8 @@ const Reporte2 = () => {
                             <Table.HeaderCell>Fecha Status</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-                    <Table.Body>      
-                      {
+                    <Table.Body>
+                        {
                             filtro().map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
@@ -157,9 +159,38 @@ const Reporte2 = () => {
                     </Table.Body>
                 </Table>
             </ListarProveedor>
+            {/* <ContenedorFlecha> */}
+                {/* <FlechaArriba><FaArrowUp /></FlechaArriba> */}
+                {/* <FlechaArriba/> */}
+                {/* <FlechaAbajo><FaArrowDown /></FlechaAbajo> */}
+                {/* <FlechaAbajo/> */}
+            {/* </ContenedorFlecha> */}
         </ContenedorReporte>
     );
 };
 
 export default Reporte2;
 const ContenedorReporte = styled.div``
+
+// const ContenedorFlecha = styled.div`
+//   position: relative;
+// `;
+
+// const Flecha = styled.div`
+//   width: 0;
+//   height: 0;
+//   border-left: 10px solid transparent;
+//   border-right: 10px solid transparent;
+//   position: absolute;
+//   cursor: pointer;
+// `;
+
+// const FlechaArriba = styled(Flecha)`
+//   border-bottom: 10px solid black;
+//   top: 0;
+// `;
+
+// const FlechaAbajo = styled(Flecha)`
+//   border-top: 10px solid black;
+//   bottom: 0;
+// `;
