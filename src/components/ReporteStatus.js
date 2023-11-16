@@ -9,9 +9,9 @@ import { UserContext } from '../context/UserContext';
 import moment from 'moment';
 import ExportarExcel from '../funciones/ExportarExcel';
 import * as FaIcons from 'react-icons/fa';
-import { FaArrowUp } from "react-icons/fa";
-import { FaArrowDown } from "react-icons/fa";
-import { Contenedor, ListarProveedor, Titulo, ContentElemenAdd, Boton } from '../elementos/General'
+// import { FaArrowUp } from "react-icons/fa";
+// import { FaArrowDown } from "react-icons/fa";
+import { Contenedor, ListarProveedor, Titulo, ContentElemenAdd } from '../elementos/General'
 import { ContentElemenMov, Input } from '../elementos/CrearEquipos'
 
 //Reporte Status Equipos
