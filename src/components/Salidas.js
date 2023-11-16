@@ -54,6 +54,7 @@ const Salidas = () => {
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
     const [numSerie, setNumSerie] = useState('');
+    // const [nomrut, setNomrut] = useState('Rut');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
@@ -63,6 +64,7 @@ const Salidas = () => {
     const inOut = useRef('');
     const almacenar = useRef([]);
     const salidaid = useRef([]);
+    const nomRut = useRef('Rut');
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -127,6 +129,14 @@ const Salidas = () => {
         // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
+    }
+    // Cambiar Label de Rut
+    if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
+        nomRut.current = 'Rut Paciente';
+    } else if (nomTipoOut === 'SERVICIO TECNICO' || nomTipoOut === 'RETIRO SERVICIO TECNICO') {
+        nomRut.current = 'Rut Servicio Tecnico';
+    } else {
+        nomRut.current = 'Rut Proveedor';
     }
     // Validar rut
     const detectarCli = async (e) => {
@@ -1096,7 +1106,7 @@ const Salidas = () => {
                             <Select
                                 disabled={confirmar}
                                 value={nomTipoOut}
-                                onChange={ev => setNomTipoOut(ev.target.value)}>
+                                onChange={ev => {setNomTipoOut(ev.target.value)}}>
                                 <option>Selecciona Opción:</option>
                                 {TipoOut.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
@@ -1104,7 +1114,7 @@ const Salidas = () => {
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
-                            <Label >Rut</Label>
+                            <Label >{nomRut.current}</Label>
                             <Input
                                 disabled={confirmar}
                                 type='numero'
