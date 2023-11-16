@@ -445,6 +445,7 @@ const Entradas = () => {
                         rfid: almacenar.current[0].rfid,
                         tipMov: 1,
                         observacion: '',
+                        historial: 1,
                         confirmado: false,
                         userAdd: user.email,
                         userMod: user.email,
@@ -518,7 +519,7 @@ const Entradas = () => {
                     const docRef = doc(db, 'entradas', docs.id);
                     batch.update(docRef, {
                         confirmado: true,
-                        fechamod: new Date()
+                        fechamod: new Date(),
                     });
                 });
                 try {
@@ -551,9 +552,11 @@ const Entradas = () => {
                     const docRef = doc(db, 'entradas', docs.id);
                     batch.update(docRef, {
                         confirmado: true,
-                        fechamod: new Date()
+                        fechamod: new Date(),
+                        historial: 1
                     });
                 });
+                console.log('Se cambia historial a 1')
                 try {
                     await batch.commit();
                     cambiarEstadoAlerta(true);

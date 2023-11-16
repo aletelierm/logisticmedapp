@@ -137,8 +137,8 @@ const Reporte1 = () => {
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} /> : ''}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? "" : <AiFillCheckCircle style={{color: 'green', fontSize: '20px'}} />}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} /> : ''}</Table.Cell>
+                                        <Table.Cell style={{textAlign: 'center'}}>{item.tipmov === 1 ? "" : <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} />}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>

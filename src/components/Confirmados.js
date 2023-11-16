@@ -8,11 +8,10 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, doc, writeBatch, addDoc, updateDoc } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
 import { FaSyncAlt } from "react-icons/fa";
-import { GrUpdate } from "react-icons/gr";
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, Boton, ContenedorElementos } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, Boton } from '../elementos/General'
 import { Input } from '../elementos/CrearEquipos'
 import moment from 'moment';
 
@@ -153,6 +152,7 @@ const Confirmados = () => {
                     rfid: docs.rfid,
                     tipmov: 1,
                     observacion: docs.observacion,
+                    historial: 0,
                     confirmado: false,
                     useradd: user.email,
                     usermod: user.email,
@@ -248,6 +248,11 @@ const Confirmados = () => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
+                verdaderos.forEach((docs) => {
+                    const docRef = doc(db, 'salidas', docs.id);
+                    console.log('docs.id confirmar entrega', docs.id)
+                    batch.update(docRef, { historial: 1 }); // Indica que se recepciono el equipo en paciente
+                });
                 try {
                     await batch.commit();
                     cambiarEstadoAlerta(true);
@@ -300,6 +305,11 @@ const Confirmados = () => {
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                });
+                falsoCheck.forEach((docs) => {
+                    const docRef = doc(db, 'salidas', docs.id);
+                    console.log('docs.id no confirma entrega', docs.id)
+                    batchf.update(docRef, { historial: 1 }); // Indica que no se recepciono el equipo en paciente
                 });
                 try {
                     await batchf.commit();
