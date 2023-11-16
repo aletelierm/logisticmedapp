@@ -551,7 +551,7 @@ const Salidas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Ingreso realizado exitosamente'
+                            mensaje: 'Cabecera Documento guadada exitosamente'
                         })
                         setFlag(!flag);
                         setConfirmar(true)
@@ -794,8 +794,8 @@ const Salidas = () => {
                         inOut.current = 'TRANSITO CLIENTE'
                     } else if (nomTipoOut === 'SERVICIO TECNICO') {
                         inOut.current = 'TRANSITO S.T.'
-                    } else if (nomTipoOut === 'DEVOLUCION PROVEEDOR') {
-                        inOut.current = 'DEVOLUCION PROVEEDOR'
+                    } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR') {
+                        inOut.current = 'DEVOLUCION A PROVEEDOR'
                         console.log('paso por devolucion proveedor')
                     } else {
                         inOut.current = nomTipoOut
@@ -834,7 +834,7 @@ const Salidas = () => {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'exito',
-                            mensaje: 'Item guardado correctamente la devolucion'
+                            mensaje: 'Item guardado correctamente'
                         })
                         setFlag(!flag);
                         setBtnConfirmar(false);

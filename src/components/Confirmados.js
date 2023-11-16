@@ -188,21 +188,22 @@ const Confirmados = () => {
                     tipoinout: docs.tipoinout,
                     rut: docs.rut,
                     entidad: docs.entidad,
+                    price: 0,
                     cab_id: cabeceraId.current,
                     eq_id: docs.eq_id,
                     familia: docs.familia,
                     tipo: docs.tipo,
                     marca: docs.marca,
-                    price: 0,
                     modelo: docs.modelo,
                     serie: docs.serie,
                     rfid: docs.rfid,
+                    tipmov: 1,
+                    observacion: docs.observacion,
+                    confirmado: false,
                     useradd: user.email,
                     usermod: user.email,
                     fechaadd: fechaAdd,
                     fechamod: fechaMod,
-                    tipmov: 1,
-                    observacion: docs.observacion,
                     emp_id: users.emp_id,
                 }
                 );
@@ -225,7 +226,6 @@ const Confirmados = () => {
     // Filtros para guardar datos y/o validaciones Entregado
     const verdaderos = isChecked.filter(check => check.checked === true);
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
-    console.log('falsoCheck', falsoCheck)
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
     const confirmaEntrega = async (e) => {
         e.preventDefault();
@@ -248,7 +248,6 @@ const Confirmados = () => {
                 });
                 try {
                     await batch.commit();
-
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -298,7 +297,6 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    // console.log('id equipo',docs.eq_id)
                     batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
@@ -356,26 +354,12 @@ const Confirmados = () => {
                     const docRef = doc(db, 'salidas', docs.id);
                     batch.update(docRef, { observacion: docs.observacion, fechamod: fechaMod });
                 });
-                try {
-                    await batch.commit();
-
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Documentos actualizados correctamente.'
-                    });
-                } catch (error) {
-                    Swal.fire('Se ha producido un error al guardar observacion');
-                    console.log(error)
-                }
-
-                const batch2 = writeBatch(db);
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch2.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                    batch.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
                 });
                 try {
-                    await batch2.commit();
+                    await batch.commit();
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
@@ -412,7 +396,7 @@ const Confirmados = () => {
                         mensaje: 'Cabecera creada correctamente.'
                     });
                 } catch (error) {
-                    Swal.fire('Se ha producido un error al guardar Cabecera de Entrda');
+                    Swal.fire('Se ha producido un error al guardar Cabecera de Entrada');
                 }
 
                 // Actualiza Status de equipos
@@ -429,8 +413,6 @@ const Confirmados = () => {
                         tipo: 'exito',
                         mensaje: 'Documentos actualizados correctamente.'
                     });
-                    setFlag(!flag)
-                    setIsOpen(!isOpen)
                 } catch (error) {
                     Swal.fire('Se ha producido un error al Cambiar Status de equipos retirados');
                 }
@@ -443,13 +425,13 @@ const Confirmados = () => {
                     usermod: user.email,
                     fechamod: fechaMod
                 })
-                // setFlag(!flag)
-                // setIsOpen(!isOpen)
+                setFlag(!flag)
+                setIsOpenR(!isOpenR)
             } catch (error) {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
             }
-            setFlag(!flag)
-            setIsOpenR(!setIsOpenR)
+            // setFlag(!flag)
+            // setIsOpenR(!setIsOpenR)
         }
     }
 
