@@ -41,18 +41,11 @@ const Reporte2 = () => {
         setBuscardor(target.value)
     }
 
-    // estado.sort((a, b) => {
-    //     const nameA = a.status;
-    //     const nameB = b.status;
-    //     if (nameA < nameB) {
-    //         return -1;
-    //     }
-    //     if (nameA > nameB) {
-    //         return 1;
-    //     }
-    //     return 0;
-    // });
+    const ordenarSerie = (a,b)=>{
+        return  b.serie - a.serie 
+    }
 
+    
     function ordenar(a, b) {
         // Primero, comparar por Status
         const statusA = a.status;

@@ -26,11 +26,11 @@ const Entradas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
-// Calcular la fecha mínima (3 días hacia atrás)
+// Calcular la fecha mínima ( n días hacia atrás)
   const fechaMinima = new Date();
   fechaMinima.setDate(fechaAdd.getDate() - 1);
 
-  // Calcular la fecha máxima (3 días hacia adelante)
+  // Calcular la fecha máxima (n días hacia adelante)
   const fechaMaxima = new Date();
   fechaMaxima.setDate(fechaAdd.getDate() + 1);
 
