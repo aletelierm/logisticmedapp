@@ -500,7 +500,7 @@ const Entradas = () => {
             // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
             // const status = await getDocs(traerStatusPrep);
             // const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-            console.log(nomTipoIn)
+            
             if (nomTipoIn === 'COMPRA' || nomTipoIn === 'ARRIENDO' || nomTipoIn === 'COMODATO') {
                 const batch = writeBatch(db);
                 dataEntrada.forEach((docs, index) => {
@@ -544,7 +544,6 @@ const Entradas = () => {
                         status: 'BODEGA',
                         rut: empresa.rut,
                         entidad: empresa.empresa,
-                        price: existein[0].price,
                         fechamod: new Date()
                     });
                 });
@@ -652,6 +651,7 @@ const Entradas = () => {
         setBtnAgregar(true);
         setBtnConfirmar(false);
         setBtnNuevo(true);
+        setFlag(!flag)
     }
 
     useEffect(() => {
@@ -752,7 +752,7 @@ const Entradas = () => {
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
-                            <Label >Rut</Label>
+                            <Label >Rut Proveedor</Label>
                             <Input
                                 disabled={confirmar}
                                 type='numero'

@@ -7,10 +7,12 @@ import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, doc, writeBatch, addDoc, updateDoc } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
+import { FaSyncAlt } from "react-icons/fa";
+import { GrUpdate } from "react-icons/gr";
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, Boton, ContenedorElementos } from '../elementos/General'
 import { Input } from '../elementos/CrearEquipos'
 import moment from 'moment';
 
@@ -259,9 +261,9 @@ const Confirmados = () => {
             }
 
             if (falsoCheck.length > 0) {
-                if (falsoCheck[0].tipoinout === 'CLIENTE') {
-                    inOut.current = 'DEVOLUCION CLIENTE'
-                } else if (falsoCheck[0].tipoinout === 'SERVICIO TECNICO'){
+                if (falsoCheck[0].tipoinout === 'PACIENTE') {
+                    inOut.current = 'DEVOLUCION PACIENTE'
+                } else if (falsoCheck[0].tipoinout === 'SERVICIO TECNICO') {
                     inOut.current = 'DEVOLUCION SERVICIO TECNICO'
                 } else {
                     inOut.current = 'DEVOLUCION DEL PROVEEDOR'
@@ -284,11 +286,11 @@ const Confirmados = () => {
                         confirmado: false,
                         falsos: false // devolucion
                     })
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Cabecera creada correctamente.'
-                    });
+                    // cambiarEstadoAlerta(true);
+                    // cambiarAlerta({
+                    //     tipo: 'exito',
+                    //     mensaje: 'Cabecera creada correctamente.'
+                    // });
                 } catch (error) {
                     Swal.fire('Se ha producido un error al guardar Cabecera de Entrda');
                 }
@@ -344,8 +346,8 @@ const Confirmados = () => {
             return;
         } else {
             if (falsoCheckRetiro.length > 0) {
-                if (falsoCheckRetiro[0].tipoinout === 'RETIRO CLIENTE') {
-                    inOut.current = 'CLIENTE'
+                if (falsoCheckRetiro[0].tipoinout === 'RETIRO PACIENTE') {
+                    inOut.current = 'PACIENTE'
                 } else {
                     inOut.current = 'SERVICIO TECNICO'
                 }
@@ -390,11 +392,11 @@ const Confirmados = () => {
                         confirmado: false,
                         falsos: true // retiro
                     })
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Cabecera creada correctamente.'
-                    });
+                    // cambiarEstadoAlerta(true);
+                    // cambiarAlerta({
+                    //     tipo: 'exito',
+                    //     mensaje: 'Cabecera creada correctamente.'
+                    // });
                 } catch (error) {
                     Swal.fire('Se ha producido un error al guardar Cabecera de Entrada');
                 }
@@ -449,8 +451,13 @@ const Confirmados = () => {
 
     return (
         <ContenedorProveedor>
-            <Contenedor>
+            {/* <BotonGuardar style={{textAlign: 'left'}}>Actualizar Informacion</BotonGuardar> */}
+            <Contenedor style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Titulo>Entregados - Retirados</Titulo>
+                <Boton /* style={{background: '#328AC4'}} */ onClick={() => setFlag(!flag)}>
+                    <FaSyncAlt style={{ fontSize: '20px', color: '#328AC4' }} />
+                </Boton>
+
             </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Entregar</Titulo>

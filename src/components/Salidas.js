@@ -133,8 +133,8 @@ const Salidas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
-            if (nomTipoOut === 'CLIENTE' || nomTipoOut === 'RETIRO CLIENTE') {
-                // Filtrar rut de Clientes
+            if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
+                // Filtrar rut de Pacientes
                 const traerClie = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
                 const rutCli = await getDocs(traerClie)
                 const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
@@ -143,7 +143,7 @@ const Salidas = () => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
+                        mensaje: 'No existe rut del Paciente'
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
@@ -231,15 +231,15 @@ const Salidas = () => {
                     mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
                 })
             } else {
-                const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE').length === 1;
+                const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE').length === 1;
                 const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
                 const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
-                if (nomTipoOut === 'RETIRO CLIENTE') {
+                if (nomTipoOut === 'RETIRO PACIENTE') {
                     if (!existeStatusCli) {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
                             tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Cliente'
+                            mensaje: 'Equipo no se encuentra en Paciente'
                         })
                     }
                 } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
@@ -388,12 +388,12 @@ const Salidas = () => {
             const existeProv = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
             const fechaInOut = new Date(date);
-            if (nomTipoOut === 'CLIENTE') {
+            if (nomTipoOut === 'PACIENTE') {
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
+                        mensaje: 'No existe rut del Paciente'
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
@@ -436,12 +436,12 @@ const Salidas = () => {
                         })
                     }
                 }
-            } else if (nomTipoOut === 'RETIRO CLIENTE') {
+            } else if (nomTipoOut === 'RETIRO PACIENTE') {
                 if (existeCli.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut del cliente'
+                        mensaje: 'No existe rut del Paciente'
                     })
                 } else {
                     setEntidad(existeCli[0].nombre);
@@ -670,18 +670,18 @@ const Salidas = () => {
             })
         } else {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
-            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'CLIENTE' && st.rut === rut).length === 1;
+            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.rut === rut).length === 1;
             const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
 
-            if (nomTipoOut === 'RETIRO CLIENTE') {
+            if (nomTipoOut === 'RETIRO PACIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en este Cliente'
+                        mensaje: 'Equipo no se encuentra en este Paciente'
                     })
                 } else {
-                    inOut.current = 'PROCESO RETIRO CLIENTE';
+                    inOut.current = 'PROCESO RETIRO PACIENTE';
                     setBtnConfirmar(false);
                     try {
                         SalidasDB({
@@ -803,8 +803,8 @@ const Salidas = () => {
                     })
                     console.log('PASA POR CONSULTA DE BODEGA')
                 } else {
-                    if (nomTipoOut === 'CLIENTE') {
-                        inOut.current = 'TRANSITO CLIENTE'
+                    if (nomTipoOut === 'PACIENTE') {
+                        inOut.current = 'TRANSITO PACIENTE'
                     } else if (nomTipoOut === 'SERVICIO TECNICO') {
                         inOut.current = 'TRANSITO S.T.'
                     } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR') {
@@ -935,7 +935,7 @@ const Salidas = () => {
             setBtnConfirmar(true);
             setBtnNuevo(true);
             setFlag(!flag);
-            if (nomTipoOut === 'CLIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
+            if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
                 try {
                     /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
                     const mensaje = cuerpoCorreo(dataSalida);

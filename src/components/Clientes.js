@@ -400,7 +400,7 @@ const Clientes = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Nombre Cliente</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre Paciente</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Direccion</Table.HeaderCell>
                             <Table.HeaderCell>Telefono</Table.HeaderCell>
