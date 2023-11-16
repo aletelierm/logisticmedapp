@@ -27,6 +27,14 @@ const Salidas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
+    // Calcular la fecha mínima (3 días hacia atrás)
+    const fechaMinima = new Date();
+    fechaMinima.setDate(fechaAdd.getDate() - 1);
+
+    // Calcular la fecha máxima (3 días hacia adelante)
+    const fechaMaxima = new Date();
+    fechaMaxima.setDate(fechaAdd.getDate() + 1);
+
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [itemDelete, setItemdelete] = useState(false);
@@ -70,11 +78,16 @@ const Salidas = () => {
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         setCabecera(existeCab);
     }
-    // Filtar por docuemto de Entrada
+    //Funcion ordena x fecha
+    const OrdenaFecha = (a, b) => {
+        return b.date.seconds - a.date.seconds;
+    }
+    // Filtar por docuemto de Salida
     const consultarOut = async () => {
         const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
-        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documento = documen.sort(OrdenaFecha);
         setDataSalida(documento)
     }
     // Filtar usuario transportista
@@ -1092,6 +1105,8 @@ const Salidas = () => {
                                 name='date'
                                 value={date}
                                 onChange={ev => setDate(ev.target.value)}
+                                min={fechaMinima.toISOString().slice(0, 16)}
+                                max={fechaMaxima.toISOString().slice(0, 16)}
                             />
                         </ContentElemenSelect>
                     </ContentElemenMov>
