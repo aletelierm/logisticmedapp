@@ -70,8 +70,9 @@ const Entradas = () => {
     }
     // Funcion ordena x fecha
     const OrdenaFecha = (a, b) => {
-        return b.date.seconds - a.date.seconds;
+        return a.fechaadd.seconds - b.fechaadd.seconds;
     }
+
     // Filtar por docuemto de Entrada
     const consultarIn = async () => {
         const doc = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
@@ -80,6 +81,7 @@ const Entradas = () => {
         const documento = documen.sort(OrdenaFecha);
         setDataEntrada(documento);
     }
+
     //Leer  Empresa
     const getEmpresa = async () => {
         const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));

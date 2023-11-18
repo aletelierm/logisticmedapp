@@ -42,11 +42,6 @@ const Reporte2 = () => {
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setBuscardor(target.value)
     }
-
-    const ordenarSerie = (a,b)=>{
-        return  b.serie - a.serie 
-    }
-
     
     function ordenar(a, b) {
         // Primero, comparar por Status

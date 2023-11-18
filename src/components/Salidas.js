@@ -82,7 +82,7 @@ const Salidas = () => {
     }
     //Funcion ordena x fecha
     const OrdenaFecha = (a, b) => {
-        return b.date.seconds - a.date.seconds;
+        return a.fechaadd.seconds - b.fechaadd.seconds;
     }
     // Filtar por docuemto de Salida
     const consultarOut = async () => {
@@ -995,8 +995,9 @@ const Salidas = () => {
                     <p>Nombre :{data[0].entidad} </p>
                     <p>Rut :{data[0].rut} </p>
                 </div>
-                <br />
-                <h3>Listado de equipos:</h3>
+                <br />                
+                <h3>Listado de equipos</h3>
+                <p>Los siguientes equipos se encuentran en transito</p>
                 <ul style={{ listStyle: 'none' }}>
                     {data.map((item, index) => (
                         <li key={index}>
@@ -1004,6 +1005,8 @@ const Salidas = () => {
                         </li>
                     ))}
                 </ul>
+                <br/>
+                <h4>En espera de ser confirmados por el destinatario</h4>
             </div>
         )
     }
