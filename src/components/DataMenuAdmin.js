@@ -4,6 +4,7 @@ import * as AiIcons from 'react-icons/ai';
 import * as IoIcons from 'react-icons/io';
 import * as RiIcons from 'react-icons/ri';
 import * as MdIcons from 'react-icons/md';
+import * as GiIcons from 'react-icons/gi';
 
 export const DataMenuAdmin = [
   {
@@ -94,7 +95,7 @@ export const DataMenuAdmin = [
       {
         title: 'Historial por Equipo',
         path: 'reportes/reporte1',
-        icon: <IoIcons.IoIosMedkit />,
+        icon: <MdIcons.MdHistory />,
         cName: 'sub-nav'
       },
       {
@@ -106,7 +107,13 @@ export const DataMenuAdmin = [
       {
         title: 'Status de Equipos',
         path: 'reportes/reporte2',
-        icon: <MdIcons.MdOutput />,
+        icon: <GiIcons.GiDeerTrack />,
+        cName: 'sub-nav'
+      },
+      {
+        title: 'Movimientos',
+        path: 'reportes/reporte4',
+        icon: <FaIcons.FaListUl />,
         cName: 'sub-nav'
       }
     ]

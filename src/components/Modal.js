@@ -35,7 +35,7 @@ const Overlay = styled.div`
     justify-content: center;
 `
 const ContenedorModal = styled.div`
-    width: 500px;
+    width: 600px;
     min-height: 100px;
     background: #fff;
     position: relative;
