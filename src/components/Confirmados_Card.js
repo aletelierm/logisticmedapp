@@ -2,6 +2,7 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useRef } from 'react';
 import Alertas from './Alertas';
+import Card from './Card';
 import styled from 'styled-components';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
@@ -12,6 +13,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, Boton } from '../elementos/General'
+import { CardList } from '../elementos/Card'
 import { Input } from '../elementos/CrearEquipos'
 import moment from 'moment';
 
@@ -460,7 +462,7 @@ const Confirmados = () => {
     }, [flag, setFlag])
 
     return (
-        <ContenedorProveedor style={{  }}>
+        <ContenedorProveedor>
             <Contenedor style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Titulo>Entregados - Retirados</Titulo>
                 <Boton onClick={() => setFlag(!flag)}>
@@ -469,42 +471,20 @@ const Confirmados = () => {
             </Contenedor>
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Entregar</Titulo>
-                <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Nombre</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {porEntregar.map((item) => {
-                            return (
-                                <Table.Row key={item.id}>
-                                    <Table.Cell>{item.tipdoc}</Table.Cell>
-                                    <Table.Cell>{item.numdoc}</Table.Cell>
-                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{item.tipoinout}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
-                                    <Table.Cell onClick={() => {
-                                        setCab_id(item.id)
-                                        setIsOpen(!isOpen)
-                                        setIsOpenR(false)
-                                        setFlag(!flag)
-                                    }} >
-                                        <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
-                                    </Table.Cell>
-                                </Table.Row>
-                            )
-                        }
-                        )}
-                    </Table.Body>
-                </StyledTable>
+                <CardList>
+                    {porEntregar.map((item) =>
+                        <Card
+                            key={item.id}
+                            item={item}
+                            setCab_id={setCab_id}
+                            isOpen={isOpen}
+                            setIsOpen={setIsOpen}
+                            setIsOpenR={false}
+                            flag={flag}
+                            setFlag={setFlag}
+                        />
+                    )}
+                </CardList>
             </ListarProveedor >
             {isOpen &&
                 <Contenedor>
