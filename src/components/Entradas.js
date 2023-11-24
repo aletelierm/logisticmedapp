@@ -38,12 +38,12 @@ const Entradas = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [itemDelete, setItemdelete] = useState(false);
+    const [itemAnular, setItemAnular] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
     const [dataEntrada, setDataEntrada] = useState([]);
     const [empresa, setEmpresa] = useState([]);
     const [status, setStatus] = useState([]);
-    // const [detalle, setDetalle] = useState([]);
     const [numDoc, setNumDoc] = useState('');
     const [nomTipDoc, setNomTipDoc] = useState('');
     const [date, setDate] = useState('');
@@ -633,24 +633,21 @@ const Entradas = () => {
         setShowConfirmation(false);
     }
 
+    const handleAnular = (itemId) => {
+        setItemAnular(itemId);
+        setShowConfirmation(true);
+    }
     const anular = async (id) => {
         const traerIn = collection(db, 'entradas');
-        const datoIn = query(traerIn, where('cab_id', '==', id));
+        const datoIn = query(traerIn, where('cab_id', '==', itemAnular));
         const dataIn = await getDocs(datoIn)
         const detalle = (dataIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        console.log('detalle de cabecera', detalle.length > 0)
-
+        // console.log('detalle de cabecera', detalle.length > 0)
         try {
-            await updateDoc(doc(db, 'cabeceras', id), {
+            await updateDoc(doc(db, 'cabeceras', itemAnular), {
                 tipmov: 3,
                 fechamod: fechaMod
             });
-            // cambiarEstadoAlerta(true);
-            // cambiarAlerta({
-            //     tipo: 'exito',
-            //     mensaje: 'Documento Anulado.'
-            // });
-            // setFlag(!flag);
         } catch (error) {
             Swal.fire('Error al Anular Documento');
         }
@@ -664,7 +661,6 @@ const Entradas = () => {
             try {
                 await batch.commit();
                 console.log('Borro item')
-                // setFlag(!flag);
             } catch (error) {
                 console.log(error)
             }
@@ -675,6 +671,7 @@ const Entradas = () => {
             mensaje: 'Documento Anulado.'
         });
         setFlag(!flag);
+        setShowConfirmation(false);
     }
 
     // // Función para eliminar Item por linea
@@ -919,7 +916,6 @@ const Entradas = () => {
                                                 :
                                                 ''
                                         }
-
                                     </Table.Row>
                                 )
                             })}
@@ -972,7 +968,7 @@ const Entradas = () => {
                                     <Table.Cell>
                                         <FcCancel
                                             style={{ fontSize: '20px' }}
-                                            onClick={() => anular(item.id)}
+                                            onClick={() => handleAnular(item.id)}
                                             title='Anular Documento'
                                         />
                                     </Table.Cell>
@@ -995,6 +991,19 @@ const Entradas = () => {
                             <h2>¿Estás seguro de que deseas eliminar este elemento?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
                                 <Boton2 style={{ backgroundColor: 'red' }} onClick={borrarItem}>Aceptar</Boton2>
+                                <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+            {
+                showConfirmation && (
+                    <Overlay>
+                        <ConfirmaModal>
+                            <h2>¿Estás seguro de que deseas anular este Documento?</h2>
+                            <ConfirmaBtn >
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={anular}>Aceptar</Boton2>
                                 <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
