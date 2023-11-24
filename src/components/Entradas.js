@@ -18,6 +18,8 @@ import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
+import Spinner from './Spinner';
+
 
 const Entradas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -58,6 +60,8 @@ const Entradas = () => {
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const [cargando, setCargando] = useState(false);
+
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 
@@ -298,6 +302,7 @@ const Entradas = () => {
 
             const fechaInOut = new Date(date);
             console.log('fecha actual con new date', fechaInOut)
+            setCargando(!cargando);
             try {
                 CabeceraInDB({
                     numDoc: numDoc,
@@ -314,6 +319,7 @@ const Entradas = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
+                setCargando(!cargando)
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -331,6 +337,7 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: error
                 })
+                setCargando(!cargando)
             }
         }
     }
@@ -686,9 +693,9 @@ const Entradas = () => {
     // console.log(numeroFormateadoChile); // Salida: "1.234.567"
 
     return (
-        <ContenedorProveedor>
+        <ContenedorProveedor>             
             <Contenedor >
-                <Titulo>Recepcion de Equipos</Titulo>
+                <Titulo>Recepcion de Equipos</Titulo>               
             </Contenedor>
             <Contenedor>
                 <Formulario action=''>
@@ -928,7 +935,7 @@ const Entradas = () => {
                         )}
                     </Table.Body>
                 </Table>
-            </ListarProveedor>
+            </ListarProveedor>          
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
@@ -947,6 +954,7 @@ const Entradas = () => {
                     </Overlay>
                 )
             }
+            {cargando && <Spinner loading={cargando}/>}
         </ContenedorProveedor>
     );
 };

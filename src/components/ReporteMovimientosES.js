@@ -76,7 +76,7 @@ const ReporteMovimientos = () => {
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
                             <Table.HeaderCell>N° Documento</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Movimiento</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
