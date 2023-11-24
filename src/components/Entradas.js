@@ -669,7 +669,6 @@ const Entradas = () => {
                 console.log(error)
             }
         }
-
         cambiarEstadoAlerta(true);
         cambiarAlerta({
             tipo: 'exito',

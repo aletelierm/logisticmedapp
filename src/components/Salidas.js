@@ -11,6 +11,7 @@ import { IoMdAdd } from "react-icons/io";
 import { TipDocOut, TipoOut } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
 import { MdDeleteForever } from "react-icons/md";
+import { FcCancel } from "react-icons/fc";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -75,7 +76,7 @@ const Salidas = () => {
     }
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
+        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 2));
         const guardaCab = await getDocs(cab);
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         setCabecera(existeCab);
@@ -289,7 +290,7 @@ const Salidas = () => {
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         // Filtar por docuemto de Cabecera
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 2));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         // Validar si existe correo de transprtista
@@ -963,6 +964,44 @@ const Salidas = () => {
         }
         setShowConfirmation(false);
     }
+
+    const anular = async (id) => {
+        const traerIn = collection(db, 'salidas');
+        const datoIn = query(traerIn, where('cab_id', '==', id));
+        const dataIn = await getDocs(datoIn)
+        const detalle = (dataIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        console.log('detalle de cabecera', detalle.length > 0)
+
+        try {
+            await updateDoc(doc(db, 'cabecerasout', id), {
+                tipmov: 3,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            Swal.fire('Error al Anular Documento');
+        }
+
+        if (detalle.length > 0) {
+            const batch = writeBatch(db);
+            detalle.forEach((docs) => {
+                const docRef = doc(db, 'salidas', docs.id);
+                batch.delete(docRef);
+            });
+            try {
+                await batch.commit();
+                console.log('Borro item')
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Documento Anulado.'
+        });
+        setFlag(!flag);
+    }
+
     // // Función para eliminar Item por linea
     // const deleteItem = (id) => {
     //     Swal.fire({
@@ -996,7 +1035,7 @@ const Salidas = () => {
                     <p>Nombre :{data[0].entidad} </p>
                     <p>Rut :{data[0].rut} </p>
                 </div>
-                <br />                
+                <br />
                 <h3>Listado de equipos</h3>
                 <p>Los siguientes equipos se encuentran en transito</p>
                 <ul style={{ listStyle: 'none' }}>
@@ -1006,7 +1045,7 @@ const Salidas = () => {
                         </li>
                     ))}
                 </ul>
-                <br/>
+                <br />
                 <h4>En espera de ser confirmados por el destinatario</h4>
             </div>
         )
@@ -1110,7 +1149,7 @@ const Salidas = () => {
                             <Select
                                 disabled={confirmar}
                                 value={nomTipoOut}
-                                onChange={ev => {setNomTipoOut(ev.target.value)}}>
+                                onChange={ev => { setNomTipoOut(ev.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {TipoOut.map((d) => {
                                     return (<option key={d.id}>{d.text}</option>)
@@ -1246,10 +1285,11 @@ const Salidas = () => {
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
                             <Table.HeaderCell>N° Documento</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Entrada</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Salida</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Conf</Table.HeaderCell>
+                            <Table.HeaderCell>Confirmar</Table.HeaderCell>
+                            <Table.HeaderCell>Anular</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -1279,6 +1319,13 @@ const Salidas = () => {
                                         setBtnConfirmar(false);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                    <Table.Cell>
+                                        <FcCancel
+                                            style={{ fontSize: '20px' }}
+                                            onClick={() => anular(item.id)}
+                                            title='Anular Documento'
+                                        />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         }
