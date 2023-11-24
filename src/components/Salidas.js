@@ -421,6 +421,7 @@ const Salidas = () => {
                             confirmado: false,
                             entregado: false,
                             retirado: true,
+                            observacion: '',
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,

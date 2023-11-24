@@ -15,7 +15,7 @@ const Card = ({item,setCab_id, isOpen, setIsOpen, setIsOpenR, flag, setFlag}) =>
         <Tarjeta>
             <Texto>Tipo Documento: {item.tipdoc}</Texto>
             <Texto>N° Documento: {item.numdoc}</Texto>
-            <Texto>Fecha: {formatearFecha(item.date)}</Texto>
+            {/* <Texto>Fecha: {formatearFecha(item.date)}</Texto> */}
             <Texto>Paciente: {item.tipoinout}</Texto>
             <Texto>Rut: {item.rut}</Texto>
             <Texto>Nombre: {item.entidad}</Texto>
