@@ -38,6 +38,7 @@ const Salidas = () => {
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [showConfirmationAnular, setShowConfirmationAnular] = useState(false);
     const [itemDelete, setItemdelete] = useState(false);
     const [itemAnular, setItemAnular] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
@@ -968,7 +969,10 @@ const Salidas = () => {
 
     const handleAnular = (itemId) => {
         setItemAnular(itemId);
-        setShowConfirmation(true);
+        setShowConfirmationAnular(true);
+    }
+    const cancelAnular = () => {
+        setShowConfirmationAnular(false);
     }
     const anular = async () => {
         const traerIn = collection(db, 'salidas');
@@ -1003,8 +1007,19 @@ const Salidas = () => {
             tipo: 'exito',
             mensaje: 'Documento Anulado.'
         });
+        setNumDoc('');
+        setNomTipDoc('');
+        setDate('');
+        setNomTipoOut('');
+        setRut('');
+        setEntidad('');
+        setConfirmar(false);
+        setBtnGuardar(true);
+        setBtnAgregar(true);
+        setBtnConfirmar(false);
+        setBtnNuevo(true);
         setFlag(!flag);
-        setShowConfirmation(false);
+        setShowConfirmationAnular(false);
     }
 
     // // Función para eliminar Item por linea
@@ -1357,13 +1372,13 @@ const Salidas = () => {
                 )
             }
             {
-                showConfirmation && (
+                showConfirmationAnular && (
                     <Overlay>
                         <ConfirmaModal>
                             <h2>¿Estás seguro de que deseas anular este Documento?</h2>
                             <ConfirmaBtn >
                                 <Boton2 style={{ backgroundColor: 'red' }} onClick={anular}>Aceptar</Boton2>
-                                <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+                                <Boton2 onClick={cancelAnular}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
                     </Overlay>
