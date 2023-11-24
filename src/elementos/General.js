@@ -3,11 +3,10 @@ import styled from 'styled-components';
 const ContenedorProveedor = styled.div`
     /* Media query para pantallas aún más pequeñas */
     @media screen and (max-width: 576px) {
-        // margin-left: 140px;
-        // margin-rigth: 40px;
         margin: auto;
         alignItems: center;
         width: auto;
+        // margin: 0 1.75rem;
     }
 `
 
@@ -22,6 +21,9 @@ const Contenedor = styled.div`
     @media screen and (max-width: 576px) {
         alignItems: center;
         width: auto;
+        // margin: 0 0.75rem;
+        margin: 0.5rem 1rem;
+        margin-left: 19rem;
     }
 `
 
@@ -63,12 +65,17 @@ const ListarProveedor = styled.div`
     @media screen and (max-width: 576px) {
         alignItems: center;
         width: auto;
+        padding: 10px 5px;
+        margin: 1.5rem 1rem;
+        margin-left: 19rem;
+        
     }
 `
 
 const Titulo = styled.h2`
     // color:  #83d394;
     color:  #328AC4;
+    margin: 0rem;
 
     /* Media query para pantallas aún más pequeñas */
     @media screen and (max-width: 576px) {

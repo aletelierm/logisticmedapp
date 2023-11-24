@@ -12,6 +12,7 @@ import { IoMdAdd } from "react-icons/io";
 import { TipDoc, TipoIn } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import { MdDeleteForever } from "react-icons/md";
+import { FcCancel } from "react-icons/fc";
 import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -28,17 +29,18 @@ const Entradas = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
-// Calcular la fecha mínima ( n días hacia atrás)
-  const fechaMinima = new Date();
-  fechaMinima.setDate(fechaAdd.getDate() - 1);
+    // Calcular la fecha mínima ( n días hacia atrás)
+    const fechaMinima = new Date();
+    fechaMinima.setDate(fechaAdd.getDate() - 1);
 
-  // Calcular la fecha máxima (n días hacia adelante)
-  const fechaMaxima = new Date();
-  fechaMaxima.setDate(fechaAdd.getDate() + 1);
+    // Calcular la fecha máxima (n días hacia adelante)
+    const fechaMaxima = new Date();
+    fechaMaxima.setDate(fechaAdd.getDate() + 1);
 
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [itemDelete, setItemdelete] = useState(false);
+    const [itemAnular, setItemAnular] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
     const [dataEntrada, setDataEntrada] = useState([]);
@@ -67,7 +69,7 @@ const Entradas = () => {
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
-        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
+        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 1));
         const guardaCab = await getDocs(cab);
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         setCabecera(existeCab);
@@ -230,7 +232,7 @@ const Entradas = () => {
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
         // Filtar por docuemto de Cabecera
-        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+        const cab = query(collection(db, 'cabeceras'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 1));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
@@ -313,6 +315,7 @@ const Entradas = () => {
                     entidad: entidad,
                     tipMov: 1,
                     confirmado: false,
+                    observacion: '',
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -510,7 +513,7 @@ const Entradas = () => {
             // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
             // const status = await getDocs(traerStatusPrep);
             // const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-            
+
             if (nomTipoIn === 'COMPRA' || nomTipoIn === 'ARRIENDO' || nomTipoIn === 'COMODATO') {
                 const batch = writeBatch(db);
                 dataEntrada.forEach((docs, index) => {
@@ -617,7 +620,6 @@ const Entradas = () => {
         setItemdelete(itemId);
         setShowConfirmation(true);
     }
-
     const cancelDelete = () => {
         setShowConfirmation(false);
     }
@@ -635,6 +637,47 @@ const Entradas = () => {
                 console.log('Error al eliminar items');
             }
         }
+        setShowConfirmation(false);
+    }
+
+    const handleAnular = (itemId) => {
+        setItemAnular(itemId);
+        setShowConfirmation(true);
+    }
+    const anular = async (id) => {
+        const traerIn = collection(db, 'entradas');
+        const datoIn = query(traerIn, where('cab_id', '==', itemAnular));
+        const dataIn = await getDocs(datoIn)
+        const detalle = (dataIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        // console.log('detalle de cabecera', detalle.length > 0)
+        try {
+            await updateDoc(doc(db, 'cabeceras', itemAnular), {
+                tipmov: 3,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            Swal.fire('Error al Anular Documento');
+        }
+
+        if (detalle.length > 0) {
+            const batch = writeBatch(db);
+            detalle.forEach((docs) => {
+                const docRef = doc(db, 'entradas', docs.id);
+                batch.delete(docRef);
+            });
+            try {
+                await batch.commit();
+                console.log('Borro item')
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Documento Anulado.'
+        });
+        setFlag(!flag);
         setShowConfirmation(false);
     }
 
@@ -880,7 +923,6 @@ const Entradas = () => {
                                                 :
                                                 ''
                                         }
-
                                     </Table.Row>
                                 )
                             })}
@@ -902,6 +944,7 @@ const Entradas = () => {
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Confirmar</Table.HeaderCell>
+                            <Table.HeaderCell>Anular</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -929,6 +972,13 @@ const Entradas = () => {
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                    <Table.Cell>
+                                        <FcCancel
+                                            style={{ fontSize: '20px' }}
+                                            onClick={() => handleAnular(item.id)}
+                                            title='Anular Documento'
+                                        />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         }
@@ -955,6 +1005,19 @@ const Entradas = () => {
                 )
             }
             {cargando && <Spinner loading={cargando}/>}
+            {
+                showConfirmation && (
+                    <Overlay>
+                        <ConfirmaModal>
+                            <h2>¿Estás seguro de que deseas anular este Documento?</h2>
+                            <ConfirmaBtn >
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={anular}>Aceptar</Boton2>
+                                <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
         </ContenedorProveedor>
     );
 };
