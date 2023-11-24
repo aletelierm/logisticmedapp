@@ -304,7 +304,7 @@ const Entradas = () => {
 
             const fechaInOut = new Date(date);
             console.log('fecha actual con new date', fechaInOut)
-            setCargando(!cargando);
+            setCargando(true);
             try {
                 CabeceraInDB({
                     numDoc: numDoc,
@@ -322,7 +322,7 @@ const Entradas = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
-                setCargando(!cargando)
+                setCargando(false)
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -340,7 +340,7 @@ const Entradas = () => {
                     tipo: 'error',
                     mensaje: error
                 })
-                setCargando(!cargando)
+                setCargando(false)
             }
         }
     }
