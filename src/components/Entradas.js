@@ -302,10 +302,9 @@ const Entradas = () => {
                 })
             }
         } else {
-
-            const fechaInOut = new Date(date);
-            console.log('fecha actual con new date', fechaInOut)
             setCargando(true);
+            const fechaInOut = new Date(date);
+            console.log('fecha actual con new date', fechaInOut)            
             try {
                 CabeceraInDB({
                     numDoc: numDoc,
@@ -323,12 +322,17 @@ const Entradas = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
-                setCargando(false)
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
+                setTimeout(() => {
+                    setCargando(false);
+                }, 3000); 
+                setTimeout(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Ingreso realizado exitosamente'
-                })
+                }) 
+                }, 3000);                 
+               
                 setFlag(!flag);
                 setConfirmar(true);
                 setBtnAgregar(false);
