@@ -73,10 +73,11 @@ const ReporteMovimientos = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell>Documento</Table.HeaderCell>
+                            <Table.HeaderCell>Número</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Movimiento</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo E/S</Table.HeaderCell>
+                            <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
@@ -90,7 +91,8 @@ const ReporteMovimientos = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>
+                                        <Table.Cell>{item.tipoinout}</Table.Cell>                                       
+                                        <Table.Cell>{item.tipmov===1 ? "Confirmado" :(item.tipmov===2 ? 'Confirmado' : "Anulado")}</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell
@@ -114,10 +116,12 @@ const ReporteMovimientos = () => {
                         })}
                     </Table.Body>
                 </Table>
-                <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
-                <Contenido>                                  
-                        <Table singleLine>
-                        <Table.Header>
+                <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>  
+                {mostrarSt.length >0 ?
+                <Contenido>
+                    
+                    <Table singleLine>
+                            <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
                                 <Table.HeaderCell>Nombre de equipo</Table.HeaderCell>
@@ -137,10 +141,11 @@ const ReporteMovimientos = () => {
                                 )
                             })}
                         </Table.Body>
-                    </Table>
-                    
+                    </Table>                    
                     <Boton2 onClick={() => setEstadoModal(!estadoModal)}>Aceptar</Boton2>
-                </Contenido>
+                </Contenido> 
+                :
+                <h2>Documento Anulado</h2>     }
             </Modal>
             </ListarProveedor>            
         </div>

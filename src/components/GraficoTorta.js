@@ -11,14 +11,13 @@ const GraficoTorta = ({ datos }) => {
       {
         data: datos.map(dato => dato.valor),
         backgroundColor: [
-          'rgb(100, 201, 235)',
+          'rgb(255, 199, 51)',
           'rgb(51, 255, 224)',
           'rgb(51, 200, 255)',
-          'rgb(8, 17, 207 )',
-          'rgb(16, 191, 226 )',
+          'rgb(128, 51, 255 )',
           'rgb(51, 255, 134 )',
-          'rgb(16, 191, 150 )',
-          'rgb(16, 191, 100)',
+          'rgb(236, 255, 51 )',
+          'rgb(255, 128, 51)',
           // ... más colores si tienes más datos
         ],
       },
