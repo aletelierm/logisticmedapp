@@ -145,7 +145,7 @@ const ReporteMovimientos = () => {
                     <Boton2 onClick={() => setEstadoModal(!estadoModal)}>Aceptar</Boton2>
                 </Contenido> 
                 :
-                <h2>Documento Anulado</h2>     }
+                <h2>Documento Anulado</h2>   }
             </Modal>
             </ListarProveedor>            
         </div>
