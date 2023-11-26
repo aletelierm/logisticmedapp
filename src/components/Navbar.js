@@ -1,7 +1,8 @@
 import React from 'react';
 import { BiUserCircle } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
-import '../styles/navbar.css'
+// import '../styles/navbar.css'
+import { Nav, ContenedorImagen, User, Texto, Boton } from '../elementos/Navbar';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -12,17 +13,17 @@ const Navbar = () => {
 
     return (
         <>
-            <div className='navbar'>
-                <div className='imageLogo'>
+            <Nav>
+                <ContenedorImagen >
                     <img src='../../logo.png' alt='Logo Logistic Med'/>
-                </div>
-                <div className='user'>
-                    <h4>Iniciar Sesion</h4>
-                    <div className='icon' onClick={() => handleChange()}>
-                        <BiUserCircle className='iconUser' />
-                    </div>
-                </div>
-            </div>
+                </ContenedorImagen>
+                <User >
+                    <Texto>Iniciar Sesion</Texto>
+                    <Boton onClick={() => handleChange()}>
+                        <BiUserCircle style={{fontSize: '64px'}} />
+                    </Boton>
+                </User>
+            </Nav>
         </>
     )
 }
