@@ -28,7 +28,6 @@ const ActualizaMarca = () => {
     const volver = () => {
         navigate('/misequipos/agregarmarca')
     }
-
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }

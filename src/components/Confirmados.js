@@ -291,11 +291,6 @@ const Confirmados = () => {
                         confirmado: false,
                         falsos: false // devolucion
                     })
-                    // cambiarEstadoAlerta(true);
-                    // cambiarAlerta({
-                    //     tipo: 'exito',
-                    //     mensaje: 'Cabecera creada correctamente.'
-                    // });
                 } catch (error) {
                     Swal.fire('Se ha producido un error al guardar Cabecera de Entrda');
                 }
@@ -402,11 +397,6 @@ const Confirmados = () => {
                         confirmado: false,
                         falsos: true // retiro
                     })
-                    // cambiarEstadoAlerta(true);
-                    // cambiarAlerta({
-                    //     tipo: 'exito',
-                    //     mensaje: 'Cabecera creada correctamente.'
-                    // });
                 } catch (error) {
                     Swal.fire('Se ha producido un error al guardar Cabecera de Entrada');
                 }
@@ -442,8 +432,6 @@ const Confirmados = () => {
             } catch (error) {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
             }
-            // setFlag(!flag)
-            // setIsOpenR(!setIsOpenR)
         }
     }
 

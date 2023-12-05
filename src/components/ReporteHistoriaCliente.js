@@ -13,9 +13,7 @@ import { AiFillCheckCircle } from "react-icons/ai";
 import moment from 'moment';
 import validarRut from '../funciones/validarRut';
 
-
 const Reporte3 = () => {
-
     const { users } = useContext(UserContext);
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
@@ -74,7 +72,6 @@ const Reporte3 = () => {
                     merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
                     const movimientos = merge.current.filter(mov => mov.tipmov !== 0)
                     setMerges(movimientos);
-                    console.log(merges)
                 } else {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -83,9 +80,7 @@ const Reporte3 = () => {
                     })
                     return;
                 }
-
             }
-
         }
     }
 
@@ -142,7 +137,6 @@ const Reporte3 = () => {
                     </Table.Header>
 
                     <Table.Body>
-                        {/* {console.log('merge jsx:', merge.current)} */}
                         {
                             merges.map((item, index) => {
                                 return (
@@ -171,7 +165,6 @@ const Reporte3 = () => {
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
         </ContenedorProveedor>
-
     );
 
 }

@@ -5,7 +5,6 @@ import { auth, db } from '../firebase/firebaseConfig';
 import Alerta from '../components/Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
 import { getDocs, collection, where, query } from 'firebase/firestore';
-// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
@@ -29,7 +28,6 @@ const Clientes = () => {
     const [correo, setCorreo] = useState('')
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
     const [flag, setFlag] = useState(false)
@@ -66,13 +64,6 @@ const Clientes = () => {
         const nuevoFiltro = leer.filter(cli => cli.nombre.includes(buscar));
         return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
     }
-    // const siguientePag = () => {
-    //     if (leer.filter(cli => cli.nombre.includes(buscador)).length > pagina + 5)
-    //         setPagina(pagina + 5);
-    // }
-    // const paginaAnterior = () => {
-    //     if (pagina > 0) setPagina(pagina - 5)
-    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         // setPagina(0);
         setBuscardor(target.value)
@@ -85,7 +76,6 @@ const Clientes = () => {
 
     /* useEffect(()=>{
         generarCorrelativo();
-        
     },[]) */
 
     // Validar rut
@@ -95,7 +85,7 @@ const Clientes = () => {
         if (e.key === 'Enter' || e.key === 'Tab') {
             const c = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutCli = await getDocs(c)
-            const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            // const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
             if (rutCli.docs.length !== 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -400,9 +390,7 @@ const Clientes = () => {
             </Contenedor>
             <ListarProveedor>
                 <ContentElemenAdd>
-                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Pacientes</Titulo>
-                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />

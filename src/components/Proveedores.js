@@ -5,7 +5,6 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import Alerta from '../components/Alertas';
 import AgregarProveedorDb from '../firebase/AgregarProveedorDb';
-// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { FaRegEdit } from "react-icons/fa";
 import validarRut from '../funciones/validarRut';
@@ -31,7 +30,6 @@ const Proveedores = () => {
     const [nomContacto, setNomContacto] = useState('')
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [leer, setLeer] = useState([]);
     const [flag, setFlag] = useState(false)
@@ -63,13 +61,6 @@ const Proveedores = () => {
         const nuevoFiltro = leer.filter(prov => prov.nombre.includes(buscador));
         return nuevoFiltro.slice( /* pagina, pagina + 5 */);
     }
-    // const siguientePag = () => {
-    //     if (leer.filter(prov => prov.nombre.includes(buscador)).length > pagina + 5)
-    //         setPagina(pagina + 5);
-    // }
-    // const paginaAnterior = () => {
-    //     if (pagina > 0) setPagina(pagina - 5)
-    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         // setPagina(0);
         setBuscardor(target.value)
@@ -112,7 +103,7 @@ const Proveedores = () => {
         if (e.key === 'Enter' || e.key === 'Tab') {
             const p = query(collection(db, 'proveedores'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutProv = await getDocs(p)
-            const final = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            // const final = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
             if (rutProv.docs.length !== 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -322,9 +313,7 @@ const Proveedores = () => {
             </Contenedor>
             <ListarProveedor>
                 <ContentElemenAdd>
-                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado Proveedores</Titulo>
-                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />

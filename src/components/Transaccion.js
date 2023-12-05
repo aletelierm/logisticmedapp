@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query} from 'firebase/firestore';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ListarProveedor, Titulo } from '../elementos/General';
@@ -20,8 +20,8 @@ const Transaccion = () => {
         const data = await getDocs(dato)
         setCabecera(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-// Leer datos de cabecera Salidas
-    const getCabeceraOut = async ()=>{
+    // Leer datos de cabecera Salidas
+    const getCabeceraOut = async () => {
         const traerCabeceraOut = collection(db, 'cabecerasout');
         const dato = query(traerCabeceraOut, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
@@ -41,14 +41,14 @@ const Transaccion = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-   const OrdenaPorNumDoc = (a, b) => {
-        return  b.date - a.date ;
+    const OrdenaPorNumDoc = (a, b) => {
+        return b.date - a.date;
     }
-    
+
     const ordena = cabecera.sort(OrdenaPorNumDoc);
     const ordenaOut = cabeceraOut.sort(OrdenaPorNumDoc);
-    const ordenado = ordena.filter(doc => doc.confirmado === true).slice(0,5);
-    const ordenadoOut = ordenaOut.filter(doc => doc.confirmado === true).slice(0,5);
+    const ordenado = ordena.filter(doc => doc.confirmado === true).slice(0, 5);
+    const ordenadoOut = ordenaOut.filter(doc => doc.confirmado === true).slice(0, 5);
 
     return (
         <div>
@@ -67,21 +67,18 @@ const Transaccion = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {ordenado.map((item, index) => {                            
-                          
-                                return (
-                                    <Table.Row key={item.id2}>
-                                        <Table.Cell >{index+1}</Table.Cell>
-                                        <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>
-                                        <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>
-                                    </Table.Row>
-                                )
-                               
-                                                   
+                        {ordenado.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id2}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipoinout}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                </Table.Row>
+                            )
                         })}
                     </Table.Body>
                 </Table>
@@ -101,18 +98,18 @@ const Transaccion = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {ordenadoOut.map((item, index) => {                           
-                                return (
-                                    <Table.Row key={item.id2}>
-                                        <Table.Cell >{index + 1}</Table.Cell>
-                                        <Table.Cell>{item.tipdoc}</Table.Cell>
-                                        <Table.Cell>{item.numdoc}</Table.Cell>
-                                        <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                        <Table.Cell>{item.tipoinout}</Table.Cell>
-                                        <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell>{item.entidad}</Table.Cell>
-                                    </Table.Row>
-                                )                         
+                        {ordenadoOut.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id2}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipoinout}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                </Table.Row>
+                            )
                         })}
                     </Table.Body>
                 </Table>

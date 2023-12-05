@@ -33,7 +33,6 @@ const CrearEquipos = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [equipo, setEquipo] = useState([]);
-    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [categoria, setCategoria] = useState('Tipo')
     const [flag, setFlag] = useState(false);
@@ -53,7 +52,6 @@ const CrearEquipos = () => {
     //Leer  Empresa
     const getEmpresa = async () => {
         const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
-        /* setEmpresa(traerEmp.data());  */
         empresaRut.current = traerEmp.data().rut;
     }
     //Leer los datos de Tipos
@@ -184,33 +182,7 @@ const CrearEquipos = () => {
             return nuevoFiltro.slice(/*pagina, pagina + 5*/);
         }
     }
-
-    // Paginacion
-    // const siguientePag = () => {
-    //     const buscar = buscador.toLocaleUpperCase();
-    //     if (categoria === 'Familia') {
-    //         if (equipo.filter(eq => eq.familia.includes(buscar)).length > pagina + 5)
-    //             setPagina(pagina + 5);
-    //     } else if (categoria === 'Tipo') {
-    //         if (equipo.filter(eq => eq.tipo.includes(buscar)).length > pagina + 5)
-    //             setPagina(pagina + 5);
-    //     } else if (categoria === 'Marca') {
-    //         if (equipo.filter(eq => eq.marca.includes(buscar)).length > pagina + 5)
-    //             setPagina(pagina + 5);
-    //     } else if (categoria === 'Modelo') {
-    //         if (equipo.filter(eq => eq.modelo.includes(buscar)).length > pagina + 5)
-    //             setPagina(pagina + 5);
-    //     } else if (categoria === 'N°Serie') {
-    //         if (equipo.filter(eq => eq.serie.includes(buscar)).length > pagina + 5)
-    //             setPagina(pagina + 5);
-    //     }
-    // }
-
-    // const paginaAnterior = () => {
-    //     if (pagina > 0) setPagina(pagina - 5)
-    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        // setPagina(0);
         setBuscardor(target.value)
     }
 
@@ -299,12 +271,6 @@ const CrearEquipos = () => {
                     nomEntidad: users.empresa,
                     status: 'PREPARACION'
                 })
-                /*   setNomFamilia('');
-                setNomMarca('');
-                setNomModelo('');
-                setNomTipo('');
-                setSerie('');
-                setRfid(''); */
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -347,7 +313,6 @@ const CrearEquipos = () => {
         }
         return 0;
     });
-
     tipo.sort((a, b) => {
         const nameA = a.tipo;
         const nameB = b.tipo;
@@ -359,7 +324,6 @@ const CrearEquipos = () => {
         }
         return 0;
     });
-
     marca.sort((a, b) => {
         const nameA = a.marca;
         const nameB = b.marca;
@@ -371,7 +335,6 @@ const CrearEquipos = () => {
         }
         return 0;
     });
-
     modelo.sort((a, b) => {
         const nameA = a.modelo;
         const nameB = b.modelo;
@@ -455,9 +418,7 @@ const CrearEquipos = () => {
 
             <ListarProveedor>
                 <ContentElemenAdd>
-                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Dispositivos Médicos</Titulo>
-                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenSelect>
                     <Label>Buscar Por</Label>

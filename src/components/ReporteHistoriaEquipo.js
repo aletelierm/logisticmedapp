@@ -128,7 +128,6 @@ const Reporte1 = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {/* {console.log('merge jsx:', merge.current)} */}
                         {
                             merges.map((item, index) => {
                                 return (

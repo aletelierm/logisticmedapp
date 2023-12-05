@@ -27,7 +27,6 @@ const ActualizaTipo = () => {
     const volver = () => {
         navigate('/misequipos/agregartipo')
     }
-
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }

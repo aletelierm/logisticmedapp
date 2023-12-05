@@ -7,9 +7,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorElementos, Titulo } from '../elementos/General'
 
-
 const App = () => {
-
   const { users } = useContext(UserContext);
   const [estado, setEstado] = useState([]);
   const [datos, setDatos] = useState([]);

@@ -54,7 +54,6 @@ const ActualizaCliente = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
 

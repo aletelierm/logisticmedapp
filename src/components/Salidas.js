@@ -58,7 +58,6 @@ const Salidas = () => {
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
     const [numSerie, setNumSerie] = useState('');
-    // const [nomrut, setNomrut] = useState('Rut');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
@@ -86,7 +85,7 @@ const Salidas = () => {
         const guardaCab1 = await getDocs(cab1);
         setCabecera1(guardaCab1.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
-    const merge = [...cabecera, ...cabecera1]
+    const merge = [...cabecera, ...cabecera1].sort((a, b) => a.numdoc - b.numdoc)
 
     //Funcion ordena x fecha
     const OrdenaFecha = (a, b) => {
@@ -210,11 +209,6 @@ const Salidas = () => {
             // Exite N° serie en Entradas 
             const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
-            // Validar en N° Serie en todos los documento de Entradas
-            // const traerserie = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-            // const serieIn = await getDocs(traerserie);
-            // const existeSerie = (serieIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
             // Validar en N° Serie en todos los documento de Entradas confirmado
             const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
             const confirmadoS = await getDocs(traerSC);
@@ -236,12 +230,6 @@ const Salidas = () => {
                     tipo: 'error',
                     mensaje: 'Equipo ya se encuentra en este documento'
                 })
-                // } else if (existeSerie.length > 0) {
-                //     cambiarEstadoAlerta(true);
-                //     cambiarAlerta({
-                //         tipo: 'error',
-                //         mensaje: 'Equipo ya se encuentra Ingresado en otro docuento'
-                //     })
             } else if (existeconfirmado.length > 0 || existeID.length > 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -304,7 +292,6 @@ const Salidas = () => {
         const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 0));
         const cabecera1 = await getDocs(cab1);
         const existeCab1 = (cabecera1.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
-
         // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
@@ -1007,7 +994,6 @@ const Salidas = () => {
         const datoIn = query(traerIn, where('cab_id', '==', itemAnular));
         const dataIn = await getDocs(datoIn)
         const detalle = (dataIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        // console.log('detalle de cabecera', detalle.length > 0)
         try {
             await updateDoc(doc(db, 'cabecerasout', itemAnular), {
                 tipmov: 3,
@@ -1049,28 +1035,6 @@ const Salidas = () => {
         setFlag(!flag);
         setShowConfirmationAnular(false);
     }
-
-    // // Función para eliminar Item por linea
-    // const deleteItem = (id) => {
-    //     Swal.fire({
-    //         title: 'Esta seguro que desea eliminar Item?',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: 'Si, eliminar!'
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             borrarItem(id);
-    //             Swal.fire(
-    //                 'Eliminado!',
-    //                 'Item eliminado con exito!',
-    //                 'success'
-    //             )
-    //         }
-    //         setFlag(!flag)
-    //     })
-    // }
 
     const cuerpoCorreo = (data) => {
         return ReactDOMServer.renderToString(
@@ -1224,14 +1188,6 @@ const Salidas = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Correo Transportista</Label>
-                            {/* <Input
-                                disabled={confirmar}
-                                type='texto'
-                                placeholder='Ingrese Correo'
-                                name='correo'
-                                value={correo}
-                                onChange={ev => setCorreo(ev.target.value)}
-                            /> */}
                             <Select
                                 disabled={confirmar}
                                 value={correo}

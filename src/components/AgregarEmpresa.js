@@ -5,7 +5,6 @@ import AgregarEmpresaDb from '../firebase/AgregarEmpresaDb';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import Alerta from './Alertas';
-// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { BiAddToQueue } from "react-icons/bi";
 import { Link } from 'react-router-dom';
@@ -15,7 +14,6 @@ import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, For
 import { ContentElemenEmp, InputEmp } from '../elementos/Configuracion'
 
 const AgregarEmpresa = () => {
-    /* const navigate = useNavigate(); */
     const user = auth.currentUser;
     let fechaAdd = new Date();
     let fechaMod = new Date();
@@ -25,7 +23,6 @@ const AgregarEmpresa = () => {
     const [leer, setLeer] = useState([])
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
@@ -52,13 +49,11 @@ const AgregarEmpresa = () => {
         const existe2 = leer.filter(emp => emp.rut === rut).length === 0;
         //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-        /*  console.log(validarRut(rut)); */
         const temp = rut.split('-');
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
 
-        // Realiza comprobacion
         if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -140,19 +135,10 @@ const AgregarEmpresa = () => {
     const filtroEmpresa = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
-            return leer.slice( /* pagina, pagina + 5 */ );
+            return leer.slice( /* pagina, pagina + 5 */);
         const nuevoFiltro = leer.filter(emp => emp.empresa.includes(buscar));
-        return nuevoFiltro.slice(/* pagina, pagina + 5 */ );
+        return nuevoFiltro.slice(/* pagina, pagina + 5 */);
     }
-
-    // const siguientePag = () => {
-    //     if (leer.filter(emp => emp.empresa.includes(buscador)).length > pagina + 5)
-    //         setPagina(pagina + 5);
-    // }
-    // const paginaAnterior = () => {
-    //     if (pagina > 0) setPagina(pagina - 5)
-    // }
-
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         // setPagina(0);
         setBuscardor(target.value)
@@ -196,9 +182,7 @@ const AgregarEmpresa = () => {
 
             <ListarProveedor>
                 <ContentElemenAdd>
-                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Empresas</Titulo>
-                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
 
                 <ContentElemenEmp>

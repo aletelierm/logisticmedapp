@@ -62,9 +62,6 @@ const ReporteMovimientos = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-  
-    
-
     return (
         <div>
             <ListarProveedor>
@@ -111,15 +108,12 @@ const ReporteMovimientos = () => {
                                         </Table.Cell>
                                     </Table.Row>
                                 )
-                               
-                                                   
                         })}
                     </Table.Body>
                 </Table>
                 <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>  
                 {mostrarSt.length >0 ?
                 <Contenido>
-                    
                     <Table singleLine>
                             <Table.Header>
                             <Table.Row>

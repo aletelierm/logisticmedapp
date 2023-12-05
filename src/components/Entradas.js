@@ -226,7 +226,6 @@ const Entradas = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Validar Rut
-
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
@@ -265,7 +264,6 @@ const Entradas = () => {
                 mensaje: 'Seleccione un Tipo de Entrada'
             })
             return;
-            // Validacion Rut
         } else if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -304,7 +302,7 @@ const Entradas = () => {
         } else {
             setCargando(true);
             const fechaInOut = new Date(date);
-            console.log('fecha actual con new date', fechaInOut)            
+            console.log('fecha actual con new date', fechaInOut)
             try {
                 CabeceraInDB({
                     numDoc: numDoc,
@@ -324,15 +322,14 @@ const Entradas = () => {
                 })
                 setTimeout(() => {
                     setCargando(false);
-                }, 3000); 
+                }, 3000);
                 setTimeout(() => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Ingreso realizado exitosamente'
-                }) 
-                }, 3000);                 
-               
+                        tipo: 'exito',
+                        mensaje: 'Ingreso realizado exitosamente'
+                    })
+                }, 3000);
                 setFlag(!flag);
                 setConfirmar(true);
                 setBtnAgregar(false);
@@ -514,11 +511,6 @@ const Entradas = () => {
             const entrada = await getDocs(entra);
             const existein = (entrada.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
-            // // Filtar por Status Preparacion Pendiente
-            // const traerStatusPrep = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('status', '==', 'PREPARACION'));
-            // const status = await getDocs(traerStatusPrep);
-            // const existeStatus = (status.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-
             if (nomTipoIn === 'COMPRA' || nomTipoIn === 'ARRIENDO' || nomTipoIn === 'COMODATO') {
                 const batch = writeBatch(db);
                 dataEntrada.forEach((docs, index) => {
@@ -657,7 +649,6 @@ const Entradas = () => {
         const datoIn = query(traerIn, where('cab_id', '==', itemAnular));
         const dataIn = await getDocs(datoIn)
         const detalle = (dataIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        // console.log('detalle de cabecera', detalle.length > 0)
         try {
             await updateDoc(doc(db, 'cabeceras', itemAnular), {
                 tipmov: 3,
@@ -699,15 +690,6 @@ const Entradas = () => {
         setFlag(!flag);
         setShowConfirmationAnular(false);
     }
-
-    // // Función para eliminar Item por linea
-    // const deleteItem = (id) => {
-    //     const confirma = window.confirm("Estas seguro ??");
-    //     if (confirma){
-    //         borrarItem(id);
-    //         setFlag(!flag)
-    //     }       
-    // }
 
     // Agregar una nueva cabecera
     const nuevo = () => {
@@ -754,9 +736,9 @@ const Entradas = () => {
     // console.log(numeroFormateadoChile); // Salida: "1.234.567"
 
     return (
-        <ContenedorProveedor>             
+        <ContenedorProveedor>
             <Contenedor >
-                <Titulo>Recepcion de Equipos</Titulo>               
+                <Titulo>Recepcion de Equipos</Titulo>
             </Contenedor>
             <Contenedor>
                 <Formulario action=''>
@@ -873,12 +855,6 @@ const Entradas = () => {
                                 value={price}
                                 onChange={e => {
                                     if (/^[1-9]\d*$/.test(e.target.value)) {
-                                        // Crear un objeto Intl.NumberFormat para español en Chile
-                                        // const formatoNumeroChile = new Intl.NumberFormat('es-CL');
-                                        // Formatear el número utilizando el objeto Intl.NumberFormat para Chile
-                                        // const numeroFormateadoChile = new Intl.NumberFormat('es-CL').format(e.target.value);
-                                        // console.log(numeroFormateadoChile); // Salida: "1.234.567"
-                                        // setPrice(numeroFormateadoChile)
                                         setPrice(e.target.value)
                                     } else {
                                         cambiarEstadoAlerta(true);
@@ -1003,7 +979,7 @@ const Entradas = () => {
                         )}
                     </Table.Body>
                 </Table>
-            </ListarProveedor>          
+            </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
@@ -1022,7 +998,7 @@ const Entradas = () => {
                     </Overlay>
                 )
             }
-            {cargando && <Spinner loading={cargando}/>}
+            {cargando && <Spinner loading={cargando} />}
             {
                 showConfirmationAnular && (
                     <Overlay>

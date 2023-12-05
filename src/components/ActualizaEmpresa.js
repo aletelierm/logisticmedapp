@@ -8,7 +8,6 @@ import {Contenedor, ContentElemenAdd, Titulo, InputAdd, BotonGuardar} from '../e
 import {ContenedorCliente, Formulario} from '../elementos/CrearEquipos';
 
 const ActualizaEmpresa = () => {
-    /* const navigate = useNavigate(); */
     const user = auth.currentUser;  
     let fechaMod = new Date();
 

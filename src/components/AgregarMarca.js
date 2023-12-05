@@ -8,7 +8,6 @@ import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
-// import * as MdIcons from 'react-icons/md';
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -24,7 +23,6 @@ const AgregarMarca = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [marca, setMarca] = useState('');
     const [leer, setLeer] = useState([]);
-    // const [pagina, setPagina] = useState(0);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
@@ -34,7 +32,7 @@ const AgregarMarca = () => {
         cambiarAlerta({});
         // Consulta si exite campo en el arreglo
         const existe = leer.filter(mar => mar.marca === marca.toLocaleUpperCase().trim()).length === 0
-        // Realiza consulta al arreglo leer para ver si existe el nombre del campo
+
         if (!existe) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -95,13 +93,6 @@ const AgregarMarca = () => {
         const nuevoFiltro = leer.filter(mar => mar.marca.includes(buscar));
         return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
     }
-    // const siguientePag = () => {
-    //     if (leer.filter(mar => mar.marca.includes(buscador)).length > pagina + 5)
-    //         setPagina(pagina + 5);
-    // }
-    // const paginaAnterior = () => {
-    //     if (pagina > 0) setPagina(pagina - 5)
-    // }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         // setPagina(0);
         setBuscardor(target.value)
@@ -134,9 +125,7 @@ const AgregarMarca = () => {
             </Contenedor>
             <ListarProveedor>
                 <ContentElemenAdd>
-                    {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                     <Titulo>Listado de Marcas</Titulo>
-                    {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />

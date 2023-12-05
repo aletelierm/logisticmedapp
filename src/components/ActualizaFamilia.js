@@ -28,7 +28,6 @@ const ActualizaFamilia = () => {
     const volver = () => {
         navigate('/misequipos/agregarfamilia')
     }
-
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
@@ -91,7 +90,6 @@ const ActualizaFamilia = () => {
         } else {
             navigate('/')
         }
-      
     }, [familia, navigate])
 
     useEffect(() => {

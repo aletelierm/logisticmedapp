@@ -9,8 +9,6 @@ import { UserContext } from '../context/UserContext';
 import moment from 'moment';
 import ExportarExcel from '../funciones/ExportarExcel';
 import * as FaIcons from 'react-icons/fa';
-// import { FaArrowUp } from "react-icons/fa";
-// import { FaArrowDown } from "react-icons/fa";
 import { Contenedor, ListarProveedor, Titulo, ContentElemenAdd } from '../elementos/General'
 import { ContentElemenMov, Input } from '../elementos/CrearEquipos'
 
@@ -154,38 +152,9 @@ const Reporte2 = () => {
                     </Table.Body>
                 </Table>
             </ListarProveedor>
-            {/* <ContenedorFlecha> */}
-                {/* <FlechaArriba><FaArrowUp /></FlechaArriba> */}
-                {/* <FlechaArriba/> */}
-                {/* <FlechaAbajo><FaArrowDown /></FlechaAbajo> */}
-                {/* <FlechaAbajo/> */}
-            {/* </ContenedorFlecha> */}
         </ContenedorReporte>
     );
 };
 
 export default Reporte2;
 const ContenedorReporte = styled.div``
-
-// const ContenedorFlecha = styled.div`
-//   position: relative;
-// `;
-
-// const Flecha = styled.div`
-//   width: 0;
-//   height: 0;
-//   border-left: 10px solid transparent;
-//   border-right: 10px solid transparent;
-//   position: absolute;
-//   cursor: pointer;
-// `;
-
-// const FlechaArriba = styled(Flecha)`
-//   border-bottom: 10px solid black;
-//   top: 0;
-// `;
-
-// const FlechaAbajo = styled(Flecha)`
-//   border-top: 10px solid black;
-//   bottom: 0;
-// `;

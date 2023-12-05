@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 export const UsuariosEnvios = () => {
     let fechaactual = new Date();
     const userAuth = auth.currentUser.email;
-    const useraddmod = userAuth;  
+    const useraddmod = userAuth;
 
     const [correo, setCorreo] = useState('');
     const [isCheckedSalida, setIsCheckedSalida] = useState(false);
@@ -262,11 +262,7 @@ export const UsuariosEnvios = () => {
                 <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
             </Contenedor>
             <ListarProveedor>
-
-                {/* <Boton onClick={paginaAnterior}><MdIcons.MdSkipPrevious style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
                 <Titulo>Listado Usuarios y Alertas</Titulo>
-                {/* <Boton onClick={siguientePag}><MdIcons.MdOutlineSkipNext style={{ fontSize: '30px', color: '#328AC4' }} /></Boton> */}
-
                 <ContentElemen>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
                     <Input style={{ width: '100%' }}

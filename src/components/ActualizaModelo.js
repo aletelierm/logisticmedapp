@@ -28,7 +28,6 @@ const ActualizaModelo = () => {
     const volver = () => {
         navigate('/misequipos/agregarmodelo')
     }
-
     const handleChange = (e) => {
         setNuevoCampo(e.target.value)
     }
