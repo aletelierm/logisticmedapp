@@ -44,6 +44,7 @@ const Salidas = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [alertaSalida, setAlertasalida] = useState([]);
     const [cabecera, setCabecera] = useState([]);
+    const [cabecera1, setCabecera1] = useState([]);
     const [dataSalida, setDataSalida] = useState([]);
     const [status, setStatus] = useState([]);
     const [usuario, setUsuarios] = useState([]);
@@ -80,9 +81,13 @@ const Salidas = () => {
     const consultarCab = async () => {
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 2));
         const guardaCab = await getDocs(cab);
-        const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-        setCabecera(existeCab);
+        setCabecera(guardaCab.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 0));
+        const guardaCab1 = await getDocs(cab1);
+        setCabecera1(guardaCab1.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
+    const merge = [...cabecera, ...cabecera1]
+
     //Funcion ordena x fecha
     const OrdenaFecha = (a, b) => {
         return a.fechaadd.seconds - b.fechaadd.seconds;
@@ -291,11 +296,15 @@ const Salidas = () => {
         const validaR = validarRut(rut);
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-        // Filtar por docuemto de Cabecera
+        // Filtar por docuemto de Cabecera Tipmov = 2
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 2));
         const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        // const existecabecera = existeCab.filter(ec => ec.tipmov === 2 || ec.tipmov === 0);
+        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
+        // Filtar por docuemto de Cabecera Tipmov = 0
+        const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 0));
+        const cabecera1 = await getDocs(cab1);
+        const existeCab1 = (cabecera1.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
+
         // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
@@ -379,6 +388,20 @@ const Salidas = () => {
             return;
         } else if (existeCab.length > 0) {
             if (existeCab[0].confirmado) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este documento y se encuentra confirmado'
+                })
+            } else {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este documento. Falta confirmar'
+                })
+            }
+        } else if (existeCab1.length > 0) {
+            if (existeCab1[0].confirmado) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -1318,7 +1341,7 @@ const Salidas = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {cabecera.map((item, index) => {
+                        {merge.map((item, index) => {
                             return (
                                 <Table.Row key={item.id2}>
                                     <Table.Cell >{index + 1}</Table.Cell>
