@@ -295,6 +295,7 @@ const Salidas = () => {
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 2));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        // const existecabecera = existeCab.filter(ec => ec.tipmov === 2 || ec.tipmov === 0);
         // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
@@ -473,6 +474,7 @@ const Salidas = () => {
                             confirmado: false,
                             entregado: true,
                             retirado: false,
+                            observacion: '',
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -521,6 +523,7 @@ const Salidas = () => {
                             confirmado: false,
                             entregado: true,
                             retirado: false,
+                            observacion: '',
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -569,6 +572,7 @@ const Salidas = () => {
                             confirmado: false,
                             entregado: false,
                             retirado: true,
+                            observacion: '',
                             userAdd: user.email,
                             userMod: user.email,
                             fechaAdd: fechaAdd,
@@ -904,6 +908,7 @@ const Salidas = () => {
             try {
                 await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
                     confirmado: true,
+                    tipmov: 0, 
                     usermod: user.email,
                     fechamod: fechaMod
                 });

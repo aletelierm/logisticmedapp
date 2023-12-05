@@ -12,8 +12,8 @@ import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
-import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General'
-import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General'
+import { ContentElemen, Formulario, Input, Label } from '../elementos/CrearEquipos'
 
 const Proveedores = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -59,9 +59,9 @@ const Proveedores = () => {
     //filtrar para paginacion
     const filtroProveedor = () => {
         if (buscador.length === 0)
-            return leer.slice( /* pagina, pagina + 5 */ );
+            return leer.slice( /* pagina, pagina + 5 */);
         const nuevoFiltro = leer.filter(prov => prov.nombre.includes(buscador));
-        return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
+        return nuevoFiltro.slice( /* pagina, pagina + 5 */);
     }
     // const siguientePag = () => {
     //     if (leer.filter(prov => prov.nombre.includes(buscador)).length > pagina + 5)
@@ -102,6 +102,24 @@ const Proveedores = () => {
                 break;
             default:
                 break;
+        }
+    }
+
+    // Validar rut
+    const detectar = async (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            const p = query(collection(db, 'proveedores'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+            const rutProv = await getDocs(p)
+            const final = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            if (rutProv.docs.length !== 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe rut de proveedor'
+                })
+            }
         }
     }
 
@@ -254,7 +272,7 @@ const Proveedores = () => {
                             placeholder='Ingrese Rut sin puntos'
                             value={rut}
                             onChange={handleChange}
-                        /* onKeyDown={detectar} */
+                            onKeyDown={detectar}
                         />
                         <Label>Razon Social</Label>
                         <Input
@@ -339,7 +357,7 @@ const Proveedores = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.direccion}</Table.Cell>
                                         <Table.Cell>{item.telefono}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center'}}>
+                                        <Table.Cell style={{ textAlign: 'center' }}>
                                             <Link to={`/actualizaproveedor/${item.id}`}>
                                                 <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />
                                             </Link>

@@ -88,6 +88,24 @@ const Clientes = () => {
         
     },[]) */
 
+    // Validar rut
+    const detectar = async (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            const c = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+            const rutCli = await getDocs(c)
+            const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            if (rutCli.docs.length !== 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe rut de Paciente'
+                })
+            }
+        }
+    }
+
     const handleChange = (e) => {
         switch (e.target.name) {
             case 'rut':
@@ -302,7 +320,7 @@ const Clientes = () => {
                             placeholder='Ingrese Rut sin puntos'
                             value={rut}
                             onChange={handleChange}
-                        /* onKeyDown={detectar} */
+                            onKeyDown={detectar}
                         />
                         <Label>Nombre</Label>
                         <Input
