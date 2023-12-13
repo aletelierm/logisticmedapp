@@ -7,13 +7,11 @@ import Alertas from './Alertas';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query /*,  updateDoc, writeBatch */ } from 'firebase/firestore';
-// import { FaRegEdit } from "react-icons/fa";
-// import { BiAddToQueue } from "react-icons/bi";
-import { Programa } from './TipDoc'
-// import * as MdIcons from 'react-icons/md';
+
+import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, Select, Formulario, Label } from '../elementos/CrearEquipos';
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 // import Swal from 'sweetalert2';
@@ -32,6 +30,7 @@ const Protocolos = () => {
     const [tipo, setTipo] = useState([]);
     const [protocolCab, setProtocolCab] = useState([]);
     const [item, setItem] = useState([]);
+    const [protocolo, setProtocolo] = useState([]);
     const [programa, setPrograma] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
@@ -40,9 +39,10 @@ const Protocolos = () => {
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
-    // const [btnAgregar, setBtnAgregar] = useState(true);
-    // const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
+    const [mostrar, setMostrar] = useState(true);
     const dias = useRef('');
 
     //Leer los datos de Familia
@@ -95,11 +95,30 @@ const Protocolos = () => {
         const dato = query(traerit, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setItem(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-        console.log(item)
     }
+    // Ordenar Listado por item
     item.sort((a, b) => {
         const nameA = a.nombre;
         const nameB = b.nombre;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    // Filtar por docuemto de Entrada
+    const consultarProtocolos = async () => {
+        const doc = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        const docu = await getDocs(doc);
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+        setProtocolo(documen);
+    }
+    // Ordenar Items Agregados a Protocolo, Alfabetico
+    protocolo.sort((a, b) => {
+        const nameA = a.item;
+        const nameB = b.item;
         if (nameA < nameB) {
             return -1;
         }
@@ -130,7 +149,7 @@ const Protocolos = () => {
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
         const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        console.log(existeCabProtocolo);
+        // console.log(existeCabProtocolo);
 
         if (nomProtocolo === '') {
             cambiarEstadoAlerta(true);
@@ -224,43 +243,57 @@ const Protocolos = () => {
         cambiarAlerta({});
         // Consultar si Item se encuentra en Documento
         const item_id = item.filter(it => it.id === id);
-
+        // Validar en N° Serie en el documento de Entradas que se esta trabatando     
+        const existeProt = protocolo.filter(doc => doc.item_id === item_id[0].id);
         // Filtar por docuemto de Cabecera de Protocolo
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
         const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        try {
-            ProtocoloDB({
-                nombre: existeCabProtocolo[0].nombre,
-                familia: existeCabProtocolo[0].familia,
-                tipo: existeCabProtocolo[0].tipo,
-                programa: existeCabProtocolo[0].nombre,
-                dias: existeCabProtocolo[0].dias,
-                item: item[0].nombre,
-                item_id: item_id[0].id,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id,
-                confirmado: false
-            });
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Item Agregado correctamente'
-            })
-            setFlag(!flag);
-            return;
-        } catch (error) {
+
+        if (existeProt.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: error
+                mensaje: 'Item ya se encuentra en este documento'
             })
+        } else {
+            try {
+                ProtocoloDB({
+                    nombre: existeCabProtocolo[0].nombre,
+                    familia: existeCabProtocolo[0].familia,
+                    tipo: existeCabProtocolo[0].tipo,
+                    programa: existeCabProtocolo[0].programa,
+                    dias: existeCabProtocolo[0].dias,
+                    item: item_id[0].nombre,
+                    item_id: item_id[0].id,
+                    categoria: item_id[0].categoria,
+                    cab_id: existeCabProtocolo[0].id,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                    confirmado: false
+                });
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Item Agregado correctamente'
+                })
+                setFlag(!flag);
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
         }
-    }
+        
 
+        
+    }
     // Agregar una nueva cabecera
     const nuevo = () => {
         setNomProtocolo('');
@@ -269,8 +302,7 @@ const Protocolos = () => {
         setPrograma('');
         setConfirmar(false);
         setBtnGuardar(false);
-        // setBtnAgregar(true);
-        // setBtnConfirmar(true);
+        setBtnConfirmar(true);
         setBtnNuevo(true);
     }
 
@@ -285,6 +317,7 @@ const Protocolos = () => {
     useEffect(() => {
         getItem();
         consultarCabProt();
+        consultarProtocolos();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -293,7 +326,6 @@ const Protocolos = () => {
             <Contenedor>
                 <Titulo>Crear Protocolos</Titulo>
             </Contenedor>
-
             <Contenedor>
                 <Formulario action=''>
                     <ContentElemenMov>
@@ -338,7 +370,7 @@ const Protocolos = () => {
                                 value={programa}
                                 onChange={ev => setPrograma(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
-                                {Programa.map((d) => {
+                                {Programas.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
@@ -360,38 +392,52 @@ const Protocolos = () => {
                     >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
-
-            <ListarProveedor>
-                <Contenedor>
+            <Contenedor>
+                <ContentElemenAdd>
                     <Titulo>Items Agregados a Protocolo</Titulo>
-                </Contenedor>
-                <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {/* {item.map((item, index) => {
-                            return (
-                                <Table.Row key={index}>
-                                    <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}>
-                                        <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar>
-                                    </Table.Cell>
-                                </Table.Row>
-                            )
-                        })} */}
-                    </Table.Body>
-                </Table>
-            </ListarProveedor>
+                </ContentElemenAdd>
+                <ListarEquipos>
+                    <Table singleLine>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Item</Table.HeaderCell>
+                                <Table.HeaderCell>Categoria</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {protocolo.map((item, index) => {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                                        <Table.Cell>{item.categoria}</Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
+                        </Table.Body>
+                    </Table>
+                </ListarEquipos>
+                <BotonGuardar /*onClick={actualizarDocs}*/ disabled={btnConfirmar}>Confirmar</BotonGuardar>
+            </Contenedor>
 
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Listado de Items</Titulo>
+                    { mostrar ?
+                            <BotonGuardar onClick={() => {
+                                setIsOpen(true)
+                                setFlag(!flag)
+                                setMostrar(false)
+                            }}
+                            >Mostrar</BotonGuardar>
+                            :
+                            <BotonGuardar onClick={() => {
+                                setIsOpen(false)
+                                setMostrar(true)
+                            }}
+                            >No Mostrar</BotonGuardar>
+                    }
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
@@ -402,30 +448,31 @@ const Protocolos = () => {
                         onChange={onBuscarCambios}
                     />
                 </ContentElemenAdd>
-                <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {filtroItem().map((item, index) => {
-                            return (
-                                <Table.Row key={index}>
-                                    <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}>
-                                        <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar>
-                                    </Table.Cell>
-                                </Table.Row>
-                            )
-                        })}
-                    </Table.Body>
-                </Table>
+                { isOpen &&
+                    <Table singleLine>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Item</Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {filtroItem().map((item, index) => {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                                        <Table.Cell style={{ textAlign: 'center' }}>
+                                            <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar>
+                                        </Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
+                        </Table.Body>
+                    </Table>
+                }
             </ListarProveedor>
-
 
             <ListarProveedor>
                 <ContentElemenAdd>
@@ -459,7 +506,7 @@ const Protocolos = () => {
                                         setBtnGuardar(true);
                                         setConfirmar(true);
                                         setBtnNuevo(false)
-                                        // setBtnConfirmar(false)
+                                        setBtnConfirmar(false)
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
@@ -476,7 +523,7 @@ const Protocolos = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-        </ContenedorProveedor>
+        </ContenedorProveedor >
     );
 };
 

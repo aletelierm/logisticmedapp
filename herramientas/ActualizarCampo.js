@@ -9,7 +9,7 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-const collectionRef = db.collection('status'); // Reemplaza con tu colección específica
+const collectionRef = db.collection('items'); // Reemplaza con tu colección específica
 
 // Realiza una consulta para obtener los documentos
 collectionRef.get()
@@ -26,8 +26,7 @@ collectionRef.get()
 
       // Actualiza el campo en cada documento
       docRef.update({
-        entidad: 'BOMY SPA CHILE LTDA',
-        rut: '17579501-4'
+        categoria: 'CHECK'
       })
       .then(() => {
         console.log(`Documento con ID ${id} actualizado con éxito.`);

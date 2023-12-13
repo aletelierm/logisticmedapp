@@ -140,11 +140,11 @@ export const DataMenu = [
         path: 'serviciotecnico/protocolos',
         icon: <IoIcons.IoIosAlbums />
       },
-      {
-        title: 'Programas',
-        path: 'serviciotecnico/programas',
-        icon: <IoIcons.IoIosTimer />
-      },
+      // {
+      //   title: 'Programas',
+      //   path: 'serviciotecnico/programas',
+      //   icon: <IoIcons.IoIosTimer />
+      // },
       {
         title: 'Reportes',
         path: 'serviciotecnico/certificados',

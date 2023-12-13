@@ -3,6 +3,7 @@ import Alertas from './Alertas';
 import AgregarItemsDb from '../firebase/AgregarItemsDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
+import { Categoria } from './TipDoc'
 // import { Link } from 'react-router-dom';
 // import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
@@ -11,7 +12,8 @@ import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
+import { ContentElemenMov, ContentElemenSelect, Select, Label } from '../elementos/CrearEquipos';
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton, ContenedorElementos } from '../elementos/General';
 
 const AgregarItems = () => {
     const user = auth.currentUser;
@@ -22,6 +24,7 @@ const AgregarItems = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [item, setItem] = useState('');
+    const [categoria, setCategoria] = useState('');
     const [leer, setLeer] = useState([]);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
@@ -49,6 +52,7 @@ const AgregarItems = () => {
             const it = item.toLocaleUpperCase().trim()
             AgregarItemsDb({
                 nombre: it,
+                categoria: categoria,
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
@@ -104,7 +108,7 @@ const AgregarItems = () => {
     }, [flag, setFlag])
 
     return (
-        <ContenedorProveedor style={{width: '90%'}}>
+        <ContenedorProveedor style={{ width: '90%' }}>
             <Contenedor>
                 <Titulo>Items</Titulo>
             </Contenedor>
@@ -118,9 +122,22 @@ const AgregarItems = () => {
                         value={item}
                         onChange={e => setItem(e.target.value)}
                     />
+
+
+                    <Label>Categoria</Label>
+                    <Select
+                        // disabled={confirmar}
+                        value={categoria}
+                        onChange={ev => setCategoria(ev.target.value)}>
+                        <option>Selecciona Opción:</option>
+                        {Categoria.map((d) => {
+                            return (<option key={d.id}>{d.text}</option>)
+                        })}
+                    </Select>
                     <Boton>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
                     </Boton>
+
                 </FormularioAdd>
             </Contenedor>
 
@@ -142,6 +159,7 @@ const AgregarItems = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Item</Table.HeaderCell>
+                            <Table.HeaderCell>Categoria</Table.HeaderCell>
                             <Table.HeaderCell>Agregado por</Table.HeaderCell>
                             {/* <Table.HeaderCell>Accion</Table.HeaderCell> */}
                         </Table.Row>
@@ -152,6 +170,7 @@ const AgregarItems = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                                    <Table.Cell>{item.categoria}</Table.Cell>
                                     <Table.Cell>{item.useradd}</Table.Cell>
                                     {/* <Table.Cell>{item.usermod}</Table.Cell> */}
                                     {/* <Table.Cell style={{textAlign: 'center'}}>

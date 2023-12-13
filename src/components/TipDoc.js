@@ -22,8 +22,15 @@ export const TipoOut= [
     { key: '5', value: '5', text: 'DEVOLUCION A PROVEEDOR' }
 ];
 
-export const Programa= [
+export const Programas= [
     { key: '1', value: '1', text: 'ANUAL', dias: '365' },
     { key: '2', value: '2', text: 'SEMESTRAL', dias: '180' },
     { key: '3', value: '3', text: 'TRIMESTRAL', dias: '90' },
+];
+
+export const Categoria= [
+    { key: '1', value: '1', text: 'CHECK' },
+    { key: '2', value: '2', text: 'LLENADO' },
+    { key: '3', value: '3', text: 'SELECCION' },
+    { key: '3', value: '3', text: 'INSTRUMENTOS' },
 ];
