@@ -6,15 +6,14 @@ import Alertas from './Alertas';
 // import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query /*,  updateDoc, writeBatch */ } from 'firebase/firestore';
-
+import { getDocs, collection, where, query, updateDoc, doc /*, writeBatch */ } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-// import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 
 const Protocolos = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -39,7 +38,7 @@ const Protocolos = () => {
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
-    const [btnConfirmar, setBtnConfirmar] = useState(true);
+    const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [mostrar, setMostrar] = useState(true);
@@ -222,8 +221,7 @@ const Protocolos = () => {
                     mensaje: 'Ingreso realizado exitosamente'
                 })
                 setFlag(!flag);
-                setConfirmar(true);
-                // setBtnAgregar(false);
+                setConfirmar(false);
                 setBtnGuardar(true);
                 setBtnNuevo(false);
                 return;
@@ -281,6 +279,9 @@ const Protocolos = () => {
                     mensaje: 'Item Agregado correctamente'
                 })
                 setFlag(!flag);
+                setConfirmar(false);
+                setBtnGuardar(true);
+                setBtnNuevo(false);
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -290,17 +291,58 @@ const Protocolos = () => {
                 })
             }
         }
-        
-
-        
     }
+
+    // Función para actualizar varios documentos por lotes
+    const actualizarDocs = async () => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // Filtar por docuemto de Cabecera
+        const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        const cabecera = await getDocs(cabProtocolo);
+        const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+
+        if (protocolo.length === 0) {
+            Swal.fire('No hay Datos por confirmar en este documento');
+        } else {
+            try {
+                await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
+                    confirmado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+                cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documento confirmado exitosamente.'
+                    });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al confirmar Cabecera:', error
+                })
+            }
+
+        }
+        setFlag(!flag)
+        setNomProtocolo('');
+        setNomFamilia('');
+        setNomTipo('');
+        setPrograma('');
+        setConfirmar(false);
+        setBtnGuardar(false);
+        setBtnConfirmar(true);
+        setBtnNuevo(true);
+    };
+
     // Agregar una nueva cabecera
     const nuevo = () => {
         setNomProtocolo('');
         setNomFamilia('');
         setNomTipo('');
         setPrograma('');
-        setConfirmar(false);
+        setConfirmar(true);
         setBtnGuardar(false);
         setBtnConfirmar(true);
         setBtnNuevo(true);
@@ -310,6 +352,7 @@ const Protocolos = () => {
         getFamilia();
         getTipo();
         getItem();
+        consultarCabProt();
         // getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -418,25 +461,25 @@ const Protocolos = () => {
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
-                <BotonGuardar /*onClick={actualizarDocs}*/ disabled={btnConfirmar}>Confirmar</BotonGuardar>
+                <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
             </Contenedor>
 
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Listado de Items</Titulo>
-                    { mostrar ?
-                            <BotonGuardar onClick={() => {
-                                setIsOpen(true)
-                                setFlag(!flag)
-                                setMostrar(false)
-                            }}
-                            >Mostrar</BotonGuardar>
-                            :
-                            <BotonGuardar onClick={() => {
-                                setIsOpen(false)
-                                setMostrar(true)
-                            }}
-                            >No Mostrar</BotonGuardar>
+                    {mostrar ?
+                        <BotonGuardar onClick={() => {
+                            setIsOpen(true)
+                            setFlag(!flag)
+                            setMostrar(false)
+                        }}
+                        >Mostrar</BotonGuardar>
+                        :
+                        <BotonGuardar onClick={() => {
+                            setIsOpen(false)
+                            setMostrar(true)
+                        }}
+                        >No Mostrar</BotonGuardar>
                     }
                 </ContentElemenAdd>
                 <ContentElemenAdd>
@@ -448,7 +491,7 @@ const Protocolos = () => {
                         onChange={onBuscarCambios}
                     />
                 </ContentElemenAdd>
-                { isOpen &&
+                {isOpen &&
                     <Table singleLine>
                         <Table.Header>
                             <Table.Row>
@@ -504,7 +547,7 @@ const Protocolos = () => {
                                         setNomTipo(item.tipo)
                                         setPrograma(item.programa);
                                         setBtnGuardar(true);
-                                        setConfirmar(true);
+                                        // setConfirmar(true);
                                         setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
