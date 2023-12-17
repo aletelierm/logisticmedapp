@@ -9,7 +9,9 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc /*, writeBatch */ } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar } from '../elementos/General'
+import { TbNotes } from "react-icons/tb";
+import { TbNotesOff } from "react-icons/tb";
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -312,10 +314,10 @@ const Protocolos = () => {
                     fechamod: fechaMod
                 });
                 cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Documento confirmado exitosamente.'
-                    });
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Documento confirmado exitosamente.'
+                });
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -467,20 +469,7 @@ const Protocolos = () => {
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Listado de Items</Titulo>
-                    {mostrar ?
-                        <BotonGuardar onClick={() => {
-                            setIsOpen(true)
-                            setFlag(!flag)
-                            setMostrar(false)
-                        }}
-                        >Mostrar</BotonGuardar>
-                        :
-                        <BotonGuardar onClick={() => {
-                            setIsOpen(false)
-                            setMostrar(true)
-                        }}
-                        >No Mostrar</BotonGuardar>
-                    }
+                    
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
@@ -490,6 +479,40 @@ const Protocolos = () => {
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
+
+{mostrar ?
+                        // <BotonGuardar onClick={() => {
+                        //     setIsOpen(true)
+                        //     setFlag(!flag)
+                        //     setMostrar(false)
+                        // }}
+                        // >Mostrar</BotonGuardar>
+                        <Boton onClick={() => {
+                            setIsOpen(true)
+                            setFlag(!flag)
+                            setMostrar(false)
+                        }}
+                        style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                        title='Mostrar Listado de Items'
+                        >
+                            <TbNotes />
+                        </Boton>
+                        :
+                        // <BotonGuardar onClick={() => {
+                        //     setIsOpen(false)
+                        //     setMostrar(true)
+                        // }}
+                        // >No Mostrar</BotonGuardar>
+                        <Boton onClick={() => {
+                                setIsOpen(false)
+                                setMostrar(true)
+                            }} 
+                            style={{ fontSize: '28px', color: '#328AC4' }}
+                            title='No mostrar Listado de Items'
+                        >
+                            <TbNotesOff />
+                        </Boton>
+                    }
                 </ContentElemenAdd>
                 {isOpen &&
                     <Table singleLine>
