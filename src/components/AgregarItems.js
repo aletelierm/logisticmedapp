@@ -12,8 +12,8 @@ import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContentElemenMov, ContentElemenSelect, Select, Label } from '../elementos/CrearEquipos';
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton, ContenedorElementos } from '../elementos/General';
+import { ContentElemenMov, Select, Label } from '../elementos/CrearEquipos';
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
 
 const AgregarItems = () => {
     const user = auth.currentUser;
@@ -114,30 +114,30 @@ const AgregarItems = () => {
             </Contenedor>
 
             <Contenedor>
-                <FormularioAdd action='' onSubmit={handleSubmit} >
-                    <InputAdd
-                        type='text'
-                        placeholder='Ingrese Item'
-                        name='item'
-                        value={item}
-                        onChange={e => setItem(e.target.value)}
-                    />
-
-
-                    <Label>Categoria</Label>
-                    <Select
-                        // disabled={confirmar}
-                        value={categoria}
-                        onChange={ev => setCategoria(ev.target.value)}>
-                        <option>Selecciona Opción:</option>
-                        {Categoria.map((d) => {
-                            return (<option key={d.id}>{d.text}</option>)
-                        })}
-                    </Select>
-                    <Boton>
+                <FormularioAdd action=''>
+                    <ContentElemenMov style={{ width: '100%' }}>
+                        <InputAdd
+                            type='text'
+                            placeholder='Ingrese Item'
+                            name='item'
+                            value={item}
+                            onChange={e => setItem(e.target.value)}
+                        />
+                    </ContentElemenMov>
+                    <ContentElemenMov>
+                        <Label>Categoria</Label>
+                        <Select
+                            value={categoria}
+                            onChange={ev => setCategoria(ev.target.value)}>
+                            <option>Selecciona Opción:</option>
+                            {Categoria.map((d) => {
+                                return (<option key={d.id}>{d.text}</option>)
+                            })}
+                        </Select>
+                    </ContentElemenMov>
+                    <Boton onClick={{ handleSubmit }}>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
                     </Boton>
-
                 </FormularioAdd>
             </Contenedor>
 

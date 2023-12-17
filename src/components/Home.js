@@ -13,7 +13,7 @@ import CrearEquipo from './CrearEquipo';
 import Transaccion from './Transaccion';
 import ServicioTecnico from './ServicioTecnico';
 import Protocolos from './Protocolos';
-import Programas from './Programas';
+// import Programas from './Programas';
 import Certificados from './Certificados';
 import Mantenimiento from './Mantenimiento';
 import Configuracion from './Configuracion';
