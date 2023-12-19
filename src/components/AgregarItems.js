@@ -48,6 +48,13 @@ const AgregarItems = () => {
                 tipo: 'error',
                 mensaje: 'No ha ingresado un Item'
             })
+        } else if (categoria.length === 0 || categoria === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una categoria'
+            })
+            return;
         } else {
             const it = item.toLocaleUpperCase().trim()
             AgregarItemsDb({
@@ -130,12 +137,12 @@ const AgregarItems = () => {
                             value={categoria}
                             onChange={ev => setCategoria(ev.target.value)}>
                             <option>Selecciona Opción:</option>
-                            {Categoria.map((d) => {
-                                return (<option key={d.id}>{d.text}</option>)
+                            {Categoria.map((d, index) => {
+                                return (<option key={index}>{d.text}</option>)
                             })}
                         </Select>
                     </ContentElemenMov>
-                    <Boton onClick={{ handleSubmit }}>
+                    <Boton onClick={handleSubmit}>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
                     </Boton>
                 </FormularioAdd>

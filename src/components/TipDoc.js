@@ -32,5 +32,5 @@ export const Categoria= [
     { key: '1', value: '1', text: 'CHECK' },
     { key: '2', value: '2', text: 'LLENADO' },
     { key: '3', value: '3', text: 'SELECCION' },
-    { key: '3', value: '3', text: 'INSTRUMENTOS' },
+    { key: '4', value: '4', text: 'INSTRUMENTOS' },
 ];

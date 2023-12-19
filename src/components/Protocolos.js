@@ -9,6 +9,8 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc /*, writeBatch */ } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
+import { FcAddRow } from "react-icons/fc";
+import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton } from '../elementos/General'
@@ -469,7 +471,7 @@ const Protocolos = () => {
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Listado de Items</Titulo>
-                    
+
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
@@ -479,8 +481,7 @@ const Protocolos = () => {
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-
-{mostrar ?
+                    {mostrar ?
                         // <BotonGuardar onClick={() => {
                         //     setIsOpen(true)
                         //     setFlag(!flag)
@@ -492,8 +493,8 @@ const Protocolos = () => {
                             setFlag(!flag)
                             setMostrar(false)
                         }}
-                        style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
-                        title='Mostrar Listado de Items'
+                            style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                            title='Mostrar Listado de Items'
                         >
                             <TbNotes />
                         </Boton>
@@ -504,9 +505,9 @@ const Protocolos = () => {
                         // }}
                         // >No Mostrar</BotonGuardar>
                         <Boton onClick={() => {
-                                setIsOpen(false)
-                                setMostrar(true)
-                            }} 
+                            setIsOpen(false)
+                            setMostrar(true)
+                        }}
                             style={{ fontSize: '28px', color: '#328AC4' }}
                             title='No mostrar Listado de Items'
                         >
@@ -520,7 +521,7 @@ const Protocolos = () => {
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
                                 <Table.HeaderCell>Item</Table.HeaderCell>
-                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell>Agregar</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -530,7 +531,9 @@ const Protocolos = () => {
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                         <Table.Cell style={{ textAlign: 'center' }}>
-                                            <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar>
+                                            {/* <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar> */}
+                                            {/* <Boton onClick={() => AgregarItem(item.id)}><FcAddRow style={{ fontSize: '28px' }} /></Boton> */}
+                                            <Boton onClick={() => AgregarItem(item.id)}><RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo'/></Boton>
                                         </Table.Cell>
                                     </Table.Row>
                                 )
@@ -581,9 +584,6 @@ const Protocolos = () => {
                     </Table.Body>
                 </Table>
             </ListarProveedor>
-
-
-
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
