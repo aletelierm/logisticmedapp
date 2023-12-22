@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc /*, writeBatch */ } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
@@ -37,7 +37,6 @@ const Protocolos = () => {
     const [item, setItem] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
     const [programa, setPrograma] = useState([]);
-    const [equipo, setEquipo] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
     const [buscador, setBuscardor] = useState('');
@@ -135,13 +134,7 @@ const Protocolos = () => {
         const documento = await getDocs(doc)
         setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-    //Leer los datos de Equipos
-    const buscarEquipo = async (tipo) => {
-        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('tipo', '==', tipo));
-        const dato = await getDocs(traerEq);
-        const data = (dato.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setEquipo(data);
-    }
+
     // Ordenar Items Agregados a Protocolo, Alfabetico
     protocolo.sort((a, b) => {
         const nameA = a.item;
@@ -239,9 +232,9 @@ const Protocolos = () => {
                     tipo: 'exito',
                     mensaje: 'Ingreso realizado exitosamente'
                 })
-                // setNomFamilia('');
-                // setNomTipo('');
-                // setPrograma('');
+                setNomFamilia('');
+                setNomTipo('');
+                setPrograma('');
                 setFlag(!flag);
                 setConfirmar(false);
                 setBtnGuardar(true);
@@ -321,46 +314,11 @@ const Protocolos = () => {
         // Filtar por docuemto de Cabecera
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
-        const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // const fechaTermino = existeCabProtocolo[0].fechaadd + existeCabProtocolo[0].dias;
-        // console.log(fechaTermino)
+        const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
         if (protocolo.length === 0) {
             Swal.fire('No hay Datos por confirmar en este documento');
         } else {
-            if (equipo.length > 0) {
-                const batch = db.batch();
-                const docRef = db.collection('mantenciones');
-                equipo.forEach((docs) => {
-                    const nuevoDatoRef = docRef.doc();
-                    batch.set(nuevoDatoRef, {
-                        cab_id_protocol: existeCabProtocolo[0].id,
-                        nombre: existeCabProtocolo[0].nombre,
-                        programa: existeCabProtocolo[0].programa,
-                        dias: existeCabProtocolo[0].dias,
-                        fecha_inicio: existeCabProtocolo[0].fechaadd,
-                        fecha_termino: '',
-                        id_eq: docs.id,
-                        familia: docs.familia,
-                        tipo: docs.tipo,
-                        serie: docs.serie,
-                        userAdd: user.email,
-                        userMod: user.email,
-                        fechaAdd: fechaAdd,
-                        fechaMod: fechaMod,
-                        emp_id: users.emp_id,
-                    });
-                });
-                try {
-                    await batch.commit();
-                    console.log('Se guardaron datos en mantenciones')
-                } catch (error) {
-                    console.log('no se guaradron datos en mantenciones', error)
-                }
-            } else {
-                return;
-            }
-            // Actualizar la cabecera de protocolos
             try {
                 await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
                     confirmado: true,
@@ -503,10 +461,7 @@ const Protocolos = () => {
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
-                <BotonGuardar onClick={() => {
-                    actualizarDocs();
-                    buscarEquipo(nomTipo);
-                }} disabled={btnConfirmar}>Confirmar</BotonGuardar>
+                <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
             </Contenedor>
 
             <ListarProveedor>
@@ -631,7 +586,7 @@ const Protocolos = () => {
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
                                     <Table.Cell >{item.tipo}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center', }}
+                                    <Table.Cell style={{ textAlign: 'center',  }}
                                         title='Ver Items'
                                         onClick={() => {
                                             leerProt(item.id)
@@ -647,7 +602,7 @@ const Protocolos = () => {
                 </Table>
             </ListarProveedor>
             <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
-                {mostrarProt.length > 0 &&
+                {mostrarProt.length > 0 ?
                     <Contenido>
                         <Table singleLine>
                             <Table.Header>
@@ -662,8 +617,8 @@ const Protocolos = () => {
                                     return (
                                         <Table.Row key={index}>
                                             <Table.Cell>{index + 1}</Table.Cell>
-                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '10px' }}>{item.item}</Table.Cell>
-                                            <Table.Cell style={{ fontSize: '10px' }}>{item.categoria}</Table.Cell>
+                                            <Table.Cell style={{whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '10px'}}>{item.item}</Table.Cell>
+                                            <Table.Cell style={{fontSize: '10px'}}>{item.categoria}</Table.Cell>
                                         </Table.Row>
                                     )
                                 })}
@@ -671,7 +626,8 @@ const Protocolos = () => {
                         </Table>
                         <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar>
                     </Contenido>
-                }
+                    :
+                    <h2></h2>}
             </Modal>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
