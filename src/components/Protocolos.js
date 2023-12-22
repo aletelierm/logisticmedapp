@@ -9,7 +9,6 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc /*, writeBatch */ } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
-import { FcAddRow } from "react-icons/fc";
 import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
@@ -32,12 +31,12 @@ const Protocolos = () => {
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
     const [protocolCab, setProtocolCab] = useState([]);
+    const [protocolCabConf, setProtocolCabConf] = useState([]);
     const [item, setItem] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
     const [programa, setPrograma] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
-    const [nomProtocolo, setNomProtocolo] = useState('');
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
@@ -92,6 +91,13 @@ const Protocolos = () => {
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolCab(documento);
+    }
+    // Filtar por Cabecera de Protocolo Cconfirmado
+    const consultarCabProtConf = async () => {
+        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true));
+        const docu = await getDocs(doc);
+        const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setProtocolCabConf(documento);
     }
     const getItem = async () => {
         const traerit = collection(db, 'items');
@@ -152,16 +158,8 @@ const Protocolos = () => {
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
         const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        // console.log(existeCabProtocolo);
 
-        if (nomProtocolo === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese Nombre Protocolo'
-            })
-            return;
-        } else if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+        if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -204,10 +202,9 @@ const Protocolos = () => {
             } else {
                 dias.current = 90
             }
-            const nomProt = nomProtocolo.toLocaleUpperCase().trim()
             try {
                 ProtocoloCabDB({
-                    nombre: nomProt,
+                    nombre: 'PAUTA DE MANTENCIÓN ' + programa,
                     familia: nomFamilia,
                     tipo: nomTipo,
                     programa: programa,
@@ -224,6 +221,9 @@ const Protocolos = () => {
                     tipo: 'exito',
                     mensaje: 'Ingreso realizado exitosamente'
                 })
+                setNomFamilia('');
+                setNomTipo('');
+                setPrograma('');
                 setFlag(!flag);
                 setConfirmar(false);
                 setBtnGuardar(true);
@@ -240,7 +240,6 @@ const Protocolos = () => {
     }
     // Agregar Item a Protocolo
     const AgregarItem = async (id) => {
-        // ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Consultar si Item se encuentra en Documento
@@ -330,7 +329,6 @@ const Protocolos = () => {
 
         }
         setFlag(!flag)
-        setNomProtocolo('');
         setNomFamilia('');
         setNomTipo('');
         setPrograma('');
@@ -342,11 +340,9 @@ const Protocolos = () => {
 
     // Agregar una nueva cabecera
     const nuevo = () => {
-        setNomProtocolo('');
         setNomFamilia('');
         setNomTipo('');
         setPrograma('');
-        setConfirmar(true);
         setBtnGuardar(false);
         setBtnConfirmar(true);
         setBtnNuevo(true);
@@ -355,8 +351,6 @@ const Protocolos = () => {
     useEffect(() => {
         getFamilia();
         getTipo();
-        getItem();
-        consultarCabProt();
         // getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -365,6 +359,7 @@ const Protocolos = () => {
         getItem();
         consultarCabProt();
         consultarProtocolos();
+        consultarCabProtConf();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -375,16 +370,6 @@ const Protocolos = () => {
             </Contenedor>
             <Contenedor>
                 <Formulario action=''>
-                    <ContentElemenMov>
-                        <InputAdd
-                            disabled={confirmar}
-                            type='text'
-                            placeholder='Ingrese Nombre Protocolo'
-                            name='nomprotocolo'
-                            value={nomProtocolo}
-                            onChange={e => setNomProtocolo(e.target.value)}
-                        />
-                    </ContentElemenMov>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Familia</Label>
@@ -482,12 +467,6 @@ const Protocolos = () => {
                         onChange={onBuscarCambios}
                     />
                     {mostrar ?
-                        // <BotonGuardar onClick={() => {
-                        //     setIsOpen(true)
-                        //     setFlag(!flag)
-                        //     setMostrar(false)
-                        // }}
-                        // >Mostrar</BotonGuardar>
                         <Boton onClick={() => {
                             setIsOpen(true)
                             setFlag(!flag)
@@ -499,11 +478,6 @@ const Protocolos = () => {
                             <TbNotes />
                         </Boton>
                         :
-                        // <BotonGuardar onClick={() => {
-                        //     setIsOpen(false)
-                        //     setMostrar(true)
-                        // }}
-                        // >No Mostrar</BotonGuardar>
                         <Boton onClick={() => {
                             setIsOpen(false)
                             setMostrar(true)
@@ -531,9 +505,7 @@ const Protocolos = () => {
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                         <Table.Cell style={{ textAlign: 'center' }}>
-                                            {/* <BotonGuardar onClick={() => AgregarItem(item.id)}>Agregar</BotonGuardar> */}
-                                            {/* <Boton onClick={() => AgregarItem(item.id)}><FcAddRow style={{ fontSize: '28px' }} /></Boton> */}
-                                            <Boton onClick={() => AgregarItem(item.id)}><RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo'/></Boton>
+                                            <Boton onClick={() => AgregarItem(item.id)}><RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' /></Boton>
                                         </Table.Cell>
                                     </Table.Row>
                                 )
@@ -542,7 +514,7 @@ const Protocolos = () => {
                     </Table>
                 }
             </ListarProveedor>
-
+            {/* Lista de Prtocolos por terminar */}
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Protocolos por terminar</Titulo>
@@ -554,7 +526,6 @@ const Protocolos = () => {
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Familia</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-                            <Table.HeaderCell>Programa</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -566,9 +537,7 @@ const Protocolos = () => {
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
                                     <Table.Cell >{item.tipo}</Table.Cell>
-                                    <Table.Cell >{item.programa}</Table.Cell>
-                                    <Table.Cell onClick={() => {
-                                        setNomProtocolo(item.nombre);
+                                    <Table.Cell style={{ textAlign: 'center' }} onClick={() => {
                                         setNomFamilia(item.familia);
                                         setNomTipo(item.tipo)
                                         setPrograma(item.programa);
@@ -578,6 +547,36 @@ const Protocolos = () => {
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
+            {/* Lista de Prtocolos termiados*/}
+            <ListarProveedor>
+                <ContentElemenAdd>
+                    <Titulo>Protocolos Confirmados</Titulo>
+                </ContentElemenAdd>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Familia</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {protocolCabConf.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell >{item.nombre}</Table.Cell>
+                                    <Table.Cell >{item.familia}</Table.Cell>
+                                    <Table.Cell >{item.tipo}</Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }} ></Table.Cell>
                                 </Table.Row>
                             )
                         })}
