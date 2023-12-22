@@ -329,36 +329,37 @@ const Protocolos = () => {
             Swal.fire('No hay Datos por confirmar en este documento');
         } else {
             if (equipo.length > 0) {
-            const batch = writeBatch(db);
-            equipo.forEach((docs, index) => {
-                const docRef = doc(db, 'mantenciones', docs.id);
-                batch.set(docRef, {
-                    cab_id_protocol: existeCabProtocolo[0].id,
-                    nombre: existeCabProtocolo[0].nombre,
-                    programa: existeCabProtocolo[0].programa,
-                    dias: existeCabProtocolo[0].dias,
-                    fecha_inicio: existeCabProtocolo[0].fechaadd,
-                    fecha_termino: '' ,
-                    id_eq: equipo[index].id,
-                    familia: equipo[index].familia,
-                    tipo: equipo[index].tipo,
-                    serie: equipo[index].serie,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    emp_id: users.emp_id,
+                const batch = db.batch();
+                const docRef = db.collection('mantenciones');
+                equipo.forEach((docs) => {
+                    const nuevoDatoRef = docRef.doc();
+                    batch.set(nuevoDatoRef, {
+                        cab_id_protocol: existeCabProtocolo[0].id,
+                        nombre: existeCabProtocolo[0].nombre,
+                        programa: existeCabProtocolo[0].programa,
+                        dias: existeCabProtocolo[0].dias,
+                        fecha_inicio: existeCabProtocolo[0].fechaadd,
+                        fecha_termino: '',
+                        id_eq: docs.id,
+                        familia: docs.familia,
+                        tipo: docs.tipo,
+                        serie: docs.serie,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id,
+                    });
                 });
-            });
-            try {
-                await batch.commit();
-                console.log('Se guardaron datos en mantenciones')
-            } catch (error) {
-                console.log('no se guaradron datos en mantenciones', error)
+                try {
+                    await batch.commit();
+                    console.log('Se guardaron datos en mantenciones')
+                } catch (error) {
+                    console.log('no se guaradron datos en mantenciones', error)
+                }
+            } else {
+                return;
             }
-        }else {
-            return;
-        }
             // Actualizar la cabecera de protocolos
             try {
                 await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
