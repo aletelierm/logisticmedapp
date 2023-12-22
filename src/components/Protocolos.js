@@ -3,17 +3,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
 import ProtocoloDB from '../firebase/ProtocoloDB';
 import Alertas from './Alertas';
-// import Modal from './Modal';
+import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc /*, writeBatch */ } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
+import * as MdIcons from 'react-icons/md';
 import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label } from '../elementos/CrearEquipos';
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label, Contenido } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import Swal from 'sweetalert2';
@@ -32,6 +33,7 @@ const Protocolos = () => {
     const [tipo, setTipo] = useState([]);
     const [protocolCab, setProtocolCab] = useState([]);
     const [protocolCabConf, setProtocolCabConf] = useState([]);
+    const [mostrarProt, setMostrarProt] = useState([]);
     const [item, setItem] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
     const [programa, setPrograma] = useState([]);
@@ -45,6 +47,7 @@ const Protocolos = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [mostrar, setMostrar] = useState(true);
+    const [estadoModal, setEstadoModal] = useState(false);
     const dias = useRef('');
 
     //Leer los datos de Familia
@@ -103,7 +106,7 @@ const Protocolos = () => {
         const traerit = collection(db, 'items');
         const dato = query(traerit, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setItem(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+        setItem(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     // Ordenar Listado por item
     item.sort((a, b) => {
@@ -124,6 +127,14 @@ const Protocolos = () => {
         const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
         setProtocolo(documen);
     }
+    // Leer Protocolos 
+    const leerProt = async (id) => {
+        const traer = collection(db, 'protocolos');
+        const doc = query(traer, where('cab_id', '==', id));
+        const documento = await getDocs(doc)
+        setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+
     // Ordenar Items Agregados a Protocolo, Alfabetico
     protocolo.sort((a, b) => {
         const nameA = a.item;
@@ -456,7 +467,6 @@ const Protocolos = () => {
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Listado de Items</Titulo>
-
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
@@ -576,13 +586,49 @@ const Protocolos = () => {
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
                                     <Table.Cell >{item.tipo}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }} ></Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center',  }}
+                                        title='Ver Items'
+                                        onClick={() => {
+                                            leerProt(item.id)
+                                            setEstadoModal(!estadoModal)
+                                        }}
+                                    >
+                                        <MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
                     </Table.Body>
                 </Table>
             </ListarProveedor>
+            <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
+                {mostrarProt.length > 0 ?
+                    <Contenido>
+                        <Table singleLine>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>N°</Table.HeaderCell>
+                                    <Table.HeaderCell>Item</Table.HeaderCell>
+                                    <Table.HeaderCell>categoria</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {mostrarProt.map((item, index) => {
+                                    return (
+                                        <Table.Row key={index}>
+                                            <Table.Cell>{index + 1}</Table.Cell>
+                                            <Table.Cell style={{whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '10px'}}>{item.item}</Table.Cell>
+                                            <Table.Cell style={{fontSize: '10px'}}>{item.categoria}</Table.Cell>
+                                        </Table.Row>
+                                    )
+                                })}
+                            </Table.Body>
+                        </Table>
+                        <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar>
+                    </Contenido>
+                    :
+                    <h2></h2>}
+            </Modal>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
