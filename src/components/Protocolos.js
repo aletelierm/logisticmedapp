@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, addDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, /*writeBatch,*/ addDoc } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
@@ -17,6 +17,7 @@ import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Tit
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label, Contenido } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import moment from 'moment';
 import Swal from 'sweetalert2';
 
 const Protocolos = () => {
@@ -146,6 +147,17 @@ const Protocolos = () => {
         const documento = await getDocs(doc)
         setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
+
+    // Sumar dias
+    const sumarDias = (fecha, dias) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj);
+        const nuevafecha = formatear.add(dias, 'days');
+        const ultima = new Date(nuevafecha)
+        // return nuevafecha.format('DD/MM/YYYY HH:mm');
+        return ultima;
+    }
+
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
@@ -339,7 +351,7 @@ const Protocolos = () => {
                             programa: existeCabProtocolo[0].programa,
                             dias: existeCabProtocolo[0].dias,
                             fecha_inicio: existeCabProtocolo[0].fechaadd,
-                            fecha_termino: '',
+                            fecha_termino: sumarDias(existeCabProtocolo[0].fechaadd, existeCabProtocolo[0].dias),
                             id_eq: doc.id,
                             familia: doc.familia,
                             tipo: doc.tipo,
