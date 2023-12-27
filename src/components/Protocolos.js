@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch, addDoc } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
@@ -329,67 +329,69 @@ const Protocolos = () => {
             Swal.fire('No hay Datos por confirmar en este documento');
         } else {
             if (equipo.length > 0) {
-                const batch = db.batch();
-                const docRef = db.collection('mantenciones');
-                equipo.forEach((docs) => {
-                    const nuevoDatoRef = docRef.doc();
-                    batch.set(nuevoDatoRef, {
-                        cab_id_protocol: existeCabProtocolo[0].id,
-                        nombre: existeCabProtocolo[0].nombre,
-                        programa: existeCabProtocolo[0].programa,
-                        dias: existeCabProtocolo[0].dias,
-                        fecha_inicio: existeCabProtocolo[0].fechaadd,
-                        fecha_termino: '',
-                        id_eq: docs.id,
-                        familia: docs.familia,
-                        tipo: docs.tipo,
-                        serie: docs.serie,
-                        userAdd: user.email,
-                        userMod: user.email,
-                        fechaAdd: fechaAdd,
-                        fechaMod: fechaMod,
-                        emp_id: users.emp_id,
-                    });
-                });
-                try {
-                    await batch.commit();
-                    console.log('Se guardaron datos en mantenciones')
-                } catch (error) {
-                    console.log('no se guaradron datos en mantenciones', error)
-                }
-            } else {
-                return;
-            }
-            // Actualizar la cabecera de protocolos
-            try {
-                await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
-                    confirmado: true,
-                    usermod: user.email,
-                    fechamod: fechaMod
-                });
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Documento confirmado exitosamente.'
-                });
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Error al confirmar Cabecera:', error
-                })
-            }
+                // const batch = writeBatch(db);
+                // const docRef = db.collection('mantenciones');
+                // const nuevoDatoRef = docRef.doc();
+                // const nuevoDatoRef = db.collection('mantenciones').doc();
+                // const docRef = doc(db, 'mantenciones');
+                // batch.set(docRef, 
 
+                // Agregar documentos por lote
+                equipo.forEach(async doc => {
+                    try {
+                        await addDoc(collection(db, 'mantenciones'), {
+                            cab_id_protocol: existeCabProtocolo[0].id,
+                            nombre: existeCabProtocolo[0].nombre,
+                            programa: existeCabProtocolo[0].programa,
+                            dias: existeCabProtocolo[0].dias,
+                            fecha_inicio: existeCabProtocolo[0].fechaadd,
+                            fecha_termino: '',
+                            id_eq: doc.id,
+                            familia: doc.familia,
+                            tipo: doc.tipo,
+                            serie: doc.serie,
+                            userAdd: user.email,
+                            userMod: user.email,
+                            fechaAdd: fechaAdd,
+                            fechaMod: fechaMod,
+                            emp_id: users.emp_id,
+                        })
+                        console.log('Se guardaron datos en mantenciones')
+                    } catch (error) {
+                        console.log('no se guaradron datos en mantenciones', error)
+                    }
+                })
+
+                // Actualizar la cabecera de protocolos
+                try {
+                    await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
+                        confirmado: true,
+                        usermod: user.email,
+                        fechamod: fechaMod
+                    });
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documento confirmado exitosamente.'
+                    });
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al confirmar Cabecera:', error
+                    })
+                }
+            }
+            setFlag(!flag)
+            setNomFamilia('');
+            setNomTipo('');
+            setPrograma('');
+            setConfirmar(false);
+            setBtnGuardar(false);
+            setBtnConfirmar(true);
+            setBtnNuevo(true);
         }
-        setFlag(!flag)
-        setNomFamilia('');
-        setNomTipo('');
-        setPrograma('');
-        setConfirmar(false);
-        setBtnGuardar(false);
-        setBtnConfirmar(true);
-        setBtnNuevo(true);
-    };
+    }
 
     // Agregar una nueva cabecera
     const nuevo = () => {
@@ -648,22 +650,22 @@ const Protocolos = () => {
             </ListarProveedor>
             <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
                 {mostrarProt.length > 0 &&
-                    <Contenido>
+                    <Contenido style={{ maxHeight: '400px', overflowY: 'auto' }}>
                         <Table singleLine>
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>N°</Table.HeaderCell>
                                     <Table.HeaderCell>Item</Table.HeaderCell>
-                                    <Table.HeaderCell>categoria</Table.HeaderCell>
+                                    <Table.HeaderCell>Categoria</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
-                            <Table.Body>
+                            <Table.Body >
                                 {mostrarProt.map((item, index) => {
                                     return (
                                         <Table.Row key={index}>
-                                            <Table.Cell>{index + 1}</Table.Cell>
-                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '10px' }}>{item.item}</Table.Cell>
-                                            <Table.Cell style={{ fontSize: '10px' }}>{item.categoria}</Table.Cell>
+                                            <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
+                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
+                                            <Table.Cell style={{ fontSize: '13px', textAlign: 'center' }}>{item.categoria}</Table.Cell>
                                         </Table.Row>
                                     )
                                 })}
