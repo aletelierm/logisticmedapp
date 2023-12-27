@@ -24,27 +24,15 @@ const Mantenimiento = () => {
 
      // Cambiar fecha
      const formatearFecha = (fecha) => {
-        const dateObj = fecha.toDate();
-        console.log(dateObj)
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');       
+        const dateObj = fecha.toDate();       
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');    
         return formatear;
     }
-
-    // Sumar dias
-    const sumarDias = (fecha,dias) =>{
-        const dateObj = fecha.toDate();
-        const formatear = moment(dateObj);
-        const nuevafecha = formatear.add(dias,'days');          
-        return nuevafecha.format('DD/MM/YYYY HH:mm');
-    }
-
-   /*  console.log(sumarDias(1640686800000).format('DD/MM/YYYY HH:mm')) */
-    //Ordenar fechas
-    const manteOrd = mantencion.sort((a, b) => a.date - b.date)
+       //Ordenar fechas
+    const manteOrd = mantencion.sort((a, b) => a.fecha_termino - b.fecha_termino)
 
     useEffect(() => {
-        getMantenimiento();
-        console.log(mantencion)
+        getMantenimiento();  
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -78,8 +66,8 @@ const Mantenimiento = () => {
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{item.nombre_protocolo}</Table.Cell>
                                     <Table.Cell>{item.dias}</Table.Cell>
-                                    <Table.Cell>{formatearFecha(item.fechaAdd)}</Table.Cell>
-                                    <Table.Cell>{sumarDias(item.fechaAdd,item.dias)}</Table.Cell>                    
+                                    <Table.Cell>{formatearFecha(item.fecha_inicio)}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>                    
                                     <Table.Cell onClick={()=>ejecutar()} title="Ejecutar Mantención"><MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor:'pointer' }} /></Table.Cell>                                  
                                 </Table.Row>
                             )

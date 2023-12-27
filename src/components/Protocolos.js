@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch, addDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, addDoc } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
