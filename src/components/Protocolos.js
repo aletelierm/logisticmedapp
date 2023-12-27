@@ -341,7 +341,7 @@ const Protocolos = () => {
                     try {
                         await addDoc(collection(db, 'mantenciones'), {
                             cab_id_protocol: existeCabProtocolo[0].id,
-                            nombre: existeCabProtocolo[0].nombre,
+                            nombre_protocolo: existeCabProtocolo[0].nombre,
                             programa: existeCabProtocolo[0].programa,
                             dias: existeCabProtocolo[0].dias,
                             fecha_inicio: existeCabProtocolo[0].fechaadd,
