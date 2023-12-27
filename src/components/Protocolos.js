@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch, addDoc } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
@@ -329,11 +329,12 @@ const Protocolos = () => {
             Swal.fire('No hay Datos por confirmar en este documento');
         } else {
             if (equipo.length > 0) {
-                const batch = db.batch();
-                const docRef = db.collection('mantenciones');
-                equipo.forEach((docs) => {
-                    const nuevoDatoRef = docRef.doc();
-                    batch.set(nuevoDatoRef, {
+                const batch = writeBatch(db);
+               
+                equipo.forEach(async docs => {
+                    const docRef = collection(db,"mantenciones");
+                    /* const nuevoDatoRef = docRef.doc(); */
+                    batch.addDoc(docRef, /* {
                         cab_id_protocol: existeCabProtocolo[0].id,
                         nombre: existeCabProtocolo[0].nombre,
                         programa: existeCabProtocolo[0].programa,
@@ -349,7 +350,7 @@ const Protocolos = () => {
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
                         emp_id: users.emp_id,
-                    });
+                    } */ docs.data);
                 });
                 try {
                     await batch.commit();
