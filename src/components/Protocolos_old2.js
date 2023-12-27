@@ -37,6 +37,7 @@ const Protocolos = () => {
     const [item, setItem] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
     const [programa, setPrograma] = useState([]);
+    const [equipo, setEquipo] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
     const [buscador, setBuscardor] = useState('');
@@ -127,6 +128,20 @@ const Protocolos = () => {
         const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
         setProtocolo(documen);
     }
+    // Leer Protocolos 
+    const leerProt = async (id) => {
+        const traer = collection(db, 'protocolos');
+        const doc = query(traer, where('cab_id', '==', id));
+        const documento = await getDocs(doc)
+        setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+    //Leer los datos de Equipos
+    const buscarEquipo = async (tipo) => {
+        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('tipo', '==', tipo));
+        const dato = await getDocs(traerEq);
+        const data = (dato.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setEquipo(data);
+    }
     // Ordenar Items Agregados a Protocolo, Alfabetico
     protocolo.sort((a, b) => {
         const nameA = a.item;
@@ -139,13 +154,6 @@ const Protocolos = () => {
         }
         return 0;
     });
-    // Leer Protocolos 
-    const leerProt = async (id) => {
-        const traer = collection(db, 'protocolos');
-        const doc = query(traer, where('cab_id', '==', id));
-        const documento = await getDocs(doc)
-        setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    }
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
@@ -314,10 +322,8 @@ const Protocolos = () => {
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
         const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // Buscar coincidencias de equipos
-        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('tipo', '==', nomTipo));
-        const dato = await getDocs(traerEq);
-        const equipo = (dato.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // const fechaTermino = existeCabProtocolo[0].fechaadd + existeCabProtocolo[0].dias;
+        // console.log(fechaTermino)
 
         if (protocolo.length === 0) {
             Swal.fire('No hay Datos por confirmar en este documento');
@@ -355,6 +361,7 @@ const Protocolos = () => {
                         console.log('no se guaradron datos en mantenciones', error)
                     }
                 })
+
                 // Actualizar la cabecera de protocolos
                 try {
                     await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
@@ -399,9 +406,6 @@ const Protocolos = () => {
     useEffect(() => {
         getFamilia();
         getTipo();
-        consultarCabProt();
-        consultarProtocolos();
-        consultarCabProtConf();
         // getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -503,6 +507,7 @@ const Protocolos = () => {
                 </ListarEquipos>
                 <BotonGuardar onClick={() => {
                     actualizarDocs();
+                    buscarEquipo(nomTipo);
                 }} disabled={btnConfirmar}>Confirmar</BotonGuardar>
             </Contenedor>
 
