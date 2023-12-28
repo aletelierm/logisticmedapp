@@ -73,7 +73,7 @@ const Mantenimiento = () => {
                                     <Table.Cell>{item.dias}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_inicio)}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>                    
-                                    <Table.Cell onClick={()=>ejecutar()} title="Ejecutar Mantención"><MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0,0,0,0) === fechaHoy.setHours(0,0,0,0) ? 'red': 'green', cursor:'pointer' }} /></Table.Cell>                                  
+                                    <Table.Cell onClick={()=>ejecutar()} title="Ejecutar Mantención"><MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0,0,0,0) <= fechaHoy.setHours(0,0,0,0) ? 'red': 'green', cursor:'pointer' }} /></Table.Cell>                                  
                                 </Table.Row>
                             )
                         })}
