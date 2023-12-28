@@ -75,7 +75,7 @@ const Mantenimiento = () => {
                                     <Table.Cell>{formatearFecha(item.fecha_inicio)}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} /*onClick={() => ejecutar()}*/ title="Ejecutar Mantención">
-                                        <Link disabled to={`/ejecutarmantencion/${item.cab_id_protocol}`}>
+                                        <Link disabled to={`/ejecutarmantencion/${item.id}`}>
                                             <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0,0,0,0) <= fechaHoy.setHours(0,0,0,0) ? 'red': 'green', cursor: 'pointer' }} />
                                         </Link>
                                         {/* <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor: 'pointer' }} /> */}
