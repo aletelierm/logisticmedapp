@@ -8,8 +8,8 @@ import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query /*, getDoc, doc updateDoc, writeBatch, addDoc */ } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { BotonGuardar, Contenedor, Titulo } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect /*, Formulario*/, Label, Input } from '../elementos/CrearEquipos'
+import { BotonGuardar, Contenedor, Titulo, BotonCheck } from '../elementos/General'
+import { ContentElemenMov, ContentElemenSelect, Label, Input } from '../elementos/CrearEquipos'
 
 const EjecutarMantencion = () => {
     const user = auth.currentUser;
@@ -34,6 +34,7 @@ const EjecutarMantencion = () => {
     const [serie, setSerie] = useState('');
     const [eq_id, setEq_id] = useState('');
     // const [flag, setFlag] = useState([false]);
+    const [activeButton, setActiveButton] = useState(null);
     const protocoloCab = useRef([]);
 
     const volver = () => {
@@ -70,6 +71,10 @@ const EjecutarMantencion = () => {
     const itemsLlenado = protocolo.filter(il => il.categoria === 'LLENADO')
     const itemsSelec = protocolo.filter(is => is.categoria === 'SELECCION')
 
+    const handleButtonClick = (buttonId) => {
+        setActiveButton(buttonId === activeButton ? null : buttonId);
+    };
+
     // const handleSubmit = (e) => {
     //     e.preventDefault();
     //     cambiarEstadoAlerta(false);
@@ -90,26 +95,26 @@ const EjecutarMantencion = () => {
             <Contenedor>
                 <Titulo>{nombreProtocolo}</Titulo>
                 <ContentElemenMov>
-                    <ContentElemenSelect style={{paddingBottom: '5px'}}>
+                    <ContentElemenSelect style={{ paddingBottom: '5px' }}>
                         <Label>Familia :</Label>
-                        <Label style={{fontSize: '15px'}}>{familia}</Label>
+                        <Label style={{ fontSize: '15px' }}>{familia}</Label>
                     </ContentElemenSelect>
-                    <ContentElemenSelect style={{paddingBottom: '5px'}}>
+                    <ContentElemenSelect style={{ paddingBottom: '5px' }}>
                         <Label>Tipo Equipamiento :</Label>
-                        <Label style={{fontSize: '15px'}}>{tipo}</Label>
+                        <Label style={{ fontSize: '15px' }}>{tipo}</Label>
                     </ContentElemenSelect>
                 </ContentElemenMov>
                 <ContentElemenMov>
-                <ContentElemenSelect style={{padding: '5px'}}>
-                    <Label>Instrumentos requeridos :</Label>
-                    <ul >
-                        {itemsInst.map((item, index) => {
-                            return (
-                                <li style={{fontSize: '12px'}} key={index}>{item.item}</li>
-                            )
-                        })}
-                    </ul>
-                </ContentElemenSelect>
+                    <ContentElemenSelect style={{ padding: '5px' }}>
+                        <Label>Instrumentos requeridos :</Label>
+                        <ul >
+                            {itemsInst.map((item, index) => {
+                                return (
+                                    <li style={{ fontSize: '12px' }} key={index}>{item.item}</li>
+                                )
+                            })}
+                        </ul>
+                    </ContentElemenSelect>
                 </ContentElemenMov>
                 <BotonGuardar>Guardar</BotonGuardar>
 
@@ -118,9 +123,10 @@ const EjecutarMantencion = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell>Pasa</Table.HeaderCell>
-                            <Table.HeaderCell>No Pasa</Table.HeaderCell>
-                            <Table.HeaderCell>N/A</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
+                            {/* <Table.HeaderCell>Pasa</Table.HeaderCell> */}
+                            {/* <Table.HeaderCell>No Pasa</Table.HeaderCell> */}
+                            {/* <Table.HeaderCell>N/A</Table.HeaderCell> */}
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -129,9 +135,28 @@ const EjecutarMantencion = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }}>
+                                        <BotonCheck
+                                            onClick={() => handleButtonClick(1)}
+                                            className={activeButton === 1 ? 'active' : ''}
+                                        >
+                                            Pasa
+                                        </BotonCheck>
+                                        <BotonCheck
+                                            onClick={() => handleButtonClick(2)}
+                                            className={activeButton === 2 ? 'active' : ''}
+                                        >
+                                            No Pasa
+                                        </BotonCheck>
+                                        <BotonCheck
+                                            onClick={() => handleButtonClick(3)}
+                                            className={activeButton === 3 ? 'active' : ''}
+                                        >
+                                            N/A
+                                        </BotonCheck>
+                                    </Table.Cell>
+                                    {/* <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell> */}
+                                    {/* <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell> */}
                                 </Table.Row>
 
                             )
