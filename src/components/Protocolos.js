@@ -6,7 +6,7 @@ import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, /*writeBatch,*/ addDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
@@ -335,38 +335,43 @@ const Protocolos = () => {
             Swal.fire('No hay Datos por confirmar en este documento');
         } else {
             if (equipo.length > 0) {
-                // const batch = writeBatch(db);
-                // const docRef = db.collection('mantenciones');
-                // const nuevoDatoRef = docRef.doc();
-                // const nuevoDatoRef = db.collection('mantenciones').doc();
-                // const docRef = doc(db, 'mantenciones');
-                // batch.set(docRef, 
+                // Crea una nueva instancia de lote (batch)
+                const batch = writeBatch(db);
+                // Obtiene una referencia a una colección específica en Firestore
+                const mantoRef = collection(db, 'mantenciones');
+                // Itera a través de los nuevos documentos y agrégalos al lote
+                equipo.forEach((docs) => {
+                    const nuevoDocRef = doc(mantoRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                    batch.set(nuevoDocRef, {
+                        cab_id_protocol: existeCabProtocolo[0].id,
+                        nombre_protocolo: existeCabProtocolo[0].nombre,
+                        programa: existeCabProtocolo[0].programa,
+                        dias: existeCabProtocolo[0].dias,
+                        fecha_inicio: existeCabProtocolo[0].fechaadd,
+                        fecha_termino: sumarDias(existeCabProtocolo[0].fechaadd, existeCabProtocolo[0].dias),
+                        id_eq: docs.id,
+                        familia: docs.familia,
+                        tipo: docs.tipo,
+                        serie: docs.serie,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id,
+                    });
+                });
+                batch.commit()
+                    .then(() => {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Docuemento creado correctamente.'
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire('Se ha producido un error al crear docuemento de entrada retirado');
+                    });
 
-                // Agregar documentos por lote
-                equipo.forEach(async doc => {
-                    try {
-                        await addDoc(collection(db, 'mantenciones'), {
-                            cab_id_protocol: existeCabProtocolo[0].id,
-                            nombre_protocolo: existeCabProtocolo[0].nombre,
-                            programa: existeCabProtocolo[0].programa,
-                            dias: existeCabProtocolo[0].dias,
-                            fecha_inicio: existeCabProtocolo[0].fechaadd,
-                            fecha_termino: sumarDias(existeCabProtocolo[0].fechaadd, existeCabProtocolo[0].dias),
-                            id_eq: doc.id,
-                            familia: doc.familia,
-                            tipo: doc.tipo,
-                            serie: doc.serie,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        })
-                        console.log('Se guardaron datos en mantenciones')
-                    } catch (error) {
-                        console.log('no se guaradron datos en mantenciones', error)
-                    }
-                })
                 // Actualizar la cabecera de protocolos
                 try {
                     await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {

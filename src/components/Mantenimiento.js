@@ -26,12 +26,12 @@ const Mantenimiento = () => {
         setMantencion(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
 
-     // Cambiar fecha
-     const formatearFecha = (fecha) => {
-        const dateObj = fecha.toDate();            
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm'); 
+    // Cambiar fecha
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-        console.log(fechaHoyF + " es menor que ? " +formatear,fechaHoy < dateObj) 
+        console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj)
         return formatear;
     }
     //Ordenar fechas
@@ -76,9 +76,9 @@ const Mantenimiento = () => {
                                     <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} /*onClick={() => ejecutar()}*/ title="Ejecutar Mantención">
                                         <Link disabled to={`/ejecutarmantencion/${item.cab_id_protocol}`}>
-                                            <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0,0,0,0) === fechaHoy.setHours(0,0,0,0) ? 'red': 'green', cursor: 'pointer' }} />
+                                            <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0, 0, 0, 0) === fechaHoy.setHours(0, 0, 0, 0) ? 'red' : 'green', cursor: 'pointer' }} />
                                         </Link>
-                                            {/* <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor: 'pointer' }} /> */}
+                                        {/* <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor: 'pointer' }} /> */}
                                     </Table.Cell>
                                 </Table.Row>
                             )
