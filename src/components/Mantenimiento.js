@@ -11,6 +11,9 @@ import Swal from 'sweetalert2';
 
 const Mantenimiento = () => {
 
+    //fecha hoy
+    const fechaHoy = new Date();
+
     const { users } = useContext(UserContext);
     const [mantencion, setMantencion] = useState([])
 
@@ -24,8 +27,10 @@ const Mantenimiento = () => {
 
      // Cambiar fecha
      const formatearFecha = (fecha) => {
-        const dateObj = fecha.toDate();       
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');    
+        const dateObj = fecha.toDate();            
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm'); 
+        const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+        console.log(fechaHoyF + " es menor que ? " +formatear,fechaHoy < dateObj) 
         return formatear;
     }
        //Ordenar fechas
@@ -68,7 +73,7 @@ const Mantenimiento = () => {
                                     <Table.Cell>{item.dias}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_inicio)}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>                    
-                                    <Table.Cell onClick={()=>ejecutar()} title="Ejecutar Mantención"><MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor:'pointer' }} /></Table.Cell>                                  
+                                    <Table.Cell onClick={()=>ejecutar()} title="Ejecutar Mantención"><MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0,0,0,0) === fechaHoy.setHours(0,0,0,0) ? 'red': 'green', cursor:'pointer' }} /></Table.Cell>                                  
                                 </Table.Row>
                             )
                         })}
