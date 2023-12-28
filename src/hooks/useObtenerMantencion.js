@@ -14,7 +14,7 @@ const useObtenerMantencion = (id) => {
             if (docum.exists) {
                 setManto(docum.data());
             } else {
-                navigate('/home/mantencion')
+                navigate('/serviciotecnico/mantencion')
             }
         }
         obtenerManto();
