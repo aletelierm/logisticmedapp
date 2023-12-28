@@ -38,6 +38,7 @@ import Confirmados from './Confirmados';
 import UsuariosEnvios from './UsuariosAlertas';
 import ActualizaUsuariosAlertas from './ActualizaUsuariosAlertas';
 import AgregarItems from './AgregarItems';
+import EjecutarMantencion from './EjecutarMantencion';
 
 export const Home = () => {
   return (
@@ -70,6 +71,7 @@ export const Home = () => {
             {/* <Route path="serviciotecnico/programas" element={<Programas/>}/> */}
             <Route path="serviciotecnico/certificados" element={<Certificados/>}/>
             <Route path="serviciotecnico/mantencion" element={<Mantenimiento/>}/>
+            <Route path="ejecutarmantencion/:id" element={<EjecutarMantencion/>}/>
             <Route path="clientes" element={<Clientes/>}/>
             <Route path="proveedores" element={<Proveedores/>}/>
             <Route path="actualizaproveedor/:id" element={<ActualizaProveedor/>}/>
