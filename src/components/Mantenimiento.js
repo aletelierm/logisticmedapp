@@ -4,45 +4,46 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query} from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import moment from 'moment';
 import * as MdIcons from 'react-icons/md';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 
 const Mantenimiento = () => {
 
     const { users } = useContext(UserContext);
     const [mantencion, setMantencion] = useState([])
 
-     // Leer datos de cabecera Entradas
-     const getMantenimiento = async () => {
+    // Leer datos de cabecera Entradas
+    const getMantenimiento = async () => {
         const traerCabecera = collection(db, 'mantenciones');
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setMantencion(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
 
-     // Cambiar fecha
-     const formatearFecha = (fecha) => {
-        const dateObj = fecha.toDate();       
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');    
+    // Cambiar fecha
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-       //Ordenar fechas
+    //Ordenar fechas
     const manteOrd = mantencion.sort((a, b) => a.fecha_termino - b.fecha_termino)
 
     useEffect(() => {
-        getMantenimiento();  
+        getMantenimiento();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const ejecutar = ()=>{
-        Swal.fire('Check list de mantención');
-    }
+    // const ejecutar = () => {
+    //     Swal.fire('Check list de mantención');
+    // }
 
     return (
         <div>
-                <ListarProveedor>
+            <ListarProveedor>
                 <Titulo>Mantenciones</Titulo>
                 <Table singleLine>
                     <Table.Header>
@@ -67,8 +68,13 @@ const Mantenimiento = () => {
                                     <Table.Cell>{item.nombre_protocolo}</Table.Cell>
                                     <Table.Cell>{item.dias}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_inicio)}</Table.Cell>
-                                    <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>                    
-                                    <Table.Cell onClick={()=>ejecutar()} title="Ejecutar Mantención"><MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor:'pointer' }} /></Table.Cell>                                  
+                                    <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }} /*onClick={() => ejecutar()}*/ title="Ejecutar Mantención">
+                                        <Link disabled to={`/ejecutarmantencion/${item.cab_id_protocol}`}>
+                                            <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor: 'pointer' }} />
+                                        </Link>
+                                            {/* <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor: 'pointer' }} /> */}
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
