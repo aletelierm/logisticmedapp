@@ -140,10 +140,13 @@ const BotonCheck = styled.button`
     border: 1px solid #ccc;
     // border: none;
     // border-radius: 5px;
-    &.active {
+    &.activeBoton{
         background-color: #328AC4;
-        // background-color: #16B9CF;
     }
+    // &.active {
+    //     background-color: #328AC4;
+    //     // background-color: #16B9CF;
+    // }
 `
 
 const Boton2 = styled.button`

@@ -34,3 +34,10 @@ export const Categoria= [
     { key: '3', value: '3', text: 'SELECCION' },
     { key: '4', value: '4', text: 'INSTRUMENTOS' },
 ];
+
+export const Opcion= [
+    { key: '1', value: '1', text: 'Opcion 1' },
+    { key: '2', value: '2', text: 'Opcion 2' },
+    { key: '3', value: '3', text: 'Opcion 3' },
+    { key: '4', value: '4', text: 'Opcion 4' },
+];
