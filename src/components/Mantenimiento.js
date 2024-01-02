@@ -61,6 +61,7 @@ const Mantenimiento = () => {
                             <Table.HeaderCell>Fecha Inicio</Table.HeaderCell>
                             <Table.HeaderCell>F.Prox.Mantenión</Table.HeaderCell>
                             <Table.HeaderCell>Ejecutar</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -80,6 +81,8 @@ const Mantenimiento = () => {
                                         </Link>
                                             {/* <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: '#328AC4', cursor: 'pointer' }} /> */}
                                     </Table.Cell>
+                                    <Table.Cell>{item.enproceso==="1" && 'Sin Confirmar'}</Table.Cell>
+                                    
                                 </Table.Row>
                             )
                         })}
