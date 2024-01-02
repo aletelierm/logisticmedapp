@@ -130,6 +130,25 @@ const BotonGuardar = styled.button`
         background-color: #16B9CF;
     }
 `
+
+const BotonCheck = styled.button`
+    width: 70px;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #a0a0a0;
+    color: #fff;
+    border: 1px solid #ccc;
+    // border: none;
+    // border-radius: 5px;
+    &.activeBoton{
+        background-color: #328AC4;
+    }
+    // &.active {
+    //     background-color: #328AC4;
+    //     // background-color: #16B9CF;
+    // }
+`
+
 const Boton2 = styled.button`
 	display: block;
 	padding: 10px 30px;
@@ -178,4 +197,4 @@ const Overlay = styled.div`
     justify-content: center;
 `
 
-export {ContenedorProveedor, Contenedor, ContenedorElementos, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd ,InputUpdate , Boton, BotonGuardar, Boton2, ConfirmaModal, ConfirmaBtn, Overlay};
+export {ContenedorProveedor, Contenedor, ContenedorElementos, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd ,InputUpdate , Boton, BotonGuardar,BotonCheck, Boton2, ConfirmaModal, ConfirmaBtn, Overlay};
