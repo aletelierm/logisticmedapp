@@ -11,7 +11,6 @@ import { UserContext } from '../context/UserContext';
 import { BotonGuardar, Contenedor, Titulo, BotonCheck } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, Select, Label, Input } from '../elementos/CrearEquipos'
 import { Opcion } from './TipDoc';
-import '../styles/activarBoton.css'
 
 const EjecutarMantencion = () => {
     const user = auth.currentUser;
