@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import BitacoraCabDB from '../firebase/BitacoraCabDB';
 import styled from 'styled-components';
 import Alerta from '../components/Alertas';
 import useObtenerMantencion from '../hooks/useObtenerMantencion';
@@ -30,7 +31,6 @@ const EjecutarMantencion = () => {
     const [itemsCheck, setItemsCheck] = useState([]);
     const [itemsLlenado, setItemsLlenado] = useState([]);
     const [itemsSelec, setItemsSelec] = useState([]);
-    const [protocolCab, setProtocolCab] = useState('');
     const [nombreProtocolo, setNombreProtocolo] = useState('');
     const [programa, setPrograma] = useState('');
     const [dias, setDias] = useState('');
@@ -89,11 +89,49 @@ const EjecutarMantencion = () => {
         });
     }
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});        
-    // }
+    // Agregar Cabecera de Protocolo
+    const addCabBitacora = async (ev) => {
+        ev.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        try {
+            BitacoraCabDB({
+                nombre_protocolo: nombreProtocolo,
+                cab_id_protocolo: protocoloCab.current,
+                fecha_mantencion: fechaAdd,
+                familia: familia,
+                tipo: tipo,
+                serie: serie,
+                eq_id: eq_id,
+                confirmado: false,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id,
+            })
+            console.log('se guardo cabecera')
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Ingreso realizado exitosamente'
+            })
+        } catch (error) {
+            console.log('no se guardo cabecera')
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: error
+            })
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        
+    }
 
     useEffect(() => {
         consultarProtocolos();
@@ -129,7 +167,7 @@ const EjecutarMantencion = () => {
                         </ul>
                     </ContentElemenSelect>
                 </ContentElemenMov>
-                <BotonGuardar>Guardar</BotonGuardar>
+                <BotonGuardar on onClick={addCabBitacora}>Guardar</BotonGuardar>
 
                 <Table singleLine>
                     <Table.Header>
@@ -181,7 +219,7 @@ const EjecutarMantencion = () => {
                             return (
                                 <Table.Row key={index} >
                                     <Table.Cell >{index + 1}</Table.Cell>
-                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
                                     <Table.Cell  ><Input type="text" /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>

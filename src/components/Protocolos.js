@@ -358,6 +358,7 @@ const Protocolos = () => {
                         fechaAdd: fechaAdd,
                         fechaMod: fechaMod,
                         emp_id: users.emp_id,
+                        enproceso: '0'
                     });
                 });
                 batch.commit()
