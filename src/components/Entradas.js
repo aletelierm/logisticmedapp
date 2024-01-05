@@ -50,7 +50,6 @@ const Entradas = () => {
     const [numDoc, setNumDoc] = useState('');
     const [nomTipDoc, setNomTipDoc] = useState('');
     const [date, setDate] = useState('');
-    // const [date, setDate] = useState(new Date()); // DatePicker
     const [nomTipoIn, setNomTipoIn] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
@@ -64,7 +63,6 @@ const Entradas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [cargando, setCargando] = useState(false);
-
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 

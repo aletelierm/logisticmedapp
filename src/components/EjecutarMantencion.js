@@ -74,11 +74,11 @@ const EjecutarMantencion = () => {
         setItemsCheck(documenCheck);
         const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'LLENADO'));
         const docuLlen = await getDocs(docLlen);
-        const documenLlen = (docuLlen.docs.map((doc) => ({ ...doc.data(), id: doc.id, pasa: false, nopasa: false })));
+        const documenLlen = (docuLlen.docs.map((doc) => ({ ...doc.data(), id: doc.id, valor: '' })));
         setItemsLlenado(documenLlen);
         const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'SELECCION'));
         const docuSel = await getDocs(docSel);
-        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id, pasa: false, nopasa: false })));
+        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id, valor: false })));
         setItemsSelec(documenSel);
     }
 
@@ -108,12 +108,26 @@ const EjecutarMantencion = () => {
     const handleButtonClick = (index, buttonId) => {
         setItemsCheck((prevItems) => {
             const nuevosElementos = [...prevItems];
-            console.log('nuevosElementos', nuevosElementos)
             nuevosElementos[index].valor = buttonId;
             return nuevosElementos;
         });
     }
-
+    const handleButtonClickLlen = (e, index) => {
+        setItemsLlenado((prevItems) => {
+            const nuevosElementos = [...prevItems];
+            console.log('nuevosElementos', nuevosElementos)
+            nuevosElementos[index].valor = e.target.value;
+            return nuevosElementos;
+        });
+    }
+    const handleButtonClickSelec = (e, index) => {
+        setItemsCheck((prevItems) => {
+            const nuevosElementos = [...prevItems];
+            console.log('nuevosElementos', nuevosElementos)
+            nuevosElementos[index].valor = e.target.value;
+            return nuevosElementos;
+        });
+    }
     // Agregar Cabecera de Protocolo
     const addCabBitacora = async (ev) => {
         ev.preventDefault();
@@ -150,6 +164,7 @@ const EjecutarMantencion = () => {
             })
         }
     }
+    console.log('items Selec', itemsSelec)
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -159,8 +174,38 @@ const EjecutarMantencion = () => {
         const batch = writeBatch(db);
         // Obtiene una referencia a una colección específica en Firestore
         const bitacoraRef = collection(db, 'bitacoras');
-        // Itera a través de los nuevos documentos y agrégalos al lote
-        itemsCheck.forEach((docs) => {
+        // Itera a través de los nuevos documentos y agrégalos al lote de Checks
+        // itemsCheck.forEach((docs) => {
+        //     const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+        //     batch.set(nuevoDocRef, {
+        //         item: docs.item,
+        //         valor: docs.valor,
+        //         categoria: docs.categoria,
+        //         cab_id_bitacora: documentoId.current,
+        //         userAdd: user.email,
+        //         userMod: user.email,
+        //         fechaAdd: fechaAdd,
+        //         fechaMod: fechaMod,
+        //         emp_id: users.emp_id,
+        //     });
+        // });
+        // // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
+        // itemsLlenado.forEach((docs) => {
+        //     const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+        //     batch.set(nuevoDocRef, {
+        //         item: docs.item,
+        //         valor: docs.valor,
+        //         categoria: docs.categoria,
+        //         cab_id_bitacora: documentoId.current,
+        //         userAdd: user.email,
+        //         userMod: user.email,
+        //         fechaAdd: fechaAdd,
+        //         fechaMod: fechaMod,
+        //         emp_id: users.emp_id,
+        //     });
+        // });
+        // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
+        itemsSelec.forEach((docs) => {
             const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
             batch.set(nuevoDocRef, {
                 item: docs.item,
@@ -221,7 +266,7 @@ const EjecutarMantencion = () => {
                         </ul>
                     </ContentElemenSelect>
                 </ContentElemenMov>
-                <BotonGuardar on onClick={addCabBitacora}>Guardar</BotonGuardar>
+                <BotonGuardar onClick={addCabBitacora}>Guardar</BotonGuardar>
 
                 <Table singleLine>
                     <Table.Header>
@@ -274,7 +319,13 @@ const EjecutarMantencion = () => {
                                 <Table.Row key={index} >
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                    <Table.Cell  ><Input type="text" /></Table.Cell>
+                                    <Table.Cell  >
+                                        <Input
+                                            type="text"
+                                            value={item.valor}
+                                            onChange={e => handleButtonClickLlen(e, index)}
+                                        />
+                                    </Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
                                 </Table.Row>
@@ -285,11 +336,14 @@ const EjecutarMantencion = () => {
 
                 <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
                 <ContentElemenMov>
-
                     {itemsSelec.map((item, index) => {
                         return (
-                            <Select key={index}>
-                                <option key={index}>{item.item} :</option>
+                            <Select
+                                key={index}
+                                // value={item.valor}
+                                // onChange={e => handleButtonClickSelec(e, index)}
+                            >
+                                <option>{item.item} :</option>
                                 {Opcion.map((o, index) => {
                                     return (
                                         <option key={index}>{o.text}</option>
