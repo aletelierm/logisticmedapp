@@ -1,17 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import BitacoraCabDB from '../firebase/BitacoraCabDB';
+// import BitacoraCabDB from '../firebase/BitacoraCabDB';
 import styled from 'styled-components';
 import Alerta from '../components/Alertas';
 import useObtenerMantencion from '../hooks/useObtenerMantencion';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query /*, getDoc, doc updateDoc, writeBatch, addDoc */ } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, addDoc, writeBatch /*, getDoc, updateDoc */ } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { BotonGuardar, Contenedor, Titulo, BotonCheck } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, Select, Label, Input } from '../elementos/CrearEquipos'
 import { Opcion } from './TipDoc';
+import Swal from 'sweetalert2';
 
 const EjecutarMantencion = () => {
     const user = auth.currentUser;
@@ -40,6 +41,7 @@ const EjecutarMantencion = () => {
     const [eq_id, setEq_id] = useState('');
     // const [flag, setFlag] = useState([false]);
     const protocoloCab = useRef([]);
+    const documentoId = useRef('');
 
     const volver = () => {
         navigate('/serviciotecnico/mantencion')
@@ -80,6 +82,29 @@ const EjecutarMantencion = () => {
         setItemsSelec(documenSel);
     }
 
+    //Funcion guardar las cabeceras de Bitacoras
+    const BitacoraCabDB = async ({ nombre_protocolo, cab_id_protocolo, fecha_mantencion, familia, tipo, serie, eq_id, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+        try {
+            const documento = await addDoc(collection(db, 'bitacoracab'), {
+                nombre_protocolo: nombre_protocolo,
+                cab_id_protocolo: cab_id_protocolo,
+                fecha_mantencion: fecha_mantencion,
+                familia: familia,
+                tipo: tipo,
+                serie: serie,
+                eq_id: eq_id,
+                confirmado: confirmado,
+                useradd: userAdd,
+                usermod: userMod,
+                fechaadd: fechaAdd,
+                fechamod: fechaMod,
+                emp_id: emp_id,
+            });
+            documentoId.current = documento.id;
+        } catch (error) {
+            Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
+        }
+    }
     const handleButtonClick = (index, buttonId) => {
         setItemsCheck((prevItems) => {
             const nuevosElementos = [...prevItems];
@@ -125,12 +150,41 @@ const EjecutarMantencion = () => {
             })
         }
     }
-
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        
+
+        // Crea una nueva instancia de lote (batch)
+        const batch = writeBatch(db);
+        // Obtiene una referencia a una colección específica en Firestore
+        const bitacoraRef = collection(db, 'bitacoras');
+        // Itera a través de los nuevos documentos y agrégalos al lote
+        itemsCheck.forEach((docs) => {
+            const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+            batch.set(nuevoDocRef, {
+                item: docs.item,
+                valor: docs.valor,
+                categoria: docs.categoria,
+                cab_id_bitacora: documentoId.current,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id,
+            });
+        });
+        batch.commit()
+            .then(() => {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Docuemento creado correctamente.'
+                });
+            })
+            .catch((error) => {
+                Swal.fire('Se ha producido un error al crear docuemento de entrada retirado');
+            });
     }
 
     useEffect(() => {
@@ -247,7 +301,7 @@ const EjecutarMantencion = () => {
                 </ContentElemenMov>
 
                 <ContentElemenMov style={{ marginTop: '10px' }}>
-                    <BotonGuardar>Guardar</BotonGuardar>
+                    <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
                     <BotonGuardar>Confirmar</BotonGuardar>
                 </ContentElemenMov>
             </Contenedor>
