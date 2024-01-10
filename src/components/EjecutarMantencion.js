@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-// import BitacoraCabDB from '../firebase/BitacoraCabDB';
 import styled from 'styled-components';
 import Alerta from '../components/Alertas';
 import useObtenerMantencion from '../hooks/useObtenerMantencion';
 import { Table } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, doc, addDoc, writeBatch /*, getDoc, updateDoc */ } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, addDoc, writeBatch, updateDoc /*, getDoc */ } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { BotonGuardar, Contenedor, Titulo, BotonCheck } from '../elementos/General'
@@ -26,8 +25,6 @@ const EjecutarMantencion = () => {
 
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    // const [cabProt, setCabProt] = useState([]);
-    // const [protocolo, setProtocolo] = useState([]);
     const [itemsInst, setItemsInst] = useState([]);
     const [itemsCheck, setItemsCheck] = useState([]);
     const [itemsLlenado, setItemsLlenado] = useState([]);
@@ -39,6 +36,8 @@ const EjecutarMantencion = () => {
     const [tipo, setTipo] = useState('');
     const [serie, setSerie] = useState('');
     const [eq_id, setEq_id] = useState('');
+    const [mostrar, setMostrar] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
     // const [flag, setFlag] = useState([false]);
     const protocoloCab = useRef([]);
     const documentoId = useRef('');
@@ -78,10 +77,9 @@ const EjecutarMantencion = () => {
         setItemsLlenado(documenLlen);
         const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'SELECCION'));
         const docuSel = await getDocs(docSel);
-        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id, valor: false })));
+        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id, valor: '' })));
         setItemsSelec(documenSel);
     }
-
     //Funcion guardar las cabeceras de Bitacoras
     const BitacoraCabDB = async ({ nombre_protocolo, cab_id_protocolo, fecha_mantencion, familia, tipo, serie, eq_id, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
         try {
@@ -121,51 +119,73 @@ const EjecutarMantencion = () => {
         });
     }
     const handleButtonClickSelec = (e, index) => {
-        setItemsCheck((prevItems) => {
+        setItemsSelec((prevItems) => {
             const nuevosElementos = [...prevItems];
             console.log('nuevosElementos', nuevosElementos)
             nuevosElementos[index].valor = e.target.value;
             return nuevosElementos;
         });
     }
+    // // Sumar dias
+    // const sumarDias = (fecha, dias) => {
+    //     const dateObj = fecha.toDate();
+    //     const formatear = moment(dateObj);
+    //     const nuevafecha = formatear.add(dias, 'days');
+    //     const ultima = new Date(nuevafecha)
+    //     // return nuevafecha.format('DD/MM/YYYY HH:mm');
+    //     return ultima;
+    // }
+
     // Agregar Cabecera de Protocolo
     const addCabBitacora = async (ev) => {
-        ev.preventDefault();
+        // ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        try {
-            BitacoraCabDB({
-                nombre_protocolo: nombreProtocolo,
-                cab_id_protocolo: protocoloCab.current,
-                fecha_mantencion: fechaAdd,
-                familia: familia,
-                tipo: tipo,
-                serie: serie,
-                eq_id: eq_id,
-                confirmado: false,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id,
-            })
-            console.log('se guardo cabecera')
+        // Filtar por docuemto de Cabecera Bitacora
+        const cab = query(collection(db, 'bitacoracab'), where('emp_id', '==', users.emp_id), where('serie', '==', serie), where('confirmado', '==', false));
+        const cabecera = await getDocs(cab);
+        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+
+        if (existeCab.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
-                mensaje: 'Ingreso realizado exitosamente'
-            })
-        } catch (error) {
-            console.log('no se guardo cabecera')
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: error
-            })
+                mensaje: 'Documento ya creado.'
+            });
+        } else {
+            try {
+                BitacoraCabDB({
+                    nombre_protocolo: nombreProtocolo,
+                    cab_id_protocolo: protocoloCab.current,
+                    fecha_mantencion: fechaAdd,
+                    familia: familia,
+                    tipo: tipo,
+                    serie: serie,
+                    eq_id: eq_id,
+                    confirmado: false,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                })
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Ingreso realizado exitosamente'
+                })
+            } catch (error) {
+                console.log('no se guardo cabecera')
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
         }
     }
-    console.log('items Selec', itemsSelec)
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -175,35 +195,35 @@ const EjecutarMantencion = () => {
         // Obtiene una referencia a una colección específica en Firestore
         const bitacoraRef = collection(db, 'bitacoras');
         // Itera a través de los nuevos documentos y agrégalos al lote de Checks
-        // itemsCheck.forEach((docs) => {
-        //     const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-        //     batch.set(nuevoDocRef, {
-        //         item: docs.item,
-        //         valor: docs.valor,
-        //         categoria: docs.categoria,
-        //         cab_id_bitacora: documentoId.current,
-        //         userAdd: user.email,
-        //         userMod: user.email,
-        //         fechaAdd: fechaAdd,
-        //         fechaMod: fechaMod,
-        //         emp_id: users.emp_id,
-        //     });
-        // });
-        // // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
-        // itemsLlenado.forEach((docs) => {
-        //     const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-        //     batch.set(nuevoDocRef, {
-        //         item: docs.item,
-        //         valor: docs.valor,
-        //         categoria: docs.categoria,
-        //         cab_id_bitacora: documentoId.current,
-        //         userAdd: user.email,
-        //         userMod: user.email,
-        //         fechaAdd: fechaAdd,
-        //         fechaMod: fechaMod,
-        //         emp_id: users.emp_id,
-        //     });
-        // });
+        itemsCheck.forEach((docs) => {
+            const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+            batch.set(nuevoDocRef, {
+                item: docs.item,
+                valor: docs.valor,
+                categoria: docs.categoria,
+                cab_id_bitacora: documentoId.current,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id,
+            });
+        });
+        // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
+        itemsLlenado.forEach((docs) => {
+            const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+            batch.set(nuevoDocRef, {
+                item: docs.item,
+                valor: docs.valor,
+                categoria: docs.categoria,
+                cab_id_bitacora: documentoId.current,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id,
+            });
+        });
         // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
         itemsSelec.forEach((docs) => {
             const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
@@ -230,6 +250,20 @@ const EjecutarMantencion = () => {
             .catch((error) => {
                 Swal.fire('Se ha producido un error al crear docuemento de entrada retirado');
             });
+
+        try {
+            await updateDoc(doc(db, 'mantenciones', id), {
+                enproceso: '1',
+                usermod: user.email,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error al actualizar Mantencion:', error
+            })
+        }
     }
 
     useEffect(() => {
@@ -266,98 +300,104 @@ const EjecutarMantencion = () => {
                         </ul>
                     </ContentElemenSelect>
                 </ContentElemenMov>
-                <BotonGuardar onClick={addCabBitacora}>Guardar</BotonGuardar>
-
-                <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {itemsCheck.map((item, index) => {
-                            return (
-                                <Table.Row key={index}>
-                                    <Table.Cell >{index + 1}</Table.Cell>
-                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}>
-                                        <BotonCheck
-                                            onClick={() => handleButtonClick(index, 'pasa')}
-                                            className={item.valor === 'pasa' ? 'activeBoton' : ''}
-                                        >Pasa</BotonCheck>
-                                        <BotonCheck
-                                            onClick={() => handleButtonClick(index, 'nopasa')}
-                                            className={item.valor === 'nopasa' ? 'activeBoton' : ''}
-                                        >No Pasa</BotonCheck>
-                                        <BotonCheck
-                                            onClick={() => handleButtonClick(index, 'na')}
-                                            className={item.valor === 'na' ? 'activeBoton' : ''}
-                                        >N/A</BotonCheck>
-                                    </Table.Cell>
+                {
+                    isOpen &&
+                    <BotonGuardar onClick={() => {
+                        setMostrar(true);
+                        setIsOpen(false);
+                        addCabBitacora()
+                    }}>Siguente</BotonGuardar>
+                }
+                { mostrar &&
+                    <>
+                        <Table singleLine>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>N°</Table.HeaderCell>
+                                    <Table.HeaderCell>Item</Table.HeaderCell>
+                                    <Table.HeaderCell></Table.HeaderCell>
                                 </Table.Row>
-                            )
-                        })}
-                    </Table.Body>
-                </Table>
-
-                <Titulo style={{ fontSize: '18px' }}>Tabla de vacio</Titulo>
-                <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell>Referencia</Table.HeaderCell>
-                            <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell>
-                            <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {itemsLlenado.map((item, index) => {
-                            return (
-                                <Table.Row key={index} >
-                                    <Table.Cell >{index + 1}</Table.Cell>
-                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                    <Table.Cell  >
-                                        <Input
-                                            type="text"
-                                            value={item.valor}
-                                            onChange={e => handleButtonClickLlen(e, index)}
-                                        />
-                                    </Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                </Table.Row>
-                            )
-                        })}
-                    </Table.Body>
-                </Table>
-
-                <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
-                <ContentElemenMov>
-                    {itemsSelec.map((item, index) => {
-                        return (
-                            <Select
-                                key={index}
-                                // value={item.valor}
-                                // onChange={e => handleButtonClickSelec(e, index)}
-                            >
-                                <option>{item.item} :</option>
-                                {Opcion.map((o, index) => {
+                            </Table.Header>
+                            <Table.Body>
+                                {itemsCheck.map((item, index) => {
                                     return (
-                                        <option key={index}>{o.text}</option>
+                                        <Table.Row key={index}>
+                                            <Table.Cell >{index + 1}</Table.Cell>
+                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}>
+                                                <BotonCheck
+                                                    onClick={() => handleButtonClick(index, 'pasa')}
+                                                    className={item.valor === 'pasa' ? 'activeBoton' : ''}
+                                                >Pasa</BotonCheck>
+                                                <BotonCheck
+                                                    onClick={() => handleButtonClick(index, 'nopasa')}
+                                                    className={item.valor === 'nopasa' ? 'activeBoton' : ''}
+                                                >No Pasa</BotonCheck>
+                                                <BotonCheck
+                                                    onClick={() => handleButtonClick(index, 'na')}
+                                                    className={item.valor === 'na' ? 'activeBoton' : ''}
+                                                >N/A</BotonCheck>
+                                            </Table.Cell>
+                                        </Table.Row>
                                     )
                                 })}
-                            </Select>
-                        )
-                    })}
-                </ContentElemenMov>
+                            </Table.Body>
+                        </Table>
 
-                <ContentElemenMov style={{ marginTop: '10px' }}>
-                    <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
-                    <BotonGuardar>Confirmar</BotonGuardar>
-                </ContentElemenMov>
+                        <Titulo style={{ fontSize: '18px' }}>Tabla de vacio</Titulo>
+                        <Table singleLine>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>N°</Table.HeaderCell>
+                                    <Table.HeaderCell>Item</Table.HeaderCell>
+                                    <Table.HeaderCell>Referencia</Table.HeaderCell>
+                                    <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell>
+                                    <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {itemsLlenado.map((item, index) => {
+                                    return (
+                                        <Table.Row key={index} >
+                                            <Table.Cell >{index + 1}</Table.Cell>
+                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
+                                            <Table.Cell  >
+                                                <Input
+                                                    type="text"
+                                                    value={item.valor}
+                                                    onChange={e => handleButtonClickLlen(e, index)}
+                                                />
+                                            </Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
+                                        </Table.Row>
+                                    )
+                                })}
+                            </Table.Body>
+                        </Table>
+
+                        <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
+                        <ContentElemenMov>
+                            {itemsSelec.map((item, index) => {
+                                return (
+                                    <Select key={index} onChange={e => { handleButtonClickSelec(e, index) }}>
+                                        <option>{item.item} :</option>
+                                        {Opcion.map((o, index) => {
+                                            return (
+                                                <option key={index}>{o.text}</option>
+                                            )
+                                        })}
+                                    </Select>
+                                )
+                            })}
+                        </ContentElemenMov>
+
+                        <ContentElemenMov style={{ marginTop: '10px' }}>
+                            <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
+                            <BotonGuardar>Confirmar</BotonGuardar>
+                        </ContentElemenMov>
+                    </>
+                }
             </Contenedor>
             <BotonGuardar style={{ marginTop: '30px' }} onClick={volver} >Volver</BotonGuardar>
             <Alerta
