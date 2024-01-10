@@ -29,7 +29,6 @@ const EjecutarMantencion = () => {
     const [itemsCheck, setItemsCheck] = useState([]);
     const [itemsLlenado, setItemsLlenado] = useState([]);
     const [itemsSelec, setItemsSelec] = useState([]);
-    const [bitacora, setBitacora] = useState([]);
     const [nombreProtocolo, setNombreProtocolo] = useState('');
     const [programa, setPrograma] = useState('');
     const [dias, setDias] = useState('');
@@ -39,29 +38,14 @@ const EjecutarMantencion = () => {
     const [eq_id, setEq_id] = useState('');
     const [mostrar, setMostrar] = useState(false);
     const [isOpen, setIsOpen] = useState(true);
-    const [flag, setFlag] = useState(false);
+    // const [flag, setFlag] = useState([false]);
     const protocoloCab = useRef([]);
     const documentoId = useRef('');
-    const idbitacora = useRef('');
 
     const volver = () => {
         navigate('/serviciotecnico/mantencion')
     }
 
-    // useEffect(() => {
-    //     if (manto) {
-    //         protocoloCab.current = manto.cab_id_protocol
-    //         setNombreProtocolo(manto.nombre_protocolo);
-    //         setPrograma(manto.programa);
-    //         setDias(manto.dias);
-    //         setFamilia(manto.familia);
-    //         setTipo(manto.tipo);
-    //         setSerie(manto.serie);
-    //         setEq_id(manto.id_eq)
-    //     } else {
-    //         navigate('/')
-    //     }
-    // }, [manto, navigate])
     useEffect(() => {
         if (manto) {
             protocoloCab.current = manto.cab_id_protocol
@@ -97,7 +81,7 @@ const EjecutarMantencion = () => {
         setItemsSelec(documenSel);
     }
     //Funcion guardar las cabeceras de Bitacoras
-    const BitacoraCabDB = async ({ nombre_protocolo, cab_id_protocolo, fecha_mantencion, familia, tipo, serie, eq_id, id_manto, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+    const BitacoraCabDB = async ({ nombre_protocolo, cab_id_protocolo, fecha_mantencion, familia, tipo, serie, eq_id, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
         try {
             const documento = await addDoc(collection(db, 'bitacoracab'), {
                 nombre_protocolo: nombre_protocolo,
@@ -107,7 +91,6 @@ const EjecutarMantencion = () => {
                 tipo: tipo,
                 serie: serie,
                 eq_id: eq_id,
-                id_manto: id_manto,
                 confirmado: confirmado,
                 useradd: userAdd,
                 usermod: userMod,
@@ -169,7 +152,6 @@ const EjecutarMantencion = () => {
                 tipo: 'exito',
                 mensaje: 'Documento ya creado.'
             });
-            documentoId.current = existeCab[0].id
         } else {
             try {
                 BitacoraCabDB({
@@ -180,7 +162,6 @@ const EjecutarMantencion = () => {
                     tipo: tipo,
                     serie: serie,
                     eq_id: eq_id,
-                    id_manto: id,
                     confirmado: false,
                     userAdd: user.email,
                     userMod: user.email,
@@ -204,31 +185,11 @@ const EjecutarMantencion = () => {
         }
     }
 
-    const bitacorasCab = async () => {
-        const doc = query(collection(db, 'bitacoracab'), where('emp_id', '==', users.emp_id), where('id_manto', '==', id));
-        const docu = await getDocs(doc);
-        const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        idbitacora.current = documen[0].id
-    }
-    const consultarBitacoras = async () => {
-        const docCheck = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'CHECK'));
-        const docuCheck = await getDocs(docCheck);
-        const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setItemsCheck(documenCheck);
-        const docLlen = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'LLENADO'));
-        const docuLlen = await getDocs(docLlen);
-        const documenLlen = (docuLlen.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setItemsLlenado(documenLlen);
-        const docSel = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'SELECCION'));
-        const docuSel = await getDocs(docSel);
-        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setItemsSelec(documenSel);
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+
         // Crea una nueva instancia de lote (batch)
         const batch = writeBatch(db);
         // Obtiene una referencia a una colección específica en Firestore
@@ -306,16 +267,9 @@ const EjecutarMantencion = () => {
     }
 
     useEffect(() => {
-        if (manto.enproceso === '1') {
-            bitacorasCab();
-            consultarBitacoras();
-            console.log('BITACORAS')
-        } else {
-            consultarProtocolos();
-            console.log('PROTOCOLOS')
-        }
+        consultarProtocolos();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [manto, navigate, flag, setFlag])
+    }, [manto, navigate])
 
     return (
         <ContenedorCliente style={{ width: '800px' }}>
@@ -351,11 +305,10 @@ const EjecutarMantencion = () => {
                     <BotonGuardar onClick={() => {
                         setMostrar(true);
                         setIsOpen(false);
-                        setFlag(!flag)
                         addCabBitacora()
                     }}>Siguente</BotonGuardar>
                 }
-                {mostrar &&
+                { mostrar &&
                     <>
                         <Table singleLine>
                             <Table.Header>
@@ -367,7 +320,6 @@ const EjecutarMantencion = () => {
                             </Table.Header>
                             <Table.Body>
                                 {itemsCheck.map((item, index) => {
-                                    console.log('item.valor', item.valor)
                                     return (
                                         <Table.Row key={index}>
                                             <Table.Cell >{index + 1}</Table.Cell>
@@ -376,7 +328,6 @@ const EjecutarMantencion = () => {
                                                 <BotonCheck
                                                     onClick={() => handleButtonClick(index, 'pasa')}
                                                     className={item.valor === 'pasa' ? 'activeBoton' : ''}
-                                                    
                                                 >Pasa</BotonCheck>
                                                 <BotonCheck
                                                     onClick={() => handleButtonClick(index, 'nopasa')}
