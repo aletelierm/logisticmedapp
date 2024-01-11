@@ -30,6 +30,7 @@ const EjecutarMantencion = () => {
     const [itemsCheck, setItemsCheck] = useState([]);
     const [itemsLlenado, setItemsLlenado] = useState([]);
     const [itemsSelec, setItemsSelec] = useState([]);
+    // const [protocolo, setProtocolo] = useState([]);
     const [nombreProtocolo, setNombreProtocolo] = useState('');
     const [programa, setPrograma] = useState('');
     const [dias, setDias] = useState('');
@@ -71,16 +72,32 @@ const EjecutarMantencion = () => {
         setItemsInst(documenInst);
         const docCheck = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'CHECK'));
         const docuCheck = await getDocs(docCheck);
-        const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id, valor: false })));
+        const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsCheck(documenCheck);
         const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'LLENADO'));
         const docuLlen = await getDocs(docLlen);
-        const documenLlen = (docuLlen.docs.map((doc) => ({ ...doc.data(), id: doc.id, valor: '' })));
+        const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsLlenado(documenLlen);
         const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'SELECCION'));
         const docuSel = await getDocs(docSel);
-        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id, valor: '' })));
+        const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsSelec(documenSel);
+        // const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current));
+        // const docuSel = await getDocs(docSel);
+        // const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
+        // setProtocolo(documenSel);
+        // const inst = protocolo.filter(p => p.categoria === 'INSTRUMENTOS')
+        // const check = protocolo.filter(p => p.categoria === 'CHECK')
+        // const llen = protocolo.filter(p => p.categoria === 'LLENADO')
+        // const sel = protocolo.filter(p => p.categoria === 'SELECCION')
+        // setItemsInst(inst);
+        // setItemsCheck(check);
+        // setItemsLlenado(llen);
+        // setItemsSelec(sel);
+        // console.log('itemsInst prot', itemsInst)
+        // console.log('itemsCheck prot', itemsCheck)
+        // console.log('itemsLlenado prot', itemsLlenado)
+        // console.log('itemsSelec prot', itemsSelec)
     }
     //Funcion guardar las cabeceras de Bitacoras
     const BitacoraCabDB = async ({ nombre_protocolo, cab_id_protocolo, fecha_mantencion, familia, tipo, serie, eq_id, id_manto, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
@@ -139,7 +156,7 @@ const EjecutarMantencion = () => {
         return ultima;
     }
 
-    // Agregar Cabecera de Protocolo
+    // Agregar Cabecera de Protocolo / Boton Siguiente
     const addCabBitacora = async (ev) => {
         // ev.preventDefault();
         cambiarEstadoAlerta(false);
@@ -150,11 +167,11 @@ const EjecutarMantencion = () => {
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
         if (existeCab.length > 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Documento ya creado.'
-            });
+            // cambiarEstadoAlerta(true);
+            // cambiarAlerta({
+            //     tipo: 'exito',
+            //     mensaje: 'Proceda a realizar la mantención'
+            // });
             documentoId.current = existeCab[0].id
         } else {
             try {
@@ -177,10 +194,9 @@ const EjecutarMantencion = () => {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
-                    mensaje: 'Ingreso realizado exitosamente'
+                    mensaje: 'Proceda a realizar la mantención'
                 })
             } catch (error) {
-                console.log('no se guardo cabecera')
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -199,82 +215,146 @@ const EjecutarMantencion = () => {
     const consultarBitacoras = async () => {
         const docCheck = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'CHECK'));
         const docuCheck = await getDocs(docCheck);
-        const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setItemsCheck(documenCheck);
         const docLlen = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'LLENADO'));
         const docuLlen = await getDocs(docLlen);
-        const documenLlen = (docuLlen.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setItemsLlenado(documenLlen);
         const docSel = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'SELECCION'));
         const docuSel = await getDocs(docSel);
-        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setItemsSelec(documenSel);
+        // const docSel = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current));
+        // const docuSel = await getDocs(docSel);
+        // const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        // setProtocolo(documenSel);
+        // const inst = protocolo.filter(p => p.categoria === 'INSTRUMENTOS')
+        // const check = protocolo.filter(p => p.categoria === 'CHECK')
+        // const llen = protocolo.filter(p => p.categoria === 'LLENADO')
+        // const sel = protocolo.filter(p => p.categoria === 'SELECCION') 
+        // setItemsInst(inst);
+        // setItemsCheck(check);
+        // setItemsLlenado(llen);
+        // setItemsSelec(sel);
     }
 
+    // Boton Guardar
     const handleSubmit = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Crea una nueva instancia de lote (batch)
-        const batch = writeBatch(db);
-        // Obtiene una referencia a una colección específica en Firestore
-        const bitacoraRef = collection(db, 'bitacoras');
-        // Itera a través de los nuevos documentos y agrégalos al lote de Checks
-        itemsCheck.forEach((docs) => {
-            const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-            batch.update(nuevoDocRef, {
-                item: docs.item,
-                valor: docs.valor,
-                categoria: docs.categoria,
-                cab_id_bitacora: documentoId.current,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id,
-            });
-        });
-        // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
-        itemsLlenado.forEach((docs) => {
-            const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-            batch.set(nuevoDocRef, {
-                item: docs.item,
-                valor: docs.valor,
-                categoria: docs.categoria,
-                cab_id_bitacora: documentoId.current,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id,
-            });
-        });
-        // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
-        itemsSelec.forEach((docs) => {
-            const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-            batch.set(nuevoDocRef, {
-                item: docs.item,
-                valor: docs.valor,
-                categoria: docs.categoria,
-                cab_id_bitacora: documentoId.current,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id,
-            });
-        });
-        batch.commit()
-            .then(() => {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Docuemento creado correctamente.'
+        console.log(itemsCheck.length)
+        console.log(itemsLlenado.length)
+        console.log(itemsSelec.length)
+
+        if (itemsCheck.length === 0 && itemsLlenado.length === 0 && itemsSelec.length === 0) {
+            // Crea una nueva instancia de lote (batch)
+            const batch = writeBatch(db);
+            // Obtiene una referencia a una colección específica en Firestore
+            const bitacoraRef = collection(db, 'bitacoras',);
+            // Itera a través de los nuevos documentos y agrégalos al lote de Checks
+            itemsCheck.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.set(nuevoDocRef, {
+                    item: docs.item,
+                    valor: docs.valor,
+                    categoria: docs.categoria,
+                    cab_id_bitacora: documentoId.current,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
                 });
-            })
-            .catch((error) => {
-                Swal.fire('Se ha producido un error al crear docuemento de entrada retirado');
             });
+            // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
+            itemsLlenado.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.set(nuevoDocRef, {
+                    item: docs.item,
+                    valor: docs.valor,
+                    categoria: docs.categoria,
+                    cab_id_bitacora: documentoId.current,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                });
+            });
+            // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
+            itemsSelec.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.set(nuevoDocRef, {
+                    item: docs.item,
+                    valor: docs.valor,
+                    categoria: docs.categoria,
+                    cab_id_bitacora: documentoId.current,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                });
+            });
+            batch.commit()
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Docuemento creado correctamente.'
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Se ha producido un error al crear docuemento');
+                    console.log(error)
+                });
+        } else {
+            // Crea una nueva instancia de lote (batch)
+            const batch = writeBatch(db);
+            // Obtiene una referencia a una colección específica en Firestore
+            const bitacoraRef = collection(db, 'bitacoras',);
+            // Itera a través de los nuevos documentos y agrégalos al lote de Checks
+            itemsCheck.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.update(nuevoDocRef, {
+                    valor: docs.valor,
+                    userMod: user.email,
+                    fechaMod: fechaMod,
+                });
+            });
+            // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
+            itemsLlenado.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.update(nuevoDocRef, {
+                    valor: docs.valor,
+                    userMod: user.email,
+                    fechaMod: fechaMod,
+                });
+            });
+            // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
+            itemsSelec.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.update(nuevoDocRef, {
+                    valor: docs.valor,
+                    userMod: user.email,
+                    fechaMod: fechaMod,
+                });
+            });
+            batch.commit()
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Docuemento creado correctamente.'
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire('Se ha producido un error al crear docuemento');
+                    console.log(error)
+                });
+        }
 
         try {
             await updateDoc(doc(db, 'mantenciones', id), {
@@ -291,7 +371,7 @@ const EjecutarMantencion = () => {
         }
     }
 
-    // Función para actualizar varios documentos por lotes
+    // Función para actualizar documentos / Boton Confirmar
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -300,45 +380,62 @@ const EjecutarMantencion = () => {
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-        // itemsCheck.forEach((docs, index) => {
-        //     if (docs.valor === false) {
-        //         // Swal.fire(`Item ${docs.item} no puede estar vacio`);
-        //         Swal.fire(`Item ${itemsCheck.map((item, index) => {
-        //             return item[index].item;
-        //         })} no puede estar vacio`);
-        //         console.log('no hay campos en false')
-        //     }
-        // });
+        itemsCheck.forEach((docs, index) => {
+            const falsos = itemsCheck.filter(ic => ic.valor === '')
+            if (falsos.length > 0) {
+                Swal.fire(`Item checked ${falsos.map((i) => {
+                    return i.id2;
+                })} no puede estar vacio`);
+            }
+        });
 
+        itemsLlenado.forEach((docs, index) => {
+            const falsos = itemsLlenado.filter(ic => ic.valor === '')
+            if (falsos.length > 0) {
+                Swal.fire(`Tabla Vacio: Item ${falsos.map((i) => {
+                    return i.id2;
+                })} no puede estar vacio`);
+            }
+        });
 
-        try {
-            await updateDoc(doc(db, 'mantenciones', id), {
-                enproceso: '0',
-                fecha_inicio: existeCab[0].fecha_mantencion,
-                fecha_termino: sumarDias(existeCab[0].fecha_mantencion, dias),
-                usermod: user.email,
-                fechamod: fechaMod
-            });
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al confirmar Cabecera:', error
-            })
-        }
-        try {
-            await updateDoc(doc(db, 'bitacoracab', existeCab[0].id), {
-                confirmado: true,
-                usermod: user.email,
-                fechamod: fechaMod
-            });
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al confirmar Cabecera:', error
-            })
-        }
+        itemsSelec.forEach((docs, index) => {
+            const falsos = itemsSelec.filter(ic => ic.valor === '')
+            if (falsos.length > 0) {
+                Swal.fire(`Tabla Seguridad: Item ${falsos.map((i) => {
+                    return i.id2;
+                })} no puede estar vacio`);
+            }
+        });
+
+        // try {
+        //     await updateDoc(doc(db, 'mantenciones', id), {
+        //         enproceso: '0',
+        //         fecha_inicio: existeCab[0].fecha_mantencion,
+        //         fecha_termino: sumarDias(existeCab[0].fecha_mantencion, dias),
+        //         usermod: user.email,
+        //         fechamod: fechaMod
+        //     });
+        // } catch (error) {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Error al confirmar Mantencion:', error
+        //     })
+        // }
+        // try {
+        //     await updateDoc(doc(db, 'bitacoracab', existeCab[0].id), {
+        //         confirmado: true,
+        //         usermod: user.email,
+        //         fechamod: fechaMod
+        //     });
+        // } catch (error) {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Error al confirmar Bitacora:', error
+        //     })
+        //     console.log(error)
+        // }
     }
 
     useEffect(() => {
