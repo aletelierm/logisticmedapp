@@ -244,15 +244,17 @@ const EjecutarMantencion = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        console.log(itemsCheck.length)
-        console.log(itemsLlenado.length)
-        console.log(itemsSelec.length)
+        
+        const docCheck = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'CHECK'));
+        const docuCheck = await getDocs(docCheck);
+        const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log(documenCheck)
 
-        if (itemsCheck.length === 0 && itemsLlenado.length === 0 && itemsSelec.length === 0) {
+        if (documenCheck.length === 0 ) {
             // Crea una nueva instancia de lote (batch)
             const batch = writeBatch(db);
             // Obtiene una referencia a una colección específica en Firestore
-            const bitacoraRef = collection(db, 'bitacoras',);
+            const bitacoraRef = collection(db, 'bitacoras');
             // Itera a través de los nuevos documentos y agrégalos al lote de Checks
             itemsCheck.forEach((docs) => {
                 const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
@@ -347,11 +349,11 @@ const EjecutarMantencion = () => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
-                        mensaje: 'Docuemento creado correctamente.'
+                        mensaje: 'Docuemento actualizado correctamente.'
                     });
                 })
                 .catch((error) => {
-                    Swal.fire('Se ha producido un error al crear docuemento');
+                    Swal.fire('Se ha producido un error al actualizar docuemento');
                     console.log(error)
                 });
         }
