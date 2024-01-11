@@ -154,6 +154,11 @@ export const DataMenu = [
         title: 'Ejecutar Mant.',
         path: 'serviciotecnico/mantencion',
         icon: <IoIcons.IoIosPlay />
+      },
+      {
+        title: 'Bitacora.',
+        path: 'serviciotecnico/bitacora',
+        icon: <MdIcons.MdOutlineWorkHistory />
       }
     ]
   },
