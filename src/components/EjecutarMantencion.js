@@ -11,6 +11,7 @@ import { UserContext } from '../context/UserContext';
 import { BotonGuardar, Contenedor, Titulo, BotonCheck } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, Select, Label, Input } from '../elementos/CrearEquipos'
 import { Opcion } from './TipDoc';
+import moment from 'moment';
 import Swal from 'sweetalert2';
 
 const EjecutarMantencion = () => {
@@ -29,7 +30,6 @@ const EjecutarMantencion = () => {
     const [itemsCheck, setItemsCheck] = useState([]);
     const [itemsLlenado, setItemsLlenado] = useState([]);
     const [itemsSelec, setItemsSelec] = useState([]);
-    const [bitacora, setBitacora] = useState([]);
     const [nombreProtocolo, setNombreProtocolo] = useState('');
     const [programa, setPrograma] = useState('');
     const [dias, setDias] = useState('');
@@ -48,20 +48,6 @@ const EjecutarMantencion = () => {
         navigate('/serviciotecnico/mantencion')
     }
 
-    // useEffect(() => {
-    //     if (manto) {
-    //         protocoloCab.current = manto.cab_id_protocol
-    //         setNombreProtocolo(manto.nombre_protocolo);
-    //         setPrograma(manto.programa);
-    //         setDias(manto.dias);
-    //         setFamilia(manto.familia);
-    //         setTipo(manto.tipo);
-    //         setSerie(manto.serie);
-    //         setEq_id(manto.id_eq)
-    //     } else {
-    //         navigate('/')
-    //     }
-    // }, [manto, navigate])
     useEffect(() => {
         if (manto) {
             protocoloCab.current = manto.cab_id_protocol
@@ -143,15 +129,15 @@ const EjecutarMantencion = () => {
             return nuevosElementos;
         });
     }
-    // // Sumar dias
-    // const sumarDias = (fecha, dias) => {
-    //     const dateObj = fecha.toDate();
-    //     const formatear = moment(dateObj);
-    //     const nuevafecha = formatear.add(dias, 'days');
-    //     const ultima = new Date(nuevafecha)
-    //     // return nuevafecha.format('DD/MM/YYYY HH:mm');
-    //     return ultima;
-    // }
+    // Sumar dias
+    const sumarDias = (fecha, dias) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj);
+        const nuevafecha = formatear.add(dias, 'days');
+        const ultima = new Date(nuevafecha)
+        // return nuevafecha.format('DD/MM/YYYY HH:mm');
+        return ultima;
+    }
 
     // Agregar Cabecera de Protocolo
     const addCabBitacora = async (ev) => {
@@ -236,7 +222,7 @@ const EjecutarMantencion = () => {
         // Itera a través de los nuevos documentos y agrégalos al lote de Checks
         itemsCheck.forEach((docs) => {
             const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-            batch.set(nuevoDocRef, {
+            batch.update(nuevoDocRef, {
                 item: docs.item,
                 valor: docs.valor,
                 categoria: docs.categoria,
@@ -305,14 +291,62 @@ const EjecutarMantencion = () => {
         }
     }
 
+    // Función para actualizar varios documentos por lotes
+    const actualizarDocs = async () => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // Filtar por docuemto de Cabecera Bitacora
+        const cab = query(collection(db, 'bitacoracab'), where('emp_id', '==', users.emp_id), where('serie', '==', serie), where('confirmado', '==', false));
+        const cabecera = await getDocs(cab);
+        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+        // itemsCheck.forEach((docs, index) => {
+        //     if (docs.valor === false) {
+        //         // Swal.fire(`Item ${docs.item} no puede estar vacio`);
+        //         Swal.fire(`Item ${itemsCheck.map((item, index) => {
+        //             return item[index].item;
+        //         })} no puede estar vacio`);
+        //         console.log('no hay campos en false')
+        //     }
+        // });
+
+
+        try {
+            await updateDoc(doc(db, 'mantenciones', id), {
+                enproceso: '0',
+                fecha_inicio: existeCab[0].fecha_mantencion,
+                fecha_termino: sumarDias(existeCab[0].fecha_mantencion, dias),
+                usermod: user.email,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error al confirmar Cabecera:', error
+            })
+        }
+        try {
+            await updateDoc(doc(db, 'bitacoracab', existeCab[0].id), {
+                confirmado: true,
+                usermod: user.email,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error al confirmar Cabecera:', error
+            })
+        }
+    }
+
     useEffect(() => {
         if (manto.enproceso === '1') {
             bitacorasCab();
             consultarBitacoras();
-            console.log('BITACORAS')
         } else {
             consultarProtocolos();
-            console.log('PROTOCOLOS')
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [manto, navigate, flag, setFlag])
@@ -367,7 +401,6 @@ const EjecutarMantencion = () => {
                             </Table.Header>
                             <Table.Body>
                                 {itemsCheck.map((item, index) => {
-                                    console.log('item.valor', item.valor)
                                     return (
                                         <Table.Row key={index}>
                                             <Table.Cell >{index + 1}</Table.Cell>
@@ -376,7 +409,7 @@ const EjecutarMantencion = () => {
                                                 <BotonCheck
                                                     onClick={() => handleButtonClick(index, 'pasa')}
                                                     className={item.valor === 'pasa' ? 'activeBoton' : ''}
-                                                    
+
                                                 >Pasa</BotonCheck>
                                                 <BotonCheck
                                                     onClick={() => handleButtonClick(index, 'nopasa')}
@@ -417,8 +450,8 @@ const EjecutarMantencion = () => {
                                                     onChange={e => handleButtonClickLlen(e, index)}
                                                 />
                                             </Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" /></Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor >= '26°' ? true : false} /></Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor < '26°' ? true : false} /></Table.Cell>
                                         </Table.Row>
                                     )
                                 })}
@@ -429,11 +462,11 @@ const EjecutarMantencion = () => {
                         <ContentElemenMov>
                             {itemsSelec.map((item, index) => {
                                 return (
-                                    <Select key={index} onChange={e => { handleButtonClickSelec(e, index) }}>
+                                    <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
                                         <option>{item.item} :</option>
                                         {Opcion.map((o, index) => {
                                             return (
-                                                <option key={index}>{o.text}</option>
+                                                <option key={index} >{o.text}</option>
                                             )
                                         })}
                                     </Select>
@@ -443,7 +476,7 @@ const EjecutarMantencion = () => {
 
                         <ContentElemenMov style={{ marginTop: '10px' }}>
                             <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
-                            <BotonGuardar>Confirmar</BotonGuardar>
+                            <BotonGuardar onClick={actualizarDocs}>Confirmar</BotonGuardar>
                         </ContentElemenMov>
                     </>
                 }
