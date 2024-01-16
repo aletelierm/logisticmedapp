@@ -41,7 +41,12 @@ const EjecutarMantencion = () => {
     const [mostrar, setMostrar] = useState(false);
     const [isOpen, setIsOpen] = useState(true);
     const [flag, setFlag] = useState(false);
+    const [btnGuardar, setBtnGuardar] = useState(false);
+    const [btnConfirmar, setBtnConfirmar] = useState(false);
     const protocoloCab = useRef([]);
+    const falsosCheck = useRef([]);
+    const falsosLlenado = useRef([]);
+    const falsosSelec = useRef([]);
     const documentoId = useRef('');
     const idbitacora = useRef('');
 
@@ -133,7 +138,6 @@ const EjecutarMantencion = () => {
     const handleButtonClickLlen = (e, index) => {
         setItemsLlenado((prevItems) => {
             const nuevosElementos = [...prevItems];
-            console.log('nuevosElementos', nuevosElementos)
             nuevosElementos[index].valor = e.target.value;
             return nuevosElementos;
         });
@@ -141,7 +145,6 @@ const EjecutarMantencion = () => {
     const handleButtonClickSelec = (e, index) => {
         setItemsSelec((prevItems) => {
             const nuevosElementos = [...prevItems];
-            console.log('nuevosElementos', nuevosElementos)
             nuevosElementos[index].valor = e.target.value;
             return nuevosElementos;
         });
@@ -244,13 +247,13 @@ const EjecutarMantencion = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        
+
         const docCheck = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'CHECK'));
         const docuCheck = await getDocs(docCheck);
         const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         console.log(documenCheck)
 
-        if (documenCheck.length === 0 ) {
+        if (documenCheck.length === 0) {
             // Crea una nueva instancia de lote (batch)
             const batch = writeBatch(db);
             // Obtiene una referencia a una colección específica en Firestore
@@ -371,6 +374,8 @@ const EjecutarMantencion = () => {
                 mensaje: 'Error al actualizar Mantencion:', error
             })
         }
+        setBtnGuardar(true);
+        setBtnConfirmar(false);
     }
 
     // Función para actualizar documentos / Boton Confirmar
@@ -383,61 +388,93 @@ const EjecutarMantencion = () => {
         const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         itemsCheck.forEach((docs, index) => {
-            const falsos = itemsCheck.filter(ic => ic.valor === '')
-            if (falsos.length > 0) {
-                Swal.fire(`Item checked ${falsos.map((i) => {
-                    return i.id2;
-                })} no puede estar vacio`);
-            }
+            falsosCheck.current = itemsCheck.filter(ic => ic.valor === '')
+            // if (falsosCheck.length > 0) {
+            //     Swal.fire(`Item checked ${falsos.map((i) => {
+            //         return i.id2;
+            //     })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
+            //     setBtnConfirmar(true);
+            // }
         });
 
         itemsLlenado.forEach((docs, index) => {
-            const falsos = itemsLlenado.filter(ic => ic.valor === '')
-            if (falsos.length > 0) {
-                Swal.fire(`Tabla Vacio: Item ${falsos.map((i) => {
-                    return i.id2;
-                })} no puede estar vacio`);
-            }
+            falsosLlenado.current = itemsLlenado.filter(ic => ic.valor === '')
+            // if (falsosLlenado.length > 0) {
+            //     Swal.fire(`Tabla Vacio: Item ${falsos.map((i) => {
+            //         return i.id2;
+            //     })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
+            //     setBtnConfirmar(true);
+            // }
         });
 
         itemsSelec.forEach((docs, index) => {
-            const falsos = itemsSelec.filter(ic => ic.valor === '')
-            if (falsos.length > 0) {
-                Swal.fire(`Tabla Seguridad: Item ${falsos.map((i) => {
-                    return i.id2;
-                })} no puede estar vacio`);
-            }
+            falsosSelec.current = itemsSelec.filter(ic => ic.valor === '')
+            // if (falsosSelec.length > 0) {
+            //     Swal.fire(`Tabla Seguridad: Item ${falsos.map((i) => {
+            //         return i.id2;
+            //     })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
+            //     setBtnConfirmar(true);
+            // }
         });
 
-        // try {
-        //     await updateDoc(doc(db, 'mantenciones', id), {
-        //         enproceso: '0',
-        //         fecha_inicio: existeCab[0].fecha_mantencion,
-        //         fecha_termino: sumarDias(existeCab[0].fecha_mantencion, dias),
-        //         usermod: user.email,
-        //         fechamod: fechaMod
-        //     });
-        // } catch (error) {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'Error al confirmar Mantencion:', error
-        //     })
-        // }
-        // try {
-        //     await updateDoc(doc(db, 'bitacoracab', existeCab[0].id), {
-        //         confirmado: true,
-        //         usermod: user.email,
-        //         fechamod: fechaMod
-        //     });
-        // } catch (error) {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'Error al confirmar Bitacora:', error
-        //     })
-        //     console.log(error)
-        // }
+        if (falsosCheck.current.length > 0) {
+            Swal.fire(`Item checked ${falsosCheck.current.map((i) => {
+                return i.id2;
+            })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
+            setBtnGuardar(false);
+            setBtnConfirmar(true);
+
+        } else if (falsosLlenado.current.length > 0) {
+            Swal.fire(`Tabla Vacio: Item ${falsosLlenado.current.map((i) => {
+                return i.id2;
+            })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
+            setBtnGuardar(false);
+            setBtnConfirmar(true);
+
+        } else if (falsosSelec.current.length > 0) {
+            Swal.fire(`Tabla Seguridad: Item ${falsosSelec.current.map((i) => {
+                return i.id2;
+            })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
+            setBtnGuardar(false);
+            setBtnConfirmar(true);
+        } else {
+
+            try {
+                await updateDoc(doc(db, 'mantenciones', id), {
+                    enproceso: '0',
+                    fecha_inicio: existeCab[0].fecha_mantencion,
+                    fecha_termino: sumarDias(existeCab[0].fecha_mantencion, dias),
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+                // cambiarEstadoAlerta(true);
+                // cambiarAlerta({
+                //     tipo: 'exito',
+                //     mensaje: 'Check List de Mantención realizado con exito!.'
+                // });
+                Swal.fire('Check List de Mantención realizado con exito!');
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al confirmar Mantencion:', error
+                })
+            }
+            try {
+                await updateDoc(doc(db, 'bitacoracab', existeCab[0].id), {
+                    confirmado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al confirmar Bitacora:', error
+                })
+            }
+            navigate('/serviciotecnico/mantencion')
+        }
     }
 
     useEffect(() => {
@@ -574,8 +611,8 @@ const EjecutarMantencion = () => {
                         </ContentElemenMov>
 
                         <ContentElemenMov style={{ marginTop: '10px' }}>
-                            <BotonGuardar onClick={handleSubmit}>Guardar</BotonGuardar>
-                            <BotonGuardar onClick={actualizarDocs}>Confirmar</BotonGuardar>
+                            <BotonGuardar onClick={handleSubmit} disabled={btnGuardar}>Guardar</BotonGuardar>
+                            <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
                         </ContentElemenMov>
                     </>
                 }
