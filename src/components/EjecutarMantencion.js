@@ -389,32 +389,12 @@ const EjecutarMantencion = () => {
 
         itemsCheck.forEach((docs, index) => {
             falsosCheck.current = itemsCheck.filter(ic => ic.valor === '')
-            // if (falsosCheck.length > 0) {
-            //     Swal.fire(`Item checked ${falsos.map((i) => {
-            //         return i.id2;
-            //     })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
-            //     setBtnConfirmar(true);
-            // }
         });
-
         itemsLlenado.forEach((docs, index) => {
             falsosLlenado.current = itemsLlenado.filter(ic => ic.valor === '')
-            // if (falsosLlenado.length > 0) {
-            //     Swal.fire(`Tabla Vacio: Item ${falsos.map((i) => {
-            //         return i.id2;
-            //     })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
-            //     setBtnConfirmar(true);
-            // }
         });
-
         itemsSelec.forEach((docs, index) => {
             falsosSelec.current = itemsSelec.filter(ic => ic.valor === '')
-            // if (falsosSelec.length > 0) {
-            //     Swal.fire(`Tabla Seguridad: Item ${falsos.map((i) => {
-            //         return i.id2;
-            //     })} no puede estar vacio. Recuerde guardar antes de Confirmar`);
-            //     setBtnConfirmar(true);
-            // }
         });
 
         if (falsosCheck.current.length > 0) {
@@ -447,12 +427,6 @@ const EjecutarMantencion = () => {
                     usermod: user.email,
                     fechamod: fechaMod
                 });
-                // cambiarEstadoAlerta(true);
-                // cambiarAlerta({
-                //     tipo: 'exito',
-                //     mensaje: 'Check List de Mantención realizado con exito!.'
-                // });
-                Swal.fire('Check List de Mantención realizado con exito!');
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -473,7 +447,9 @@ const EjecutarMantencion = () => {
                     mensaje: 'Error al confirmar Bitacora:', error
                 })
             }
-            navigate('/serviciotecnico/mantencion')
+            Swal.fire('Check List de Mantención realizado con exito!' ).then((result) => {
+                navigate('/serviciotecnico/mantencion')
+            })
         }
     }
 
