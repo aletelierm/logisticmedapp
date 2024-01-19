@@ -167,7 +167,7 @@ const EjecutarMantencion = () => {
         // Filtar por docuemto de Cabecera Bitacora
         const cab = query(collection(db, 'bitacoracab'), where('emp_id', '==', users.emp_id), where('serie', '==', serie), where('confirmado', '==', false));
         const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         if (existeCab.length > 0) {
             // cambiarEstadoAlerta(true);
