@@ -20,6 +20,7 @@ const EjecutarMantencion = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
+    console.log("fecha:", fechaAdd.setDate(fechaAdd.getDate()+5));
     const navigate = useNavigate();
     const { id } = useParams();
     const [manto] = useObtenerMantencion(id);

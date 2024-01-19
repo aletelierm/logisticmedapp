@@ -31,7 +31,7 @@ const Mantenimiento = () => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-        console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj)
+        console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj)        
         return formatear;
     }
     //Ordenar fechas
