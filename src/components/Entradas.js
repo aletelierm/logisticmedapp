@@ -493,7 +493,7 @@ const Entradas = () => {
                     setFlag(!flag);
                     setBtnConfirmar(false);
                     setBtnNuevo(false);
-                    return;
+                    // return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -863,7 +863,7 @@ const Entradas = () => {
                                 onChange={ev => setNomTipoIn(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipoIn.map((d) => {
-                                    return (<option key={d.id}>{d.text}</option>)
+                                    return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
                         </ContentElemenSelect>
@@ -961,7 +961,7 @@ const Entradas = () => {
                         <Table.Body>
                             {dataEntrada.map((item, index) => {
                                 return (
-                                    <Table.Row key={item.id2}>
+                                    <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>

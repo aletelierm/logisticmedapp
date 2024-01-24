@@ -68,6 +68,7 @@ const Salidas = () => {
     const almacenar = useRef([]);
     const salidaid = useRef([]);
     const nomRut = useRef('Rut');
+    const cabid = useRef('');
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -209,15 +210,15 @@ const Salidas = () => {
             // Exite N° serie en Entradas 
             const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
             const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
-            // Validar en N° Serie en todos los documento de Entradas confirmado
+            // Validar en N° Serie en todos los documento de Salidas confirmado
             const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
             const confirmadoS = await getDocs(traerSC);
             const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // Validar en Eq_id en todos los documento de Entradas confirmado
+            // Validar en Eq_id en todos los documento de Salidas confirmado
             const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
             const confirmadoID = await getDocs(traerID);
             const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-
+            
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -636,16 +637,18 @@ const Salidas = () => {
         // Exite N° serie en Salidas 
         const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
         const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
-        // Validar en N° Serie en todos los documento de Entradas confirmado
+        // Validar en N° Serie en todos los documento de Salidas confirmado
         const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
         const confirmadoS = await getDocs(traerSC);
         const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // Validar en Eq_id en todos los documento de Entradas confirmado
+        // Validar en Eq_id en todos los documento de Salidas confirmado
         const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
         const confirmadoID = await getDocs(traerID);
         const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        const existeCab1 = cabecera1.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        console.log('existeCab', existeCab)
         // Validar que equipo pertenezca a proveedor y que este en arriendo
         const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
         const valida = await getDocs(traer);
@@ -680,7 +683,7 @@ const Salidas = () => {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
             const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.rut === rut).length === 1;
             const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
-
+            console.log(existeStatusST)
             if (nomTipoOut === 'RETIRO PACIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
@@ -690,18 +693,19 @@ const Salidas = () => {
                     })
                 } else {
                     inOut.current = 'PROCESO RETIRO PACIENTE';
+                    cabid.current = existeCab1[0].id
                     setBtnConfirmar(false);
                     try {
                         SalidasDB({
                             numDoc: numDoc,
                             tipDoc: nomTipDoc,
-                            date: existeCab[0].date,
+                            date: existeCab1[0].date,
                             tipoInOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
-                            cab_id: existeCab[0].id,
+                            cab_id: existeCab1[0].id,
                             eq_id: almacenar.current[0].id,
                             familia: almacenar.current[0].familia,
                             tipo: almacenar.current[0].tipo,
@@ -730,7 +734,7 @@ const Salidas = () => {
                         setFlag(!flag);
                         setBtnConfirmar(false);
                         setBtnNuevo(false);
-                        return;
+                        // return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -748,18 +752,19 @@ const Salidas = () => {
                     })
                 } else {
                     inOut.current = 'PROCESO RETIRO S.T.';
+                    cabid.current = existeCab1[0].id
                     setBtnConfirmar(false);
                     try {
                         SalidasDB({
                             numDoc: numDoc,
                             tipDoc: nomTipDoc,
-                            date: existeCab[0].date,
+                            date: existeCab1[0].date,
                             tipoInOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
-                            cab_id: existeCab[0].id,
+                            cab_id: existeCab1[0].id,
                             eq_id: almacenar.current[0].id,
                             familia: almacenar.current[0].familia,
                             tipo: almacenar.current[0].tipo,
@@ -788,7 +793,7 @@ const Salidas = () => {
                         setFlag(!flag);
                         setBtnConfirmar(false);
                         setBtnNuevo(false);
-                        return;
+                        // return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -820,6 +825,7 @@ const Salidas = () => {
                     } else {
                         inOut.current = nomTipoOut
                     }
+                    cabid.current = existeCab[0].id
                     setBtnConfirmar(false);
                     try {
                         SalidasDB({
@@ -860,7 +866,7 @@ const Salidas = () => {
                         setFlag(!flag);
                         setBtnConfirmar(false);
                         setBtnNuevo(false);
-                        return;
+                        // return;
                     } catch (error) {
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -879,6 +885,7 @@ const Salidas = () => {
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        console.log(cabid.current)
 
         if (dataSalida.length === 0) {
             Swal.fire('No hay Datos pr confirmar en este documento');
@@ -916,7 +923,7 @@ const Salidas = () => {
                 })
             }
             try {
-                await updateDoc(doc(db, 'cabecerasout', existeCab[0].id), {
+                await updateDoc(doc(db, 'cabecerasout', cabid.current), {
                     confirmado: true,
                     tipmov: 0, 
                     usermod: user.email,
@@ -926,7 +933,7 @@ const Salidas = () => {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'Error al actualizar documentos:', error
+                    mensaje: 'Error al actualizar Cabecera:', error
                 })
             }
             setNomTipDoc('');
@@ -1164,7 +1171,7 @@ const Salidas = () => {
                                 onChange={ev => { setNomTipoOut(ev.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {TipoOut.map((d) => {
-                                    return (<option key={d.id}>{d.text}</option>)
+                                    return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
                         </ContentElemenSelect>
@@ -1261,7 +1268,7 @@ const Salidas = () => {
                         <Table.Body>
                             {dataSalida.map((item, index) => {
                                 return (
-                                    <Table.Row key={item.id2}>
+                                    <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
@@ -1299,7 +1306,7 @@ const Salidas = () => {
                     <Table.Body>
                         {merge.map((item, index) => {
                             return (
-                                <Table.Row key={item.id2}>
+                                <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
                                     <Table.Cell>{item.numdoc}</Table.Cell>
