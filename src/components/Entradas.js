@@ -47,6 +47,7 @@ const Entradas = () => {
     const [dataEntrada, setDataEntrada] = useState([]);
     const [empresa, setEmpresa] = useState([]);
     const [status, setStatus] = useState([]);
+    const [protocolo, setProtocolo] = useState([]);
     const [numDoc, setNumDoc] = useState('');
     const [nomTipDoc, setNomTipDoc] = useState('');
     const [date, setDate] = useState('');
@@ -86,6 +87,13 @@ const Entradas = () => {
         const documento = documen.sort(OrdenaFecha);
         setDataEntrada(documento);
     }
+    // Filtar por docuemto de Entrada
+    const consultarCabProt = async () => {
+        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true));
+        const docu = await getDocs(doc);
+        const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setProtocolo(documen);
+    }
 
     //Leer  Empresa
     const getEmpresa = async () => {
@@ -115,6 +123,14 @@ const Entradas = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
+    // Sumar dias
+
+    const sumarDias = (fecha, dias) => {
+        const nuevaFecha = new Date(fecha);
+        nuevaFecha.setDate(nuevaFecha.getDate() + dias);
+        return nuevaFecha;
+    };
+
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -477,7 +493,7 @@ const Entradas = () => {
                     setFlag(!flag);
                     setBtnConfirmar(false);
                     setBtnNuevo(false);
-                    return;
+                    // return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -492,6 +508,8 @@ const Entradas = () => {
         almacenar.current = [];
         entradaid.current = [];
     }
+
+
 
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
@@ -543,6 +561,51 @@ const Entradas = () => {
                         mensaje: 'Error al actualizar documentos:', error
                     })
                 }
+                if (nomTipoIn === 'COMPRA') {
+                    // Crea una nueva instancia de lote (batch)
+                    const batch = writeBatch(db);
+                    // Obtiene una referencia a una colección específica en Firestore
+                    const mantoRef = collection(db, 'mantenciones');
+                    let contar = 0
+                    // Itera a través de los nuevos documentos y agrégalos al lote
+                    dataEntrada.forEach((docs) => {
+                        protocolo.forEach((item) => {
+                            if (docs.tipo === item.tipo) {
+                                contar = contar + 1;
+                                const nuevoDocRef = doc(mantoRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                                batch.set(nuevoDocRef, {
+                                    cab_id_protocol: item.id,
+                                    nombre_protocolo: item.nombre,
+                                    programa: item.programa,
+                                    dias: item.dias,
+                                    fecha_inicio: fechaAdd,
+                                    fecha_termino: sumarDias(fechaAdd, item.dias),
+                                    id_eq: docs.id,
+                                    familia: docs.familia,
+                                    tipo: docs.tipo,
+                                    serie: docs.serie,
+                                    userAdd: user.email,
+                                    userMod: user.email,
+                                    fechaAdd: fechaAdd,
+                                    fechaMod: fechaMod,
+                                    emp_id: users.emp_id,
+                                    enproceso: '0'
+                                });
+                            } 
+                        })
+                    });
+                    batch.commit()
+                        .then(() => {
+                            if (contar > 0) {
+                                Swal.fire('Se han agregado Equipos al Plan de Mantención');
+                            } else {
+                                return '';
+                            }
+                        })
+                        .catch((error) => {
+                            Swal.fire('Se ha producido un error al agregar Equipos al Plan de Mantención');
+                        });
+                }
 
             } else {
                 const batch = writeBatch(db);
@@ -563,7 +626,6 @@ const Entradas = () => {
                         historial: 1
                     });
                 });
-                console.log('Se cambia historial a 1')
                 try {
                     await batch.commit();
                     cambiarEstadoAlerta(true);
@@ -711,6 +773,7 @@ const Entradas = () => {
         getStatus();
         getEmpresa();
         consultarCab();
+        consultarCabProt();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -800,7 +863,7 @@ const Entradas = () => {
                                 onChange={ev => setNomTipoIn(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {TipoIn.map((d) => {
-                                    return (<option key={d.id}>{d.text}</option>)
+                                    return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
                         </ContentElemenSelect>
@@ -898,7 +961,7 @@ const Entradas = () => {
                         <Table.Body>
                             {dataEntrada.map((item, index) => {
                                 return (
-                                    <Table.Row key={item.id2}>
+                                    <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
