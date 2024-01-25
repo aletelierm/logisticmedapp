@@ -243,6 +243,7 @@ const Confirmados = () => {
             return;
         } else {
             if (verdaderos.length > 0) {
+
                 const batch = writeBatch(db);
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
@@ -250,7 +251,6 @@ const Confirmados = () => {
                 });
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'salidas', docs.id);
-                    console.log('docs.id confirmar entrega', docs.id)
                     batch.update(docRef, { historial: 1 }); // Indica que se recepciono el equipo en paciente
                 });
                 try {
@@ -303,7 +303,6 @@ const Confirmados = () => {
                 });
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'salidas', docs.id);
-                    console.log('docs.id no confirma entrega', docs.id)
                     batchf.update(docRef, { historial: 1 }); // Indica que no se recepciono el equipo en paciente
                 });
                 try {

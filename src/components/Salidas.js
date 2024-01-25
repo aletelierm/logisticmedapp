@@ -629,7 +629,6 @@ const Salidas = () => {
             const existeId = traerId.data();
             const arreglo = [existeId];
             const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-            console.log('existe2', existe2)
             almacenar.current = existe2;
         } else {
             console.log('almacenar', almacenar.current);
@@ -648,11 +647,11 @@ const Salidas = () => {
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         const existeCab1 = cabecera1.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        console.log('existeCab', existeCab)
         // Validar que equipo pertenezca a proveedor y que este en arriendo
         const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
         const valida = await getDocs(traer);
         const existeeqprov = (valida.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log(existeeqprov)
 
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
@@ -683,7 +682,6 @@ const Salidas = () => {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
             const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.rut === rut).length === 1;
             const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
-            console.log(existeStatusST)
             if (nomTipoOut === 'RETIRO PACIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
@@ -803,7 +801,8 @@ const Salidas = () => {
                     }
                 }
             } else {
-                if (nomTipoOut === 'DEVOLUCION PROVEEDOR' && existeeqprov.length === 0) {
+                console.log('validacion de equipo en arriendo ', existeeqprov)
+                if (nomTipoOut === 'DEVOLUCION A PROVEEDOR' && existeeqprov.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
@@ -821,7 +820,7 @@ const Salidas = () => {
                     } else if (nomTipoOut === 'SERVICIO TECNICO') {
                         inOut.current = 'TRANSITO S.T.'
                     } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR') {
-                        inOut.current = 'DEVOLUCION A PROVEEDOR'
+                        inOut.current = 'TRANSITO A PROVEEDOR'
                     } else {
                         inOut.current = nomTipoOut
                     }
@@ -890,7 +889,7 @@ const Salidas = () => {
         if (dataSalida.length === 0) {
             Swal.fire('No hay Datos pr confirmar en este documento');
         } else {
-            const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+            // const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
             const batch = writeBatch(db);
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
