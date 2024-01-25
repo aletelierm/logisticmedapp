@@ -47,6 +47,7 @@ export const Home = () => {
     <NavbarSesion />
     <SideBar>     
     <Routes>
+            <Route path="home" element={<DashboardEq/>}/>
             <Route path="misequipos" element={<DashboardEq/>}/>
             <Route path="misequipos/agregarfamilia" element={<AgregarFamilia/>}/>
             <Route path="actualizafamilia/:id" element={<ActualizaFamilia/>}/>

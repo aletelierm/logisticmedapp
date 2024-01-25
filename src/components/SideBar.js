@@ -10,7 +10,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
 const SideBar = ({ children }) => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
     const { users } = useContext(UserContext);
     const [menu, setMenu] = useState([])
