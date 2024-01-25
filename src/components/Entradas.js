@@ -94,7 +94,6 @@ const Entradas = () => {
         const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolo(documen);
     }
-
     //Leer  Empresa
     const getEmpresa = async () => {
         const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
@@ -124,7 +123,6 @@ const Entradas = () => {
         setDate(formatoDatetimeLocal)
     }
     // Sumar dias
-
     const sumarDias = (fecha, dias) => {
         const nuevaFecha = new Date(fecha);
         nuevaFecha.setDate(nuevaFecha.getDate() + dias);
@@ -420,7 +418,6 @@ const Entradas = () => {
             })
             return;
         } else if (almacenar.current.length === 0) {
-            console.log('Validacion', almacenar.current.length)
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -508,9 +505,6 @@ const Entradas = () => {
         almacenar.current = [];
         entradaid.current = [];
     }
-
-
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
@@ -851,7 +845,6 @@ const Entradas = () => {
                                 min={fechaMinima.toISOString().slice(0, 16)}
                                 max={fechaMaxima.toISOString().slice(0, 16)}
                             />
-                            {/* <DatePicker date={date} setDate={setDate} /> */}
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <ContentElemenMov>
@@ -1036,8 +1029,7 @@ const Entradas = () => {
                                     </Table.Cell>
                                 </Table.Row>
                             )
-                        }
-                        )}
+                        })}
                     </Table.Body>
                 </Table>
             </ListarProveedor>

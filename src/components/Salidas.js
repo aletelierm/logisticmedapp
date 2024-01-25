@@ -172,7 +172,6 @@ const Salidas = () => {
                 const traerProv = query(collection(db, 'proveedores'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
                 const rutProv = await getDocs(traerProv)
                 const existeProv = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
                 if (existeProv.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -218,7 +217,11 @@ const Salidas = () => {
             const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
             const confirmadoID = await getDocs(traerID);
             const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            
+            // Validar que equipo pertenezca a proveedor y que este en arriendo
+            const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
+            const valida = await getDocs(traer);
+            const existeeqprov = (valida.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
             if (almacenar.current.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -257,6 +260,12 @@ const Salidas = () => {
                             mensaje: 'Equipo no se encuentra en Servicio Tecnico'
                         })
                     }
+                } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR' && existeeqprov.length === 0) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Equipo no pertenece a este Proveedor o no ha sido arrendado'
+                    })
                 } else {
                     if (!existeStatusBod) {
                         cambiarEstadoAlerta(true);
@@ -288,11 +297,11 @@ const Salidas = () => {
         // Filtar por docuemto de Cabecera Tipmov = 2
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 2));
         const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
+        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
         // Filtar por docuemto de Cabecera Tipmov = 0
         const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 0));
         const cabecera1 = await getDocs(cab1);
-        const existeCab1 = (cabecera1.docs.map((doc, index) => ({ ...doc.data(), id: doc.id})));
+        const existeCab1 = (cabecera1.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
         // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
@@ -651,7 +660,6 @@ const Salidas = () => {
         const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
         const valida = await getDocs(traer);
         const existeeqprov = (valida.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(existeeqprov)
 
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
@@ -801,7 +809,6 @@ const Salidas = () => {
                     }
                 }
             } else {
-                console.log('validacion de equipo en arriendo ', existeeqprov)
                 if (nomTipoOut === 'DEVOLUCION A PROVEEDOR' && existeeqprov.length === 0) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -924,7 +931,7 @@ const Salidas = () => {
             try {
                 await updateDoc(doc(db, 'cabecerasout', cabid.current), {
                     confirmado: true,
-                    tipmov: 0, 
+                    tipmov: 0,
                     usermod: user.email,
                     fechamod: fechaMod
                 });
@@ -1131,8 +1138,7 @@ const Salidas = () => {
                                         })
                                         setNumDoc('')
                                     }
-                                }
-                                }
+                                }}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -1265,9 +1271,9 @@ const Salidas = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                           {dataSalida.map((item, index) => {
+                            {dataSalida.map((item, index) => {
                                 return (
-                                    <Table.Row key={index}>
+                                    <Table.Row key={item.id2}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
@@ -1280,7 +1286,7 @@ const Salidas = () => {
                                         </Table.Cell>
                                     </Table.Row>
                                 )
-                            })} 
+                            })}
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
@@ -1305,7 +1311,7 @@ const Salidas = () => {
                     <Table.Body>
                         {merge.map((item, index) => {
                             return (
-                                <Table.Row key={index}>
+                                <Table.Row key={item.id2}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
                                     <Table.Cell>{item.numdoc}</Table.Cell>
@@ -1338,8 +1344,7 @@ const Salidas = () => {
                                     </Table.Cell>
                                 </Table.Row>
                             )
-                        }
-                        )}
+                        })}
                     </Table.Body>
                 </Table>
             </ListarProveedor>
