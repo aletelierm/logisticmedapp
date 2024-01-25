@@ -243,7 +243,7 @@ const Confirmados = () => {
             return;
         } else {
             if (verdaderos.length > 0) {
-
+                
                 const batch = writeBatch(db);
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
