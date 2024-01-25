@@ -1259,7 +1259,7 @@ const Salidas = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {dataSalida.map((item, index) => {
+                           {dataSalida.map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{index + 1}</Table.Cell>
@@ -1274,7 +1274,7 @@ const Salidas = () => {
                                         </Table.Cell>
                                     </Table.Row>
                                 )
-                            })}
+                            })} 
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
