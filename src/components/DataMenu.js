@@ -120,6 +120,12 @@ export const DataMenu = [
         path: 'reportes/reporte4',
         icon: <FaIcons.FaListUl />,
         cName: 'sub-nav'
+      },
+      {
+        title: 'Inventario Paciente',
+        path: 'reportes/reporte5',
+        icon: <MdIcons.MdOutlineInventory />,
+        cName: 'sub-nav'
       }
     ]
   },

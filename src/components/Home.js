@@ -33,6 +33,7 @@ import ReporteHistoriaEquipo from './ReporteHistoriaEquipo';
 import ReporteHistoriaCliente from './ReporteHistoriaCliente';
 import ReporteStatus from './ReporteStatus';
 import ReporteMovimientos from './ReporteMovimientosES';
+import ReporteInvCliente from './ReporteInvCliente';
 import { Reportes } from './Reportes';
 import Confirmados from './Confirmados';
 import UsuariosEnvios from './UsuariosAlertas';
@@ -67,6 +68,7 @@ export const Home = () => {
             <Route path="reportes/reporte2" element={<ReporteStatus/>}/>
             <Route path="reportes/reporte3" element={<ReporteHistoriaCliente/>}/>
             <Route path="reportes/reporte4" element={<ReporteMovimientos/>}/>
+            <Route path="reportes/reporte5" element={<ReporteInvCliente/>}/>
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>
             <Route path="serviciotecnico/items" element={<AgregarItems/>}/>            
             <Route path="serviciotecnico/protocolos" element={<Protocolos/>}/>            

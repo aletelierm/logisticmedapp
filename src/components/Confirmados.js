@@ -31,9 +31,17 @@ const Confirmados = () => {
     const [isOpenR, setIsOpenR] = useState(false);
     const [isChecked, setIsChecked] = useState([]);
     const [isChecked2, setIsChecked2] = useState([]);
+    /* const [alertaSalida, setAlertasalida] = useState([]); */
     const cabeceraId = useRef('');
     const inOut = useRef('');
 
+   /*   //Lectura de usuario para alertas de salida
+     const getAlertasSalidas = async () => {
+        const traerAlertas = collection(db, 'usuariosalertas');
+        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id,'confirma','==',true));
+        const data = await getDocs(dato);
+        setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    } */
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true), where('correo', '==', users.correo));

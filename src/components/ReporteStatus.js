@@ -137,7 +137,7 @@ const Reporte2 = () => {
                                         {/* <Table.Cell>{item.marca}</Table.Cell>
                                         <Table.Cell>{item.modelo}</Table.Cell> */}
                                         <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell>{item.price}</Table.Cell>
+                                        <Table.Cell>{item.price.toLocaleString()}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                         <Table.Cell>{item.status}</Table.Cell>
                                         {/* <Table.Cell>{item.price}</Table.Cell> */}
