@@ -585,7 +585,7 @@ const Entradas = () => {
                                     emp_id: users.emp_id,
                                     enproceso: '0'
                                 });
-                            } 
+                            }
                         })
                     });
                     batch.commit()
@@ -953,12 +953,13 @@ const Entradas = () => {
                         </Table.Header>
                         <Table.Body>
                             {dataEntrada.map((item, index) => {
+                                
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell>${item.price}.-</Table.Cell>
+                                        <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
                                         {
                                             item.tipoinout === 'COMPRA' || item.tipoinout === 'ARRIENDO' || item.tipoinout === 'COMODATO' ?
                                                 <Table.Cell style={{ textAlign: 'center' }}>
