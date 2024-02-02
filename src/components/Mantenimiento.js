@@ -16,8 +16,10 @@ const Mantenimiento = () => {
     const fechaHoy = new Date();
 
     const { users } = useContext(UserContext);
-    const [mantencion, setMantencion] = useState([])
+    const [mantencion, setMantencion] = useState([]);
+    const [status, setStatus] = useState([]);
     const [modal, setModal] = useState(false);
+    const [modalST, setModalST] = useState(false);
 
     // Leer datos de cabecera Entradas
     const getMantenimiento = async () => {
@@ -26,13 +28,20 @@ const Mantenimiento = () => {
         const data = await getDocs(dato)
         setMantencion(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+    // Leer datos de cabecera Entradas
+    const getStatus = async () => {
+        const traer = collection(db, 'status');
+        const dato = query(traer, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setStatus(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-        console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj)        
+        console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj)
         return formatear;
     }
     //Ordenar fechas
@@ -40,12 +49,10 @@ const Mantenimiento = () => {
 
     useEffect(() => {
         getMantenimiento();
+        getStatus();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    // const ejecutar = () => {
-    //     Swal.fire('Check list de mantención');
-    // }
 
     return (
         <div>
@@ -67,6 +74,7 @@ const Mantenimiento = () => {
                     </Table.Header>
                     <Table.Body>
                         {manteOrd.map((item, index) => {
+                            const statusST = status.filter(st => st.serie === item.serie && st.status === 'SERVICIO TECNICO').length === 1;
                             return (
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
@@ -78,11 +86,19 @@ const Mantenimiento = () => {
                                     <Table.Cell>{formatearFecha(item.fecha_termino)}</Table.Cell>
                                     {
                                         item.fecha_termino.toDate().setHours(0, 0, 0, 0) <= fechaHoy.setHours(0, 0, 0, 0) ?
-                                            <Table.Cell style={{ textAlign: 'center' }} /*onClick={() => ejecutar()}*/ title="Ejecutar Mantención">
-                                                <Link disabled to={`/ejecutarmantencion/${item.id}`}>
-                                                    <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0, 0, 0, 0) <= fechaHoy.setHours(0, 0, 0, 0) ? 'red' : 'green', cursor: 'pointer' }} />
-                                                </Link>
-                                            </Table.Cell>
+                                            statusST === true ?
+                                                <Table.Cell style={{ textAlign: 'center' }} /* onClick={() => ejecutar()} */ title="Ejecutar Mantención">
+                                                    <Link disabled to={`/ejecutarmantencion/${item.id}`}>
+                                                        <MdIcons.MdPlayCircle style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0, 0, 0, 0) <= fechaHoy.setHours(0, 0, 0, 0) ? 'red' : 'green', cursor: 'pointer' }} />
+                                                    </Link>
+                                                </Table.Cell>
+                                                :
+                                                <Table.Cell style={{ textAlign: 'center' }} title="Ejecutar Mantención">
+                                                    <MdIcons.MdPlayCircle
+                                                        style={{ fontSize: '20px', color: item.fecha_termino.toDate().setHours(0, 0, 0, 0) <= fechaHoy.setHours(0, 0, 0, 0) ? 'red' : 'green', cursor: 'pointer' }}
+                                                        onClick={() => setModalST(true)}
+                                                    />
+                                                </Table.Cell>
                                             :
                                             <Table.Cell style={{ textAlign: 'center' }} title="Ejecutar Mantención">
                                                 <MdIcons.MdPlayCircle
@@ -106,6 +122,18 @@ const Mantenimiento = () => {
                             <h2>¡Este equipo no esta disponible para Ejecutar Mantención!</h2>
                             <ConfirmaBtn style={{ justifyContent: 'center' }} className="confirmation-buttons">
                                 <Boton2 onClick={() => setModal(false)}>Aceptar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+            {
+                modalST && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¡Este equipo no se encuentra en Servicio Tecnico!</h2>
+                            <ConfirmaBtn style={{ justifyContent: 'center' }} className="confirmation-buttons">
+                                <Boton2 onClick={() => setModalST(false)}>Aceptar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
                     </Overlay>
