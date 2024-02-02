@@ -258,7 +258,7 @@ const Confirmados = () => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
-                        mensaje: 'Documentos actualizados correctamente.'
+                        mensaje: 'Documentos Entregados Correctamente.'
                     });
                 } catch (error) {
                     Swal.fire('Se ha producido un error al actualizar Status de equipos recibidos');
@@ -330,6 +330,7 @@ const Confirmados = () => {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
             }
         }
+        // Alerta para enviar correo
     }
 
     // Filtros para guardar datos y/o validaciones Retiro
@@ -432,6 +433,7 @@ const Confirmados = () => {
                 Swal.fire('Se ha producido un error al actualizar la cabecera');
             }
         }
+        // Alerta para enviar correo
     }
 
     useEffect(() => {
