@@ -1051,7 +1051,7 @@ const Salidas = () => {
 
     const cuerpoCorreo = (data) => {
         return ReactDOMServer.renderToString(
-            <div>
+            <div style={{ backgroundColor: '#EEF2EF' }}>
                 <h2>Salida de Bodega</h2>
                 <div style={{ backgroundColor: '#EEF2EF' }}>
                     <p>Tipo de Salida :{data[0].tipoinout}</p>

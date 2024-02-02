@@ -17,6 +17,8 @@ export const TipoIn= [
 export const TipoOut= [
     { key: '1', value: '1', text: 'PACIENTE' },
     { key: '2', value: '2', text: 'SERVICIO TECNICO' },
+    // { key: '2', value: '2', text: 'SERVICIO TECNICO CORRECTIVO' },
+    // { key: '2', value: '2', text: 'SERVICIO TECNICO PREVENTIVO' },
     { key: '3', value: '3', text: 'RETIRO PACIENTE' },
     { key: '4', value: '4', text: 'RETIRO SERVICIO TECNICO' },
     { key: '5', value: '5', text: 'DEVOLUCION A PROVEEDOR' }
