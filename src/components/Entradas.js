@@ -443,7 +443,7 @@ const Entradas = () => {
             })
         } else {
             // Validar en entrdas que equipos esten en Arriendo/Comodato
-            const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
+            const existeStatusAoC = status.filter(st => st.id === almacenar.current[0].id && (st.status === 'DEVOLUCION A PROVEEDOR' || st.status === 'PREPARACION')).length === 1;
             if (!existeStatusAoC) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
