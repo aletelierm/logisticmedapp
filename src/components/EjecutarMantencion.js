@@ -20,7 +20,7 @@ const EjecutarMantencion = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
-    console.log("fecha:", fechaAdd.setDate(fechaAdd.getDate()+5));
+    console.log("fecha:", fechaAdd.setDate(fechaAdd.getDate() + 5));
     const navigate = useNavigate();
     const { id } = useParams();
     const [manto] = useObtenerMantencion(id);
@@ -29,8 +29,9 @@ const EjecutarMantencion = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [itemsInst, setItemsInst] = useState([]);
     const [itemsCheck, setItemsCheck] = useState([]);
-    const [itemsLlenado, setItemsLlenado] = useState([]);
-    const [itemsSelec, setItemsSelec] = useState([]);
+    const [itemsMedicion, setItemsMedicion] = useState([]);
+    const [itemsSeg, setItemsSeg] = useState([]);
+    const [itemsSeg2, setItemsSeg2] = useState([]);
     // const [protocolo, setProtocolo] = useState([]);
     const [nombreProtocolo, setNombreProtocolo] = useState('');
     const [programa, setPrograma] = useState('');
@@ -80,14 +81,14 @@ const EjecutarMantencion = () => {
         const docuCheck = await getDocs(docCheck);
         const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsCheck(documenCheck);
-        const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'LLENADO'));
+        const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
         const docuLlen = await getDocs(docLlen);
         const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
-        setItemsLlenado(documenLlen);
-        const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'SELECCION'));
+        setItemsMedicion(documenLlen);
+        const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'SEGURIDAD'));
         const docuSel = await getDocs(docSel);
         const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
-        setItemsSelec(documenSel);
+        setItemsSeg(documenSel);
         // const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current));
         // const docuSel = await getDocs(docSel);
         // const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
@@ -137,14 +138,21 @@ const EjecutarMantencion = () => {
         });
     }
     const handleButtonClickLlen = (e, index) => {
-        setItemsLlenado((prevItems) => {
+        setItemsMedicion((prevItems) => {
+            const nuevosElementos = [...prevItems];
+            nuevosElementos[index].valor = e.target.value;
+            return nuevosElementos;
+        });
+    }
+    const handleButtonClickSeg = (e, index) => {
+        setItemsSeg((prevItems) => {
             const nuevosElementos = [...prevItems];
             nuevosElementos[index].valor = e.target.value;
             return nuevosElementos;
         });
     }
     const handleButtonClickSelec = (e, index) => {
-        setItemsSelec((prevItems) => {
+        setItemsSeg2((prevItems) => {
             const nuevosElementos = [...prevItems];
             nuevosElementos[index].valor = e.target.value;
             return nuevosElementos;
@@ -224,11 +232,11 @@ const EjecutarMantencion = () => {
         const docLlen = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'LLENADO'));
         const docuLlen = await getDocs(docLlen);
         const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setItemsLlenado(documenLlen);
+        setItemsMedicion(documenLlen);
         const docSel = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current), where('categoria', '==', 'SELECCION'));
         const docuSel = await getDocs(docSel);
         const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        setItemsSelec(documenSel);
+        setItemsSeg(documenSel);
         // const docSel = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current));
         // const docuSel = await getDocs(docSel);
         // const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
@@ -275,7 +283,7 @@ const EjecutarMantencion = () => {
                 });
             });
             // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
-            itemsLlenado.forEach((docs) => {
+            itemsMedicion.forEach((docs) => {
                 const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
                 batch.set(nuevoDocRef, {
                     item: docs.item,
@@ -290,7 +298,7 @@ const EjecutarMantencion = () => {
                 });
             });
             // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
-            itemsSelec.forEach((docs) => {
+            itemsSeg.forEach((docs) => {
                 const nuevoDocRef = doc(bitacoraRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
                 batch.set(nuevoDocRef, {
                     item: docs.item,
@@ -331,7 +339,7 @@ const EjecutarMantencion = () => {
                 });
             });
             // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
-            itemsLlenado.forEach((docs) => {
+            itemsMedicion.forEach((docs) => {
                 const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
                 batch.update(nuevoDocRef, {
                     valor: docs.valor,
@@ -340,7 +348,7 @@ const EjecutarMantencion = () => {
                 });
             });
             // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
-            itemsSelec.forEach((docs) => {
+            itemsSeg.forEach((docs) => {
                 const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
                 batch.update(nuevoDocRef, {
                     valor: docs.valor,
@@ -391,11 +399,11 @@ const EjecutarMantencion = () => {
         itemsCheck.forEach((docs, index) => {
             falsosCheck.current = itemsCheck.filter(ic => ic.valor === '')
         });
-        itemsLlenado.forEach((docs, index) => {
-            falsosLlenado.current = itemsLlenado.filter(ic => ic.valor === '')
+        itemsMedicion.forEach((docs, index) => {
+            falsosLlenado.current = itemsMedicion.filter(ic => ic.valor === '')
         });
-        itemsSelec.forEach((docs, index) => {
-            falsosSelec.current = itemsSelec.filter(ic => ic.valor === '')
+        itemsSeg.forEach((docs, index) => {
+            falsosSelec.current = itemsSeg.filter(ic => ic.valor === '')
         });
 
         if (falsosCheck.current.length > 0) {
@@ -448,7 +456,7 @@ const EjecutarMantencion = () => {
                     mensaje: 'Error al confirmar Bitacora:', error
                 })
             }
-            Swal.fire('Check List de Mantención realizado con exito!' ).then((result) => {
+            Swal.fire('Check List de Mantención realizado con exito!').then((result) => {
                 navigate('/serviciotecnico/mantencion')
             })
         }
@@ -539,7 +547,7 @@ const EjecutarMantencion = () => {
                             </Table.Body>
                         </Table>
 
-                        <Titulo style={{ fontSize: '18px' }}>Tabla de vacio</Titulo>
+                        <Titulo style={{ fontSize: '18px' }}>Medición</Titulo>
                         <Table singleLine>
                             <Table.Header>
                                 <Table.Row>
@@ -551,20 +559,21 @@ const EjecutarMantencion = () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {itemsLlenado.map((item, index) => {
+                                {itemsMedicion.map((item, index) => {
+                                    console.log(itemsMedicion)
                                     return (
                                         <Table.Row key={index} >
                                             <Table.Cell >{index + 1}</Table.Cell>
                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
                                             <Table.Cell  >
                                                 <Input
-                                                    type="text"
+                                                    type="number"
                                                     value={item.valor}
                                                     onChange={e => handleButtonClickLlen(e, index)}
                                                 />
                                             </Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor >= '26°' ? true : false} /></Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor < '26°' ? true : false} /></Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor >= item.inicial ? true : false} /></Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor < item.final ? false : true} /></Table.Cell>
                                         </Table.Row>
                                     )
                                 })}
@@ -573,18 +582,69 @@ const EjecutarMantencion = () => {
 
                         <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
                         <ContentElemenMov>
-                            {itemsSelec.map((item, index) => {
-                                return (
-                                    <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
-                                        <option>{item.item} :</option>
-                                        {Opcion.map((o, index) => {
-                                            return (
-                                                <option key={index} >{o.text}</option>
-                                            )
-                                        })}
-                                    </Select>
-                                )
-                            })}
+                            <Table singleLine>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell>N°</Table.HeaderCell>
+                                        <Table.HeaderCell>Item</Table.HeaderCell>
+                                        <Table.HeaderCell>Referencia</Table.HeaderCell>
+                                        {/* <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell> */}
+                                        {/* <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell> */}
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {itemsSeg.map((item, index) => {
+                                        return (
+                                            <Table.Row key={index} >
+                                                <Table.Cell >{index + 1}</Table.Cell>
+                                                {item.item === 'CLASIFICACION' ?
+                                                    <>
+                                                        <Table.Cell >{item.item}</Table.Cell>
+                                                        <Table.Cell >
+                                                            <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
+                                                                {Opcion.map((o, index) => {
+                                                                    return (
+                                                                        <option key={index} >{o.text}</option>
+                                                                        )
+                                                                    })}
+                                                            </Select>
+                                                        </Table.Cell>
+                                                                    {/* <Table.Cell ></Table.Cell> */}
+                                                                    {/* <Table.Cell ></Table.Cell> */}
+                                                    </>
+                                                    :
+                                                    <>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
+                                                        <Table.Cell  >
+                                                            <Input
+                                                                type="text"
+                                                                value={item.valor}
+                                                                onChange={e => handleButtonClickSeg(e, index)}
+                                                            />
+                                                        </Table.Cell>
+                                                        {/* <Table.Cell style={{ textAlign: 'center' }}></Table.Cell> */}
+                                                        {/* <Table.Cell style={{ textAlign: 'center' }}></Table.Cell> */}
+                                                    </>
+                                                }
+                                            </Table.Row>
+                                        )
+                                    })}
+                                </Table.Body>
+                            </Table>
+                            {/* // {itemsSeg.map((item, index) => { */}
+                            {/* //     if (item.item !== 'CLASIFICACION') { */}
+                            {/* //         return ( */}
+                            {/* //             <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}> */}
+                            {/* //                 <option>{item.item} :</option> */}
+                            {/* //                 {Opcion.map((o, index) => { */}
+                            {/* //                     return ( */}
+                            {/* //                         <option key={index} >{o.text}</option> */}
+                            {/* //                     ) */}
+                            {/* //                 })} */}
+                            {/* //             </Select> */}
+                            {/* //         ) */}
+                            {/* {/* //     }  */}
+                            {/* // })} */}
                         </ContentElemenMov>
 
                         <ContentElemenMov style={{ marginTop: '10px' }}>
