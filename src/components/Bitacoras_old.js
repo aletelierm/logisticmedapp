@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FaRegFilePdf } from "react-icons/fa";
 import { ListarProveedor, Titulo } from '../elementos/General';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Ref, Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
 import { Link } from 'react-router-dom';
 import { getDocs, collection, where, query } from 'firebase/firestore';
@@ -68,8 +67,7 @@ const Bitacoras = () => {
                                     <Table.Cell>{item.tipo}</Table.Cell>
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{item.nombre_protocolo}</Table.Cell>
-                                    <Table.Cell>{formatearFecha(item.fecha_mantencion)}</Table.Cell>
-                                    <Table.Cell textAlign="center"><FaRegFilePdf style={{fontSize: '24px', color: 'red'}} title='Visualizar en PDF' /></Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.fecha_mantencion)}</Table.Cell> 
                                 </Table.Row>
                             )
                         })}

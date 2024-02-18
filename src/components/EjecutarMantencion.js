@@ -490,16 +490,20 @@ const EjecutarMantencion = () => {
                     </ContentElemenSelect>
                 </ContentElemenMov>
                 <ContentElemenMov>
-                    <ContentElemenSelect style={{ padding: '5px' }}>
-                        <Label>Instrumentos requeridos :</Label>
-                        <ul >
-                            {itemsInst.map((item, index) => {
-                                return (
-                                    <li style={{ fontSize: '12px' }} key={index}>{item.item}</li>
-                                )
-                            })}
-                        </ul>
-                    </ContentElemenSelect>
+                    {itemsInst.length === 0 ?
+                        ''
+                        :
+                        <ContentElemenSelect style={{ padding: '5px' }}>
+                            <Label>Instrumentos requeridos :</Label>
+                            <ul >
+                                {itemsInst.map((item, index) => {
+                                    return (
+                                        <li style={{ fontSize: '12px' }} key={index}>{item.item}</li>
+                                    )
+                                })}
+                            </ul>
+                        </ContentElemenSelect>
+                    }
                 </ContentElemenMov>
                 {
                     isOpen &&
@@ -512,140 +516,147 @@ const EjecutarMantencion = () => {
                 }
                 {mostrar &&
                     <>
-                        <Table singleLine>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell>N°</Table.HeaderCell>
-                                    <Table.HeaderCell>Item</Table.HeaderCell>
-                                    <Table.HeaderCell></Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {itemsCheck.map((item, index) => {
-                                    return (
-                                        <Table.Row key={index}>
-                                            <Table.Cell >{index + 1}</Table.Cell>
-                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}>
-                                                <BotonCheck
-                                                    onClick={() => handleButtonClick(index, 'pasa')}
-                                                    className={item.valor === 'pasa' ? 'activeBoton' : ''}
-
-                                                >Pasa</BotonCheck>
-                                                <BotonCheck
-                                                    onClick={() => handleButtonClick(index, 'nopasa')}
-                                                    className={item.valor === 'nopasa' ? 'activeBoton' : ''}
-                                                >No Pasa</BotonCheck>
-                                                <BotonCheck
-                                                    onClick={() => handleButtonClick(index, 'na')}
-                                                    className={item.valor === 'na' ? 'activeBoton' : ''}
-                                                >N/A</BotonCheck>
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    )
-                                })}
-                            </Table.Body>
-                        </Table>
-
-                        <Titulo style={{ fontSize: '18px' }}>Medición</Titulo>
-                        <Table singleLine>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell>N°</Table.HeaderCell>
-                                    <Table.HeaderCell>Item</Table.HeaderCell>
-                                    <Table.HeaderCell>Referencia</Table.HeaderCell>
-                                    <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell>
-                                    <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {itemsMedicion.map((item, index) => {
-                                    console.log(itemsMedicion)
-                                    return (
-                                        <Table.Row key={index} >
-                                            <Table.Cell >{index + 1}</Table.Cell>
-                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                            <Table.Cell  >
-                                                <Input
-                                                    type="number"
-                                                    value={item.valor}
-                                                    onChange={e => handleButtonClickLlen(e, index)}
-                                                />
-                                            </Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor >= item.inicial ? true : false} /></Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor < item.final ? false : true} /></Table.Cell>
-                                        </Table.Row>
-                                    )
-                                })}
-                            </Table.Body>
-                        </Table>
-
-                        <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
-                        <ContentElemenMov>
+                        {itemsCheck.length === 0 ?
+                            ''
+                            :
                             <Table singleLine>
                                 <Table.Header>
                                     <Table.Row>
                                         <Table.HeaderCell>N°</Table.HeaderCell>
                                         <Table.HeaderCell>Item</Table.HeaderCell>
-                                        <Table.HeaderCell>Referencia</Table.HeaderCell>
-                                        {/* <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell> */}
-                                        {/* <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell> */}
+                                        <Table.HeaderCell></Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {itemsSeg.map((item, index) => {
+                                    {itemsCheck.map((item, index) => {
                                         return (
-                                            <Table.Row key={index} >
+                                            <Table.Row key={index}>
                                                 <Table.Cell >{index + 1}</Table.Cell>
-                                                {item.item === 'CLASIFICACION' ?
-                                                    <>
-                                                        <Table.Cell >{item.item}</Table.Cell>
-                                                        <Table.Cell >
-                                                            <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
-                                                                {Opcion.map((o, index) => {
-                                                                    return (
-                                                                        <option key={index} >{o.text}</option>
-                                                                        )
-                                                                    })}
-                                                            </Select>
-                                                        </Table.Cell>
-                                                                    {/* <Table.Cell ></Table.Cell> */}
-                                                                    {/* <Table.Cell ></Table.Cell> */}
-                                                    </>
-                                                    :
-                                                    <>
-                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                                        <Table.Cell  >
-                                                            <Input
-                                                                type="text"
-                                                                value={item.valor}
-                                                                onChange={e => handleButtonClickSeg(e, index)}
-                                                            />
-                                                        </Table.Cell>
-                                                        {/* <Table.Cell style={{ textAlign: 'center' }}></Table.Cell> */}
-                                                        {/* <Table.Cell style={{ textAlign: 'center' }}></Table.Cell> */}
-                                                    </>
-                                                }
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
+                                                <Table.Cell style={{ textAlign: 'center' }}>
+                                                    <BotonCheck
+                                                        onClick={() => handleButtonClick(index, 'pasa')}
+                                                        className={item.valor === 'pasa' ? 'activeBoton' : ''}
+
+                                                    >Pasa</BotonCheck>
+                                                    <BotonCheck
+                                                        onClick={() => handleButtonClick(index, 'nopasa')}
+                                                        className={item.valor === 'nopasa' ? 'activeBoton' : ''}
+                                                    >No Pasa</BotonCheck>
+                                                    <BotonCheck
+                                                        onClick={() => handleButtonClick(index, 'na')}
+                                                        className={item.valor === 'na' ? 'activeBoton' : ''}
+                                                    >N/A</BotonCheck>
+                                                </Table.Cell>
                                             </Table.Row>
                                         )
                                     })}
                                 </Table.Body>
                             </Table>
-                            {/* // {itemsSeg.map((item, index) => { */}
-                            {/* //     if (item.item !== 'CLASIFICACION') { */}
-                            {/* //         return ( */}
-                            {/* //             <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}> */}
-                            {/* //                 <option>{item.item} :</option> */}
-                            {/* //                 {Opcion.map((o, index) => { */}
-                            {/* //                     return ( */}
-                            {/* //                         <option key={index} >{o.text}</option> */}
-                            {/* //                     ) */}
-                            {/* //                 })} */}
-                            {/* //             </Select> */}
-                            {/* //         ) */}
-                            {/* {/* //     }  */}
-                            {/* // })} */}
-                        </ContentElemenMov>
+                        }
+                        {itemsMedicion.length === 0 ?
+                            ''
+                            :
+                            <>
+                                <Titulo style={{ fontSize: '18px' }}>Medición</Titulo>
+                                <Table singleLine>
+                                    <Table.Header>
+                                        <Table.Row>
+                                            <Table.HeaderCell>N°</Table.HeaderCell>
+                                            <Table.HeaderCell>Item</Table.HeaderCell>
+                                            <Table.HeaderCell>Referencia</Table.HeaderCell>
+                                            <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell>
+                                            <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell>
+                                        </Table.Row>
+                                    </Table.Header>
+                                    <Table.Body>
+                                        {itemsMedicion.map((item, index) => {
+                                            return (
+                                                <Table.Row key={index} >
+                                                    <Table.Cell >{index + 1}</Table.Cell>
+                                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
+                                                    <Table.Cell  >
+                                                        <Input
+                                                            type="number"
+                                                            value={item.valor}
+                                                            onChange={e => handleButtonClickLlen(e, index)}
+                                                        />
+                                                    </Table.Cell>
+                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor >= item.inicial ? true : false} /></Table.Cell>
+                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor < item.final ? false : true} /></Table.Cell>
+                                                </Table.Row>
+                                            )
+                                        })}
+                                    </Table.Body>
+                                </Table>
+                            </>
+                        }
+                        {itemsSeg.length === 0 ?
+                            ''
+                            :
+                            <>
+                                <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
+                                <ContentElemenMov>
+                                    <Table singleLine>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                                <Table.HeaderCell>Item</Table.HeaderCell>
+                                                <Table.HeaderCell>Referencia</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body>
+                                            {itemsSeg.map((item, index) => {
+                                                return (
+                                                    <Table.Row key={index} >
+                                                        <Table.Cell >{index + 1}</Table.Cell>
+                                                        {item.item === 'CLASIFICACION' ?
+                                                            <>
+                                                                <Table.Cell >{item.item}</Table.Cell>
+                                                                <Table.Cell >
+                                                                    <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
+                                                                        {Opcion.map((o, index) => {
+                                                                            return (
+                                                                                <option key={index} >{o.text}</option>
+                                                                            )
+                                                                        })}
+                                                                    </Select>
+                                                                </Table.Cell>
+                                                            </>
+                                                            :
+                                                            <>
+                                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
+                                                                <Table.Cell  >
+                                                                    <Input
+                                                                        type="text"
+                                                                        value={item.valor}
+                                                                        onChange={e => handleButtonClickSeg(e, index)}
+                                                                    />
+                                                                </Table.Cell>
+                                                            </>
+                                                        }
+                                                    </Table.Row>
+                                                )
+                                            })}
+                                        </Table.Body>
+                                    </Table>
+                                    {/* // {itemsSeg.map((item, index) => { */}
+                                    {/* //     if (item.item !== 'CLASIFICACION') { */}
+                                    {/* //         return ( */}
+                                    {/* //             <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}> */}
+                                    {/* //                 <option>{item.item} :</option> */}
+                                    {/* //                 {Opcion.map((o, index) => { */}
+                                    {/* //                     return ( */}
+                                    {/* //                         <option key={index} >{o.text}</option> */}
+                                    {/* //                     ) */}
+                                    {/* //                 })} */}
+                                    {/* //             </Select> */}
+                                    {/* //         ) */}
+                                    {/* {/* //     }  */}
+                                    {/* // })} */}
+                                </ContentElemenMov>
+                            </>
+                        }
 
                         <ContentElemenMov style={{ marginTop: '10px' }}>
                             <BotonGuardar onClick={handleSubmit} disabled={btnGuardar}>Guardar</BotonGuardar>
