@@ -20,9 +20,22 @@ const ReporteInvCliente = () => {
     const [valorizado, setValorizado] = useState('');
    /*  const [inventarioClte, setInventarioClte] = useState([]); */
     
+    const fechaHoy = new Date();
+
     const Inv = useRef([]);
    
+    // Contar días
+    const contarDias = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj);        
+        const ultima = new Date(formatear)
+        const tiempo = fechaHoy - ultima;
+        const dias = tiempo/(1000 * 60 * 60 * 24)
+        // return nuevafecha.format('DD/MM/YYYY HH:mm');
+        return dias;
+    }
 
+    
   /*   //Leer los datos de Status
     const getStatus = async () => {
         const traerStatus = collection(db, 'status');
@@ -133,7 +146,8 @@ const ReporteInvCliente = () => {
                             <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Cantidad</Table.HeaderCell>
                             <Table.HeaderCell>Precio</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Inicio</Table.HeaderCell>                            
+                            <Table.HeaderCell>Fecha Inicio</Table.HeaderCell>                           
+                            <Table.HeaderCell>Total Días</Table.HeaderCell>                           
                         </Table.Row>
                     </Table.Header>
 
@@ -147,7 +161,8 @@ const ReporteInvCliente = () => {
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>1</Table.Cell>
                                         <Table.Cell>{item.price.toLocaleString()}</Table.Cell>
-                                        <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>                                                                             
+                                        <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
+                                        <Table.Cell>{contarDias(item.fechamod).toFixed(2)}</Table.Cell>                                                                                                                     
                                     </Table.Row>
                                 )
                             })
