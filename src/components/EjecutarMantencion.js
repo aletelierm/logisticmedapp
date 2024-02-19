@@ -565,6 +565,7 @@ const EjecutarMantencion = () => {
                                             <Table.HeaderCell>N°</Table.HeaderCell>
                                             <Table.HeaderCell>Item</Table.HeaderCell>
                                             <Table.HeaderCell>Referencia</Table.HeaderCell>
+                                            <Table.Cell>Unidad Medida</Table.Cell>
                                             <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell>
                                             <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell>
                                         </Table.Row>
@@ -582,8 +583,9 @@ const EjecutarMantencion = () => {
                                                             onChange={e => handleButtonClickLlen(e, index)}
                                                         />
                                                     </Table.Cell>
-                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor >= item.inicial ? true : false} /></Table.Cell>
-                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor > item.final ? false : true} /></Table.Cell>
+                                                    <Table.Cell>Unidad Medida</Table.Cell>
+                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor === '' ? false : item.valor >= item.inicial && item.valor <= item.final ? true : false} /></Table.Cell>
+                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor === '' ? false : item.valor >= item.inicial && item.valor <= item.final ? false : true} /></Table.Cell>
                                                 </Table.Row>
                                             )
                                         })}
@@ -592,71 +594,71 @@ const EjecutarMantencion = () => {
                             </>
                         }
                         {itemsSeg.length === 0 ?
-                        ''
-                    :
-                    <>
-                            <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
-                            <ContentElemenMov>
-                                <Table singleLine>
-                                    <Table.Header>
-                                        <Table.Row>
-                                            <Table.HeaderCell>N°</Table.HeaderCell>
-                                            <Table.HeaderCell>Item</Table.HeaderCell>
-                                            <Table.HeaderCell>Referencia</Table.HeaderCell>
-                                        </Table.Row>
-                                    </Table.Header>
-                                    <Table.Body>
-                                        {itemsSeg.map((item, index) => {
-                                            return (
-                                                <Table.Row key={index} >
-                                                    <Table.Cell >{index + 1}</Table.Cell>
-                                                    {item.item === 'CLASIFICACION' ?
-                                                        <>
-                                                            <Table.Cell >{item.item}</Table.Cell>
-                                                            <Table.Cell >
-                                                                <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
-                                                                    {Opcion.map((o, index) => {
-                                                                        return (
-                                                                            <option key={index} >{o.text}</option>
-                                                                        )
-                                                                    })}
-                                                                </Select>
-                                                            </Table.Cell>
-                                                        </>
-                                                        :
-                                                        <>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
-                                                            <Table.Cell  >
-                                                                <Input
-                                                                    type="text"
-                                                                    value={item.valor}
-                                                                    onChange={e => handleButtonClickSeg(e, index)}
-                                                                />
-                                                            </Table.Cell>
-                                                        </>
-                                                    }
-                                                </Table.Row>
-                                            )
-                                        })}
-                                    </Table.Body>
-                                </Table>
-                                {/* // {itemsSeg.map((item, index) => { */}
-                                {/* //     if (item.item !== 'CLASIFICACION') { */}
-                                {/* //         return ( */}
-                                {/* //             <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}> */}
-                                {/* //                 <option>{item.item} :</option> */}
-                                {/* //                 {Opcion.map((o, index) => { */}
-                                {/* //                     return ( */}
-                                {/* //                         <option key={index} >{o.text}</option> */}
-                                {/* //                     ) */}
-                                {/* //                 })} */}
-                                {/* //             </Select> */}
-                                {/* //         ) */}
-                                {/* {/* //     }  */}
-                                {/* // })} */}
-                            </ContentElemenMov>
-                    </>
-                    }
+                            ''
+                            :
+                            <>
+                                <Titulo style={{ fontSize: '18px' }}>Seguridad electrica</Titulo>
+                                <ContentElemenMov>
+                                    <Table singleLine>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                                <Table.HeaderCell>Item</Table.HeaderCell>
+                                                <Table.HeaderCell>Referencia</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body>
+                                            {itemsSeg.map((item, index) => {
+                                                return (
+                                                    <Table.Row key={index} >
+                                                        <Table.Cell >{index + 1}</Table.Cell>
+                                                        {item.item === 'CLASIFICACION' ?
+                                                            <>
+                                                                <Table.Cell >{item.item}</Table.Cell>
+                                                                <Table.Cell >
+                                                                    <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
+                                                                        {Opcion.map((o, index) => {
+                                                                            return (
+                                                                                <option key={index} >{o.text}</option>
+                                                                            )
+                                                                        })}
+                                                                    </Select>
+                                                                </Table.Cell>
+                                                            </>
+                                                            :
+                                                            <>
+                                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '12px' }}>{item.item}</Table.Cell>
+                                                                <Table.Cell  >
+                                                                    <Input
+                                                                        type="text"
+                                                                        value={item.valor}
+                                                                        onChange={e => handleButtonClickSeg(e, index)}
+                                                                    />
+                                                                </Table.Cell>
+                                                            </>
+                                                        }
+                                                    </Table.Row>
+                                                )
+                                            })}
+                                        </Table.Body>
+                                    </Table>
+                                    {/* // {itemsSeg.map((item, index) => { */}
+                                    {/* //     if (item.item !== 'CLASIFICACION') { */}
+                                    {/* //         return ( */}
+                                    {/* //             <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}> */}
+                                    {/* //                 <option>{item.item} :</option> */}
+                                    {/* //                 {Opcion.map((o, index) => { */}
+                                    {/* //                     return ( */}
+                                    {/* //                         <option key={index} >{o.text}</option> */}
+                                    {/* //                     ) */}
+                                    {/* //                 })} */}
+                                    {/* //             </Select> */}
+                                    {/* //         ) */}
+                                    {/* {/* //     }  */}
+                                    {/* // })} */}
+                                </ContentElemenMov>
+                            </>
+                        }
 
                         <ContentElemenMov style={{ marginTop: '10px' }}>
                             <BotonGuardar onClick={handleSubmit} disabled={btnGuardar}>Guardar</BotonGuardar>

@@ -12,7 +12,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContentElemenMov, Select, Label } from '../elementos/CrearEquipos';
+import { ContentElemenMov, Select, Label, ContentElemen } from '../elementos/CrearEquipos';
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
 
 const AgregarItems = () => {
@@ -24,6 +24,8 @@ const AgregarItems = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [item, setItem] = useState('');
+    const [inicial, setInicial] = useState('');
+    const [final, setFinal] = useState('');
     const [categoria, setCategoria] = useState('');
     const [leer, setLeer] = useState([]);
     const [buscador, setBuscardor] = useState('');
@@ -57,24 +59,51 @@ const AgregarItems = () => {
             return;
         } else {
             const it = item.toLocaleUpperCase().trim()
-            AgregarItemsDb({
-                nombre: it,
-                categoria: categoria,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id
-            })
-                .then(() => {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Item Ingresada Correctamente'
-                    })
-                    setItem('');
-                    setFlag(!flag)
+            if (categoria === 'MEDICION') {
+                AgregarItemsDb({
+                    nombre: it,
+                    categoria: categoria,
+                    inicial: inicial,
+                    final: final,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
                 })
+                    .then(() => {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Item Ingresada Correctamente'
+                        })
+                        setItem('');
+                        setInicial('');
+                        setFinal('');
+                        setFlag(!flag)
+                    })
+            } else {
+                AgregarItemsDb({
+                    nombre: it,
+                    categoria: categoria,
+                    inicial: 0,
+                    final: 0,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
+                })
+                    .then(() => {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Item Ingresada Correctamente'
+                        })
+                        setItem('');
+                        setFlag(!flag)
+                    })
+            }
         }
     }
 
@@ -130,7 +159,8 @@ const AgregarItems = () => {
                             value={item}
                             onChange={e => setItem(e.target.value)}
                         />
-                    </ContentElemenMov>
+                        </ContentElemenMov>
+                    
                     <ContentElemenMov>
                         <Label>Categoria</Label>
                         <Select
@@ -142,6 +172,30 @@ const AgregarItems = () => {
                             })}
                         </Select>
                     </ContentElemenMov>
+                    <ContentElemenMov>
+                        {categoria === 'MEDICION' && (
+                            <>
+                            <ContentElemen>
+                                    <Label>Min</Label>
+                                    <InputAdd style={{width:'100px'}}
+                                        type='number'
+                                        name='inicial'
+                                        value={inicial}
+                                        onChange={e => setInicial(e.target.value)}
+                                    />
+                                </ContentElemen>
+                                <ContentElemen>
+                                    <Label>Max</Label>
+                                    <InputAdd style={{width:'100px'}}
+                                        type='number'
+                                        name='final'
+                                        value={final}
+                                        onChange={e => setFinal(e.target.value)}
+                                    />
+                                </ContentElemen>
+                            </>
+                        )}
+                        </ContentElemenMov>
                     <Boton onClick={handleSubmit}>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
                     </Boton>
