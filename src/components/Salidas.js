@@ -16,7 +16,7 @@ import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay } from '../elementos/General';
-import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, TextArea } from '../elementos/CrearEquipos';
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
@@ -58,6 +58,7 @@ const Salidas = () => {
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
     const [numSerie, setNumSerie] = useState('');
+    const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(true);
@@ -441,6 +442,7 @@ const Salidas = () => {
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
+                            descripcion: descripcion,
                             tipMov: 2,
                             confirmado: false,
                             entregado: false,
@@ -490,6 +492,7 @@ const Salidas = () => {
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
+                            descripcion: descripcion,
                             tipMov: 0,
                             confirmado: false,
                             entregado: true,
@@ -539,6 +542,7 @@ const Salidas = () => {
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
+                            descripcion: descripcion,
                             tipMov: 0,
                             confirmado: false,
                             entregado: true,
@@ -588,6 +592,7 @@ const Salidas = () => {
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
+                            descripcion: descripcion,
                             tipMov: 2,
                             confirmado: false,
                             entregado: false,
@@ -1221,6 +1226,17 @@ const Salidas = () => {
                                 onChange={ev => setPatente(ev.target.value)}
                             />
                         </ContentElemenSelect>
+                        <ContentElemenMov>
+                            <Label style={{ marginRight: '10px' }} >Descripcion</Label>
+                            <TextArea
+                                style={{ width: '80%', height: '60px' }}
+                                type='text'
+                                name='descripcion'
+                                placeholder='Ingrese descripcion o detalles adicionales a la guía'
+                                value={descripcion}
+                                onChange={e => setDescripcion(e.target.value)}
+                            />
+                        </ContentElemenMov>
                         <BotonGuardar
                             style={{ margin: '35px 10px' }}
                             onClick={addCabeceraIn}

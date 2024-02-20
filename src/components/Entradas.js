@@ -880,16 +880,15 @@ const Entradas = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <ContentElemenMov>
-                    <Label style={{ marginRight: '10px' }} >Descripcion</Label>
-                            <TextArea
-                                style={{ width: '80%', height: '60px' }}
-                                max='100'
-                                type='text'
-                                name='descripcion'
-                                placeholder='Ingrese descripcion o detalles adicionales a la guía'
-                                value={descripcion}
-                                onChange={e => setDescripcion(e.target.value)}
-                            />
+                        <Label style={{ marginRight: '10px' }} >Descripcion</Label>
+                        <TextArea
+                            style={{ width: '80%', height: '60px' }}
+                            type='text'
+                            name='descripcion'
+                            placeholder='Ingrese descripcion o detalles adicionales a la guía'
+                            value={descripcion}
+                            onChange={e => setDescripcion(e.target.value)}
+                        />
                     </ContentElemenMov>
 
                     <BotonGuardar
