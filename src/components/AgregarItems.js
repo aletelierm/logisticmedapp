@@ -206,8 +206,8 @@ const AgregarItems = () => {
                             <ContentElemenSelect>
                                 <Label>Unidad de Medida</Label>
                                 <Select
-                                value={categoria}
-                                onChange={ev => setCategoria(ev.target.value)}>
+                                value={medida}
+                                onChange={ev => setMedida(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
                                 {Medidas.map((d, index) => {
                                     return (<option key={index}>{d.text}</option>)
