@@ -5,12 +5,14 @@ import { db, auth } from './../firebase/firebaseConfig';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { Roles } from './Roles';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Table } from 'semantic-ui-react';
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
 import ExportarExcel from '../funciones/ExportarExcel';
 import {Titulo, BotonGuardar} from '../elementos/General'
-import {Formulario} from '../elementos/CrearEquipos'
+import {Formulario, ContentElemen, Input} from '../elementos/CrearEquipos'
 import {ContentElemenUser, ContenedorUser, InputUser, LabelUser, SelectUser} from '../elementos/Configuracion'
+import { ListarProveedor} from '../elementos/General'
 
 export const RegistroUsuarios = () => {
     let fechaactual = new Date();
@@ -195,10 +197,10 @@ export const RegistroUsuarios = () => {
 
     return (
         <ContenedorFormulario>
-            <ContenedorUser>
+            <ListarProveedor>
                 <Titulo>Registro de Usuarios y Roles</Titulo>
-            </ContenedorUser>
-            <ContenedorUser>
+            </ListarProveedor>
+            <ListarProveedor>
                 <Formulario onSubmit={handleSubmit}>
                     <ContentElemenUser>
                         <FaIcons.FaUserAlt style={{ color: '#328AC4', fontSize: '20px' }} />
@@ -275,10 +277,49 @@ export const RegistroUsuarios = () => {
                         <BotonGuardar>GUARDAR</BotonGuardar>
                     </ContentElemenUser>
                 </Formulario>
-                <ContentElemenUser>
+                {/* <ContentElemenUser>
                     <BotonGuardar onClick={ExportarXls}>Exportar</BotonGuardar>
-                </ContentElemenUser>
-            </ContenedorUser>
+                </ContentElemenUser> */}
+            </ListarProveedor>
+            <ListarProveedor>
+                <Titulo>Listado Usuarios</Titulo>
+                <ContentElemen>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px' }} />
+                    <Input style={{ width: '100%' }}
+                        type='text'
+                        placeholder='Buscar Usuario'
+                    /* value={buscador}
+                    onChange={onBuscarCambios} */
+                    />
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Proveedores a Excel' />
+                </ContentElemen>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Correo</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Empresa</Table.HeaderCell>
+                            <Table.HeaderCell>Rol</Table.HeaderCell>                           
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {
+                            usuarios.map((item, index) => {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell>{item.correo}</Table.Cell>
+                                        <Table.Cell>{item.nombre + " " + item.apellido}</Table.Cell>
+                                        <Table.Cell>{item.empresa}</Table.Cell>
+                                        <Table.Cell>{item.rol}</Table.Cell>                                       
+                                    </Table.Row>
+                                )
+                            })
+                        }
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
             <Alerta
                 tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
