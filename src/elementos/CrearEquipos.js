@@ -51,6 +51,13 @@ const Input = styled.input`
     border-radius: 10px;
     padding: 5px;
 `
+
+const TextArea = styled.textarea`
+    border: 2px solid #328AC4;
+    border-radius: 10px;
+    padding: 5px;
+`
+
 const Label = styled.label`
     padding: 5px;
     font-size: 20px;
@@ -99,4 +106,4 @@ position: relative;
     }
 `
 
-export { ContenedorCliente, ContentElemen, ContentElemenUser, ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, Contenido, ContenedorInput };
+export { ContenedorCliente, ContentElemen, ContentElemenUser, ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, TextArea, Contenido, ContenedorInput };
