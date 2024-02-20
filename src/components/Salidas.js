@@ -1226,7 +1226,8 @@ const Salidas = () => {
                                 onChange={ev => setPatente(ev.target.value)}
                             />
                         </ContentElemenSelect>
-                        <ContentElemenMov>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
                             <Label style={{ marginRight: '10px' }} >Descripcion</Label>
                             <TextArea
                                 style={{ width: '80%', height: '60px' }}
@@ -1251,7 +1252,6 @@ const Salidas = () => {
                             onChange={handleCheckboxChange}
                             disabled={btnNuevo}
                         >Nuevo</BotonGuardar>
-                    </ContentElemenMov>
                 </Formulario>
             </Contenedor>
             <Contenedor>
