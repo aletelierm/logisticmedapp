@@ -17,7 +17,7 @@ import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label } from '../elementos/CrearEquipos';
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, TextArea } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
 import Spinner from './Spinner';
 
@@ -56,6 +56,7 @@ const Entradas = () => {
     const [entidad, setEntidad] = useState('');
     const [numSerie, setNumSerie] = useState('');
     const [price, setPrice] = useState('');
+    const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);
     const [flag2, setFlag2] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
@@ -323,6 +324,7 @@ const Entradas = () => {
                     tipoInOut: nomTipoIn,
                     rut: rut,
                     entidad: entidad,
+                    descripcion: descripcion,
                     tipMov: 1,
                     confirmado: false,
                     observacion: '',
@@ -876,6 +878,17 @@ const Entradas = () => {
                             <Label >Nombre</Label>
                             <Input value={entidad} disabled />
                         </ContentElemenSelect>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
+                        <Label style={{ marginRight: '10px' }} >Descripcion</Label>
+                        <TextArea
+                            style={{ width: '80%', height: '60px' }}
+                            type='text'
+                            name='descripcion'
+                            placeholder='Ingrese descripcion o detalles adicionales a la guía'
+                            value={descripcion}
+                            onChange={e => setDescripcion(e.target.value)}
+                        />
                     </ContentElemenMov>
 
                     <BotonGuardar

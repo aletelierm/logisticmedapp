@@ -3,7 +3,7 @@ import Alertas from './Alertas';
 import AgregarItemsDb from '../firebase/AgregarItemsDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
-import { Categoria } from './TipDoc'
+import { Categoria, Medidas } from './TipDoc'
 // import { Link } from 'react-router-dom';
 // import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
@@ -12,8 +12,8 @@ import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContentElemenMov, Select, Label } from '../elementos/CrearEquipos';
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
+import { ContentElemenMov, Select, Label, ContentElemenSelect, Formulario } from '../elementos/CrearEquipos';
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
 
 const AgregarItems = () => {
     const user = auth.currentUser;
@@ -24,7 +24,10 @@ const AgregarItems = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [item, setItem] = useState('');
+    const [inicial, setInicial] = useState('');
+    const [final, setFinal] = useState('');
     const [categoria, setCategoria] = useState('');
+    const [medida, setMedida] = useState('');
     const [leer, setLeer] = useState([]);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
@@ -55,26 +58,76 @@ const AgregarItems = () => {
                 mensaje: 'Seleccione una categoria'
             })
             return;
+            } else if (medida === '') {
+                cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese una Unidad de Medida'
+            })
+            return;
+            } else if (inicial === '') {
+                cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese un valor minimo'
+            })
+            return;
+            } else if (final === '') {
+                cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Ingrese un valor maximo'
+            })
+            return;
         } else {
             const it = item.toLocaleUpperCase().trim()
-            AgregarItemsDb({
-                nombre: it,
-                categoria: categoria,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id
-            })
-                .then(() => {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Item Ingresada Correctamente'
-                    })
-                    setItem('');
-                    setFlag(!flag)
+            if (categoria === 'MEDICION') {
+                AgregarItemsDb({
+                    nombre: it,
+                    categoria: categoria,
+                    medida: medida,
+                    inicial: inicial,
+                    final: final,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
                 })
+                    .then(() => {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Item Ingresada Correctamente'
+                        })
+                        setItem('');
+                        setInicial('');
+                        setFinal('');
+                        setFlag(!flag)
+                    })
+            } else {
+                AgregarItemsDb({
+                    nombre: it,
+                    categoria: categoria,
+                    inicial: 0,
+                    final: 0,
+                    medida: '',
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
+                })
+                    .then(() => {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Item Ingresada Correctamente'
+                        })
+                        setItem('');
+                        setFlag(!flag)
+                    })
+            }
         }
     }
 
@@ -121,31 +174,70 @@ const AgregarItems = () => {
             </Contenedor>
 
             <Contenedor>
-                <FormularioAdd action=''>
+                <Formulario action=''>
                     <ContentElemenMov style={{ width: '100%' }}>
-                        <InputAdd
-                            type='text'
-                            placeholder='Ingrese Item'
-                            name='item'
-                            value={item}
-                            onChange={e => setItem(e.target.value)}
-                        />
-                    </ContentElemenMov>
-                    <ContentElemenMov>
-                        <Label>Categoria</Label>
-                        <Select
-                            value={categoria}
-                            onChange={ev => setCategoria(ev.target.value)}>
-                            <option>Selecciona Opción:</option>
-                            {Categoria.map((d, index) => {
-                                return (<option key={index}>{d.text}</option>)
-                            })}
-                        </Select>
-                    </ContentElemenMov>
+                        <ContentElemenSelect style={{ width: '100%', paddingTop: '40px' }}>
+                            <InputAdd 
+                                type='text'
+                                placeholder='Ingrese Item'
+                                name='item'
+                                value={item}
+                                onChange={e => setItem(e.target.value)}
+                            />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Categoria</Label>
+                            <Select
+                                value={categoria}
+                                onChange={ev => setCategoria(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {Categoria.map((d, index) => {
+                                    return (<option key={index}>{d.text}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
                     <Boton onClick={handleSubmit}>
-                        <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
+                        <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4', marginTop: '20px' }} />
                     </Boton>
-                </FormularioAdd>
+                    </ContentElemenMov>
+
+                    {categoria === 'MEDICION' && (
+                        <ContentElemenMov style={{ width: '100%' }}>
+                            <ContentElemenSelect>
+                                <Label>Unidad de Medida</Label>
+                                <Select
+                                value={categoria}
+                                onChange={ev => setCategoria(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {Medidas.map((d, index) => {
+                                    return (<option key={index}>{d.text}</option>)
+                                })}
+                            </Select>
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label>Mínimo</Label>
+                                <InputAdd 
+                                    type='number'
+                                    name='inicial'
+                                    value={inicial}
+                                    onChange={e => setInicial(e.target.value)}
+                                />
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label>Máximo</Label>
+                                <InputAdd
+                                    type='number'
+                                    name='final'
+                                    value={final}
+                                    onChange={e => setFinal(e.target.value)}
+                                />
+                            </ContentElemenSelect>
+                        </ContentElemenMov>
+                    )}
+                    {/* <Boton onClick={handleSubmit}>
+                        <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
+                    </Boton> */}
+                </Formulario>
             </Contenedor>
 
             <ListarProveedor>

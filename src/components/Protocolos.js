@@ -290,6 +290,8 @@ const Protocolos = () => {
                     item: item_id[0].nombre,
                     item_id: item_id[0].id,
                     categoria: item_id[0].categoria,
+                    inicial: item_id[0].inicial,
+                    final: item_id[0].final,
                     cab_id: existeCabProtocolo[0].id,
                     userAdd: user.email,
                     userMod: user.email,

@@ -38,8 +38,18 @@ export const Categoria= [
 ];
 
 export const Opcion= [
-    { key: '1', value: '1', text: 'Opcion 1' },
-    { key: '2', value: '2', text: 'Opcion 2' },
-    { key: '3', value: '3', text: 'Opcion 3' },
-    { key: '4', value: '4', text: 'Opcion 4' },
+    { key: '1', value: '1', text: 'TIPO 2 / B' },
+    { key: '2', value: '2', text: 'TIPO 2 / BF' },
+    { key: '3', value: '3', text: 'CLASE I' },
+    { key: '4', value: '4', text: 'CLASE II A' },
+    { key: '5', value: '5', text: 'CLASE II B' },
+    { key: '6', value: '6', text: 'CLASE III ' },
+];
+
+export const Medidas= [
+    { key: '1', value: '1', text: 'CM H2O' },
+    { key: '2', value: '2', text: 'LPM' },
+    { key: '3', value: '3', text: 'BAR' },
+    { key: '4', value: '4', text: 'MICROAMPERE' },
+    { key: '5', value: '5', text: 'GIGA OHM' },
 ];

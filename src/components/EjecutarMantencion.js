@@ -565,6 +565,7 @@ const EjecutarMantencion = () => {
                                             <Table.HeaderCell>N°</Table.HeaderCell>
                                             <Table.HeaderCell>Item</Table.HeaderCell>
                                             <Table.HeaderCell>Referencia</Table.HeaderCell>
+                                            <Table.Cell>Unidad Medida</Table.Cell>
                                             <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell>
                                             <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell>
                                         </Table.Row>
@@ -582,8 +583,9 @@ const EjecutarMantencion = () => {
                                                             onChange={e => handleButtonClickLlen(e, index)}
                                                         />
                                                     </Table.Cell>
-                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor >= item.inicial ? true : false} /></Table.Cell>
-                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor < item.final ? false : true} /></Table.Cell>
+                                                    <Table.Cell>Unidad Medida</Table.Cell>
+                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor === '' ? false : item.valor >= item.inicial && item.valor <= item.final ? true : false} /></Table.Cell>
+                                                    <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor === '' ? false : item.valor >= item.inicial && item.valor <= item.final ? false : true} /></Table.Cell>
                                                 </Table.Row>
                                             )
                                         })}
