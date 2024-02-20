@@ -58,53 +58,55 @@ const AgregarItems = () => {
                 mensaje: 'Seleccione una categoria'
             })
             return;
-            } else if (medida === '') {
-                cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese una Unidad de Medida'
-            })
-            return;
-            } else if (inicial === '') {
-                cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese un valor minimo'
-            })
-            return;
-            } else if (final === '') {
-                cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese un valor maximo'
-            })
-            return;
         } else {
             const it = item.toLocaleUpperCase().trim()
             if (categoria === 'MEDICION') {
-                AgregarItemsDb({
-                    nombre: it,
-                    categoria: categoria,
-                    medida: medida,
-                    inicial: inicial,
-                    final: final,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    emp_id: users.emp_id
-                })
-                    .then(() => {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Item Ingresada Correctamente'
-                        })
-                        setItem('');
-                        setInicial('');
-                        setFinal('');
-                        setFlag(!flag)
+                if (medida === '') {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Ingrese una Unidad de Medida'
                     })
+                    return;
+                } else if (inicial === '') {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Ingrese un valor minimo'
+                    })
+                    return;
+                } else if (final === '') {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Ingrese un valor maximo'
+                    })
+                    return;
+                } else {
+                    AgregarItemsDb({
+                        nombre: it,
+                        categoria: categoria,
+                        medida: medida,
+                        inicial: inicial,
+                        final: final,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id
+                    })
+                        .then(() => {
+                            cambiarEstadoAlerta(true);
+                            cambiarAlerta({
+                                tipo: 'exito',
+                                mensaje: 'Item Ingresada Correctamente'
+                            })
+                            setItem('');
+                            setInicial('');
+                            setFinal('');
+                            setFlag(!flag)
+                        })
+                }
             } else {
                 AgregarItemsDb({
                     nombre: it,
@@ -177,7 +179,7 @@ const AgregarItems = () => {
                 <Formulario action=''>
                     <ContentElemenMov style={{ width: '100%' }}>
                         <ContentElemenSelect style={{ width: '100%', paddingTop: '40px' }}>
-                            <InputAdd 
+                            <InputAdd
                                 type='text'
                                 placeholder='Ingrese Item'
                                 name='item'
@@ -196,9 +198,9 @@ const AgregarItems = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
-                    <Boton onClick={handleSubmit}>
-                        <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4', marginTop: '20px' }} />
-                    </Boton>
+                        <Boton onClick={handleSubmit}>
+                            <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4', marginTop: '20px' }} />
+                        </Boton>
                     </ContentElemenMov>
 
                     {categoria === 'MEDICION' && (
@@ -206,17 +208,17 @@ const AgregarItems = () => {
                             <ContentElemenSelect>
                                 <Label>Unidad de Medida</Label>
                                 <Select
-                                value={medida}
-                                onChange={ev => setMedida(ev.target.value)}>
-                                <option>Selecciona Opción:</option>
-                                {Medidas.map((d, index) => {
-                                    return (<option key={index}>{d.text}</option>)
-                                })}
-                            </Select>
+                                    value={medida}
+                                    onChange={ev => setMedida(ev.target.value)}>
+                                    <option>Selecciona Opción:</option>
+                                    {Medidas.map((d, index) => {
+                                        return (<option key={index}>{d.text}</option>)
+                                    })}
+                                </Select>
                             </ContentElemenSelect>
                             <ContentElemenSelect>
                                 <Label>Mínimo</Label>
-                                <InputAdd 
+                                <InputAdd
                                     type='number'
                                     name='inicial'
                                     value={inicial}
