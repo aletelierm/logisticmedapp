@@ -12,7 +12,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContentElemenMov, Select, Label, Input, ContentElemenSelect, Formulario } from '../elementos/CrearEquipos';
+import { ContentElemenMov, Select, Label, ContentElemenSelect, Formulario } from '../elementos/CrearEquipos';
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
 
 const AgregarItems = () => {
@@ -196,13 +196,16 @@ const AgregarItems = () => {
                                 })}
                             </Select>
                         </ContentElemenSelect>
+                    <Boton onClick={handleSubmit}>
+                        <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4', marginTop: '20px' }} />
+                    </Boton>
                     </ContentElemenMov>
 
                     {categoria === 'MEDICION' && (
-                        <ContentElemenMov>
+                        <ContentElemenMov style={{ width: '100%' }}>
                             <ContentElemenSelect>
                                 <Label>Unidad de Medida</Label>
-                                <Input style={{ width: '100px' }}
+                                <InputAdd
                                     type='text'
                                     name='medida'
                                     value={medida}
@@ -210,8 +213,8 @@ const AgregarItems = () => {
                                 />
                             </ContentElemenSelect>
                             <ContentElemenSelect>
-                                <Label>Min</Label>
-                                <Input style={{ width: '100px' }}
+                                <Label>Mínimo</Label>
+                                <InputAdd 
                                     type='number'
                                     name='inicial'
                                     value={inicial}
@@ -219,8 +222,8 @@ const AgregarItems = () => {
                                 />
                             </ContentElemenSelect>
                             <ContentElemenSelect>
-                                <Label>Max</Label>
-                                <Input style={{ width: '100px' }}
+                                <Label>Máximo</Label>
+                                <InputAdd
                                     type='number'
                                     name='final'
                                     value={final}
@@ -229,9 +232,9 @@ const AgregarItems = () => {
                             </ContentElemenSelect>
                         </ContentElemenMov>
                     )}
-                    <Boton onClick={handleSubmit}>
+                    {/* <Boton onClick={handleSubmit}>
                         <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4' }} />
-                    </Boton>
+                    </Boton> */}
                 </Formulario>
             </Contenedor>
 
