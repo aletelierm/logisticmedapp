@@ -3,7 +3,7 @@ import Alertas from './Alertas';
 import AgregarItemsDb from '../firebase/AgregarItemsDb';
 import { auth } from '../firebase/firebaseConfig';
 import { Table } from 'semantic-ui-react';
-import { Categoria } from './TipDoc'
+import { Categoria, Medidas } from './TipDoc'
 // import { Link } from 'react-router-dom';
 // import { FaRegEdit } from "react-icons/fa";
 import { getDocs, collection, where, query } from 'firebase/firestore';
@@ -205,12 +205,14 @@ const AgregarItems = () => {
                         <ContentElemenMov style={{ width: '100%' }}>
                             <ContentElemenSelect>
                                 <Label>Unidad de Medida</Label>
-                                <InputAdd
-                                    type='text'
-                                    name='medida'
-                                    value={medida}
-                                    onChange={e => setMedida(e.target.value)}
-                                />
+                                <Select
+                                value={categoria}
+                                onChange={ev => setCategoria(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {Medidas.map((d, index) => {
+                                    return (<option key={index}>{d.text}</option>)
+                                })}
+                            </Select>
                             </ContentElemenSelect>
                             <ContentElemenSelect>
                                 <Label>Mínimo</Label>
