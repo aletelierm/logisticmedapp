@@ -277,8 +277,8 @@ const EjecutarMantencion = () => {
                     cab_id_bitacora: documentoId.current,
                     userAdd: user.email,
                     userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
+                    fechaadd: fechaAdd,
+                    fechamod: fechaMod,
                     emp_id: users.emp_id,
                 });
             });
@@ -288,12 +288,13 @@ const EjecutarMantencion = () => {
                 batch.set(nuevoDocRef, {
                     item: docs.item,
                     valor: docs.valor,
+                    medida: docs.medida,
                     categoria: docs.categoria,
                     cab_id_bitacora: documentoId.current,
                     userAdd: user.email,
                     userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
+                    fechaadd: fechaAdd,
+                    fechamod: fechaMod,
                     emp_id: users.emp_id,
                 });
             });
@@ -307,8 +308,8 @@ const EjecutarMantencion = () => {
                     cab_id_bitacora: documentoId.current,
                     userAdd: user.email,
                     userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
+                    fechaadd: fechaAdd,
+                    fechamod: fechaMod,
                     emp_id: users.emp_id,
                 });
             });
@@ -334,8 +335,8 @@ const EjecutarMantencion = () => {
                 const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
                 batch.update(nuevoDocRef, {
                     valor: docs.valor,
-                    userMod: user.email,
-                    fechaMod: fechaMod,
+                    usermod: user.email,
+                    fechamod: fechaMod,
                 });
             });
             // Itera a través de los nuevos documentos y agrégalos al lote de Llenado
@@ -343,8 +344,8 @@ const EjecutarMantencion = () => {
                 const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
                 batch.update(nuevoDocRef, {
                     valor: docs.valor,
-                    userMod: user.email,
-                    fechaMod: fechaMod,
+                    usermod: user.email,
+                    fechamod: fechaMod,
                 });
             });
             // Itera a través de los nuevos documentos y agrégalos al lote de Seleccion
@@ -352,8 +353,8 @@ const EjecutarMantencion = () => {
                 const nuevoDocRef = doc(bitacoraRef, docs.id); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
                 batch.update(nuevoDocRef, {
                     valor: docs.valor,
-                    userMod: user.email,
-                    fechaMod: fechaMod,
+                    usermod: user.email,
+                    fechamod: fechaMod,
                 });
             });
             batch.commit()
@@ -565,7 +566,7 @@ const EjecutarMantencion = () => {
                                             <Table.HeaderCell>N°</Table.HeaderCell>
                                             <Table.HeaderCell>Item</Table.HeaderCell>
                                             <Table.HeaderCell>Referencia</Table.HeaderCell>
-                                            <Table.Cell>Unidad Medida</Table.Cell>
+                                            <Table.HeaderCell>Unidad Medida</Table.HeaderCell>
                                             <Table.HeaderCell style={{ textAlign: 'center' }}>Pasa</Table.HeaderCell>
                                             <Table.HeaderCell style={{ textAlign: 'center' }}>No Pasa</Table.HeaderCell>
                                         </Table.Row>
@@ -583,7 +584,7 @@ const EjecutarMantencion = () => {
                                                             onChange={e => handleButtonClickLlen(e, index)}
                                                         />
                                                     </Table.Cell>
-                                                    <Table.Cell>Unidad Medida</Table.Cell>
+                                                    <Table.Cell>{item.medida}</Table.Cell>
                                                     <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor === '' ? false : item.valor >= item.inicial && item.valor <= item.final ? true : false} /></Table.Cell>
                                                     <Table.Cell style={{ textAlign: 'center' }}><Input type="checkbox" checked={item.valor === '' ? false : item.valor >= item.inicial && item.valor <= item.final ? false : true} /></Table.Cell>
                                                 </Table.Row>

@@ -280,6 +280,7 @@ const Protocolos = () => {
                 mensaje: 'Item ya se encuentra en este documento'
             })
         } else {
+            console.log(item_id)
             try {
                 ProtocoloDB({
                     nombre: existeCabProtocolo[0].nombre,
@@ -290,6 +291,7 @@ const Protocolos = () => {
                     item: item_id[0].nombre,
                     item_id: item_id[0].id,
                     categoria: item_id[0].categoria,
+                    medida: item_id[0].medida,
                     inicial: item_id[0].inicial,
                     final: item_id[0].final,
                     cab_id: existeCabProtocolo[0].id,

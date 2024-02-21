@@ -52,4 +52,5 @@ export const Medidas= [
     { key: '3', value: '3', text: 'BAR' },
     { key: '4', value: '4', text: 'MICROAMPERE' },
     { key: '5', value: '5', text: 'GIGA OHM' },
+    { key: '6', value: '6', text: 'GRADOS CELSIUS' },
 ];
