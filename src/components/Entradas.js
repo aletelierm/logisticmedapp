@@ -20,6 +20,7 @@ import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonG
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, TextArea } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
 import Spinner from './Spinner';
+import subirArchivos  from '.././funciones/subirArchivos';
 
 
 const Entradas = () => {
@@ -907,6 +908,9 @@ const Entradas = () => {
                         disabled={btnNuevo}
                     >
                         Nuevo</BotonGuardar>
+                    <div>
+                    <Input type="file" onChange={e => subirArchivos(e.target.files[0])}/>
+                    </div>
                 </Formulario>
             </Contenedor>
             <Contenedor>
