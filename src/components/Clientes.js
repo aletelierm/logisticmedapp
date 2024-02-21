@@ -4,14 +4,15 @@ import { Link } from 'react-router-dom';
 import { auth, db } from '../firebase/firebaseConfig';
 import Alerta from '../components/Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
+import { Regiones } from './comunas';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
 import validarRut from '../funciones/validarRut';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import ExportarExcel from '../funciones/ExportarExcel';
-import {ContentElemen, Formulario, Input, Label} from '../elementos/CrearEquipos'
-import {ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar} from '../elementos/General';
+import { ContentElemen, Formulario, Select, Input, Label } from '../elementos/CrearEquipos'
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 
 const Clientes = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -21,11 +22,37 @@ const Clientes = () => {
     //Obtener datos de contexto global
     const { users } = useContext(UserContext);
 
-    const [rut, setRut] = useState('')
-    const [nombre, setNombre] = useState('')
-    const [direccion, setDireccion] = useState('')
-    const [telefono, setTelefono] = useState('')
-    const [correo, setCorreo] = useState('')
+    // comunas.map((item, index) => 
+    // console.log(item.region[0].comunas)
+    // )
+
+    // const comuna = comunas.filter( item => item.region === 'Arica y Parinacota')
+    // console.log(comuna)
+    // const comunaxregion = comuna.filter (item =>  item.comuna  'Metropolitana');
+    // const resultado = comuna.map((item) => {
+    //     console.log(item.comunas.name)
+    // });
+
+    // console.log(Regiones)
+
+    // Regiones.forEach(region => {
+    //     console.log(region.region);
+    //     Regiones.filter()
+    //     if (region.region === region) {
+    //         setMostrarComunas(region.comunas.forEach(comuna => {
+    //             console.log(comuna.name)
+    //         }))
+    //     }
+    // })
+
+    const [rut, setRut] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [direccion, setDireccion] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [region, setRegion] = useState('');
+    const [comuna, setComuna] = useState('');
+    const [comunas, setComunas] = useState({});
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [buscador, setBuscardor] = useState('');
@@ -62,7 +89,7 @@ const Clientes = () => {
         if (buscar.length === 0)
             return leer.slice(/* pagina, pagina + 5 */);
         const nuevoFiltro = leer.filter(cli => cli.nombre.includes(buscar));
-        return nuevoFiltro.slice( /* pagina, pagina + 5 */ );
+        return nuevoFiltro.slice( /* pagina, pagina + 5 */);
     }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         // setPagina(0);
@@ -142,11 +169,11 @@ const Clientes = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Comprobar que existe el rut en DB
-        const existe = leer.filter(cli => cli.rut === rut).length === 0 
+        const existe = leer.filter(cli => cli.rut === rut).length === 0
         //Patron para Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         //Patron para valiar rut
-        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;       
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
@@ -293,6 +320,23 @@ const Clientes = () => {
         downloadLink.click();
     }
 
+    const mostrarComunas = Regiones.filter(reg => reg.region === region)
+    // setComunas(mostrarComunas)
+    // console.log(comunas)
+    // mostrarComunas.map((item, index) => {
+    //     console.log(item.comunas[index].name)
+    //     console.log(index)
+    // })
+    
+    mostrarComunas.forEach((item, index) => {
+        const option = item.comunas[index].name;
+        console.log(option)
+        // console.log(item.comunas[index].name)
+        // console.log(index)
+    });
+    
+    
+
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -328,6 +372,25 @@ const Clientes = () => {
                             value={direccion}
                             onChange={handleChange}
                         />
+                    </ContentElemen>
+                    <ContentElemen>
+                        <Label>Region</Label>
+                        <Select value={region} onChange={e => setRegion(e.target.value)}>
+                            {Regiones.map((r, index) => {
+                                return (
+                                    <option key={index} >{r.region}</option>
+                                )
+                            })}
+                        </Select>
+                        <Label>Comuna</Label>
+                        <Select value={comuna} onChange={e => setComuna(e.target.value)}>
+                            {/* {mostrarComunas.map((c, index) => {
+                                return (
+                                    <option key={index} >{c.comunas}</option>
+                                )
+                            })} */}
+                            
+                        </Select>
                     </ContentElemen>
                     <ContentElemen>
                         <Label >Telefono</Label>
@@ -423,7 +486,7 @@ const Clientes = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.direccion}</Table.Cell>
                                         <Table.Cell>{item.telefono}</Table.Cell>
-                                        <Table.Cell style={{textAlign: 'center'}}>
+                                        <Table.Cell style={{ textAlign: 'center' }}>
                                             <Link to={`/actualizacliente/${item.id}`}>
                                                 <FaIcons.FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />
                                             </Link>
