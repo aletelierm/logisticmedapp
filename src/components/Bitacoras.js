@@ -3,11 +3,12 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { ListarProveedor, Titulo } from '../elementos/General';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Ref, Table } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import moment from 'moment';
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 // import Swal from 'sweetalert2';
 
 const Bitacoras = () => {
@@ -36,6 +37,8 @@ const Bitacoras = () => {
     //Ordenar fechas
     const manteOrd = mantencion.sort((a, b) => a.fecha_mantencion - b.fecha_mantencion)
 
+    console.log(mantencion)
+
     useEffect(() => {
         getBitacoras();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,6 +47,19 @@ const Bitacoras = () => {
     // const ejecutar = () => {
     //     Swal.fire('Check list de mantención');
     // }
+
+    const MyDocument = () => (
+        <Document>
+            <Page size="A4" style={styles.page}>
+                <View style={styles.section}>
+                    <Text>Section #1</Text>
+                </View>
+                <View style={styles.section}>
+                    <Text>Section #2</Text>
+                </View>
+            </Page>
+        </Document>
+    );
 
     return (
         <div>
@@ -56,7 +72,7 @@ const Bitacoras = () => {
                             <Table.HeaderCell>Equipo</Table.HeaderCell>
                             <Table.HeaderCell>Serie</Table.HeaderCell>
                             <Table.HeaderCell>Protocolo</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Mantención</Table.HeaderCell>                            
+                            <Table.HeaderCell>Fecha Mantención</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -69,7 +85,7 @@ const Bitacoras = () => {
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{item.nombre_protocolo}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_mantencion)}</Table.Cell>
-                                    <Table.Cell textAlign="center"><FaRegFilePdf style={{fontSize: '24px', color: 'red'}} title='Visualizar en PDF' /></Table.Cell>
+                                    <Table.Cell textAlign="center"><FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Visualizar en PDF' /></Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -81,3 +97,16 @@ const Bitacoras = () => {
 };
 
 export default Bitacoras;
+
+// Create styles
+const styles = StyleSheet.create({
+    page: {
+        flexDirection: 'row',
+        backgroundColor: '#E4E4E4'
+    },
+    section: {
+        margin: 10,
+        padding: 10,
+        flexGrow: 1
+    }
+});

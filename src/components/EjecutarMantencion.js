@@ -31,7 +31,6 @@ const EjecutarMantencion = () => {
     const [itemsCheck, setItemsCheck] = useState([]);
     const [itemsMedicion, setItemsMedicion] = useState([]);
     const [itemsSeg, setItemsSeg] = useState([]);
-    const [itemsSeg2, setItemsSeg2] = useState([]);
     // const [protocolo, setProtocolo] = useState([]);
     const [nombreProtocolo, setNombreProtocolo] = useState('');
     const [programa, setPrograma] = useState('');
@@ -151,13 +150,13 @@ const EjecutarMantencion = () => {
             return nuevosElementos;
         });
     }
-    const handleButtonClickSelec = (e, index) => {
-        setItemsSeg2((prevItems) => {
-            const nuevosElementos = [...prevItems];
-            nuevosElementos[index].valor = e.target.value;
-            return nuevosElementos;
-        });
-    }
+    // const handleButtonClickSelec = (e, index) => {
+    //     setItemsSeg2((prevItems) => {
+    //         const nuevosElementos = [...prevItems];
+    //         nuevosElementos[index].valor = e.target.value;
+    //         return nuevosElementos;
+    //     });
+    // }
     // Sumar dias
     const sumarDias = (fecha, dias) => {
         const dateObj = fecha.toDate();
@@ -538,7 +537,6 @@ const EjecutarMantencion = () => {
                                                     <BotonCheck
                                                         onClick={() => handleButtonClick(index, 'pasa')}
                                                         className={item.valor === 'pasa' ? 'activeBoton' : ''}
-
                                                     >Pasa</BotonCheck>
                                                     <BotonCheck
                                                         onClick={() => handleButtonClick(index, 'nopasa')}
@@ -617,7 +615,7 @@ const EjecutarMantencion = () => {
                                                             <>
                                                                 <Table.Cell >{item.item}</Table.Cell>
                                                                 <Table.Cell >
-                                                                    <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}>
+                                                                    <Select key={index} value={item.valor} onChange={e => { handleButtonClickSeg(e, index) }}>
                                                                         {Opcion.map((o, index) => {
                                                                             return (
                                                                                 <option key={index} >{o.text}</option>
