@@ -11,7 +11,7 @@ import * as MdIcons from 'react-icons/md';
 import ExportarExcel from '../funciones/ExportarExcel';
 import {Titulo, BotonGuardar} from '../elementos/General'
 import {Formulario, ContentElemen, Input} from '../elementos/CrearEquipos'
-import {ContentElemenUser, ContenedorUser, InputUser, LabelUser, SelectUser} from '../elementos/Configuracion'
+import {ContentElemenUser, InputUser, LabelUser, SelectUser} from '../elementos/Configuracion'
 import { ListarProveedor} from '../elementos/General'
 
 export const RegistroUsuarios = () => {

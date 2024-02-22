@@ -22,37 +22,13 @@ const Clientes = () => {
     //Obtener datos de contexto global
     const { users } = useContext(UserContext);
 
-    // comunas.map((item, index) => 
-    // console.log(item.region[0].comunas)
-    // )
-
-    // const comuna = comunas.filter( item => item.region === 'Arica y Parinacota')
-    // console.log(comuna)
-    // const comunaxregion = comuna.filter (item =>  item.comuna  'Metropolitana');
-    // const resultado = comuna.map((item) => {
-    //     console.log(item.comunas.name)
-    // });
-
-    // console.log(Regiones)
-
-    // Regiones.forEach(region => {
-    //     console.log(region.region);
-    //     Regiones.filter()
-    //     if (region.region === region) {
-    //         setMostrarComunas(region.comunas.forEach(comuna => {
-    //             console.log(comuna.name)
-    //         }))
-    //     }
-    // })
-
     const [rut, setRut] = useState('');
     const [nombre, setNombre] = useState('');
     const [direccion, setDireccion] = useState('');
     const [telefono, setTelefono] = useState('');
     const [correo, setCorreo] = useState('');
-    const [region, setRegion] = useState('');
-    const [comuna, setComuna] = useState('');
-    const [comunas, setComunas] = useState({});
+    const [region, setRegion] = useState('Arica y Parinacota');
+    const [comuna, setComuna] = useState('');   
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [buscador, setBuscardor] = useState('');
@@ -320,21 +296,7 @@ const Clientes = () => {
         downloadLink.click();
     }
 
-    const mostrarComunas = Regiones.filter(reg => reg.region === region)
-    // setComunas(mostrarComunas)
-    // console.log(comunas)
-    // mostrarComunas.map((item, index) => {
-    //     console.log(item.comunas[index].name)
-    //     console.log(index)
-    // })
-    
-    mostrarComunas.forEach((item, index) => {
-        const option = item.comunas[index].name;
-        console.log(option)
-        // console.log(item.comunas[index].name)
-        // console.log(index)
-    });
-    
+    const comunasxRegion = Regiones.find((option)=> option.region === region).comunas
     
 
     return (
@@ -384,12 +346,18 @@ const Clientes = () => {
                         </Select>
                         <Label>Comuna</Label>
                         <Select value={comuna} onChange={e => setComuna(e.target.value)}>
-                            {/* {mostrarComunas.map((c, index) => {
-                                return (
-                                    <option key={index} >{c.comunas}</option>
-                                )
-                            })} */}
-                            
+                                {comunasxRegion.map((objeto, index) =>{
+
+                                    return ( <option key={index}>{objeto.name}</option>)
+                                }
+                                
+                                
+                                
+                                
+                                )            
+                                }
+
+                              
                         </Select>
                     </ContentElemen>
                     <ContentElemen>
