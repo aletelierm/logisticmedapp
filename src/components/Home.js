@@ -41,6 +41,7 @@ import ActualizaUsuariosAlertas from './ActualizaUsuariosAlertas';
 import AgregarItems from './AgregarItems';
 import EjecutarMantencion from './EjecutarMantencion';
 import Bitacoras from './Bitacoras';
+import Traspasos from './Traspasos';
 
 export const Home = () => {
   return (
@@ -63,6 +64,7 @@ export const Home = () => {
             <Route path="transacciones" element={<Transaccion/>}/>
             <Route path="transacciones/entradas" element={<Entradas/>}/>
             <Route path="transacciones/salidas" element={<Salidas/>}/>
+            <Route path="transacciones/traspasos" element={<Traspasos/>}/>
             <Route path="reportes" element={<Reportes/>}/>
             <Route path="reportes/reporte1" element={<ReporteHistoriaEquipo/>}/>
             <Route path="reportes/reporte2" element={<ReporteStatus/>}/>
