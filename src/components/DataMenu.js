@@ -78,6 +78,12 @@ export const DataMenu = [
         path: 'transacciones/salidas',
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
+      },
+      {
+        title: 'Traspasos',
+        path: 'transacciones/traspasos',
+        icon: <MdIcons.MdOutput />,
+        cName: 'sub-nav'
       }
 
     ]
