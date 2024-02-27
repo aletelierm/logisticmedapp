@@ -44,6 +44,7 @@ const Salidas = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [alertaSalida, setAlertasalida] = useState([]);
     const [cabecera, setCabecera] = useState([]);
+    const [empresa, setEmpresa] = useState([]);
     const [cabecera1, setCabecera1] = useState([]);
     const [dataSalida, setDataSalida] = useState([]);
     const [status, setStatus] = useState([]);
@@ -121,6 +122,11 @@ const Salidas = () => {
         const dato = query(dataUsuarios, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setUsuarios(data.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
+    }
+    //Leer  Empresa
+    const getEmpresa = async () => {
+        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
+        setEmpresa(traerEmp.data());
     }
 
     // Cambiar fecha
@@ -907,8 +913,10 @@ const Salidas = () => {
                 const docRef = doc(db, 'status', docs.eq_id);
                 batch.update(docRef, {
                     status: inOut.current,
-                    rut: rut,
-                    entidad: entidad,
+                    r_origen: empresa.rut,
+                    n_origen: empresa.empresa,
+                    r_destino: rut,
+                    n_destino: entidad,
                     fechamod: docs.fechamod
                 });
             });
@@ -1228,30 +1236,30 @@ const Salidas = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <ContentElemenMov>
-                            <Label style={{ marginRight: '10px' }} >Descripcion</Label>
-                            <TextArea
-                                style={{ width: '80%', height: '60px' }}
-                                type='text'
-                                name='descripcion'
-                                placeholder='Ingrese descripcion o detalles adicionales a la guía'
-                                value={descripcion}
-                                onChange={e => setDescripcion(e.target.value)}
-                            />
-                        </ContentElemenMov>
-                        <BotonGuardar
-                            style={{ margin: '35px 10px' }}
-                            onClick={addCabeceraIn}
-                            checked={confirmar}
-                            onChange={handleCheckboxChange}
-                            disabled={btnGuardar}
-                        >Guardar</BotonGuardar>
-                        <BotonGuardar
-                            style={{ margin: '35px 0' }}
-                            onClick={nuevo}
-                            checked={confirmar}
-                            onChange={handleCheckboxChange}
-                            disabled={btnNuevo}
-                        >Nuevo</BotonGuardar>
+                        <Label style={{ marginRight: '10px' }} >Descripcion</Label>
+                        <TextArea
+                            style={{ width: '80%', height: '60px' }}
+                            type='text'
+                            name='descripcion'
+                            placeholder='Ingrese descripcion o detalles adicionales a la guía'
+                            value={descripcion}
+                            onChange={e => setDescripcion(e.target.value)}
+                        />
+                    </ContentElemenMov>
+                    <BotonGuardar
+                        style={{ margin: '35px 10px' }}
+                        onClick={addCabeceraIn}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnGuardar}
+                    >Guardar</BotonGuardar>
+                    <BotonGuardar
+                        style={{ margin: '35px 0' }}
+                        onClick={nuevo}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnNuevo}
+                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>

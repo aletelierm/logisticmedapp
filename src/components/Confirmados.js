@@ -35,13 +35,13 @@ const Confirmados = () => {
     const cabeceraId = useRef('');
     const inOut = useRef('');
 
-   /*   //Lectura de usuario para alertas de salida
-     const getAlertasSalidas = async () => {
-        const traerAlertas = collection(db, 'usuariosalertas');
-        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id,'confirma','==',true));
-        const data = await getDocs(dato);
-        setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    } */
+    /*   //Lectura de usuario para alertas de salida
+      const getAlertasSalidas = async () => {
+         const traerAlertas = collection(db, 'usuariosalertas');
+         const dato = query(traerAlertas, where('emp_id', '==', users.emp_id,'confirma','==',true));
+         const data = await getDocs(dato);
+         setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+     } */
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true), where('correo', '==', users.correo));
@@ -251,11 +251,19 @@ const Confirmados = () => {
             return;
         } else {
             if (verdaderos.length > 0) {
-                
+
                 const batch = writeBatch(db);
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, { status: docs.tipoinout, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                    batch.update(docRef, {
+                        status: docs.tipoinout,
+                        r_destino: docs.rut,
+                        n_destino: docs.entidad,
+                        r_permanente: docs.rut,
+                        n_permanente: docs.entidad,
+                        fecha_permanente: fechaAdd,
+                        fechamod: fechaMod
+                    });
                 });
                 verdaderos.forEach((docs) => {
                     const docRef = doc(db, 'salidas', docs.id);
@@ -307,7 +315,12 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                    batchf.update(docRef, {
+                        status: 'TRANSITO BODEGA',
+                        r_origen: docs.rut,
+                        n_orgen: docs.entidad,
+                        fechamod: fechaMod
+                    });
                 });
                 falsoCheck.forEach((docs) => {
                     const docRef = doc(db, 'salidas', docs.id);
@@ -457,7 +470,7 @@ const Confirmados = () => {
     }, [flag, setFlag])
 
     return (
-        <ContenedorProveedor style={{  }}>
+        <ContenedorProveedor style={{}}>
             <Contenedor style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Titulo>Entregados - Retirados</Titulo>
                 <Boton onClick={() => setFlag(!flag)}>

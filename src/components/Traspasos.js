@@ -8,7 +8,7 @@ import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch, deleteDoc } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
-import { TipDocOut, TipoOut } from './TipDoc';
+import { TipDocOut, Traspaso } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
 import { MdDeleteForever } from "react-icons/md";
 import { FcCancel } from "react-icons/fc";
@@ -139,14 +139,14 @@ const Traspasos = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
-    // Cambiar Label de Rut
-    if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
-        nomRut.current = 'Rut Paciente';
-    } else if (nomTipoOut === 'SERVICIO TECNICO' || nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-        nomRut.current = 'Rut Servicio Tecnico';
-    } else {
-        nomRut.current = 'Rut Proveedor';
-    }
+    // // Cambiar Label de Rut
+    // if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
+    //     nomRut.current = 'Rut Paciente';
+    // } else if (nomTipoOut === 'SERVICIO TECNICO' || nomTipoOut === 'RETIRO SERVICIO TECNICO') {
+    //     nomRut.current = 'Rut Servicio Tecnico';
+    // } else {
+    //     nomRut.current = 'Rut Proveedor';
+    // }
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -1180,16 +1180,16 @@ const Traspasos = () => {
                                 value={nomTipoOut}
                                 onChange={ev => { setNomTipoOut(ev.target.value) }}>
                                 <option>Selecciona Opción:</option>
-                                {TipoOut.map((d) => {
+                                {Traspaso.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
-                            <Label >{nomRut.current}</Label>
+                            <Label >Rut Paciente</Label>
                             <Input
                                 disabled={confirmar}
-                                type='numero'
+                                type='text'
                                 placeholder='Ingrese Rut sin puntos'
                                 name='rut'
                                 value={rut}

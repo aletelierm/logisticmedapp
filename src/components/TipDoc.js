@@ -56,3 +56,9 @@ export const Medidas= [
     { key: '5', value: '5', text: 'GIGA OHM' },
     { key: '6', value: '6', text: 'GRADOS CELSIUS' },
 ];
+
+export const Traspaso= [
+    { key: '1', value: '1', text: 'S.T. CORRECTIVO' },
+    { key: '2', value: '2', text: 'S.T. PREVENTIVO' },
+    { key: '3', value: '3', text: 'PACIENTE' },
+];

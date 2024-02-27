@@ -20,7 +20,7 @@ import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonG
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, TextArea } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
 import Spinner from './Spinner';
-import subirArchivos  from '.././funciones/subirArchivos';
+import subirArchivos from '.././funciones/subirArchivos';
 
 
 const Entradas = () => {
@@ -530,8 +530,10 @@ const Entradas = () => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     batch.update(docRef, {
                         status: 'BODEGA',
-                        rut: empresa.rut,
-                        entidad: empresa.empresa,
+                        r_origen: rut,
+                        n_origen: entidad,
+                        r_destino: empresa.rut,
+                        n_destino: empresa.empresa,
                         price: existein[index].price,
                         tipoinout: existein[0].tipoinout,
                         fechamod: new Date()
@@ -610,8 +612,10 @@ const Entradas = () => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     batch.update(docRef, {
                         status: 'BODEGA',
-                        rut: empresa.rut,
-                        entidad: empresa.empresa,
+                        r_origen: rut,
+                        n_origen: entidad,
+                        r_destino: empresa.rut,
+                        n_destino: empresa.empresa,
                         fechamod: new Date()
                     });
                 });
@@ -909,7 +913,7 @@ const Entradas = () => {
                     >
                         Nuevo</BotonGuardar>
                     <div>
-                    <Input type="file" onChange={e => subirArchivos(e.target.files[0])}/>
+                        <Input type="file" onChange={e => subirArchivos(e.target.files[0])} />
                     </div>
                 </Formulario>
             </Contenedor>
@@ -970,7 +974,7 @@ const Entradas = () => {
                         </Table.Header>
                         <Table.Body>
                             {dataEntrada.map((item, index) => {
-                                
+
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
