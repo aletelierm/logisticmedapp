@@ -261,7 +261,10 @@ const Confirmados = () => {
                         n_destino: docs.entidad,
                         r_permanente: docs.rut,
                         n_permanente: docs.entidad,
-                        fecha_permanente: fechaAdd,
+                        fecha_permanente: docs.tipoinout === 'PACIENTE' ? fechaAdd : '',
+                        // r_permanente: docs.tipoinout === 'PACIENTE' ? docs.rut : '',
+                        // n_permanente: docs.tipoinout === 'PACIENTE' ? docs.entidad : '',
+                        // fecha_permanente: docs.tipoinout === 'PACIENTE' ? fechaAdd : '',
                         fechamod: fechaMod
                     });
                 });
@@ -318,7 +321,7 @@ const Confirmados = () => {
                     batchf.update(docRef, {
                         status: 'TRANSITO BODEGA',
                         r_origen: docs.rut,
-                        n_orgen: docs.entidad,
+                        n_origen: docs.entidad,
                         fechamod: fechaMod
                     });
                 });
@@ -384,7 +387,11 @@ const Confirmados = () => {
                 });
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, { status: inOut.current, rut: docs.rut, entidad: docs.entidad, fechamod: fechaMod });
+                    batch.update(docRef, { 
+                        status: inOut.current, 
+                        r_destino: docs.rut, 
+                        n_destino: docs.entidad, 
+                        fechamod: fechaMod });
                 });
                 try {
                     await batch.commit();
@@ -426,7 +433,16 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 verdaderosRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batchf.update(docRef, { status: 'TRANSITO BODEGA', rut: docs.rut, entidad: docs.entidad });
+                    batchf.update(docRef, { 
+                        status: 'TRANSITO BODEGA',
+                        r_origen: docs.rut,
+                        n_origen: docs.entidad,
+                        r_destino: empresa.rut,
+                        n_destino: empresa.empresa,
+                        r_permanente: '',
+                        n_permanente: '',
+                        fecha_permanente: '',
+                    });
                 });
 
                 try {

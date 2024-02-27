@@ -664,6 +664,7 @@ const Entradas = () => {
             setEntidad('');
             setNumSerie('');
             setPrice('');
+            setDescripcion('');
             setConfirmar(false);
             setBtnConfirmar(true);
             setBtnAgregar(true);
