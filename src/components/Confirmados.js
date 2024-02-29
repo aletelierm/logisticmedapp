@@ -474,6 +474,9 @@ const Confirmados = () => {
                         n_origen: docs.entidad,
                         r_destino: empresa.rut,
                         n_destino: empresa.empresa,
+                        r_permanente: '',
+                        n_permanente: '',
+                        fecha_permanente: ''
                     });
                 });
 
