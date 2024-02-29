@@ -5,7 +5,7 @@ import Alertas from './Alertas';
 import styled from 'styled-components';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, doc, writeBatch, addDoc, updateDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, writeBatch, addDoc, updateDoc, getDoc } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
 import { FaSyncAlt } from "react-icons/fa";
 import { useContext } from 'react';
@@ -25,6 +25,7 @@ const Confirmados = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [cabecera, setCabecera] = useState([]);
+    const [empresa, setEmpresa] = useState([]);
     const [flag, setFlag] = useState(false);
     const [cab_id, setCab_id] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -36,11 +37,11 @@ const Confirmados = () => {
     const inOut = useRef('');
 
     /*   //Lectura de usuario para alertas de salida
-      const getAlertasSalidas = async () => {
-         const traerAlertas = collection(db, 'usuariosalertas');
-         const dato = query(traerAlertas, where('emp_id', '==', users.emp_id,'confirma','==',true));
-         const data = await getDocs(dato);
-         setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    const getAlertasSalidas = async () => {
+        const traerAlertas = collection(db, 'usuariosalertas');
+        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id,'confirma','==',true));
+        const data = await getDocs(dato);
+        setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
      } */
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -65,6 +66,11 @@ const Confirmados = () => {
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })));
         setIsChecked2(documento)
+    }
+    //Leer  Empresa
+    const getEmpresa = async () => {
+        const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
+        setEmpresa(traerEmp.data());
     }
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -235,6 +241,7 @@ const Confirmados = () => {
 
     // Filtros para guardar datos y/o validaciones Entregado
     const verdaderos = isChecked.filter(check => check.checked === true);
+    console.log('verdaderos', verdaderos)
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
     const confirmaEntrega = async (e) => {
@@ -251,38 +258,65 @@ const Confirmados = () => {
             return;
         } else {
             if (verdaderos.length > 0) {
-
-                const batch = writeBatch(db);
-                verdaderos.forEach((docs) => {
-                    const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, {
-                        status: docs.tipoinout,
-                        r_destino: docs.rut,
-                        n_destino: docs.entidad,
-                        r_permanente: docs.rut,
-                        n_permanente: docs.entidad,
-                        fecha_permanente: docs.tipoinout === 'PACIENTE' ? fechaAdd : '',
-                        // r_permanente: docs.tipoinout === 'PACIENTE' ? docs.rut : '',
-                        // n_permanente: docs.tipoinout === 'PACIENTE' ? docs.entidad : '',
-                        // fecha_permanente: docs.tipoinout === 'PACIENTE' ? fechaAdd : '',
-                        fechamod: fechaMod
+                if (verdaderos[0].tipoinout === 'PACIENTE') {
+                    const batch = writeBatch(db);
+                    verdaderos.forEach((docs) => {
+                        const docRef = doc(db, 'status', docs.eq_id);
+                        batch.update(docRef, {
+                            status: docs.tipoinout,
+                            r_destino: docs.rut,
+                            n_destino: docs.entidad,
+                            r_permanente: docs.rut,
+                            n_permanente: docs.entidad,
+                            fecha_permanente: fechaAdd,
+                            // r_permanente: docs.tipoinout === 'PACIENTE' ? docs.rut : '',
+                            // n_permanente: docs.tipoinout === 'PACIENTE' ? docs.entidad : '',
+                            // fecha_permanente: docs.tipoinout === 'PACIENTE' ? fechaAdd : '',
+                            fechamod: fechaMod
+                        });
                     });
-                });
-                verdaderos.forEach((docs) => {
-                    const docRef = doc(db, 'salidas', docs.id);
-                    batch.update(docRef, { historial: 1 }); // Indica que se recepciono el equipo en paciente
-                });
-                try {
-                    await batch.commit();
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Documentos Entregados Correctamente.'
+                    verdaderos.forEach((docs) => {
+                        const docRef = doc(db, 'salidas', docs.id);
+                        batch.update(docRef, { historial: 1 }); // Indica que se recepciono el equipo en paciente
                     });
-                } catch (error) {
-                    Swal.fire('Se ha producido un error al actualizar Status de equipos recibidos');
+                    try {
+                        await batch.commit();
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Documentos Entregados Correctamente.'
+                        });
+                    } catch (error) {
+                        Swal.fire('Se ha producido un error al actualizar Status de equipos recibidos');
+                    }
+                } else {
+                    const batch = writeBatch(db);
+                    verdaderos.forEach((docs) => {
+                        const docRef = doc(db, 'status', docs.eq_id);
+                        batch.update(docRef, {
+                            status: docs.tipoinout,
+                            r_destino: docs.rut,
+                            n_destino: docs.entidad,
+                            fechamod: fechaMod
+                        });
+                    });
+                    verdaderos.forEach((docs) => {
+                        const docRef = doc(db, 'salidas', docs.id);
+                        batch.update(docRef, { historial: 1 }); // Indica que se recepciono el equipo en paciente
+                    });
+                    try {
+                        await batch.commit();
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Documentos Entregados Correctamente.'
+                        });
+                    } catch (error) {
+                        Swal.fire('Se ha producido un error al actualizar Status de equipos recibidos');
+                    }
                 }
             }
+
 
             if (falsoCheck.length > 0) {
                 if (falsoCheck[0].tipoinout === 'PACIENTE') {
@@ -322,6 +356,8 @@ const Confirmados = () => {
                         status: 'TRANSITO BODEGA',
                         r_origen: docs.rut,
                         n_origen: docs.entidad,
+                        r_destino: empresa.rut,
+                        n_destino: empresa.empresa,
                         fechamod: fechaMod
                     });
                 });
@@ -387,11 +423,10 @@ const Confirmados = () => {
                 });
                 falsoCheckRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batch.update(docRef, { 
-                        status: inOut.current, 
-                        r_destino: docs.rut, 
-                        n_destino: docs.entidad, 
-                        fechamod: fechaMod });
+                    batch.update(docRef, {
+                        status: inOut.current,
+                        fechamod: fechaMod
+                    });
                 });
                 try {
                     await batch.commit();
@@ -433,15 +468,12 @@ const Confirmados = () => {
                 const batchf = writeBatch(db);
                 verdaderosRetiro.forEach((docs) => {
                     const docRef = doc(db, 'status', docs.eq_id);
-                    batchf.update(docRef, { 
+                    batchf.update(docRef, {
                         status: 'TRANSITO BODEGA',
                         r_origen: docs.rut,
                         n_origen: docs.entidad,
                         r_destino: empresa.rut,
                         n_destino: empresa.empresa,
-                        r_permanente: '',
-                        n_permanente: '',
-                        fecha_permanente: '',
                     });
                 });
 
@@ -475,6 +507,7 @@ const Confirmados = () => {
 
     useEffect(() => {
         consultarCab();
+        getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

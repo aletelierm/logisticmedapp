@@ -67,7 +67,7 @@ const Reporte2 = () => {
     estado.sort(ordenar);
 
     const filtro = () => {
-        const nuevoFiltro = estado.filter(r => r.rut.includes(buscador))
+        const nuevoFiltro = estado.filter(r => r.r_destino.includes(buscador))
         return nuevoFiltro;
     }
 
@@ -121,8 +121,10 @@ const Reporte2 = () => {
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             {/* <Table.HeaderCell>Precio</Table.HeaderCell> */}
                             {/* <Table.HeaderCell>Estado</Table.HeaderCell> */}
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Rut Origen</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre Origen</Table.HeaderCell>
+                            <Table.HeaderCell>Rut Destino</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre Destino</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Status</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -142,8 +144,10 @@ const Reporte2 = () => {
                                         <Table.Cell>{item.status}</Table.Cell>
                                         {/* <Table.Cell>{item.price}</Table.Cell> */}
                                         {/* <Table.Cell>{item.tipoinout}</Table.Cell> */}
-                                        <Table.Cell>{item.rut}</Table.Cell>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.entidad}</Table.Cell>
+                                        <Table.Cell>{item.r_origen}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.n_origen}</Table.Cell>
+                                        <Table.Cell>{item.r_destino}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.n_destino}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
                                     </Table.Row>
                                 )
