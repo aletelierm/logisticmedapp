@@ -699,8 +699,8 @@ const Salidas = () => {
             })
         } else {
             const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
-            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.rut === rut).length === 1;
-            const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
+            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.r_destino === rut).length === 1;
+            const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.r_destino === rut).length === 1;
             if (nomTipoOut === 'RETIRO PACIENTE') {
                 if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
@@ -835,12 +835,16 @@ const Salidas = () => {
                 } else {
                     if (nomTipoOut === 'PACIENTE') {
                         inOut.current = 'TRANSITO PACIENTE'
+                        console.log(inOut.current)
                     } else if (nomTipoOut === 'SERVICIO TECNICO') {
                         inOut.current = 'TRANSITO S.T.'
+                        console.log(inOut.current)
                     } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR') {
                         inOut.current = 'TRANSITO A PROVEEDOR'
+                        console.log(inOut.current)
                     } else {
                         inOut.current = nomTipoOut
+                        console.log(inOut.current)
                     }
                     cabid.current = existeCab[0].id
                     setBtnConfirmar(false);
@@ -898,11 +902,12 @@ const Salidas = () => {
         almacenar.current = [];
         salidaid.current = [];
     }
+    
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        console.log(cabid.current)
+        cabid.current = dataSalida[0].cab_id
 
         if (dataSalida.length === 0) {
             Swal.fire('No hay Datos pr confirmar en este documento');
@@ -911,12 +916,13 @@ const Salidas = () => {
             const batch = writeBatch(db);
             dataSalida.forEach((docs) => {
                 const docRef = doc(db, 'status', docs.eq_id);
+                console.log(inOut.current)
                 batch.update(docRef, {
                     status: inOut.current,
                     r_origen: empresa.rut,
                     n_origen: empresa.empresa,
-                    r_destino: rut,
-                    n_destino: entidad,
+                    r_destino: docs.rut,
+                    n_destino: docs.entidad,
                     fechamod: docs.fechamod
                 });
             });
@@ -954,6 +960,7 @@ const Salidas = () => {
                     tipo: 'error',
                     mensaje: 'Error al actualizar Cabecera:', error
                 })
+                console.log(error)
             }
             setNomTipDoc('');
             setNumDoc('');
@@ -1109,6 +1116,7 @@ const Salidas = () => {
 
     useEffect(() => {
         consultarCab();
+        getEmpresa();
         transportista();
         getUsuarios();
         getAlertasSalidas()
@@ -1297,7 +1305,7 @@ const Salidas = () => {
                         <Table.Body>
                             {dataSalida.map((item, index) => {
                                 return (
-                                    <Table.Row key={item.id2}>
+                                    <Table.Row key={item.id}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
@@ -1335,7 +1343,7 @@ const Salidas = () => {
                     <Table.Body>
                         {merge.map((item, index) => {
                             return (
-                                <Table.Row key={item.id2}>
+                                <Table.Row key={item.id}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.tipdoc}</Table.Cell>
                                     <Table.Cell>{item.numdoc}</Table.Cell>

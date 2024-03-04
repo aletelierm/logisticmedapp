@@ -16,14 +16,14 @@ export const TipoIn= [
 ];
 export const TipoOut= [
     { key: '1', value: '1', text: 'PACIENTE' },
-    { key: '2', value: '2', text: 'TRASPASO PACIENTE - S.T.' },
-    { key: '3', value: '3', text: 'SERVICIO TECNICO' },
-    { key: '4', value: '4', text: 'TRASPASO S.T. - PACIENTE' },
-    // { key: '2', value: '2', text: 'SERVICIO TECNICO CORRECTIVO' },
-    // { key: '2', value: '2', text: 'SERVICIO TECNICO PREVENTIVO' },
-    { key: '5', value: '5', text: 'RETIRO PACIENTE' },
-    { key: '6', value: '6', text: 'RETIRO SERVICIO TECNICO' },
-    { key: '7', value: '7', text: 'DEVOLUCION A PROVEEDOR' }
+    // { key: '2', value: '2', text: 'TRASPASO PACIENTE - S.T.' },
+    // { key: '3', value: '2', text: 'SERVICIO TECNICO' },
+    // { key: '4', value: '4', text: 'TRASPASO S.T. - PACIENTE' },
+    { key: '2', value: '2', text: 'S. TECNICO CORRECTIVO' },
+    { key: '3', value: '3', text: 'S. TECNICO PREVENTIVO' },
+    { key: '4', value: '4', text: 'RETIRO PACIENTE' },
+    { key: '5', value: '5', text: 'RETIRO SERVICIO TECNICO' },
+    { key: '6', value: '6', text: 'DEVOLUCION A PROVEEDOR' }
 ];
 
 export const Programas= [
