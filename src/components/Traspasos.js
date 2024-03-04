@@ -20,6 +20,7 @@ import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulari
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
+import correlativos from '../funciones/correlativos';
 
 const Traspasos = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -139,6 +140,8 @@ const Traspasos = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
+
+    console.log(correlativos('EshoJNBwJlw1Sh3mIBYv','traspasos'))
     // // Cambiar Label de Rut
     // if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
     //     nomRut.current = 'Rut Paciente';
@@ -1230,9 +1233,10 @@ const Traspasos = () => {
                     <ContentElemenMov>
                             <Label style={{ marginRight: '10px' }} >Descripcion</Label>
                             <TextArea
-                                style={{ width: '80%', height: '60px' }}
+                                style={{ width: '80%', maxheight: '60px' }}
                                 type='text'
                                 name='descripcion'
+                                maxLength="100"
                                 placeholder='Ingrese descripcion o detalles adicionales a la guía'
                                 value={descripcion}
                                 onChange={e => setDescripcion(e.target.value)}
