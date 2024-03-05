@@ -58,7 +58,7 @@ export const Medidas= [
 ];
 
 export const Traspaso= [
-    { key: '1', value: '1', text: 'S.T. CORRECTIVO' },
-    { key: '2', value: '2', text: 'S.T. PREVENTIVO' },
+    { key: '1', value: '1', text: 'S. TECNICO CORRECTIVO' },
+    { key: '2', value: '2', text: 'S. TECNICO PREVENTIVO' },
     { key: '3', value: '3', text: 'PACIENTE' },
 ];

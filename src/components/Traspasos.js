@@ -81,10 +81,10 @@ const Traspasos = () => {
     }
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 2));
+        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 4));
         const guardaCab = await getDocs(cab);
         setCabecera(guardaCab.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 0));
+        const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('tipmov', '==', 5));
         const guardaCab1 = await getDocs(cab1);
         setCabecera1(guardaCab1.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
@@ -116,6 +116,7 @@ const Traspasos = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+    // console.log(status)
     //Lee datos de los usuarios
     const getUsuarios = async () => {
         const dataUsuarios = collection(db, "usuarios");
@@ -123,7 +124,6 @@ const Traspasos = () => {
         const data = await getDocs(dato)
         setUsuarios(data.docs.map((emp, index) => ({ ...emp.data(), id: emp.id, id2: index + 1 })))
     }
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -142,20 +142,18 @@ const Traspasos = () => {
     }
 
     console.log(correlativos('EshoJNBwJlw1Sh3mIBYv','traspasos'))
-    // // Cambiar Label de Rut
-    // if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
+    // Cambiar Label de Rut
+    // if (nomTipoOut === 'PACIENTE') {
     //     nomRut.current = 'Rut Paciente';
-    // } else if (nomTipoOut === 'SERVICIO TECNICO' || nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-    //     nomRut.current = 'Rut Servicio Tecnico';
     // } else {
-    //     nomRut.current = 'Rut Proveedor';
+    //     nomRut.current = 'Rut Servicio Tecnico';
     // }
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
-            if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'RETIRO PACIENTE') {
+            if (nomTipoOut === 'PACIENTE') {
                 // Filtrar rut de Pacientes
                 const traerClie = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
                 const rutCli = await getDocs(traerClie)
@@ -299,11 +297,11 @@ const Traspasos = () => {
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         // Filtar por docuemto de Cabecera Tipmov = 2
-        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 2));
+        const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 4));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
         // Filtar por docuemto de Cabecera Tipmov = 0
-        const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 0));
+        const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 5));
         const cabecera1 = await getDocs(cab1);
         const existeCab1 = (cabecera1.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
         // Validar si existe correo de transprtista
@@ -446,7 +444,7 @@ const Traspasos = () => {
                             correo: correo,
                             patente: patente,
                             descripcion: descripcion,
-                            tipMov: 2,
+                            tipMov: 4,
                             confirmado: false,
                             entregado: false,
                             retirado: true,
@@ -456,106 +454,6 @@ const Traspasos = () => {
                             fechaAdd: fechaAdd,
                             fechaMod: fechaMod,
                             emp_id: users.emp_id,
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Cabecera Documento guadada exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
-            } else if (nomTipoOut === 'RETIRO PACIENTE') {
-                if (existeCli.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut del Paciente'
-                    })
-                } else {
-                    setEntidad(existeCli[0].nombre);
-                    try {
-                        CabeceraOutDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            descripcion: descripcion,
-                            tipMov: 0,
-                            confirmado: false,
-                            entregado: true,
-                            retirado: false,
-                            observacion: '',
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Cabecera Documento guadada exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
-            } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-                if (existeProv.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut de proveedor'
-                    })
-                } else {
-                    setEntidad(existeProv[0].nombre);
-                    try {
-                        CabeceraOutDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            descripcion: descripcion,
-                            tipMov: 0,
-                            confirmado: false,
-                            entregado: true,
-                            retirado: false,
-                            observacion: '',
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id
                         })
                         cambiarEstadoAlerta(true);
                         cambiarAlerta({
@@ -596,7 +494,7 @@ const Traspasos = () => {
                             correo: correo,
                             patente: patente,
                             descripcion: descripcion,
-                            tipMov: 2,
+                            tipMov: 5,
                             confirmado: false,
                             entregado: false,
                             retirado: true,
@@ -613,8 +511,8 @@ const Traspasos = () => {
                             mensaje: 'Cabecera Documento guadada exitosamente'
                         })
                         setFlag(!flag);
-                        setConfirmar(true)
-                        setBtnAgregar(false)
+                        setConfirmar(true);
+                        setBtnAgregar(false);
                         setBtnGuardar(true);
                         setBtnNuevo(false);
                         return;
@@ -664,10 +562,6 @@ const Traspasos = () => {
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
         const existeCab1 = cabecera1.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        // Validar que equipo pertenezca a proveedor y que este en arriendo
-        const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
-        const valida = await getDocs(traer);
-        const existeeqprov = (valida.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         if (numSerie === '') {
             cambiarEstadoAlerta(true);
@@ -695,31 +589,30 @@ const Traspasos = () => {
                 mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
             })
         } else {
-            const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
             const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.rut === rut).length === 1;
             const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
-            if (nomTipoOut === 'RETIRO PACIENTE') {
-                if (!existeStatusCli) {
+            if (nomTipoOut === 'PACIENTE') {
+                if (!existeStatusST) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en este Paciente'
+                        mensaje: 'Equipo no se encuentra en Servicio Tecnico'
                     })
                 } else {
-                    inOut.current = 'PROCESO RETIRO PACIENTE';
-                    cabid.current = existeCab1[0].id
+                    inOut.current = ' TRANSITO A PACIENTE';
+                    cabid.current = existeCab[0].id
                     setBtnConfirmar(false);
                     try {
                         SalidasDB({
                             numDoc: numDoc,
                             tipDoc: nomTipDoc,
-                            date: existeCab1[0].date,
+                            date: existeCab[0].date,
                             tipoInOut: nomTipoOut,
                             rut: rut,
                             entidad: entidad,
                             correo: correo,
                             patente: patente,
-                            cab_id: existeCab1[0].id,
+                            cab_id: existeCab[0].id,
                             eq_id: almacenar.current[0].id,
                             familia: almacenar.current[0].familia,
                             tipo: almacenar.current[0].tipo,
@@ -727,7 +620,7 @@ const Traspasos = () => {
                             modelo: almacenar.current[0].modelo,
                             serie: almacenar.current[0].serie,
                             rfid: almacenar.current[0].rfid,
-                            tipMov: 0,
+                            tipMov: 4,
                             observacion: '',
                             historial: 0, // = transito
                             confirmado: false,
@@ -757,15 +650,15 @@ const Traspasos = () => {
                         })
                     }
                 }
-            } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-                if (!existeStatusST) {
+            } else {
+                if (!existeStatusCli) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Servicio Tecnico'
+                        mensaje: 'Equipo no se encuentra en Paciente'
                     })
                 } else {
-                    inOut.current = 'PROCESO RETIRO S.T.';
+                    inOut.current = 'TRANSITO S.T.';
                     cabid.current = existeCab1[0].id
                     setBtnConfirmar(false);
                     try {
@@ -786,80 +679,7 @@ const Traspasos = () => {
                             modelo: almacenar.current[0].modelo,
                             serie: almacenar.current[0].serie,
                             rfid: almacenar.current[0].rfid,
-                            tipMov: 0,
-                            observacion: '',
-                            historial: 0,
-                            confirmado: false,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        });
-                        setNumSerie('');
-                        almacenar.current = [];
-                        salidaid.current = [];
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Item guardado correctamente'
-                        })
-                        setFlag(!flag);
-                        setBtnConfirmar(false);
-                        setBtnNuevo(false);
-                        // return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
-                }
-            } else {
-                if (nomTipoOut === 'DEVOLUCION A PROVEEDOR' && existeeqprov.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Equipo no pertenece a este Proveedor o no ha sido arrendado'
-                    })
-                } else if (!existeStatusBod) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Bodega'
-                    })
-                } else {
-                    if (nomTipoOut === 'PACIENTE') {
-                        inOut.current = 'TRANSITO PACIENTE'
-                    } else if (nomTipoOut === 'SERVICIO TECNICO') {
-                        inOut.current = 'TRANSITO S.T.'
-                    } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR') {
-                        inOut.current = 'TRANSITO A PROVEEDOR'
-                    } else {
-                        inOut.current = nomTipoOut
-                    }
-                    cabid.current = existeCab[0].id
-                    setBtnConfirmar(false);
-                    try {
-                        SalidasDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: existeCab[0].date,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            cab_id: existeCab[0].id,
-                            eq_id: almacenar.current[0].id,
-                            familia: almacenar.current[0].familia,
-                            tipo: almacenar.current[0].tipo,
-                            marca: almacenar.current[0].marca,
-                            modelo: almacenar.current[0].modelo,
-                            serie: almacenar.current[0].serie,
-                            rfid: almacenar.current[0].rfid,
-                            tipMov: 2,
+                            tipMov: 5,
                             observacion: '',
                             historial: 0,
                             confirmado: false,
@@ -899,7 +719,12 @@ const Traspasos = () => {
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        console.log(cabid.current)
+
+        // Traer datos de equipo en Status  
+        const traerEq = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        const serieEq = await getDocs(traerEq);
+        const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log(existe)
 
         if (dataSalida.length === 0) {
             Swal.fire('No hay Datos pr confirmar en este documento');
@@ -910,7 +735,7 @@ const Traspasos = () => {
                 const docRef = doc(db, 'status', docs.eq_id);
                 batch.update(docRef, {
                     status: inOut.current,
-                    rut: rut,
+                    // r_origen: ,
                     entidad: entidad,
                     fechamod: docs.fechamod
                 });

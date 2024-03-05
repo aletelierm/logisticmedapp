@@ -241,7 +241,6 @@ const Confirmados = () => {
 
     // Filtros para guardar datos y/o validaciones Entregado
     const verdaderos = isChecked.filter(check => check.checked === true);
-    console.log('verdaderos', verdaderos)
     const falsoCheck = isChecked.filter(check => check.checked === false && check.observacion !== '');
     const falsos = isChecked.filter(check => check.observacion === '' && check.checked === false);
     const confirmaEntrega = async (e) => {
@@ -294,7 +293,7 @@ const Confirmados = () => {
                     verdaderos.forEach((docs) => {
                         const docRef = doc(db, 'status', docs.eq_id);
                         batch.update(docRef, {
-                            status: docs.tipoinout,
+                            status: 'SERVICIO TECNICO',
                             r_destino: docs.rut,
                             n_destino: docs.entidad,
                             fechamod: fechaMod
@@ -314,14 +313,13 @@ const Confirmados = () => {
                     } catch (error) {
                         Swal.fire('Se ha producido un error al actualizar Status de equipos recibidos');
                     }
-                }
+                } 
             }
-
 
             if (falsoCheck.length > 0) {
                 if (falsoCheck[0].tipoinout === 'PACIENTE') {
                     inOut.current = 'DEVOLUCION PACIENTE'
-                } else if (falsoCheck[0].tipoinout === 'SERVICIO TECNICO') {
+                } else if (falsoCheck[0].tipoinout === 'S. TECNICO CORRECTIVO' || falsoCheck[0].tipoinout === 'S. TECNICO CORRECTIVO') {
                     inOut.current = 'DEVOLUCION SERVICIO TECNICO'
                 } else {
                     inOut.current = 'DEVOLUCION DEL PROVEEDOR'
