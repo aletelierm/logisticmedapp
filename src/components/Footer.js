@@ -10,7 +10,7 @@ const Footer = () => {
                 <h2>Contactanos</h2>
                 <ul className='contact'>
                     <li><FaWhatsapp style={{color:'#ffffff'}}/>  +569 76321481</li>
-                    <li><TfiEmail style={{color: '#ffffff'}}/>  ventas@dormirbien.cl</li>
+                    <li><TfiEmail style={{color: '#ffffff'}}/>  info@logisticmed.cl</li>
                     <li><FiPhoneCall />  +569 54234538</li>
                 </ul>
                 <div className='reserved-right'>
