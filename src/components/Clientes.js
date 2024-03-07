@@ -28,7 +28,7 @@ const Clientes = () => {
     const [telefono, setTelefono] = useState('');
     const [correo, setCorreo] = useState('');
     const [region, setRegion] = useState('Arica y Parinacota');
-    const [comuna, setComuna] = useState('');   
+    const [comuna, setComuna] = useState('');
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [buscador, setBuscardor] = useState('');
@@ -296,8 +296,8 @@ const Clientes = () => {
         downloadLink.click();
     }
 
-    const comunasxRegion = Regiones.find((option)=> option.region === region).comunas
-    
+    const comunasxRegion = Regiones.find((option) => option.region === region).comunas
+
 
     return (
         <ContenedorProveedor>
@@ -346,18 +346,11 @@ const Clientes = () => {
                         </Select>
                         <Label>Comuna</Label>
                         <Select value={comuna} onChange={e => setComuna(e.target.value)}>
-                                {comunasxRegion.map((objeto, index) =>{
-
-                                    return ( <option key={index}>{objeto.name}</option>)
-                                }
-                                
-                                
-                                
-                                
-                                )            
-                                }
-
-                              
+                            {comunasxRegion.map((objeto, index) => {
+                                return (<option key={index}>{objeto.name}</option>)
+                            }
+                            )
+                            }
                         </Select>
                     </ContentElemen>
                     <ContentElemen>

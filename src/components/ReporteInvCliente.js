@@ -83,7 +83,7 @@ const ReporteInvCliente = () => {
 
                 if (encuentraRut.docs.length !== 0) {
                     //leer entradas por id
-                    const datoE = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('rut', '==', rut), where('status','==','PACIENTE'));
+                    const datoE = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut), where('status','==','PACIENTE'));
                     const InvCliente = await getDocs(datoE);
                     Inv.current = InvCliente.docs.map((doc, index) => ({ ...doc.data(), id: doc.id}))
                     setValorizado( Inv.current.reduce((total, dato)=>total+dato.price,0));
@@ -111,6 +111,7 @@ const ReporteInvCliente = () => {
         return formatear;
     }
 
+    console.log(Inv.current)
    
        return (
         <ContenedorProveedor>
@@ -133,7 +134,7 @@ const ReporteInvCliente = () => {
             <Contenedor>
                 {
                     Inv.current.length > 0 ?
-                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" " + Inv.current[0].entidad + " ------ Rut: " + Inv.current[0].rut}</Titulo>
+                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" " + Inv.current[0].n_permanente + " ------ Rut: " + Inv.current[0].r_permanente}</Titulo>
                         :
                         <Titulo>Equipo:</Titulo>
                 }
