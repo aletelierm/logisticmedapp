@@ -20,7 +20,7 @@ import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulari
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
-import correlativos from '../funciones/correlativos';
+import correlativos from '../funciones/correlativosMultiEmpresa';
 
 const Traspasos = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -141,7 +141,12 @@ const Traspasos = () => {
         setDate(formatoDatetimeLocal)
     }
 
-    console.log(correlativos('EshoJNBwJlw1Sh3mIBYv','traspasos'))
+    //Generar folio unico.
+    //correlativos('EshoJNBwJlw1Sh3mIBYv', 'traspasos').then((nuevoFolio) => {
+    //    console.log(`Nuevo folio para:`, nuevoFolio);
+    // });
+    
+    /* console.log(correlativos('EshoJNBwJlw1Sh3mIBYv','traspasos')) */
     // Cambiar Label de Rut
     // if (nomTipoOut === 'PACIENTE') {
     //     nomRut.current = 'Rut Paciente';

@@ -1,38 +1,35 @@
 import { db } from '../firebase/firebaseConfig';
 import { doc, runTransaction } from 'firebase/firestore';
 
+const generarFolioUnico = async (documento, campo) => {
+  const docRef = doc(db, 'correlativos', documento);
 
-const generarFolioMulti = async (documento, campo) => {
-    const folioRef = doc(db, 'correlativos', documento);
+  try {
+    const nuevoFolio = await runTransaction(db, async (transaction) => {
+      const documentSnapshot = await transaction.get(docRef);
 
-    try {
-      // Obtener el documento existente
-      const docSnapshot = await folioRef.get();
-  
-      // Definir el contadorCampo fuera de la transacción
-      let contadorCampo;
-  
-      // Verificar si el documento ya existe
-      if (docSnapshot.exists()) {
-        // El documento ya existe, incrementar el contador del campo específico
-        await runTransaction(db, async (transaction) => {
-          const documentoData = await transaction.get(folioRef);
-          contadorCampo = documentoData.get(campo) || 0;
-          transaction.update(folioRef, { [campo]: contadorCampo + 1 });
-        });
-      } else {
-        // El documento no existe, crearlo con el contador del campo específico en 1
-        await folioRef.set({ [campo]: 1 });
-        contadorCampo = 1; // Establecer el contadorCampo en 1
+      if (!documentSnapshot.exists()) {
+        console.log('El documento no existe, creándolo...');
+        const nuevoDocumento = {};
+        nuevoDocumento[campo] = 1;
+        transaction.set(docRef, nuevoDocumento);
+        return 1; // Devuelve el primer folio
       }
-  
-      // Obtener el folio único después de la actualización o creación
-      const folio = `${documento.toUpperCase()}-${campo.toUpperCase()}-${contadorCampo}`;
-      console.log('Folio generado:', folio);
-      return folio;
-    } catch (error) {
-      console.error('Error al generar folio:', error);
-    }
-  
-}
-export default generarFolioMulti;
+
+      const documentoActual = documentSnapshot.data();
+      const valorActual = documentoActual[campo];
+      const nuevoFolio = valorActual + 1;
+
+      transaction.update(docRef, { [campo]: nuevoFolio });
+
+      console.log(`Nuevo folio para ${campo}:`, nuevoFolio);
+      return nuevoFolio;
+    });
+
+    return nuevoFolio;
+  } catch (error) {
+    console.error('Error al generar folio', error);
+  }
+};
+
+export default generarFolioUnico;
