@@ -48,6 +48,7 @@ const Traspasos = () => {
     const [cabecera1, setCabecera1] = useState([]);
     const [dataSalida, setDataSalida] = useState([]);
     const [status, setStatus] = useState([]);
+    const [statusPaciente, setStatusPaciente] = useState([]);
     const [usuario, setUsuarios] = useState([]);
     const [transport, setTransport] = useState([]);
     const [numDoc, setNumDoc] = useState('');
@@ -55,7 +56,7 @@ const Traspasos = () => {
     const [date, setDate] = useState('');
     const [nomTipoOut, setNomTipoOut] = useState('');
     const [rut, setRut] = useState('');
-    const [entidad, setEntidad] = useState('');
+    const [entidad, setEntidad] = useState([]);
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
     const [numSerie, setNumSerie] = useState('');
@@ -116,7 +117,13 @@ const Traspasos = () => {
         const data = await getDocs(dato)
         setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-    // console.log(status)
+    // Lectura de status por pacientes
+    const statusPacientes = async () => {
+        const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('status', '==', 'PACIENTE'));
+        const docu = await getDocs(doc);
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setStatusPaciente(documen)
+    }
     //Lee datos de los usuarios
     const getUsuarios = async () => {
         const dataUsuarios = collection(db, "usuarios");
@@ -147,51 +154,40 @@ const Traspasos = () => {
     // });
     
     /* console.log(correlativos('EshoJNBwJlw1Sh3mIBYv','traspasos')) */
+    const handleChange = (ev) => {
+        setRut(ev.target.value);
+        const nombre = statusPaciente.filter(item => item.r_permanente === ev.target.value)
+        setEntidad(nombre[0].n_permanente)
+    }
+
+   /*  console.log(correlativos('EshoJNBwJlw1Sh3mIBYv', 'traspasos')) */
     // Cambiar Label de Rut
     // if (nomTipoOut === 'PACIENTE') {
     //     nomRut.current = 'Rut Paciente';
     // } else {
     //     nomRut.current = 'Rut Servicio Tecnico';
     // }
-    // Validar rut
-    const detectarCli = async (e) => {
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        if (e.key === 'Enter' || e.key === 'Tab') {
-            if (nomTipoOut === 'PACIENTE') {
-                // Filtrar rut de Pacientes
-                const traerClie = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-                const rutCli = await getDocs(traerClie)
-                const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-                if (existeCli.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut del Paciente'
-                    })
-                } else {
-                    setEntidad(existeCli[0].nombre);
-                    setBtnGuardar(false);
-                }
-            } else {
-                // Filtrar rut de Proveedores
-                const traerProv = query(collection(db, 'proveedores'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-                const rutProv = await getDocs(traerProv)
-                const existeProv = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-                if (existeProv.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'No existe rut de proveedor'
-                    })
-                } else {
-                    setEntidad(existeProv[0].nombre);
-                    setBtnGuardar(false);
-                }
-            }
-        }
-    }
+    // Validar rut
+    // const detectarCli = async (e) => {
+    //     cambiarEstadoAlerta(false);
+    //     cambiarAlerta({});
+    //     if (e.key === 'Enter' || e.key === 'Tab') {
+    //         // Filtrar rut de Pacientes
+    //         const traerClie = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+    //         const rutCli = await getDocs(traerClie)
+    //         const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+    //         if (existeCli.length === 1) {
+    //             setEntidad(existeCli[0].n_permanente);
+    //             setBtnGuardar(false);
+    //         }
+    //     }
+    // }
+
+    // const nomPaciente = statusPacientes.find((option) => option.r_permanente === rut)
+    
+    
     // Validar N°serie
     const detectar = async (e) => {
         cambiarEstadoAlerta(false);
@@ -731,83 +727,83 @@ const Traspasos = () => {
         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         console.log(existe)
 
-        if (dataSalida.length === 0) {
-            Swal.fire('No hay Datos pr confirmar en este documento');
-        } else {
-            // const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-            const batch = writeBatch(db);
-            dataSalida.forEach((docs) => {
-                const docRef = doc(db, 'status', docs.eq_id);
-                batch.update(docRef, {
-                    status: inOut.current,
-                    // r_origen: ,
-                    entidad: entidad,
-                    fechamod: docs.fechamod
-                });
-            });
-            dataSalida.forEach((docs) => {
-                const docRef = doc(db, 'salidas', docs.id);
-                batch.update(docRef, {
-                    confirmado: true,
-                    fechamod: new Date()
-                });
-            });
-            try {
-                await batch.commit();
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Documentos actualizados correctamente.'
-                });
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Error al actualizar documentos:', error
-                })
-            }
-            try {
-                await updateDoc(doc(db, 'cabecerasout', cabid.current), {
-                    confirmado: true,
-                    tipmov: 0,
-                    usermod: user.email,
-                    fechamod: fechaMod
-                });
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Error al actualizar Cabecera:', error
-                })
-            }
-            setNomTipDoc('');
-            setNumDoc('');
-            setDate('');
-            setNomTipoOut('');
-            setRut('');
-            setEntidad('');
-            setCorreo('');
-            setPatente('');
-            setNumSerie('');
-            setConfirmar(false);
-            setBtnGuardar(false);
-            setBtnAgregar(true);
-            setBtnConfirmar(true);
-            setBtnNuevo(true);
-            setFlag(!flag);
-            if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
-                try {
-                    /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
-                    const mensaje = cuerpoCorreo(dataSalida);
-                    alertaSalida.forEach((destino) => {
-                        EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
-                    })
-                } catch (error) {
-                    console.log('error', error)
-                }
-            }
-            setFlag(!flag);
-        }
+        // if (dataSalida.length === 0) {
+        //     Swal.fire('No hay Datos pr confirmar en este documento');
+        // } else {
+        //     // const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        //     const batch = writeBatch(db);
+        //     dataSalida.forEach((docs) => {
+        //         const docRef = doc(db, 'status', docs.eq_id);
+        //         batch.update(docRef, {
+        //             status: inOut.current,
+        //             r_origen: ,
+        //             entidad: entidad,
+        //             fechamod: docs.fechamod
+        //         });
+        //     });
+        //     dataSalida.forEach((docs) => {
+        //         const docRef = doc(db, 'salidas', docs.id);
+        //         batch.update(docRef, {
+        //             confirmado: true,
+        //             fechamod: new Date()
+        //         });
+        //     });
+        //     try {
+        //         await batch.commit();
+        //         cambiarEstadoAlerta(true);
+        //         cambiarAlerta({
+        //             tipo: 'exito',
+        //             mensaje: 'Documentos actualizados correctamente.'
+        //         });
+        //     } catch (error) {
+        //         cambiarEstadoAlerta(true);
+        //         cambiarAlerta({
+        //             tipo: 'error',
+        //             mensaje: 'Error al actualizar documentos:', error
+        //         })
+        //     }
+        //     try {
+        //         await updateDoc(doc(db, 'cabecerasout', cabid.current), {
+        //             confirmado: true,
+        //             tipmov: 0,
+        //             usermod: user.email,
+        //             fechamod: fechaMod
+        //         });
+        //     } catch (error) {
+        //         cambiarEstadoAlerta(true);
+        //         cambiarAlerta({
+        //             tipo: 'error',
+        //             mensaje: 'Error al actualizar Cabecera:', error
+        //         })
+        //     }
+        //     setNomTipDoc('');
+        //     setNumDoc('');
+        //     setDate('');
+        //     setNomTipoOut('');
+        //     setRut('');
+        //     setEntidad('');
+        //     setCorreo('');
+        //     setPatente('');
+        //     setNumSerie('');
+        //     setConfirmar(false);
+        //     setBtnGuardar(false);
+        //     setBtnAgregar(true);
+        //     setBtnConfirmar(true);
+        //     setBtnNuevo(true);
+        //     setFlag(!flag);
+        //     if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
+        //         try {
+        //             /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
+        //             const mensaje = cuerpoCorreo(dataSalida);
+        //             alertaSalida.forEach((destino) => {
+        //                 EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
+        //             })
+        //         } catch (error) {
+        //             console.log('error', error)
+        //         }
+        //     }
+        //     setFlag(!flag);
+        // }
     };
     const handleDelete = (itemId) => {
         setItemdelete(itemId);
@@ -936,7 +932,8 @@ const Traspasos = () => {
         consultarCab();
         transportista();
         getUsuarios();
-        getAlertasSalidas()
+        getAlertasSalidas();
+        statusPacientes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -1020,7 +1017,7 @@ const Traspasos = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label >Rut Paciente</Label>
-                            <Input
+                            {/* <Input
                                 disabled={confirmar}
                                 type='text'
                                 placeholder='Ingrese Rut sin puntos'
@@ -1028,7 +1025,21 @@ const Traspasos = () => {
                                 value={rut}
                                 onChange={ev => setRut(ev.target.value)}
                                 onKeyDown={detectarCli}
-                            />
+                            /> */}
+
+                            <Select
+                                disabled={confirmar}
+                                placeholder='Ingrese Rut sin puntos'
+                                value={rut}
+                                onChange={handleChange}
+                                // onKeyDown={detectarCli}
+                            >
+                                <option>Selecciona Opción:</option>
+                                {statusPaciente.map((d) => {
+                                    return (<option key={d.key}>{d.r_permanente}</option>)
+                                })}
+                            </Select>
+
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label >Nombre</Label>
@@ -1061,31 +1072,31 @@ const Traspasos = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <ContentElemenMov>
-                            <Label style={{ marginRight: '10px' }} >Descripcion</Label>
-                            <TextArea
-                                style={{ width: '80%', maxheight: '60px' }}
-                                type='text'
-                                name='descripcion'
-                                maxLength="100"
-                                placeholder='Ingrese descripcion o detalles adicionales a la guía'
-                                value={descripcion}
-                                onChange={e => setDescripcion(e.target.value)}
-                            />
-                        </ContentElemenMov>
-                        <BotonGuardar
-                            style={{ margin: '35px 10px' }}
-                            onClick={addCabeceraIn}
-                            checked={confirmar}
-                            onChange={handleCheckboxChange}
-                            disabled={btnGuardar}
-                        >Guardar</BotonGuardar>
-                        <BotonGuardar
-                            style={{ margin: '35px 0' }}
-                            onClick={nuevo}
-                            checked={confirmar}
-                            onChange={handleCheckboxChange}
-                            disabled={btnNuevo}
-                        >Nuevo</BotonGuardar>
+                        <Label style={{ marginRight: '10px' }} >Descripcion</Label>
+                        <TextArea
+                            style={{ width: '80%', maxheight: '60px' }}
+                            type='text'
+                            name='descripcion'
+                            maxLength="100"
+                            placeholder='Ingrese descripcion o detalles adicionales a la guía'
+                            value={descripcion}
+                            onChange={e => setDescripcion(e.target.value)}
+                        />
+                    </ContentElemenMov>
+                    <BotonGuardar
+                        style={{ margin: '35px 10px' }}
+                        onClick={addCabeceraIn}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnGuardar}
+                    >Guardar</BotonGuardar>
+                    <BotonGuardar
+                        style={{ margin: '35px 0' }}
+                        onClick={nuevo}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnNuevo}
+                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>
