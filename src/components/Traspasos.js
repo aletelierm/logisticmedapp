@@ -3,12 +3,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import SalidasDB from '../firebase/SalidasDB';
 import CabeceraOutDB from '../firebase/CabeceraOutDB';
 import Alertas from './Alertas';
-import validarRut from '../funciones/validarRut';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch, deleteDoc } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
-import { TipDocOut, Traspaso } from './TipDoc';
+import { TipDocTraspaso, TipoOut, Traspaso } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
 import { MdDeleteForever } from "react-icons/md";
 import { FcCancel } from "react-icons/fc";
@@ -49,6 +48,7 @@ const Traspasos = () => {
     const [dataSalida, setDataSalida] = useState([]);
     const [status, setStatus] = useState([]);
     const [statusPaciente, setStatusPaciente] = useState([]);
+    const [statusST, setStatusST] = useState([]);
     const [usuario, setUsuarios] = useState([]);
     const [transport, setTransport] = useState([]);
     const [numDoc, setNumDoc] = useState('');
@@ -63,14 +63,11 @@ const Traspasos = () => {
     const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnGuardar, setBtnGuardar] = useState(true);
+    const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const inOut = useRef('');
-    const almacenar = useRef([]);
-    const salidaid = useRef([]);
-    const nomRut = useRef('Rut');
     const cabid = useRef('');
 
     //Lectura de usuario para alertas de salida
@@ -110,20 +107,35 @@ const Traspasos = () => {
         const transportista = (transporte.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setTransport(transportista);
     }
+    // //Lectura de status
+    // const getStatus = async () => {
+    //     const traerEntrada = collection(db, 'status');
+    //     const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
+    //     const data = await getDocs(dato)
+    //     setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    // }
     //Lectura de status
     const getStatus = async () => {
-        const traerEntrada = collection(db, 'status');
-        const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
-        const data = await getDocs(dato)
-        setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+        const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('status', '==', 'PACIENTE'));
+        const docu = await getDocs(doc);
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setStatus(documen)
     }
     // Lectura de status por pacientes
     const statusPacientes = async () => {
-        const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('status', '==', 'PACIENTE'));
+        const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut), where('status', '==', 'PACIENTE'));
         const docu = await getDocs(doc);
         const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setStatusPaciente(documen)
     }
+    // Lectura de status por S.T.
+    const statusSTecnico = async () => {
+        const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut), where('status', '==', 'SERVICIO TECNICO'));
+        const docu = await getDocs(doc);
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setStatusST(documen)
+    }
+
     //Lee datos de los usuarios
     const getUsuarios = async () => {
         const dataUsuarios = collection(db, "usuarios");
@@ -148,139 +160,13 @@ const Traspasos = () => {
         setDate(formatoDatetimeLocal)
     }
 
-    //Generar folio unico.
-    //correlativos('EshoJNBwJlw1Sh3mIBYv', 'traspasos').then((nuevoFolio) => {
-    //    console.log(`Nuevo folio para:`, nuevoFolio);
-    // });
-    
-    /* console.log(correlativos('EshoJNBwJlw1Sh3mIBYv','traspasos')) */
     const handleChange = (ev) => {
         setRut(ev.target.value);
-        const nombre = statusPaciente.filter(item => item.r_permanente === ev.target.value)
+        const nombre = status.filter(item => item.r_permanente === ev.target.value)
         setEntidad(nombre[0].n_permanente)
+        setFlag(!flag)
     }
-
-   /*  console.log(correlativos('EshoJNBwJlw1Sh3mIBYv', 'traspasos')) */
-    // Cambiar Label de Rut
-    // if (nomTipoOut === 'PACIENTE') {
-    //     nomRut.current = 'Rut Paciente';
-    // } else {
-    //     nomRut.current = 'Rut Servicio Tecnico';
-    // }
-
-    // Validar rut
-    // const detectarCli = async (e) => {
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-    //     if (e.key === 'Enter' || e.key === 'Tab') {
-    //         // Filtrar rut de Pacientes
-    //         const traerClie = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-    //         const rutCli = await getDocs(traerClie)
-    //         const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
-    //         if (existeCli.length === 1) {
-    //             setEntidad(existeCli[0].n_permanente);
-    //             setBtnGuardar(false);
-    //         }
-    //     }
-    // }
-
-    // const nomPaciente = statusPacientes.find((option) => option.r_permanente === rut)
     
-    
-    // Validar N°serie
-    const detectar = async (e) => {
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        if (e.key === 'Enter' || e.key === 'Tab') {
-            // Exite N° serie en equipos   
-            const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-            const serieEq = await getDocs(traerEq);
-            const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // Exite ID en equipos
-            const traerId = await getDoc(doc(db, 'equipos', numSerie));
-            if (existe.length === 1) {
-                almacenar.current = existe;
-            } else if (traerId.exists()) {
-                const existeId = traerId.data();
-                const arreglo = [existeId];
-                const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-                almacenar.current = existe2;
-            } else {
-                console.log('almacenar', almacenar.current);
-            }
-            // Exite N° serie en Entradas 
-            const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
-            const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
-            // Validar en N° Serie en todos los documento de Salidas confirmado
-            const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
-            const confirmadoS = await getDocs(traerSC);
-            const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // Validar en Eq_id en todos los documento de Salidas confirmado
-            const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
-            const confirmadoID = await getDocs(traerID);
-            const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            // Validar que equipo pertenezca a proveedor y que este en arriendo
-            const traer = query(collection(db, 'entradas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('rut', '==', rut), where('tipoinout', '==', 'ARRIENDO'));
-            const valida = await getDocs(traer);
-            const existeeqprov = (valida.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
-            if (almacenar.current.length === 0) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'No existe un Equipo con este N° Serie o Id'
-                })
-            } else if (existeIn.length > 0 || existeIn2.length > 0) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra en este documento'
-                })
-            } else if (existeconfirmado.length > 0 || existeID.length > 0) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
-                })
-            } else {
-                const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE').length === 1;
-                const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO').length === 1;
-                const existeStatusBod = status.filter(st => st.id === almacenar.current[0].id && st.status === 'BODEGA').length === 1;
-                if (nomTipoOut === 'RETIRO PACIENTE') {
-                    if (!existeStatusCli) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Paciente'
-                        })
-                    }
-                } else if (nomTipoOut === 'RETIRO SERVICIO TECNICO') {
-                    if (!existeStatusST) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Servicio Tecnico'
-                        })
-                    }
-                } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR' && existeeqprov.length === 0) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Equipo no pertenece a este Proveedor o no ha sido arrendado'
-                    })
-                } else {
-                    if (!existeStatusBod) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: 'Equipo no se encuentra en Bodega'
-                        })
-                    }
-                }
-            }
-        }
-    }
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -289,22 +175,16 @@ const Traspasos = () => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Validar Rut
-        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-        const temp = rut.split('-');
-        let digito = temp[1];
-        if (digito === 'k' || digito === 'K') digito = -1;
-        const validaR = validarRut(rut);
         //Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         // Filtar por docuemto de Cabecera Tipmov = 2
         const cab = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 4));
         const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         // Filtar por docuemto de Cabecera Tipmov = 0
         const cab1 = query(collection(db, 'cabecerasout'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut), where('tipmov', '==', 5));
         const cabecera1 = await getDocs(cab1);
-        const existeCab1 = (cabecera1.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+        const existeCab1 = (cabecera1.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
@@ -337,25 +217,11 @@ const Traspasos = () => {
             })
             return;
             // Validacion Rut
-        } else if (rut === '') {
+        } else if (rut.length === 0 || rut === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Campo Rut no puede estar vacio'
-            })
-            return;
-        } else if (!expresionRegularRut.test(rut)) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Formato incorrecto de rut'
-            })
-            return;
-        } else if (validaR !== parseInt(digito)) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Rut no válido'
+                mensaje: 'Seleccione un Rut'
             })
             return;
         } else if (correo === '') {
@@ -415,395 +281,354 @@ const Traspasos = () => {
                 })
             }
         } else {
-            // Validar Rut Paciente
-            const traerClie = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-            const rutCli = await getDocs(traerClie)
-            const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-            // Validar Rut Proveedor
-            const traerProv = query(collection(db, 'proveedores'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-            const rutProv = await getDocs(traerProv)
-            const existeProv = (rutProv.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
+            // const folio = correlativos(users.emp_id, 'traspasos')
+            // console.log(folio)
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'PACIENTE') {
-                if (existeCli.length === 0) {
+                try {
+                    CabeceraOutDB({
+                        numDoc: numDoc,
+                        tipDoc: nomTipDoc,
+                        date: fechaInOut,
+                        tipoInOut: nomTipoOut,
+                        rut: rut,
+                        entidad: entidad,
+                        correo: correo,
+                        patente: patente,
+                        descripcion: descripcion,
+                        tipMov: 4,
+                        confirmado: false,
+                        entregado: false,
+                        retirado: true,
+                        observacion: '',
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id,
+                    })
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Cabecera Documento guadada exitosamente'
+                    })
+                    setFlag(!flag);
+                    setConfirmar(true);
+                    setBtnAgregar(false);
+                    setBtnGuardar(true);
+                    setBtnNuevo(false);
+                    return;
+                } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut del Paciente'
+                        mensaje: error
                     })
-                } else {
-                    setEntidad(existeCli[0].nombre);
-                    try {
-                        CabeceraOutDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            descripcion: descripcion,
-                            tipMov: 4,
-                            confirmado: false,
-                            entregado: false,
-                            retirado: true,
-                            observacion: '',
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Cabecera Documento guadada exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
                 }
             } else {
-                if (existeProv.length === 0) {
+                try {
+                    CabeceraOutDB({
+                        numDoc: numDoc,
+                        tipDoc: nomTipDoc,
+                        date: fechaInOut,
+                        tipoInOut: nomTipoOut,
+                        rut: rut,
+                        entidad: entidad,
+                        correo: correo,
+                        patente: patente,
+                        descripcion: descripcion,
+                        tipMov: 5,
+                        confirmado: false,
+                        entregado: false,
+                        retirado: true,
+                        observacion: '',
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id
+                    })
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Cabecera Documento guadada exitosamente'
+                    })
+                    setFlag(!flag);
+                    setConfirmar(true);
+                    setBtnAgregar(false);
+                    setBtnGuardar(true);
+                    setBtnNuevo(false);
+                    return;
+                } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'No existe rut de proveedor'
+                        mensaje: error
                     })
-                } else {
-                    setEntidad(existeProv[0].nombre);
-                    try {
-                        CabeceraOutDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: fechaInOut,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            descripcion: descripcion,
-                            tipMov: 5,
-                            confirmado: false,
-                            entregado: false,
-                            retirado: true,
-                            observacion: '',
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id
-                        })
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Cabecera Documento guadada exitosamente'
-                        })
-                        setFlag(!flag);
-                        setConfirmar(true);
-                        setBtnAgregar(false);
-                        setBtnGuardar(true);
-                        setBtnNuevo(false);
-                        return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
                 }
             }
         }
     }
+
     //Valida y guarda los detalles del documento
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, item) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Exite N° serie en equipos   
-        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        const serieEq = await getDocs(traerEq);
-        const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // Validar ID en equipo
-        const traerId = await getDoc(doc(db, 'equipos', numSerie));
-        if (existe.length === 1) {
-            almacenar.current = existe;
-        } else if (traerId.exists()) {
-            const existeId = traerId.data();
-            const arreglo = [existeId];
-            const existe2 = arreglo.map((doc) => ({ ...doc, id: numSerie }));
-            almacenar.current = existe2;
-        } else {
-            console.log('almacenar', almacenar.current);
-        }
+
         // Exite N° serie en Salidas 
-        const existeIn = dataSalida.filter(doc => doc.serie === numSerie);
-        const existeIn2 = dataSalida.filter(doc => doc.eq_id === numSerie);
+        const existeIn = dataSalida.filter(doc => doc.serie === item.serie);
+        const existeIn2 = dataSalida.filter(doc => doc.eq_id === item.serie);
         // Validar en N° Serie en todos los documento de Salidas confirmado
-        const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie), where('confirmado', '==', false));
+        const traerSC = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('serie', '==', item.serie), where('confirmado', '==', false));
         const confirmadoS = await getDocs(traerSC);
         const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // Validar en Eq_id en todos los documento de Salidas confirmado
-        const traerID = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('eq_id', '==', numSerie), where('confirmado', '==', false));
-        const confirmadoID = await getDocs(traerID);
-        const existeID = (confirmadoID.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         // Validar Id de Cabecera en Salidas
         const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        console.log('existeCab', existeCab)
         const existeCab1 = cabecera1.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+        console.log('existeCab1', existeCab1)
 
-        if (numSerie === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese o Scaneé N° Serie'
-            })
-            return;
-        } else if (almacenar.current.length === 0) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'No existe un Equipo con este N° Serie o Id'
-            })
-        } else if (existeIn.length > 0 || existeIn2.length > 0) {
+        if (existeIn.length > 0 || existeIn2.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra en este documento'
             })
-        } else if (existeconfirmado.length > 0 || existeID.length > 0) {
+        } else if (existeconfirmado.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Equipo ya se encuentra Ingresado en un documento por confirmar'
             })
         } else {
-            const existeStatusCli = status.filter(st => st.id === almacenar.current[0].id && st.status === 'PACIENTE' && st.rut === rut).length === 1;
-            const existeStatusST = status.filter(st => st.id === almacenar.current[0].id && st.status === 'SERVICIO TECNICO' && st.rut === rut).length === 1;
             if (nomTipoOut === 'PACIENTE') {
-                if (!existeStatusST) {
+                inOut.current = 'TRANSITO A PACIENTE';
+                cabid.current = existeCab[0].id
+                setBtnConfirmar(false);
+                try {
+                    SalidasDB({
+                        numDoc: numDoc,
+                        tipDoc: nomTipDoc,
+                        date: existeCab[0].date,
+                        tipoInOut: nomTipoOut,
+                        rut: rut,
+                        entidad: entidad,
+                        correo: correo,
+                        patente: patente,
+                        cab_id: existeCab[0].id,
+                        eq_id: item.id,
+                        familia: item.familia,
+                        tipo: item.tipo,
+                        marca: item.marca,
+                        modelo: item.modelo,
+                        serie: item.serie,
+                        rfid: '',
+                        tipMov: 4,
+                        observacion: '',
+                        historial: 0, // = transito
+                        confirmado: false,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id,
+                    });
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Item guardado correctamente'
+                    })
+                    setFlag(!flag);
+                    setBtnConfirmar(false);
+                    setBtnNuevo(false);
+                    // return;
+                } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Servicio Tecnico'
+                        mensaje: error
                     })
-                } else {
-                    inOut.current = ' TRANSITO A PACIENTE';
-                    cabid.current = existeCab[0].id
-                    setBtnConfirmar(false);
-                    try {
-                        SalidasDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: existeCab[0].date,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            cab_id: existeCab[0].id,
-                            eq_id: almacenar.current[0].id,
-                            familia: almacenar.current[0].familia,
-                            tipo: almacenar.current[0].tipo,
-                            marca: almacenar.current[0].marca,
-                            modelo: almacenar.current[0].modelo,
-                            serie: almacenar.current[0].serie,
-                            rfid: almacenar.current[0].rfid,
-                            tipMov: 4,
-                            observacion: '',
-                            historial: 0, // = transito
-                            confirmado: false,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        });
-                        setNumSerie('');
-                        almacenar.current = [];
-                        salidaid.current = [];
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Item guardado correctamente'
-                        })
-                        setFlag(!flag);
-                        setBtnConfirmar(false);
-                        setBtnNuevo(false);
-                        // return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
                 }
             } else {
-                if (!existeStatusCli) {
+                inOut.current = 'TRANSITO S.T.';
+                cabid.current = existeCab1[0].id
+                setBtnConfirmar(false);
+                try {
+                    SalidasDB({
+                        numDoc: numDoc,
+                        tipDoc: nomTipDoc,
+                        date: existeCab1[0].date,
+                        tipoInOut: nomTipoOut,
+                        rut: rut,
+                        entidad: entidad,
+                        correo: correo,
+                        patente: patente,
+                        cab_id: existeCab1[0].id,
+                        eq_id: item.id,
+                        familia: item.familia,
+                        tipo: item.tipo,
+                        marca: item.marca,
+                        modelo: item.modelo,
+                        serie: item.serie,
+                        rfid: '',
+                        tipMov: 5,
+                        observacion: '',
+                        historial: 0,
+                        confirmado: false,
+                        userAdd: user.email,
+                        userMod: user.email,
+                        fechaAdd: fechaAdd,
+                        fechaMod: fechaMod,
+                        emp_id: users.emp_id,
+                    });
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Item guardado correctamente'
+                    })
+                    setFlag(!flag);
+                    setBtnConfirmar(false);
+                    setBtnNuevo(false);
+                    // return;
+                } catch (error) {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'error',
-                        mensaje: 'Equipo no se encuentra en Paciente'
+                        mensaje: error
                     })
-                } else {
-                    inOut.current = 'TRANSITO S.T.';
-                    cabid.current = existeCab1[0].id
-                    setBtnConfirmar(false);
-                    try {
-                        SalidasDB({
-                            numDoc: numDoc,
-                            tipDoc: nomTipDoc,
-                            date: existeCab1[0].date,
-                            tipoInOut: nomTipoOut,
-                            rut: rut,
-                            entidad: entidad,
-                            correo: correo,
-                            patente: patente,
-                            cab_id: existeCab1[0].id,
-                            eq_id: almacenar.current[0].id,
-                            familia: almacenar.current[0].familia,
-                            tipo: almacenar.current[0].tipo,
-                            marca: almacenar.current[0].marca,
-                            modelo: almacenar.current[0].modelo,
-                            serie: almacenar.current[0].serie,
-                            rfid: almacenar.current[0].rfid,
-                            tipMov: 5,
-                            observacion: '',
-                            historial: 0,
-                            confirmado: false,
-                            userAdd: user.email,
-                            userMod: user.email,
-                            fechaAdd: fechaAdd,
-                            fechaMod: fechaMod,
-                            emp_id: users.emp_id,
-                        });
-                        setNumSerie('');
-                        almacenar.current = [];
-                        salidaid.current = [];
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Item guardado correctamente'
-                        })
-                        setFlag(!flag);
-                        setBtnConfirmar(false);
-                        setBtnNuevo(false);
-                        // return;
-                    } catch (error) {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'error',
-                            mensaje: error
-                        })
-                    }
                 }
             }
         }
-        setNumSerie('');
-        almacenar.current = [];
-        salidaid.current = [];
     }
+
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        // Traer datos de equipo en Status  
-        const traerEq = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        const serieEq = await getDocs(traerEq);
-        const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(existe)
+        // // Traer datos de equipo en Status  
+        // const traerEq = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
+        // const serieEq = await getDocs(traerEq);
+        // const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // console.log(existe)
 
-        // if (dataSalida.length === 0) {
-        //     Swal.fire('No hay Datos pr confirmar en este documento');
-        // } else {
-        //     // const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        //     const batch = writeBatch(db);
-        //     dataSalida.forEach((docs) => {
-        //         const docRef = doc(db, 'status', docs.eq_id);
-        //         batch.update(docRef, {
-        //             status: inOut.current,
-        //             r_origen: ,
-        //             entidad: entidad,
-        //             fechamod: docs.fechamod
-        //         });
-        //     });
-        //     dataSalida.forEach((docs) => {
-        //         const docRef = doc(db, 'salidas', docs.id);
-        //         batch.update(docRef, {
-        //             confirmado: true,
-        //             fechamod: new Date()
-        //         });
-        //     });
-        //     try {
-        //         await batch.commit();
-        //         cambiarEstadoAlerta(true);
-        //         cambiarAlerta({
-        //             tipo: 'exito',
-        //             mensaje: 'Documentos actualizados correctamente.'
-        //         });
-        //     } catch (error) {
-        //         cambiarEstadoAlerta(true);
-        //         cambiarAlerta({
-        //             tipo: 'error',
-        //             mensaje: 'Error al actualizar documentos:', error
-        //         })
-        //     }
-        //     try {
-        //         await updateDoc(doc(db, 'cabecerasout', cabid.current), {
-        //             confirmado: true,
-        //             tipmov: 0,
-        //             usermod: user.email,
-        //             fechamod: fechaMod
-        //         });
-        //     } catch (error) {
-        //         cambiarEstadoAlerta(true);
-        //         cambiarAlerta({
-        //             tipo: 'error',
-        //             mensaje: 'Error al actualizar Cabecera:', error
-        //         })
-        //     }
-        //     setNomTipDoc('');
-        //     setNumDoc('');
-        //     setDate('');
-        //     setNomTipoOut('');
-        //     setRut('');
-        //     setEntidad('');
-        //     setCorreo('');
-        //     setPatente('');
-        //     setNumSerie('');
-        //     setConfirmar(false);
-        //     setBtnGuardar(false);
-        //     setBtnAgregar(true);
-        //     setBtnConfirmar(true);
-        //     setBtnNuevo(true);
-        //     setFlag(!flag);
-        //     if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
-        //         try {
-        //             /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
-        //             const mensaje = cuerpoCorreo(dataSalida);
-        //             alertaSalida.forEach((destino) => {
-        //                 EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
-        //             })
-        //         } catch (error) {
-        //             console.log('error', error)
-        //         }
-        //     }
-        //     setFlag(!flag);
-        // }
+        if (dataSalida.length === 0) {
+            Swal.fire('No hay Datos pr confirmar en este documento');
+        } else {
+            // const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
+            if (nomTipoOut === 'PACIENTE') {
+                const batch = writeBatch(db);
+                dataSalida.forEach((docs) => {
+                    const docRef = doc(db, 'status', docs.eq_id);
+                    batch.update(docRef, {
+                        status: inOut.current,
+                        r_origen: '1234567',
+                        n_origen: 'Dormir Bien Spa',
+                        r_destino: rut,
+                        n_destino: entidad,
+                        fechamod: docs.fechamod
+                    });
+                });
+                dataSalida.forEach((docs) => {
+                    const docRef = doc(db, 'salidas', docs.id);
+                    batch.update(docRef, {
+                        confirmado: true,
+                        fechamod: new Date()
+                    });
+                });
+                try {
+                    await batch.commit();
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documentos actualizados correctamente.'
+                    });
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al actualizar documentos:', error
+                    })
+                }
+            } else {
+                const batch = writeBatch(db);
+                dataSalida.forEach((docs) => {
+                    const docRef = doc(db, 'status', docs.eq_id);
+                    batch.update(docRef, {
+                        status: inOut.current,
+                        r_origen: rut,
+                        n_origen: entidad,
+                        r_destino: '1234567',
+                        n_destino: 'Dormir Bien Spa',
+                        fechamod: docs.fechamod
+                    });
+                });
+                dataSalida.forEach((docs) => {
+                    const docRef = doc(db, 'salidas', docs.id);
+                    batch.update(docRef, {
+                        confirmado: true,
+                        fechamod: new Date()
+                    });
+                });
+                try {
+                    await batch.commit();
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documentos actualizados correctamente.'
+                    });
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al actualizar documentos:', error
+                    })
+                }
+            }
+            
+
+            try {
+                await updateDoc(doc(db, 'cabecerasout', cabid.current), {
+                    confirmado: true,
+                    tipmov: 0,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar Cabecera:', error
+                })
+            }
+            setNumDoc('');
+            setNomTipDoc('');
+            setDate('');
+            setNomTipoOut('');
+            setRut('');
+            setEntidad('');
+            setCorreo('');
+            setPatente('');
+            setConfirmar(false);
+            setBtnGuardar(false);
+            setBtnAgregar(true);
+            setBtnConfirmar(true);
+            setBtnNuevo(true);
+            setFlag(!flag);
+            if (nomTipoOut === 'PACIENTE' || nomTipoOut === 'SERVICIO TECNICO') {
+                try {
+                    /* const mensaje = documento.map((item, index) => `${index + 1}.-Equipo: ${item.tipo} ${item.marca} ${item.modelo} N.Serie: ${item.serie}`).join('\n'); */
+                    const mensaje = cuerpoCorreo(dataSalida);
+                    alertaSalida.forEach((destino) => {
+                        EnviarCorreo(destino.correo, 'Alerta Salida de Bodega', mensaje)
+                    })
+                } catch (error) {
+                    console.log('error', error)
+                }
+            }
+            setFlag(!flag);
+        }
     };
     const handleDelete = (itemId) => {
         setItemdelete(itemId);
@@ -933,15 +758,16 @@ const Traspasos = () => {
         transportista();
         getUsuarios();
         getAlertasSalidas();
-        statusPacientes();
+        getStatus();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        getStatus();
         consultarCab();
         consultarOut();
         transportista();
+        statusPacientes();
+        statusSTecnico();
         // if (dataSalida.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -962,18 +788,7 @@ const Traspasos = () => {
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
                                 value={numDoc}
-                                onChange={ev => {
-                                    if (/^[1-9]\d*$/.test(ev.target.value)) {
-                                        setNumDoc(ev.target.value)
-                                    } else {
-                                        cambiarEstadoAlerta(true);
-                                        cambiarAlerta({
-                                            tipo: 'error',
-                                            mensaje: 'Por favor ingrese un numero positivo'
-                                        })
-                                        setNumDoc('')
-                                    }
-                                }}
+                                onChange={ev => setNumDoc(ev.target.value)}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -983,7 +798,7 @@ const Traspasos = () => {
                                 value={nomTipDoc}
                                 onChange={ev => setNomTipDoc(ev.target.value)}>
                                 <option>Selecciona Opción:</option>
-                                {TipDocOut.map((d) => {
+                                {TipDocTraspaso.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
                                 })}
                             </Select>
@@ -1017,25 +832,14 @@ const Traspasos = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label >Rut Paciente</Label>
-                            {/* <Input
-                                disabled={confirmar}
-                                type='text'
-                                placeholder='Ingrese Rut sin puntos'
-                                name='rut'
-                                value={rut}
-                                onChange={ev => setRut(ev.target.value)}
-                                onKeyDown={detectarCli}
-                            /> */}
-
                             <Select
                                 disabled={confirmar}
                                 placeholder='Ingrese Rut sin puntos'
                                 value={rut}
                                 onChange={handleChange}
-                                // onKeyDown={detectarCli}
                             >
                                 <option>Selecciona Opción:</option>
-                                {statusPaciente.map((d) => {
+                                {status.map((d) => {
                                     return (<option key={d.key}>{d.r_permanente}</option>)
                                 })}
                             </Select>
@@ -1102,7 +906,7 @@ const Traspasos = () => {
             <Contenedor>
                 <Formulario>
                     <ContentElemenMov>
-                        <ContentElemenSelect>
+                        {/* <ContentElemenSelect>
                             <Label style={{ marginRight: '10px' }} >Equipo</Label>
                             <Input
                                 style={{ width: '500px' }}
@@ -1111,14 +915,60 @@ const Traspasos = () => {
                                 placeholder='Escanee o ingrese Equipo'
                                 value={numSerie}
                                 onChange={e => setNumSerie(e.target.value)}
-                                onKeyDown={detectar}
+                                // onKeyDown={detectar}
                             />
                         </ContentElemenSelect>
                         <Boton disabled={btnAgregar} onClick={handleSubmit}>
                             <IoMdAdd
                                 style={{ fontSize: '36px', color: '#328AC4', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
                             />
-                        </Boton>
+                        </Boton> */}
+
+                        <Table singleLine>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>N°</Table.HeaderCell>
+                                    <Table.HeaderCell>tipo Equipamiento</Table.HeaderCell>
+                                    <Table.HeaderCell>Serie</Table.HeaderCell>
+                                    <Table.HeaderCell>Agregar</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {nomTipoOut === 'PACIENTE' ?
+                                    (statusST.map((item, index) =>
+                                        <Table.Row key={index}>
+                                            <Table.Cell>{index + 1}</Table.Cell>
+                                            <Table.Cell> {item.tipo}</Table.Cell>
+                                            <Table.Cell> {item.serie}</Table.Cell>
+                                            <Table.Cell style={{ textAlign: 'center' }}>
+                                                <Boton disabled={btnAgregar} onClick={(e) => handleSubmit(e, item)}>
+                                                    <IoMdAdd
+                                                        style={{ fontSize: '24px', color: '#328AC4', cursor: "pointer" }}
+                                                    />
+                                                </Boton>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    )
+                                    ) : (
+                                        statusPaciente.map((item, index) =>
+                                            <Table.Row key={index}>
+                                                <Table.Cell>{index + 1}</Table.Cell>
+                                                <Table.Cell> {item.tipo}</Table.Cell>
+                                                <Table.Cell> {item.serie}</Table.Cell>
+                                                <Table.Cell style={{ textAlign: 'center' }}>
+                                                    <Boton disabled={btnAgregar} onClick={(e) => handleSubmit(e, item)}>
+                                                        <IoMdAdd
+                                                            style={{ fontSize: '24px', color: '#328AC4', cursor: "pointer" }}
+                                                        />
+                                                    </Boton>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        )
+                                    )
+                                }
+                            </Table.Body>
+                        </Table>
+
                     </ContentElemenMov>
                 </Formulario>
                 <ListarEquipos>
