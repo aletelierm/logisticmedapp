@@ -134,7 +134,7 @@ const ReporteInvCliente = () => {
             <Contenedor>
                 {
                     Inv.current.length > 0 ?
-                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" " + Inv.current[0].n_permanente + " ------ Rut: " + Inv.current[0].r_permanente}</Titulo>
+                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" " + Inv.current[0].entidad + " ------ Rut: " + Inv.current[0].rut}</Titulo>
                         :
                         <Titulo>Equipo:</Titulo>
                 }

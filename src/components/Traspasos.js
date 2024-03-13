@@ -507,12 +507,6 @@ const Traspasos = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
 
-        // // Traer datos de equipo en Status  
-        // const traerEq = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('serie', '==', numSerie));
-        // const serieEq = await getDocs(traerEq);
-        // const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // console.log(existe)
-
         if (dataSalida.length === 0) {
             Swal.fire('No hay Datos pr confirmar en este documento');
         } else {
