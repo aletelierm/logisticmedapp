@@ -55,7 +55,7 @@ const Traspasos = () => {
     const [nomTipDoc, setNomTipDoc] = useState('');
     const [date, setDate] = useState('');
     const [nomTipoOut, setNomTipoOut] = useState('');
-    const [rut, setRut] = useState('');
+    const [rut, setRut] = useState(1);
     const [entidad, setEntidad] = useState([]);
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
@@ -109,11 +109,13 @@ const Traspasos = () => {
     }
     //Lectura de status
     const getStatus = async () => {
-        const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('status', '==', 'PACIENTE'));
+        const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id));
         const docu = await getDocs(doc);
-        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setStatus(documen)
     }
+    const pac = status.filter(item => item.r_permanente !== '' && item.status === 'SERVICIO TECNICO')
+    const ser = status.filter(item => item.r_permanente !== '' && item.status === 'PACIENTE')
     // Lectura de status por pacientes
     const statusPacientes = async () => {
         const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut), where('status', '==', 'PACIENTE'));
@@ -125,9 +127,10 @@ const Traspasos = () => {
     const statusSTecnico = async () => {
         const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut), where('status', '==', 'SERVICIO TECNICO'));
         const docu = await getDocs(doc);
-        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setStatusST(documen)
     }
+    console.log('statusST', statusST)
 
     //Lee datos de los usuarios
     const getUsuarios = async () => {
@@ -159,7 +162,7 @@ const Traspasos = () => {
         setEntidad(nombre[0].n_permanente)
         setFlag(!flag)
     }
-    
+
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
@@ -573,7 +576,7 @@ const Traspasos = () => {
                     })
                 }
             }
-            
+
 
             try {
                 await updateDoc(doc(db, 'cabecerasout', cabid.current), {
@@ -825,17 +828,32 @@ const Traspasos = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label >Rut Paciente</Label>
-                            <Select
-                                disabled={confirmar}
-                                placeholder='Ingrese Rut sin puntos'
-                                value={rut}
-                                onChange={handleChange}
-                            >
-                                <option>Selecciona Opción:</option>
-                                {status.map((d) => {
-                                    return (<option key={d.key}>{d.r_permanente}</option>)
-                                })}
-                            </Select>
+                            {nomTipoOut === 'PACIENTE' ?
+                                <Select
+                                    disabled={confirmar}
+                                    placeholder='Ingrese Rut sin puntos'
+                                    value={rut}
+                                    onChange={handleChange}
+                                >
+                                    <option>Selecciona Opción:</option>
+                                    {pac.map((d) => {
+                                        return (<option key={d.key}>{d.r_permanente}</option>)
+                                    })}
+                                </Select>
+                                :
+                                <Select
+                                    disabled={confirmar}
+                                    placeholder='Ingrese Rut sin puntos'
+                                    value={rut}
+                                    onChange={handleChange}
+                                >
+                                    <option>Selecciona Opción:</option>
+                                    {ser.map((d) => {
+                                        return (<option key={d.key}>{d.r_permanente}</option>)
+                                    })}
+                                </Select>
+                            }
+
 
                         </ContentElemenSelect>
                         <ContentElemenSelect>
