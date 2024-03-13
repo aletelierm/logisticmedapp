@@ -67,7 +67,7 @@ const Reporte2 = () => {
     estado.sort(ordenar);
 
     const filtro = () => {
-        const nuevoFiltro = estado.filter(r => r.r_destino.includes(buscador))
+        const nuevoFiltro = estado.filter(r => r.rut.includes(buscador))
         return nuevoFiltro;
     }
 

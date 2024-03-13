@@ -5,6 +5,9 @@ export const TipDoc = [
 export const TipDocOut = [
     { key: '1', value: '1', text: 'GUÍA' },
 ];
+export const TipDocTraspaso = [
+    { key: '1', value: '1', text: 'TRASPASO' },
+];
 export const TipTransaccion = [
     { key: '1', value: '1', text: 'ENTRADA' },
     { key: '2', value: '2', text: 'SALIDA' }
