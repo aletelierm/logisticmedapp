@@ -30,8 +30,12 @@ const Confirmados = () => {
     const [cab_id, setCab_id] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenR, setIsOpenR] = useState(false);
+    const [isOpent, setIsOpent] = useState(false);
     const [isChecked, setIsChecked] = useState([]);
     const [isChecked2, setIsChecked2] = useState([]);
+    const [traspasoE, setTraspasoE] = useState([]);
+    const [traspasoS, setTraspasoS] = useState([]);
+    const [todo, setTodo] = useState([]);
     /* const [alertaSalida, setAlertasalida] = useState([]); */
     const cabeceraId = useRef('');
     const inOut = useRef('');
@@ -50,8 +54,9 @@ const Confirmados = () => {
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
         setCabecera(existeCab);
     }
-    const porEntregar = cabecera.filter(cab => cab.entregado === false)
+    const porEntregar = cabecera.filter(cab => cab.entregado === false && cab.tipdoc !== 'TRASPASO')
     const porRetirar = cabecera.filter(cab => cab.retirado === false)
+    const traspaso = cabecera.filter(cab => cab.entregado === false && cab.tipdoc === 'TRASPASO')
 
     // Filtar por docuemto de Entrada campo entregado
     const consultarOutEntrega = async () => {
@@ -67,6 +72,18 @@ const Confirmados = () => {
         const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, checked: false })));
         setIsChecked2(documento)
     }
+    // Filtar por docuemto de Entrada campo retirado
+    const consultarTraspasos = async () => {
+        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('cab_id', '==', cab_id), where('tipmov', '==', 4));
+        const docu = await getDocs(doc);
+        const documento = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setTraspasoE(documento)
+        const doc1 = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('cab_id', '==', cab_id), where('tipmov', '==', 5));
+        const docu1 = await getDocs(doc1);
+        const documento1 = (docu1.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setTraspasoS(documento1)
+    }
+    const merge = [...traspasoE, ...traspasoS].sort((a, b) => a.numdoc - b.numdoc)
     //Leer  Empresa
     const getEmpresa = async () => {
         const traerEmp = await getDoc(doc(db, 'empresas', users.emp_id));
@@ -313,7 +330,7 @@ const Confirmados = () => {
                     } catch (error) {
                         Swal.fire('Se ha producido un error al actualizar Status de equipos recibidos');
                     }
-                } 
+                }
             }
 
             if (falsoCheck.length > 0) {
@@ -506,6 +523,56 @@ const Confirmados = () => {
         // Alerta para enviar correo
     }
 
+    // Confirmar Taspasos
+    const confirmaTraspasos = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (merge[0].tipmov === 5) {
+            setTodo(traspasoS)
+            inOut.current = 'SERVICIO TECNICO'
+        } else {
+            setTodo(traspasoE)
+            inOut.current = 'PACIENTE'
+        }
+        console.log('todo', todo)
+
+        const batch = writeBatch(db);
+        todo.forEach((docs) => {
+            const docRef = doc(db, 'status', docs.eq_id);
+            batch.update(docRef, {
+                status: inOut.current,
+                fechamod: fechaMod
+            });
+        });
+        try {
+            await batch.commit();
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Status actualizados correctamente.'
+            });
+        } catch (error) {
+            Swal.fire('Se ha producido un error al actualizar Status');
+            console.log(error)
+        }
+        // ACTUALIZAR CABECERA DE CONFIRMADOS
+        try {
+            await updateDoc(doc(db, 'cabecerasout', cab_id), {
+                entregado: true,
+                usermod: user.email,
+                fechamod: fechaMod
+            })
+            setFlag(!flag)
+            setIsOpent(!isOpent)
+        } catch (error) {
+            Swal.fire('Se ha producido un error al actualizar la cabecera');
+        }
+    }
+    // Alerta para enviar correo
+
+
     useEffect(() => {
         consultarCab();
         getEmpresa();
@@ -515,6 +582,7 @@ const Confirmados = () => {
     useEffect(() => {
         consultarOutEntrega();
         consultarOutRetiro();
+        consultarTraspasos();
         consultarCab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -527,6 +595,7 @@ const Confirmados = () => {
                     <FaSyncAlt style={{ fontSize: '20px', color: '#328AC4' }} />
                 </Boton>
             </Contenedor>
+
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Entregar</Titulo>
                 <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
@@ -698,6 +767,74 @@ const Confirmados = () => {
                         </Table.Body>
                     </StyledTable>
                     <BotonGuardar onClick={confirmaRetiro} >Confirmar Retiro</BotonGuardar>
+                </Contenedor>
+            }
+
+
+            <ListarProveedor>
+                <Titulo>Listado Traspasos</Titulo>
+                <StyledTable striped celled unstackable responsive style={{ textAlign: 'center' }}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
+                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha</Table.HeaderCell>
+                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {traspaso.map((item) => {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell>{item.tipdoc}</Table.Cell>
+                                    <Table.Cell>{item.numdoc}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipoinout}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell onClick={() => {
+                                        setCab_id(item.id)
+                                        setIsOpen(false)
+                                        setIsOpent(!isOpent)
+                                        setFlag(!flag)
+                                    }} >
+                                        <FaIcons.FaArrowCircleDown style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
+                                </Table.Row>
+                            )
+                        }
+                        )}
+                    </Table.Body>
+                </StyledTable>
+            </ListarProveedor >
+            {isOpent &&
+                <Contenedor>
+                    <StyledTable striped celled unstackable responsive>
+                        <Table.Header style={{ textAlign: 'center' }}>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Equipo</Table.HeaderCell>
+                                <Table.HeaderCell>Serie</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {merge.map((item, index) => {
+                                return (
+                                    <Table.Row key={item.id}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell>{item.tipo + ' - ' + item.marca + ' - ' + item.modelo}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                    </Table.Row>
+                                )
+                            }
+                            )
+                            }
+                        </Table.Body>
+                    </StyledTable>
+                    <BotonGuardar onClick={confirmaTraspasos} >Confirmar Traspaso</BotonGuardar>
                 </Contenedor>
             }
 

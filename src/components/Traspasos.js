@@ -5,9 +5,9 @@ import CabeceraOutDB from '../firebase/CabeceraOutDB';
 import Alertas from './Alertas';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, collection, where, query, updateDoc, doc, writeBatch, deleteDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch, deleteDoc } from 'firebase/firestore';
 import { IoMdAdd } from "react-icons/io";
-import { TipDocTraspaso, TipoOut, Traspaso } from './TipDoc';
+import { TipDocTraspaso, Traspaso } from './TipDoc';
 import * as FaIcons from 'react-icons/fa';
 import { MdDeleteForever } from "react-icons/md";
 import { FcCancel } from "react-icons/fc";
@@ -19,7 +19,7 @@ import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulari
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
-import correlativos from '../funciones/correlativosMultiEmpresa';
+// import correlativos from '../funciones/correlativosMultiEmpresa';
 
 const Traspasos = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -59,7 +59,7 @@ const Traspasos = () => {
     const [entidad, setEntidad] = useState([]);
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
-    const [numSerie, setNumSerie] = useState('');
+    // const [numSerie, setNumSerie] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
@@ -107,13 +107,6 @@ const Traspasos = () => {
         const transportista = (transporte.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setTransport(transportista);
     }
-    // //Lectura de status
-    // const getStatus = async () => {
-    //     const traerEntrada = collection(db, 'status');
-    //     const dato = query(traerEntrada, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setStatus(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
-    // }
     //Lectura de status
     const getStatus = async () => {
         const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('status', '==', 'PACIENTE'));
@@ -585,7 +578,6 @@ const Traspasos = () => {
             try {
                 await updateDoc(doc(db, 'cabecerasout', cabid.current), {
                     confirmado: true,
-                    tipmov: 0,
                     usermod: user.email,
                     fechamod: fechaMod
                 });
@@ -628,14 +620,14 @@ const Traspasos = () => {
         setItemdelete(itemId);
         setShowConfirmation(true);
     }
-    let folios;
-    const folio = ()=>{
-        correlativos(users.emp_id, 'traspasos').then((nuevoFolio)=>{
-            if (nuevoFolio !== null){
-                folios = nuevoFolio;
-            }
-        })
-    }
+    // let folios;
+    // const folio = ()=>{
+    //     correlativos(users.emp_id, 'traspasos').then((nuevoFolio)=>{
+    //         if (nuevoFolio !== null){
+    //             folios = nuevoFolio;
+    //         }
+    //     })
+    // }
     const cancelDelete = () => {
         setShowConfirmation(false);
     }
@@ -745,7 +737,6 @@ const Traspasos = () => {
         setNomTipoOut('');
         setRut('');
         setEntidad('');
-        setNumSerie('');
         setCorreo('');
         setPatente('');
         setConfirmar(false);
@@ -1092,7 +1083,7 @@ const Traspasos = () => {
                     </Overlay>
                 )
             }
-            <Boton2 onClick={folio}>folio</Boton2>
+            {/* <Boton2 onClick={folio}>folio</Boton2> */}
         </ContenedorProveedor>
     );
 };
