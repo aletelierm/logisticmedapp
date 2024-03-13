@@ -153,40 +153,13 @@ const Traspasos = () => {
     //    console.log(`Nuevo folio para:`, nuevoFolio);
     // });
     
-    /* console.log(correlativos('EshoJNBwJlw1Sh3mIBYv','traspasos')) */
     const handleChange = (ev) => {
         setRut(ev.target.value);
         const nombre = statusPaciente.filter(item => item.r_permanente === ev.target.value)
         setEntidad(nombre[0].n_permanente)
     }
 
-   /*  console.log(correlativos('EshoJNBwJlw1Sh3mIBYv', 'traspasos')) */
-    // Cambiar Label de Rut
-    // if (nomTipoOut === 'PACIENTE') {
-    //     nomRut.current = 'Rut Paciente';
-    // } else {
-    //     nomRut.current = 'Rut Servicio Tecnico';
-    // }
-
-    // Validar rut
-    // const detectarCli = async (e) => {
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-    //     if (e.key === 'Enter' || e.key === 'Tab') {
-    //         // Filtrar rut de Pacientes
-    //         const traerClie = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-    //         const rutCli = await getDocs(traerClie)
-    //         const existeCli = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
-    //         if (existeCli.length === 1) {
-    //             setEntidad(existeCli[0].n_permanente);
-    //             setBtnGuardar(false);
-    //         }
-    //     }
-    // }
-
-    // const nomPaciente = statusPacientes.find((option) => option.r_permanente === rut)
-    
+       
     
     // Validar N°serie
     const detectar = async (e) => {
@@ -809,6 +782,14 @@ const Traspasos = () => {
         setItemdelete(itemId);
         setShowConfirmation(true);
     }
+    let folios;
+    const folio = ()=>{
+        correlativos(users.emp_id, 'traspasos').then((nuevoFolio)=>{
+            if (nuevoFolio !== null){
+                folios = nuevoFolio;
+            }
+        })
+    }
     const cancelDelete = () => {
         setShowConfirmation(false);
     }
@@ -1240,6 +1221,7 @@ const Traspasos = () => {
                     </Overlay>
                 )
             }
+            <Boton2 onClick={folio}>folio</Boton2>
         </ContenedorProveedor>
     );
 };
