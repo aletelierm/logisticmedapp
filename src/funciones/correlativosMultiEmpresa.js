@@ -1,6 +1,10 @@
 import { db } from '../firebase/firebaseConfig';
 import { doc, runTransaction } from 'firebase/firestore';
 
+//documento debe ser creado en coleccion correlativos
+// corresponde al ID de la empresa
+//campo es el nombre del campo que contendra los folios correlativos
+
 const generarFolioUnico = async (documento, campo) => {
   const docRef = doc(db, 'correlativos', documento);
 
@@ -22,7 +26,7 @@ const generarFolioUnico = async (documento, campo) => {
 
       transaction.update(docRef, { [campo]: nuevoFolio });
 
-      console.log(`Nuevo folio para ${campo}:`, nuevoFolio);
+     /*  console.log(`Nuevo folio para ${campo}:`, nuevoFolio); */
       return nuevoFolio;
     });
 

@@ -19,7 +19,7 @@ import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulari
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
-// import correlativos from '../funciones/correlativosMultiEmpresa';
+import correlativos from '../funciones/correlativosMultiEmpresa';
 
 const Traspasos = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -62,11 +62,13 @@ const Traspasos = () => {
     // const [numSerie, setNumSerie] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);
+    const[fol,setFol] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const [folio, setFolio] = useState(null);
     const inOut = useRef('');
     const cabid = useRef('');
 
@@ -276,9 +278,13 @@ const Traspasos = () => {
                     mensaje: 'Ya existe este documento. Falta confirmar'
                 })
             }
-        } else {
-            // const folio = correlativos(users.emp_id, 'traspasos')
-            // console.log(folio)
+        } else {           
+           setFol(!fol)
+           if(folio !== null){
+            console.log('correlativo:', folio)
+           }else{
+            console.log('valor nulo')
+           }
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'PACIENTE') {
                 try {
@@ -623,14 +629,21 @@ const Traspasos = () => {
         setItemdelete(itemId);
         setShowConfirmation(true);
     }
-    // let folios;
-    // const folio = ()=>{
-    //     correlativos(users.emp_id, 'traspasos').then((nuevoFolio)=>{
-    //         if (nuevoFolio !== null){
-    //             folios = nuevoFolio;
-    //         }
-    //     })
-    // }
+
+    const folios = async()=>{        
+        try {
+            const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
+            if(nuevoFolio !== null){
+                setFolio(nuevoFolio);                
+            }else{
+                console.log("no se pudo generar folio")
+            }
+        } catch (error) {
+            console.log('error al generar folio', error)
+        } 
+    }
+    
+
     const cancelDelete = () => {
         setShowConfirmation(false);
     }
@@ -767,6 +780,11 @@ const Traspasos = () => {
         // if (dataSalida.length > 0) setBtnConfirmar(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
+
+    useEffect(()=>{
+        folios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[fol,setFol])
 
     return (
         <ContenedorProveedor>
@@ -911,7 +929,7 @@ const Traspasos = () => {
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnNuevo}
-                    >Nuevo</BotonGuardar>
+                    >Nuevo</BotonGuardar>                   
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -1101,7 +1119,11 @@ const Traspasos = () => {
                     </Overlay>
                 )
             }
-            {/* <Boton2 onClick={folio}>folio</Boton2> */}
+            <BotonGuardar
+                        style={{ margin: '35px 0' }}
+                        onClick={folios} 
+                    >Generar Folio</BotonGuardar>
+                    <h2>folio: {folio}</h2>
         </ContenedorProveedor>
     );
 };
