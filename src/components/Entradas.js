@@ -330,6 +330,7 @@ const Entradas = () => {
                     entidad: entidad,
                     descripcion: descripcion,
                     tipMov: 1,
+                    url: '',
                     confirmado: false,
                     observacion: '',
                     userAdd: user.email,

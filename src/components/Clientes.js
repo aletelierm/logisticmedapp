@@ -154,6 +154,7 @@ const Clientes = () => {
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
+
         if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -246,6 +247,8 @@ const Clientes = () => {
                     nombre: nom,
                     direccion: dir,
                     telefono: telefono,
+                    region: region,
+                    comuna: comuna,
                     correo: corr,
                     nomrsf: nomrsf,
                     dirrsf: dirrsf,
@@ -298,7 +301,6 @@ const Clientes = () => {
 
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
 
-
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -348,9 +350,7 @@ const Clientes = () => {
                         <Select value={comuna} onChange={e => setComuna(e.target.value)}>
                             {comunasxRegion.map((objeto, index) => {
                                 return (<option key={index}>{objeto.name}</option>)
-                            }
-                            )
-                            }
+                            })}
                         </Select>
                     </ContentElemen>
                     <ContentElemen>
