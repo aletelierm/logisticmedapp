@@ -147,8 +147,8 @@ const Reporte3 = () => {
                                         <Table.Cell>{item.tipdoc}</Table.Cell>
                                         <Table.Cell>{item.tipo + " " + item.marca}</Table.Cell>
                                         <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell style={{ textAlign: 'center' }} >{item.tipmov === 1 ? '' : <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} />}</Table.Cell>
-                                        <Table.Cell style={{ textAlign: 'center' }} >{item.tipmov === 1 ? <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} /> : ''}</Table.Cell>
+                                        <Table.Cell style={{ textAlign: 'center' }} >{item.tipmov === 1 || item.tipmov === 5 ? '' : <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} />}</Table.Cell>
+                                        <Table.Cell style={{ textAlign: 'center' }} >{item.tipmov === 1 || item.tipmov === 5? <AiFillCheckCircle style={{ color: item.historial === 0 ? '#E8CF1C' : 'green', fontSize: '20px' }} title={item.historial === 0 ? 'En Transito' : ''} /> : ''}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>
                                     </Table.Row>
                                 )

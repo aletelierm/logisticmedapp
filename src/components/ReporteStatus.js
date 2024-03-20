@@ -52,8 +52,8 @@ const Reporte2 = () => {
             return 1;
         }
         // Si los Status son iguales, comparar por Entidad
-        const nameA = a.entidad;
-        const nameB = b.entidad;
+        const nameA = a.n_destino;
+        const nameB = b.n_destino;
         if (nameA < nameB) {
             return -1;
         }
@@ -67,7 +67,7 @@ const Reporte2 = () => {
     estado.sort(ordenar);
 
     const filtro = () => {
-        const nuevoFiltro = estado.filter(r => r.rut.includes(buscador))
+        const nuevoFiltro = estado.filter(r => r.r_destino.includes(buscador))
         return nuevoFiltro;
     }
 

@@ -43,7 +43,7 @@ const Reporte1 = () => {
                 const dataS = await getDocs(datoS);
                 sal.current = dataS.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 }));  
                 merge.current = [...ent.current, ...sal.current].sort((a, b) => a.date - b.date);
-                const movimientos = merge.current.filter(mov => mov.tipmov !==0)                
+                const movimientos = merge.current.filter(mov => mov.tipmov !==0 && mov.tipmov !==4 && mov.tipmov !==5)                
                 setMerges(movimientos);
             } else if(dataid.exists()){                
                 //leer entradas por id

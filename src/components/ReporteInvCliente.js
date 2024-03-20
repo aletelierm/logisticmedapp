@@ -83,7 +83,7 @@ const ReporteInvCliente = () => {
 
                 if (encuentraRut.docs.length !== 0) {
                     //leer entradas por id
-                    const datoE = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut), where('status','==','PACIENTE'));
+                    const datoE = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut));
                     const InvCliente = await getDocs(datoE);
                     Inv.current = InvCliente.docs.map((doc, index) => ({ ...doc.data(), id: doc.id}))
                     setValorizado( Inv.current.reduce((total, dato)=>total+dato.price,0));
@@ -134,7 +134,7 @@ const ReporteInvCliente = () => {
             <Contenedor>
                 {
                     Inv.current.length > 0 ?
-                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" " + Inv.current[0].entidad + " ------ Rut: " + Inv.current[0].rut}</Titulo>
+                        <Titulo style={{ fontSize: '17px' }}>Paciente :{" " + Inv.current[0].n_permanente + " ------ Rut: " + Inv.current[0].r_permanente}</Titulo>
                         :
                         <Titulo>Equipo:</Titulo>
                 }
@@ -162,8 +162,8 @@ const ReporteInvCliente = () => {
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>1</Table.Cell>
                                         <Table.Cell>{item.price.toLocaleString()}</Table.Cell>
-                                        <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
-                                        <Table.Cell>{contarDias(item.fechamod).toFixed(2)}</Table.Cell>                                                                                                                     
+                                        <Table.Cell>{formatearFecha(item.fecha_permanente)}</Table.Cell>
+                                        <Table.Cell>{contarDias(item.fecha_permanente).toFixed(2)}</Table.Cell>                                                                                                                     
                                     </Table.Row>
                                 )
                             })

@@ -806,7 +806,11 @@ const Entradas = () => {
                 console.log(error)
             }
         } else {
-            console.log("error no tiene contenido")
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha seleccionado ningun archivo'
+            })
         }
 
     }
@@ -940,10 +944,11 @@ const Entradas = () => {
                             <>
                                 <div>
                                     <Input type="file" onChange={e => setArchivo(e.target.files[0])} />
+                                    <BotonGuardar onClick={subida}>
+                                        Subir
+                                    </BotonGuardar>
                                 </div>
-                                <BotonGuardar onClick={subida}>
-                                    Subir
-                                </BotonGuardar>
+
                             </>
                         )
 

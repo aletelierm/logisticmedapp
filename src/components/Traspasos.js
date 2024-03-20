@@ -279,7 +279,7 @@ const Traspasos = () => {
                 })
             }
         } else {
-            setFol(!fol)
+            setFol(true)
             if (folio !== null) {
                 console.log('correlativo:', folio)
             } else {
@@ -782,8 +782,10 @@ const Traspasos = () => {
     }, [flag, setFlag])
 
     useEffect(() => {
-        folios();
-        console.log('Se ejecuta folio')
+        if(fol===true){
+            folios();
+            console.log('Se ejecuta folio')
+        }        
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fol, setFol])
 
