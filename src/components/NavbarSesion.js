@@ -29,11 +29,11 @@ const NavbarSesion = () => {
                 <ContenedorImagenSesion2>
                     <img src={`../../${users.emp_id}.png`} alt='LogoEmprsa' /* style={{ height: '60px', width: '100px' }} */ />
                 </ContenedorImagenSesion2>
-                <UserSesion>
+               {/*  <UserSesion>
                     <TextoNavSesion>
                         v1.0 Beta
                     </TextoNavSesion>
-                </UserSesion>
+                </UserSesion> */}
                 <UserSesion>
                     <TextoNavSesion>Empresa : {'   ' + users.empresa}</TextoNavSesion>
                 </UserSesion>
