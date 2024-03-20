@@ -15,7 +15,7 @@ import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay } from '../elementos/General';
-import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, TextArea } from '../elementos/CrearEquipos';
+import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label/* TextArea */ } from '../elementos/CrearEquipos';
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
@@ -60,7 +60,7 @@ const Traspasos = () => {
     const [correo, setCorreo] = useState('');
     const [patente, setPatente] = useState('');
     // const [numSerie, setNumSerie] = useState('');
-    const [descripcion, setDescripcion] = useState('');
+    // const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);    
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
@@ -119,6 +119,9 @@ const Traspasos = () => {
     }
     const pac = status.filter(item => item.r_permanente !== '' && item.status === 'SERVICIO TECNICO')
     const ser = status.filter(item => item.r_permanente !== '' && item.status === 'PACIENTE')
+    const pac2 = pac.filter((valor, indice, arreglo) => {return (arreglo.findIndex((obj) => obj.rut  === valor.rut) === indice)})
+    const ser2 = ser.filter((valor, indice, arreglo) => {return (arreglo.findIndex((obj) => obj.rut  === valor.rut) === indice)})
+
     // Lectura de status por pacientes
     const statusPacientes = async () => {
         const doc = query(collection(db, 'status'), where('emp_id', '==', users.emp_id), where('r_permanente', '==', rut), where('status', '==', 'PACIENTE'));
@@ -298,8 +301,9 @@ const Traspasos = () => {
                         entidad: entidad,
                         correo: correo,
                         patente: patente,
-                        descripcion: descripcion,
+                        descripcion: '',
                         tipMov: 4,
+                        url: '',
                         confirmado: false,
                         entregado: false,
                         retirado: true,
@@ -340,8 +344,9 @@ const Traspasos = () => {
                         entidad: entidad,
                         correo: correo,
                         patente: patente,
-                        descripcion: descripcion,
+                        descripcion: '',
                         tipMov: 5,
+                        url: '',
                         confirmado: false,
                         entregado: false,
                         retirado: true,
@@ -388,10 +393,10 @@ const Traspasos = () => {
         const confirmadoS = await getDocs(traerSC);
         const existeconfirmado = (confirmadoS.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         // Validar Id de Cabecera en Salidas
-        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        console.log('existeCab', existeCab)
-        const existeCab1 = cabecera1.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
-        console.log('existeCab1', existeCab1)
+        const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === folio && cab.rut === rut);
+        // console.log('existeCab', existeCab)
+        const existeCab1 = cabecera1.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === folio && cab.rut === rut);
+        // console.log('existeCab1', existeCab1)
 
         if (existeIn.length > 0 || existeIn2.length > 0) {
             cambiarEstadoAlerta(true);
@@ -557,8 +562,8 @@ const Traspasos = () => {
                         status: inOut.current,
                         r_origen: rut,
                         n_origen: entidad,
-                        r_destino: '1234567',
-                        n_destino: 'Dormir Bien Spa',
+                        r_destino: rutST.current,
+                        n_destino: nombreST.current,
                         fechamod: docs.fechamod
                     });
                 });
@@ -838,7 +843,7 @@ const Traspasos = () => {
                                     onChange={handleChange}
                                 >
                                     <option>Selecciona Opción:</option>
-                                    {pac.map((d) => {
+                                    {pac2.map((d) => {
                                         return (<option key={d.key}>{d.r_permanente}</option>)
                                     })}
                                 </Select>
@@ -850,7 +855,7 @@ const Traspasos = () => {
                                     onChange={handleChange}
                                 >
                                     <option>Selecciona Opción:</option>
-                                    {ser.map((d) => {
+                                    {ser2.map((d) => {
                                         return (<option key={d.key}>{d.r_permanente}</option>)
                                     })}
                                 </Select>
@@ -886,7 +891,7 @@ const Traspasos = () => {
                             />
                         </ContentElemenSelect>
                     </ContentElemenMov>
-                    <ContentElemenMov>
+                    {/* <ContentElemenMov>
                         <Label style={{ marginRight: '10px' }} >Descripcion</Label>
                         <TextArea
                             style={{ width: '80%', maxheight: '60px' }}
@@ -897,7 +902,7 @@ const Traspasos = () => {
                             value={descripcion}
                             onChange={e => setDescripcion(e.target.value)}
                         />
-                    </ContentElemenMov>
+                    </ContentElemenMov> */}
                     <BotonGuardar
                         style={{ margin: '35px 10px' }}
                         onClick={addCabeceraIn}
@@ -934,7 +939,7 @@ const Traspasos = () => {
                                             <Table.Cell>{index + 1}</Table.Cell>
                                             <Table.Cell> {item.tipo}</Table.Cell>
                                             <Table.Cell> {item.serie}</Table.Cell>
-                                            <Table.Cell style={{ textAlign: 'center' }}>
+                                            <Table.Cell >
                                                 <Boton disabled={btnAgregar} onClick={(e) => handleSubmit(e, item)}>
                                                     <IoMdAdd
                                                         style={{ fontSize: '24px', color: '#328AC4', cursor: "pointer" }}
@@ -949,7 +954,7 @@ const Traspasos = () => {
                                                 <Table.Cell>{index + 1}</Table.Cell>
                                                 <Table.Cell> {item.tipo}</Table.Cell>
                                                 <Table.Cell> {item.serie}</Table.Cell>
-                                                <Table.Cell style={{ textAlign: 'center' }}>
+                                                <Table.Cell >
                                                     <Boton disabled={btnAgregar} onClick={(e) => handleSubmit(e, item)}>
                                                         <IoMdAdd
                                                             style={{ fontSize: '24px', color: '#328AC4', cursor: "pointer" }}

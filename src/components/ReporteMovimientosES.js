@@ -89,7 +89,7 @@ const ReporteMovimientos = () => {
                                         <Table.Cell>{item.numdoc}</Table.Cell>
                                         <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                         <Table.Cell>{item.tipoinout}</Table.Cell>                                       
-                                        <Table.Cell>{item.tipmov===1 ? "Confirmado" :(item.tipmov===2 ? 'Confirmado' : "Anulado")}</Table.Cell>
+                                        <Table.Cell>{item.tipmov !== 3 ? "CONFIRMADO" : "ANULADO" }</Table.Cell>
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell
