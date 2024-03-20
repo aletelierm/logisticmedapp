@@ -61,8 +61,7 @@ const Traspasos = () => {
     const [patente, setPatente] = useState('');
     // const [numSerie, setNumSerie] = useState('');
     const [descripcion, setDescripcion] = useState('');
-    const [flag, setFlag] = useState(false);
-    const [fol, setFol] = useState(false);
+    const [flag, setFlag] = useState(false);    
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnAgregar, setBtnAgregar] = useState(true);
@@ -70,8 +69,9 @@ const Traspasos = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [folio, setFolio] = useState(null);
     const inOut = useRef('');
-    const cabid = useRef('');
-    const folio1 = useRef('');
+    const cabid = useRef('');    
+    const nombreST = useRef("DORMIR BIEN SPA");
+    const rutST = useRef("76.550.891-6")
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -319,8 +319,7 @@ const Traspasos = () => {
                     setConfirmar(true);
                     setBtnAgregar(false);
                     setBtnGuardar(true);
-                    setBtnNuevo(false);
-                    setFol(false);
+                    setBtnNuevo(false);                    
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -362,8 +361,7 @@ const Traspasos = () => {
                     setConfirmar(true);
                     setBtnAgregar(false);
                     setBtnGuardar(true);
-                    setBtnNuevo(false);
-                    setFol(false);
+                    setBtnNuevo(false);                    
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -523,8 +521,8 @@ const Traspasos = () => {
                     const docRef = doc(db, 'status', docs.eq_id);
                     batch.update(docRef, {
                         status: inOut.current,
-                        r_origen: '1234567',
-                        n_origen: 'Dormir Bien Spa',
+                        r_origen: rutST.current,
+                        n_origen: nombreST.current,
                         r_destino: rut,
                         n_destino: entidad,
                         fechamod: docs.fechamod
@@ -750,7 +748,7 @@ const Traspasos = () => {
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
-        setFol(false);
+        
     }
 
     useEffect(() => {
