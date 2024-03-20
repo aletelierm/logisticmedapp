@@ -281,15 +281,9 @@ const Traspasos = () => {
                 })
             }
         } else {
-            // setFol(true);
-            /* folios(); */
             const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
             setFolio(nuevoFolio);
-            // if (folio !== null) {
-            //     console.log('correlativo:', folio)
-            // } else {
-            //     console.log('valor nulo')
-            // }
+            
             console.log('folio antes de guardar', nuevoFolio)
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'PACIENTE') {
@@ -640,23 +634,6 @@ const Traspasos = () => {
         setShowConfirmation(true);
     }
 
-    const folios = async () => {
-        try {
-            const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
-            if (nuevoFolio !== null) {
-                folio1.current = nuevoFolio
-                // setFolio(nuevoFolio);
-                // setNumDoc(nuevoFolio);
-            } else {
-                console.log("no se pudo generar folio")
-            }
-        } catch (error) {
-            console.log('error al generar folio', error)
-        }
-    }
-    console.log('folio',folio1.current)
-
-
     const cancelDelete = () => {
         setShowConfirmation(false);
     }
@@ -795,14 +772,6 @@ const Traspasos = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    // useEffect(() => {
-    //     console.log(fol)
-    //     if (fol === true) {
-    //         folios();
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [fol, setFol])
-
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -888,8 +857,6 @@ const Traspasos = () => {
                                     })}
                                 </Select>
                             }
-
-
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label >Nombre</Label>
@@ -953,24 +920,6 @@ const Traspasos = () => {
             <Contenedor>
                 <Formulario>
                     <ContentElemenMov>
-                        {/* <ContentElemenSelect>
-                            <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            <Input
-                                style={{ width: '500px' }}
-                                type='text'
-                                name='serie'
-                                placeholder='Escanee o ingrese Equipo'
-                                value={numSerie}
-                                onChange={e => setNumSerie(e.target.value)}
-                                // onKeyDown={detectar}
-                            />
-                        </ContentElemenSelect>
-                        <Boton disabled={btnAgregar} onClick={handleSubmit}>
-                            <IoMdAdd
-                                style={{ fontSize: '36px', color: '#328AC4', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
-                            />
-                        </Boton> */}
-
                         <Table singleLine>
                             <Table.Header>
                                 <Table.Row>
@@ -1137,11 +1086,6 @@ const Traspasos = () => {
                     </Overlay>
                 )
             }
-            <BotonGuardar
-                style={{ margin: '35px 0' }}
-                onClick={folios}
-            >Generar Folio</BotonGuardar>
-            <h2>folio: {folio}</h2>
         </ContenedorProveedor>
     );
 };
