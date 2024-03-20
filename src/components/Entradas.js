@@ -56,7 +56,7 @@ const Entradas = () => {
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
     const [numSerie, setNumSerie] = useState('');
-    const [price, setPrice] = useState('');
+    const [price, setPrice] = useState(0);
     const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);
     const [flag2, setFlag2] = useState(false);
@@ -410,7 +410,7 @@ const Entradas = () => {
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
-        if (price === '') {
+        if (price === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -947,8 +947,6 @@ const Entradas = () => {
                                 </BotonGuardar>
                             </>
                         )
-
-
                     }
                 </Formulario>
             </Contenedor>
@@ -960,12 +958,12 @@ const Entradas = () => {
                             <Input
                                 type='number'
                                 min='1'
-                                name='precio'
+                                name='price'
                                 placeholder='Ingrese Valor'
                                 value={price}
                                 onChange={e => {
                                     if (/^[1-9]\d*$/.test(e.target.value)) {
-                                        setPrice(e.target.value)
+                                        setPrice(Number(e.target.value))
                                     } else {
                                         cambiarEstadoAlerta(true);
                                         cambiarAlerta({
