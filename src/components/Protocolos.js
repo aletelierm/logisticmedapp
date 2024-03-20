@@ -357,10 +357,10 @@ const Protocolos = () => {
                         familia: docs.familia,
                         tipo: docs.tipo,
                         serie: docs.serie,
-                        userAdd: user.email,
-                        userMod: user.email,
-                        fechaAdd: fechaAdd,
-                        fechaMod: fechaMod,
+                        useradd: user.email,
+                        usermod: user.email,
+                        fechaadd: fechaAdd,
+                        fechamod: fechaMod,
                         emp_id: users.emp_id,
                         enproceso: '0'
                     });

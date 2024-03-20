@@ -795,20 +795,20 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    const subida = async (e)=>{
+    const subida = async (e) => {
         e.preventDefault();
-        if(archivo !== null){
+        if (archivo !== null) {
             try {
-               const result = await subirArchivos(archivo);   
-               console.log(result)
-               window.open(result, '_blank');        
-           } catch (error) {
-               console.log(error)
-           }
-        }else{
+                const result = await subirArchivos(archivo);
+                console.log(result)
+                window.open(result, '_blank');
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
             console.log("error no tiene contenido")
         }
-       
+
     }
     // Opcion 1
     // Poner miles en el precio
@@ -934,18 +934,18 @@ const Entradas = () => {
                         disabled={btnNuevo}
                     >
                         Nuevo</BotonGuardar>
-                    
-                    { mostrarSubir && 
-                            (
-                                <>
-                                    <div>
-                                        <Input type="file" onChange={e => setArchivo(e.target.files[0])}/>
-                                    </div>
-                                    <BotonGuardar onClick={subida}>
-                                        Subir
-                                    </BotonGuardar>
-                                </>
-                            )
+
+                    {mostrarSubir &&
+                        (
+                            <>
+                                <div>
+                                    <Input type="file" onChange={e => setArchivo(e.target.files[0])} />
+                                </div>
+                                <BotonGuardar onClick={subida}>
+                                    Subir
+                                </BotonGuardar>
+                            </>
+                        )
 
 
                     }

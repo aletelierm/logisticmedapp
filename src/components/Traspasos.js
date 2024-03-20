@@ -62,7 +62,7 @@ const Traspasos = () => {
     // const [numSerie, setNumSerie] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [flag, setFlag] = useState(false);
-    const[fol,setFol] = useState(false);
+    const [fol, setFol] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnAgregar, setBtnAgregar] = useState(true);
@@ -278,13 +278,13 @@ const Traspasos = () => {
                     mensaje: 'Ya existe este documento. Falta confirmar'
                 })
             }
-        } else {           
-           setFol(!fol)
-           if(folio !== null){
-            console.log('correlativo:', folio)
-           }else{
-            console.log('valor nulo')
-           }
+        } else {
+            setFol(!fol)
+            if (folio !== null) {
+                console.log('correlativo:', folio)
+            } else {
+                console.log('valor nulo')
+            }
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'PACIENTE') {
                 try {
@@ -630,19 +630,19 @@ const Traspasos = () => {
         setShowConfirmation(true);
     }
 
-    const folios = async()=>{        
+    const folios = async () => {
         try {
             const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
-            if(nuevoFolio !== null){
-                setFolio(nuevoFolio);                
-            }else{
+            if (nuevoFolio !== null) {
+                setFolio(nuevoFolio);
+            } else {
                 console.log("no se pudo generar folio")
             }
         } catch (error) {
             console.log('error al generar folio', error)
-        } 
+        }
     }
-    
+
 
     const cancelDelete = () => {
         setShowConfirmation(false);
@@ -781,10 +781,11 @@ const Traspasos = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    useEffect(()=>{
+    useEffect(() => {
         folios();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[fol,setFol])
+        console.log('Se ejecuta folio')
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fol, setFol])
 
     return (
         <ContenedorProveedor>
@@ -929,7 +930,7 @@ const Traspasos = () => {
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnNuevo}
-                    >Nuevo</BotonGuardar>                   
+                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -1120,10 +1121,10 @@ const Traspasos = () => {
                 )
             }
             <BotonGuardar
-                        style={{ margin: '35px 0' }}
-                        onClick={folios} 
-                    >Generar Folio</BotonGuardar>
-                    <h2>folio: {folio}</h2>
+                style={{ margin: '35px 0' }}
+                onClick={folios}
+            >Generar Folio</BotonGuardar>
+            <h2>folio: {folio}</h2>
         </ContenedorProveedor>
     );
 };

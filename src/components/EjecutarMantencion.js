@@ -20,7 +20,7 @@ const EjecutarMantencion = () => {
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
-    console.log("fecha:", fechaAdd.setDate(fechaAdd.getDate() + 5));
+    // console.log("fecha:", fechaAdd.setDate(fechaAdd.getDate() + 5));
     const navigate = useNavigate();
     const { id } = useParams();
     const [manto] = useObtenerMantencion(id);
@@ -44,7 +44,7 @@ const EjecutarMantencion = () => {
     const [flag, setFlag] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(false);
-    const protocoloCab = useRef([]);
+    const protocoloCab = useRef('');
     const falsosCheck = useRef([]);
     const falsosLlenado = useRef([]);
     const falsosSelec = useRef([]);
@@ -69,41 +69,29 @@ const EjecutarMantencion = () => {
             navigate('/')
         }
     }, [manto, navigate])
-
+    
+    console.log(protocoloCab.current)
     // Filtar por docuemto de Protocolo
     const consultarProtocolos = async () => {
         const docInst = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'INSTRUMENTOS'));
         const docuInst = await getDocs(docInst);
         const documenInst = (docuInst.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setItemsInst(documenInst);
+
         const docCheck = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'CHECK'));
         const docuCheck = await getDocs(docCheck);
         const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsCheck(documenCheck);
+
         const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
         const docuLlen = await getDocs(docLlen);
         const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsMedicion(documenLlen);
+
         const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'SEGURIDAD'));
         const docuSel = await getDocs(docSel);
         const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsSeg(documenSel);
-        // const docSel = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current));
-        // const docuSel = await getDocs(docSel);
-        // const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
-        // setProtocolo(documenSel);
-        // const inst = protocolo.filter(p => p.categoria === 'INSTRUMENTOS')
-        // const check = protocolo.filter(p => p.categoria === 'CHECK')
-        // const llen = protocolo.filter(p => p.categoria === 'LLENADO')
-        // const sel = protocolo.filter(p => p.categoria === 'SELECCION')
-        // setItemsInst(inst);
-        // setItemsCheck(check);
-        // setItemsLlenado(llen);
-        // setItemsSelec(sel);
-        // console.log('itemsInst prot', itemsInst)
-        // console.log('itemsCheck prot', itemsCheck)
-        // console.log('itemsLlenado prot', itemsLlenado)
-        // console.log('itemsSelec prot', itemsSelec)
     }
     //Funcion guardar las cabeceras de Bitacoras
     const BitacoraCabDB = async ({ nombre_protocolo, cab_id_protocolo, fecha_mantencion, familia, tipo, serie, eq_id, id_manto, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
@@ -274,8 +262,8 @@ const EjecutarMantencion = () => {
                     valor: docs.valor,
                     categoria: docs.categoria,
                     cab_id_bitacora: documentoId.current,
-                    userAdd: user.email,
-                    userMod: user.email,
+                    useradd: user.email,
+                    usermod: user.email,
                     fechaadd: fechaAdd,
                     fechamod: fechaMod,
                     emp_id: users.emp_id,
@@ -290,8 +278,8 @@ const EjecutarMantencion = () => {
                     medida: docs.medida,
                     categoria: docs.categoria,
                     cab_id_bitacora: documentoId.current,
-                    userAdd: user.email,
-                    userMod: user.email,
+                    useradd: user.email,
+                    usermod: user.email,
                     fechaadd: fechaAdd,
                     fechamod: fechaMod,
                     emp_id: users.emp_id,
@@ -305,8 +293,8 @@ const EjecutarMantencion = () => {
                     valor: docs.valor,
                     categoria: docs.categoria,
                     cab_id_bitacora: documentoId.current,
-                    userAdd: user.email,
-                    userMod: user.email,
+                    useradd: user.email,
+                    usermod: user.email,
                     fechaadd: fechaAdd,
                     fechamod: fechaMod,
                     emp_id: users.emp_id,
@@ -470,7 +458,7 @@ const EjecutarMantencion = () => {
             consultarProtocolos();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [manto, navigate, flag, setFlag])
+    }, [flag, setFlag])
 
     return (
         <ContenedorCliente style={{ width: '800px' }}>
@@ -616,6 +604,7 @@ const EjecutarMantencion = () => {
                                                                 <Table.Cell >{item.item}</Table.Cell>
                                                                 <Table.Cell >
                                                                     <Select key={index} value={item.valor} onChange={e => { handleButtonClickSeg(e, index) }}>
+                                                                        <option>Seleccione Opcion: </option>
                                                                         {Opcion.map((o, index) => {
                                                                             return (
                                                                                 <option key={index} >{o.text}</option>

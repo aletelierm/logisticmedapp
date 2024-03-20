@@ -37,8 +37,6 @@ const Bitacoras = () => {
     //Ordenar fechas
     const manteOrd = mantencion.sort((a, b) => a.fecha_mantencion - b.fecha_mantencion)
 
-    console.log(mantencion)
-
     useEffect(() => {
         getBitacoras();
         // eslint-disable-next-line react-hooks/exhaustive-deps
