@@ -71,6 +71,7 @@ const Traspasos = () => {
     const [folio, setFolio] = useState(null);
     const inOut = useRef('');
     const cabid = useRef('');
+    const folio1 = useRef('');
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -132,7 +133,7 @@ const Traspasos = () => {
         const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setStatusST(documen)
     }
-    console.log('statusST', statusST)
+    // console.log('statusST', statusST)
 
     //Lee datos de los usuarios
     const getUsuarios = async () => {
@@ -186,14 +187,15 @@ const Traspasos = () => {
         // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
-        if (numDoc === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese N° Documento'
-            })
-            return;
-        } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
+        // if (numDoc === '') {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Ingrese N° Documento'
+        //     })
+        //     return;
+        // } else 
+        if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -279,17 +281,22 @@ const Traspasos = () => {
                 })
             }
         } else {
-            setFol(!fol)
-            if (folio !== null) {
-                console.log('correlativo:', folio)
-            } else {
-                console.log('valor nulo')
-            }
+            // setFol(true);
+            /* folios(); */
+            const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
+            setFolio(nuevoFolio);
+            // if (folio !== null) {
+            //     console.log('correlativo:', folio)
+            // } else {
+            //     console.log('valor nulo')
+            // }
+            console.log('folio antes de guardar', nuevoFolio)
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'PACIENTE') {
                 try {
                     CabeceraOutDB({
-                        numDoc: numDoc,
+                        // numDoc: numDoc,
+                        numDoc: nuevoFolio,
                         tipDoc: nomTipDoc,
                         date: fechaInOut,
                         tipoInOut: nomTipoOut,
@@ -319,6 +326,7 @@ const Traspasos = () => {
                     setBtnAgregar(false);
                     setBtnGuardar(true);
                     setBtnNuevo(false);
+                    setFol(false);
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -330,7 +338,8 @@ const Traspasos = () => {
             } else {
                 try {
                     CabeceraOutDB({
-                        numDoc: numDoc,
+                        // numDoc: numDoc,
+                        numDoc: nuevoFolio,
                         tipDoc: nomTipDoc,
                         date: fechaInOut,
                         tipoInOut: nomTipoOut,
@@ -360,6 +369,7 @@ const Traspasos = () => {
                     setBtnAgregar(false);
                     setBtnGuardar(true);
                     setBtnNuevo(false);
+                    setFol(false);
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -634,7 +644,9 @@ const Traspasos = () => {
         try {
             const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
             if (nuevoFolio !== null) {
-                setFolio(nuevoFolio);
+                folio1.current = nuevoFolio
+                // setFolio(nuevoFolio);
+                // setNumDoc(nuevoFolio);
             } else {
                 console.log("no se pudo generar folio")
             }
@@ -642,6 +654,7 @@ const Traspasos = () => {
             console.log('error al generar folio', error)
         }
     }
+    console.log('folio',folio1.current)
 
 
     const cancelDelete = () => {
@@ -710,7 +723,7 @@ const Traspasos = () => {
         setRut('');
         setEntidad('');
         setConfirmar(false);
-        setBtnGuardar(true);
+        setBtnGuardar(false);
         setBtnAgregar(true);
         setBtnConfirmar(false);
         setBtnNuevo(true);
@@ -756,10 +769,11 @@ const Traspasos = () => {
         setCorreo('');
         setPatente('');
         setConfirmar(false);
-        setBtnGuardar(true);
+        setBtnGuardar(false);
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
+        setFol(false);
     }
 
     useEffect(() => {
@@ -781,11 +795,13 @@ const Traspasos = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    useEffect(() => {
-        folios();
-        console.log('Se ejecuta folio')
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fol, setFol])
+    // useEffect(() => {
+    //     console.log(fol)
+    //     if (fol === true) {
+    //         folios();
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [fol, setFol])
 
     return (
         <ContenedorProveedor>
@@ -796,14 +812,14 @@ const Traspasos = () => {
                 <Formulario action=''>
                     <ContentElemenMov>
                         <ContentElemenSelect>
-                            <Label>N° de Documento</Label>
+                            <Label>N° de Folio</Label>
                             <Input
-                                disabled={confirmar}
+                                disabled
                                 type='number'
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
-                                value={numDoc}
-                                onChange={ev => setNumDoc(ev.target.value)}
+                                value={folio}
+                                // onChange={ev => setNumDoc(folio)}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -923,6 +939,7 @@ const Traspasos = () => {
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnGuardar}
+
                     >Guardar</BotonGuardar>
                     <BotonGuardar
                         style={{ margin: '35px 0' }}
@@ -1040,7 +1057,7 @@ const Traspasos = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell>N° Folio</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Salida</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
@@ -1061,7 +1078,7 @@ const Traspasos = () => {
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell onClick={() => {
-                                        setNumDoc(item.numdoc);
+                                        setFolio(item.numdoc);
                                         setNomTipDoc(item.tipdoc);
                                         setNomTipoOut(item.tipoinout);
                                         setRut(item.rut);
