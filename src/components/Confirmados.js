@@ -530,33 +530,54 @@ const Confirmados = () => {
         cambiarAlerta({});
 
         if (merge[0].tipmov === 5) {
-            setTodo(traspasoS)
-            inOut.current = 'SERVICIO TECNICO'
+            // setTodo(traspasoS)
+            // inOut.current = 'SERVICIO TECNICO'
+            const batch = writeBatch(db);
+            traspasoS.forEach((docs) => {
+                console.log('inOut', inOut.current)
+                const docRef = doc(db, 'status', docs.eq_id);
+                batch.update(docRef, {
+                    status: 'SERVICIO TECNICO',
+                    fechamod: fechaMod
+                });
+            });
+            try {
+                await batch.commit();
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Status actualizados correctamente.'
+                });
+            } catch (error) {
+                Swal.fire('Se ha producido un error al actualizar Status');
+                console.log(error)
+            }
         } else {
             setTodo(traspasoE)
-            inOut.current = 'PACIENTE'
+            // inOut.current = 'PACIENTE'
+            // console.log('PACIENTE', inOut.current)
+            const batch = writeBatch(db);
+            traspasoE.forEach((docs) => {
+                console.log('inOut', inOut.current)
+                const docRef = doc(db, 'status', docs.eq_id);
+                batch.update(docRef, {
+                    status: 'PACIENTE',
+                    fechamod: fechaMod
+                });
+            });
+            try {
+                await batch.commit();
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Status actualizados correctamente.'
+                });
+            } catch (error) {
+                Swal.fire('Se ha producido un error al actualizar Status');
+                console.log(error)
+            }
         }
-        console.log('todo', todo)
 
-        const batch = writeBatch(db);
-        todo.forEach((docs) => {
-            const docRef = doc(db, 'status', docs.eq_id);
-            batch.update(docRef, {
-                status: inOut.current,
-                fechamod: fechaMod
-            });
-        });
-        try {
-            await batch.commit();
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Status actualizados correctamente.'
-            });
-        } catch (error) {
-            Swal.fire('Se ha producido un error al actualizar Status');
-            console.log(error)
-        }
         // ACTUALIZAR CABECERA DE CONFIRMADOS
         try {
             await updateDoc(doc(db, 'cabecerasout', cab_id), {
