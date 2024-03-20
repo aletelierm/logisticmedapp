@@ -44,7 +44,7 @@ const EjecutarMantencion = () => {
     const [flag, setFlag] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(false);
-    const protocoloCab = useRef('');
+    const protocoloCab = useRef(0);
     const falsosCheck = useRef([]);
     const falsosLlenado = useRef([]);
     const falsosSelec = useRef([]);
@@ -55,9 +55,12 @@ const EjecutarMantencion = () => {
         navigate('/serviciotecnico/mantencion')
     }
 
+    // protocoloCab.current = 0
+
     useEffect(() => {
         if (manto) {
             protocoloCab.current = manto.cab_id_protocol
+            console.log('id useeffect', manto.cab_id_protocol)
             setNombreProtocolo(manto.nombre_protocolo);
             setPrograma(manto.programa);
             setDias(manto.dias);
@@ -70,7 +73,7 @@ const EjecutarMantencion = () => {
         }
     }, [manto, navigate])
     
-    console.log(protocoloCab.current)
+    // console.log('protocolo cab despues del primer useeffect',protocoloCab.current)
     // Filtar por docuemto de Protocolo
     const consultarProtocolos = async () => {
         const docInst = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'INSTRUMENTOS'));
@@ -83,7 +86,7 @@ const EjecutarMantencion = () => {
         const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsCheck(documenCheck);
 
-        const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
+    const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
         const docuLlen = await getDocs(docLlen);
         const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsMedicion(documenLlen);

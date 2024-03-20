@@ -71,6 +71,7 @@ const Traspasos = () => {
     const [folio, setFolio] = useState(null);
     const inOut = useRef('');
     const cabid = useRef('');
+    const folio1 = useRef('');
 
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
@@ -132,7 +133,7 @@ const Traspasos = () => {
         const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setStatusST(documen)
     }
-    console.log('statusST', statusST)
+    // console.log('statusST', statusST)
 
     //Lee datos de los usuarios
     const getUsuarios = async () => {
@@ -186,14 +187,15 @@ const Traspasos = () => {
         // Validar si existe correo de transprtista
         const existeCorreo = usuario.filter(corr => corr.correo === correo);
 
-        if (numDoc === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ingrese N° Documento'
-            })
-            return;
-        } else if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
+        // if (numDoc === '') {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Ingrese N° Documento'
+        //     })
+        //     return;
+        // } else 
+        if (nomTipDoc.length === 0 || nomTipDoc === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -279,17 +281,16 @@ const Traspasos = () => {
                 })
             }
         } else {
-            setFol(true)
-            if (folio !== null) {
-                console.log('correlativo:', folio)
-            } else {
-                console.log('valor nulo')
-            }
+            const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
+            setFolio(nuevoFolio);
+            
+            console.log('folio antes de guardar', nuevoFolio)
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'PACIENTE') {
                 try {
                     CabeceraOutDB({
-                        numDoc: numDoc,
+                        // numDoc: numDoc,
+                        numDoc: nuevoFolio,
                         tipDoc: nomTipDoc,
                         date: fechaInOut,
                         tipoInOut: nomTipoOut,
@@ -319,6 +320,7 @@ const Traspasos = () => {
                     setBtnAgregar(false);
                     setBtnGuardar(true);
                     setBtnNuevo(false);
+                    setFol(false);
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -330,7 +332,8 @@ const Traspasos = () => {
             } else {
                 try {
                     CabeceraOutDB({
-                        numDoc: numDoc,
+                        // numDoc: numDoc,
+                        numDoc: nuevoFolio,
                         tipDoc: nomTipDoc,
                         date: fechaInOut,
                         tipoInOut: nomTipoOut,
@@ -360,6 +363,7 @@ const Traspasos = () => {
                     setBtnAgregar(false);
                     setBtnGuardar(true);
                     setBtnNuevo(false);
+                    setFol(false);
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -630,20 +634,6 @@ const Traspasos = () => {
         setShowConfirmation(true);
     }
 
-    const folios = async () => {
-        try {
-            const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
-            if (nuevoFolio !== null) {
-                setFolio(nuevoFolio);
-            } else {
-                console.log("no se pudo generar folio")
-            }
-        } catch (error) {
-            console.log('error al generar folio', error)
-        }
-    }
-
-
     const cancelDelete = () => {
         setShowConfirmation(false);
     }
@@ -710,7 +700,7 @@ const Traspasos = () => {
         setRut('');
         setEntidad('');
         setConfirmar(false);
-        setBtnGuardar(true);
+        setBtnGuardar(false);
         setBtnAgregar(true);
         setBtnConfirmar(false);
         setBtnNuevo(true);
@@ -756,10 +746,11 @@ const Traspasos = () => {
         setCorreo('');
         setPatente('');
         setConfirmar(false);
-        setBtnGuardar(true);
+        setBtnGuardar(false);
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
+        setFol(false);
     }
 
     useEffect(() => {
@@ -781,14 +772,6 @@ const Traspasos = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    useEffect(() => {
-        if(fol===true){
-            folios();
-            console.log('Se ejecuta folio')
-        }        
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fol, setFol])
-
     return (
         <ContenedorProveedor>
             <Contenedor>
@@ -798,14 +781,14 @@ const Traspasos = () => {
                 <Formulario action=''>
                     <ContentElemenMov>
                         <ContentElemenSelect>
-                            <Label>N° de Documento</Label>
+                            <Label>N° de Folio</Label>
                             <Input
-                                disabled={confirmar}
+                                disabled
                                 type='number'
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
-                                value={numDoc}
-                                onChange={ev => setNumDoc(ev.target.value)}
+                                value={folio}
+                                // onChange={ev => setNumDoc(folio)}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -874,8 +857,6 @@ const Traspasos = () => {
                                     })}
                                 </Select>
                             }
-
-
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label >Nombre</Label>
@@ -925,6 +906,7 @@ const Traspasos = () => {
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnGuardar}
+
                     >Guardar</BotonGuardar>
                     <BotonGuardar
                         style={{ margin: '35px 0' }}
@@ -938,24 +920,6 @@ const Traspasos = () => {
             <Contenedor>
                 <Formulario>
                     <ContentElemenMov>
-                        {/* <ContentElemenSelect>
-                            <Label style={{ marginRight: '10px' }} >Equipo</Label>
-                            <Input
-                                style={{ width: '500px' }}
-                                type='text'
-                                name='serie'
-                                placeholder='Escanee o ingrese Equipo'
-                                value={numSerie}
-                                onChange={e => setNumSerie(e.target.value)}
-                                // onKeyDown={detectar}
-                            />
-                        </ContentElemenSelect>
-                        <Boton disabled={btnAgregar} onClick={handleSubmit}>
-                            <IoMdAdd
-                                style={{ fontSize: '36px', color: '#328AC4', padding: '5px', marginRight: '15px', marginTop: '14px', cursor: "pointer" }}
-                            />
-                        </Boton> */}
-
                         <Table singleLine>
                             <Table.Header>
                                 <Table.Row>
@@ -1042,7 +1006,7 @@ const Traspasos = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Documento</Table.HeaderCell>
-                            <Table.HeaderCell>N° Documento</Table.HeaderCell>
+                            <Table.HeaderCell>N° Folio</Table.HeaderCell>
                             <Table.HeaderCell>Fecha</Table.HeaderCell>
                             <Table.HeaderCell>Tipo Salida</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
@@ -1063,7 +1027,7 @@ const Traspasos = () => {
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell onClick={() => {
-                                        setNumDoc(item.numdoc);
+                                        setFolio(item.numdoc);
                                         setNomTipDoc(item.tipdoc);
                                         setNomTipoOut(item.tipoinout);
                                         setRut(item.rut);
@@ -1122,11 +1086,6 @@ const Traspasos = () => {
                     </Overlay>
                 )
             }
-            <BotonGuardar
-                style={{ margin: '35px 0' }}
-                onClick={folios}
-            >Generar Folio</BotonGuardar>
-            <h2>folio: {folio}</h2>
         </ContenedorProveedor>
     );
 };
