@@ -20,6 +20,7 @@ import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulari
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
+import subirArchivos from '.././funciones/subirArchivos';
 
 const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -66,6 +67,8 @@ const Salidas = () => {
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const [mostrarSubir, setMostrarSubir] = useState(true);
+    const [archivo, setArchivo] = useState(null);
     const inOut = useRef('');
     const almacenar = useRef([]);
     const salidaid = useRef([]);
@@ -419,6 +422,7 @@ const Salidas = () => {
                 })
             }
         } else {
+            setMostrarSubir(!mostrarSubir);
             // Validar Rut Paciente
             const traerClie = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutCli = await getDocs(traerClie)
@@ -1073,6 +1077,25 @@ const Salidas = () => {
         setShowConfirmationAnular(false);
     }
 
+    const subida = async (e) => {
+        e.preventDefault();
+        if (archivo !== null) {
+            try {
+                const result = await subirArchivos(archivo);
+                console.log(result)
+                window.open(result, '_blank');
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No ha seleccionado ningun archivo'
+            })
+        }
+
+    }
     const cuerpoCorreo = (data) => {
         return ReactDOMServer.renderToString(
             <div style={{ backgroundColor: '#EEF2EF' }}>
@@ -1272,6 +1295,19 @@ const Salidas = () => {
                         onChange={handleCheckboxChange}
                         disabled={btnNuevo}
                     >Nuevo</BotonGuardar>
+                    {mostrarSubir &&
+                        (
+                            <>
+                                <div>
+                                    <Input type="file" onChange={e => setArchivo(e.target.files[0])} />
+                                    <BotonGuardar onClick={subida}>
+                                        Subir
+                                    </BotonGuardar>
+                                </div>
+
+                            </>
+                        )
+                    }
                 </Formulario>
             </Contenedor>
             <Contenedor>
