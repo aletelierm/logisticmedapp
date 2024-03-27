@@ -61,7 +61,7 @@ const Traspasos = () => {
     const [patente, setPatente] = useState('');
     // const [numSerie, setNumSerie] = useState('');
     // const [descripcion, setDescripcion] = useState('');
-    const [flag, setFlag] = useState(false);
+    const [flag, setFlag] = useState(false);    
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnAgregar, setBtnAgregar] = useState(true);
@@ -69,7 +69,7 @@ const Traspasos = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [folio, setFolio] = useState(null);
     const inOut = useRef('');
-    const cabid = useRef('');
+    const cabid = useRef('');    
     const nombreST = useRef("DORMIR BIEN SPA");
     const rutST = useRef("76.550.891-6")
 
@@ -119,27 +119,8 @@ const Traspasos = () => {
     }
     const pac = status.filter(item => item.r_permanente !== '' && item.status === 'SERVICIO TECNICO')
     const ser = status.filter(item => item.r_permanente !== '' && item.status === 'PACIENTE')
-    console.log('pac', pac)
-    console.log('ser', ser)
-    const pac2 = pac.filter((valor, indice, arreglo) => { return (arreglo.findIndex((obj) => obj.r_permanente === valor.r_permanente) === indice) })
-    const ser2 = ser.filter((valor, indice, arreglo) => { return (arreglo.findIndex((obj) => obj.r_permanente === valor.r_permanente) === indice) })
-    console.log('pac2', pac2)
-    console.log('ser2', ser2)
-    // const pac2 = []
-    // pac.forEach(p => {
-    //     if (!pac2.some(objeto => objeto.rut === p.r_permanente)) {
-    //         pac2.push(p)
-    //     }
-    // })
-    // console.log('pac2', pac2)
-    // const ser2 = []
-    // ser.forEach(s => {
-    //     if (!ser2.some(objeto => objeto.rut === s.r_permanente)) {
-    //         pac2.push(s)
-    //     }
-    // })
-    // console.log('ser2', ser2)
-
+    const pac2 = pac.filter((valor, indice, arreglo) => {return (arreglo.findIndex((obj) => obj.r_permanente  === valor.r_permanente) === indice)})
+    const ser2 = ser.filter((valor, indice, arreglo) => {return (arreglo.findIndex((obj) => obj.r_permanente  === valor.r_permanente) === indice)})
 
     // Lectura de status por pacientes
     const statusPacientes = async () => {
@@ -305,7 +286,7 @@ const Traspasos = () => {
         } else {
             const nuevoFolio = await correlativos(users.emp_id, 'traspasos');
             setFolio(nuevoFolio);
-
+            
             console.log('folio antes de guardar', nuevoFolio)
             const fechaInOut = new Date(date);
             if (nomTipoOut === 'PACIENTE') {
@@ -342,7 +323,7 @@ const Traspasos = () => {
                     setConfirmar(true);
                     setBtnAgregar(false);
                     setBtnGuardar(true);
-                    setBtnNuevo(false);
+                    setBtnNuevo(false);                    
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -385,7 +366,7 @@ const Traspasos = () => {
                     setConfirmar(true);
                     setBtnAgregar(false);
                     setBtnGuardar(true);
-                    setBtnNuevo(false);
+                    setBtnNuevo(false);                    
                     return;
                 } catch (error) {
                     cambiarEstadoAlerta(true);
@@ -772,7 +753,7 @@ const Traspasos = () => {
         setBtnAgregar(true);
         setBtnConfirmar(true);
         setBtnNuevo(true);
-
+        
     }
 
     useEffect(() => {
@@ -810,7 +791,7 @@ const Traspasos = () => {
                                 name='NumDoc'
                                 placeholder='Ingrese N° Documento'
                                 value={folio}
-                            // onChange={ev => setNumDoc(folio)}
+                                // onChange={ev => setNumDoc(folio)}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
