@@ -68,6 +68,7 @@ const Entradas = () => {
     const [cargando, setCargando] = useState(false);
     const [mostrarSubir, setMostrarSubir] = useState(true);
     const [archivo, setArchivo] = useState(null);
+    const [url, setUrl] = useState('');
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 
@@ -330,7 +331,7 @@ const Entradas = () => {
                     entidad: entidad,
                     descripcion: descripcion,
                     tipMov: 1,
-                    url: '',
+                    url: url,
                     confirmado: false,
                     observacion: '',
                     userAdd: user.email,
@@ -802,7 +803,9 @@ const Entradas = () => {
             try {
                 const result = await subirArchivos(archivo);
                 console.log(result)
+                setUrl(result);
                 window.open(result, '_blank');
+                setMostrarSubir(!mostrarSubir)
             } catch (error) {
                 console.log(error)
             }
