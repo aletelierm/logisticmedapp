@@ -8,8 +8,6 @@ import { db } from '../firebase/firebaseConfig';
 // import { Link } from 'react-router-dom';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import moment from 'moment';
-// import { PDFViewer } from '@react-pdf/renderer';
-// import PDFContent from './PDFContent';
 // import Swal from 'sweetalert2';
 
 const Bitacoras = () => {
@@ -47,7 +45,7 @@ const Bitacoras = () => {
     //     Swal.fire('Check list de mantención');
     // }
 
-
+    
     return (
         <div>
             <ListarProveedor>
@@ -72,10 +70,7 @@ const Bitacoras = () => {
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{item.nombre_protocolo}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_mantencion)}</Table.Cell>
-                                    <Table.Cell textAlign="center">
-                                        <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Visualizar en PDF' />
-                                        {/* <PDFContent data={item} /> */}
-                                    </Table.Cell>
+                                    <Table.Cell textAlign="center"><FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Visualizar en PDF' /></Table.Cell>
                                 </Table.Row>
                             )
                         })}

@@ -3,7 +3,9 @@ export const TipDoc = [
     { key: '2', value: '2', text: 'GUÍA' },
 ];
 export const TipDocOut = [
-    { key: '1', value: '1', text: 'GUÍA' },
+    { key: '1', value: '1', text: 'FACTURA' },
+    { key: '2', value: '2', text: 'GUÍA' },
+    { key: '3', value: '3', text: 'BOLETA' },
 ];
 export const TipDocTraspaso = [
     { key: '1', value: '1', text: 'TRASPASO' },

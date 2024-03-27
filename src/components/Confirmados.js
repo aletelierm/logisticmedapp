@@ -35,7 +35,7 @@ const Confirmados = () => {
     const [isChecked2, setIsChecked2] = useState([]);
     const [traspasoE, setTraspasoE] = useState([]);
     const [traspasoS, setTraspasoS] = useState([]);
-    const [todo, setTodo] = useState([]);
+    // const [todo, setTodo] = useState([]);
     /* const [alertaSalida, setAlertasalida] = useState([]); */
     const cabeceraId = useRef('');
     const inOut = useRef('');
@@ -553,7 +553,7 @@ const Confirmados = () => {
                 console.log(error)
             }
         } else {
-            setTodo(traspasoE)
+            // setTodo(traspasoE)
             // inOut.current = 'PACIENTE'
             // console.log('PACIENTE', inOut.current)
             const batch = writeBatch(db);

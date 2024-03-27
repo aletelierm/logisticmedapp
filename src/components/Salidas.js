@@ -839,17 +839,13 @@ const Salidas = () => {
                 } else {
                     if (nomTipoOut === 'PACIENTE') {
                         inOut.current = 'TRANSITO PACIENTE'
-                        console.log(inOut.current)
-                    } else if (nomTipoOut === 'SERVICIO TECNICO') {
+                    } else if (nomTipoOut === 'S. TECNICO CORRECTIVO') {
                         inOut.current = 'TRANSITO S.T.'
-                        console.log(inOut.current)
+                    } else if (nomTipoOut === 'S. TECNICO PREVENTIVO') {
+                        inOut.current = 'TRANSITO S.T.'
                     } else if (nomTipoOut === 'DEVOLUCION A PROVEEDOR') {
                         inOut.current = 'TRANSITO A PROVEEDOR'
-                        console.log(inOut.current)
-                    } else {
-                        inOut.current = nomTipoOut
-                        console.log(inOut.current)
-                    }
+                    } 
                     cabid.current = existeCab[0].id
                     setBtnConfirmar(false);
                     try {
