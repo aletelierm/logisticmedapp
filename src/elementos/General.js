@@ -83,6 +83,18 @@ const Titulo = styled.h2`
     }
 `
 
+const Subtitulo = styled.h3`
+    // color:  #83d394;
+    color:  #328AC4;
+    margin: 0rem;
+    font-size: 1.5rem ;
+
+    /* Media query para pantallas aún más pequeñas */
+    @media screen and (max-width: 576px) {
+        font-size: 1.2rem ;
+    }
+`
+
 const InputAdd = styled.input`
     // border: 2px solid #d1d1d1;
     border: 2px solid #328AC4;
@@ -197,4 +209,4 @@ const Overlay = styled.div`
     justify-content: center;
 `
 
-export {ContenedorProveedor, Contenedor, ContenedorElementos, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, InputAdd ,InputUpdate , Boton, BotonGuardar,BotonCheck, Boton2, ConfirmaModal, ConfirmaBtn, Overlay};
+export {ContenedorProveedor, Contenedor, ContenedorElementos, ContentElemenAdd, FormularioAdd, ListarProveedor, Titulo, Subtitulo, InputAdd ,InputUpdate , Boton, BotonGuardar,BotonCheck, Boton2, ConfirmaModal, ConfirmaBtn, Overlay};
