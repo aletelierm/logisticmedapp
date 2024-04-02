@@ -7,13 +7,12 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Subtitulo, BotonGuardar } from '../elementos/General';
-// import moment from 'moment';
+import moment from 'moment';
 
 const CheckMantoPDF = () => {
     //fecha hoy
-    // const fechaHoy = new Date();
+    const fechaHoy = new Date();
     const { users } = useContext(UserContext);
-    console.log(users)
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -22,21 +21,21 @@ const CheckMantoPDF = () => {
     const [itemsCheck, setItemsCheck] = useState([]);
     const [itemsMedicion, setItemsMedicion] = useState([]);
     const [itemsSeg, setItemsSeg] = useState([]);
-    const [nombreProtocolo, setNombreProtocolo] = useState([]);
-    const [familia, setFamilia] = useState([]);
-    const [tipo, setTipo] = useState([]);
-    const [serie, setSerie] = useState([]);
-    const [fechaManto, setFechaManto] = useState([]);
+    const [nombreProtocolo, setNombreProtocolo] = useState('');
+    const [familia, setFamilia] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [serie, setSerie] = useState('');
+    const [fechaManto, setFechaManto] = useState(null);
     // const bitacoraCab = useRef(0);
 
     console.log(itemsSeg);
     console.log(familia);
-    console.log(fechaManto)
-
+    console.log("fechaManto", fechaManto)
+    
     const volver = () => {
         navigate('/serviciotecnico/bitacora')
     }
-
+    
     useEffect(() => {
         if (bitacora) {
             // bitacoraCab.current = bitacora.id
@@ -44,12 +43,13 @@ const CheckMantoPDF = () => {
             setFamilia(bitacora.familia);
             setTipo(bitacora.tipo);
             setSerie(bitacora.serie);
+            console.log('bitacora.fecha', bitacora.fecha_mantencion)
             setFechaManto(bitacora.fecha_mantencion);
         } else {
             navigate('/serviciotecnico/bitacora')
         }
     }, [bitacora, navigate])
-
+    
     // Detalle de Bitacoras por categoria
     const consultarBitacoras = async () => {
         const docCheck = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', id), where('categoria', '==', 'CHECK'));
@@ -69,12 +69,12 @@ const CheckMantoPDF = () => {
     }
 
     // Cambiar fecha
-    // const formatearFecha = (fecha) => {
-    //     const dateObj = fecha.toDate();
-    //     const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-    //     const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-    //     return formatear;
-    // }
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+        const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+        return formatear;
+    }
 
     useEffect(() => {
         consultarBitacoras();
@@ -108,7 +108,7 @@ const CheckMantoPDF = () => {
                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Marca</Table.Cell>
                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Modelo</Table.Cell>
                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{serie}</Table.Cell>
-                            {/* <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{formatearFecha(fechaManto)}</Table.Cell> */}
+                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{fechaManto ? formatearFecha(fechaManto) : '00/00/00 00:00'}</Table.Cell>
                         </Table.Row>
                     </Table.Body>
                 </Table>
