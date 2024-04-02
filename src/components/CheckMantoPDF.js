@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,13 +6,12 @@ import useObtenerBitacora from '../hooks/useObtenerBitacora';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react';
-import { Contenido } from '../elementos/CrearEquipos'
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Subtitulo, BotonGuardar } from '../elementos/General';
-import moment from 'moment';
+// import moment from 'moment';
 
 const CheckMantoPDF = () => {
     //fecha hoy
-    const fechaHoy = new Date();
+    // const fechaHoy = new Date();
     const { users } = useContext(UserContext);
     console.log(users)
 
@@ -28,7 +27,11 @@ const CheckMantoPDF = () => {
     const [tipo, setTipo] = useState([]);
     const [serie, setSerie] = useState([]);
     const [fechaManto, setFechaManto] = useState([]);
-    const bitacoraCab = useRef(0);
+    // const bitacoraCab = useRef(0);
+
+    console.log(itemsSeg);
+    console.log(familia);
+    console.log(fechaManto)
 
     const volver = () => {
         navigate('/serviciotecnico/bitacora')
@@ -36,7 +39,6 @@ const CheckMantoPDF = () => {
 
     useEffect(() => {
         if (bitacora) {
-            console.log(id)
             // bitacoraCab.current = bitacora.id
             setNombreProtocolo(bitacora.nombre_protocolo);
             setFamilia(bitacora.familia);
@@ -67,12 +69,12 @@ const CheckMantoPDF = () => {
     }
 
     // Cambiar fecha
-    const formatearFecha = (fecha) => {
-        const dateObj = fecha.toDate();
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-        const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-        return formatear;
-    }
+    // const formatearFecha = (fecha) => {
+    //     const dateObj = fecha.toDate();
+    //     const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+    //     const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+    //     return formatear;
+    // }
 
     useEffect(() => {
         consultarBitacoras();

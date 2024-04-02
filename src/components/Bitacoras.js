@@ -24,6 +24,8 @@ const Bitacoras = () => {
     const [itemsMedicion, setItemsMedicion] = useState([]);
     const [itemsSeg, setItemsSeg] = useState([]);
 
+    console.log(itemsSeg);
+
     // Leer datos de cabecera Entradas
     const getBitacoras = async () => {
         const traerCabecera = collection(db, 'bitacoracab');
@@ -63,13 +65,9 @@ const Bitacoras = () => {
 
     useEffect(() => {
         getBitacoras();
+        consultarBitacoras();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-    // const ejecutar = () => {
-    //     Swal.fire('Check list de mantención');
-    // }
-
 
     return (
         <div>
