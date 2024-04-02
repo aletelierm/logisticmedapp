@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { db } from '../firebase/firebaseConfig';
+import { getDocs, collection, where, query } from 'firebase/firestore';
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 import { FaRegFilePdf } from "react-icons/fa";
 import { ListarProveedor, Titulo, Subtitulo, Boton2 } from '../elementos/General';
 import { Contenido } from '../elementos/CrearEquipos'
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
-import { db } from '../firebase/firebaseConfig';
+import { Link } from 'react-router-dom';
 import Modal from './Modal';
-// import { Link } from 'react-router-dom';
-import { getDocs, collection, where, query } from 'firebase/firestore';
 import moment from 'moment';
 // import Swal from 'sweetalert2';
 
@@ -17,6 +17,7 @@ const Bitacoras = () => {
     //fecha hoy
     const fechaHoy = new Date();
     const { users } = useContext(UserContext);
+
     const [mantencion, setMantencion] = useState([]);
     const [estadoModal, setEstadoModal] = useState(false);
     const [itemsCheck, setItemsCheck] = useState([]);
@@ -48,7 +49,6 @@ const Bitacoras = () => {
         const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setItemsSeg(documenSel);
     }
-
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -96,12 +96,15 @@ const Bitacoras = () => {
                                     <Table.Cell>{item.nombre_protocolo}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_mantencion)}</Table.Cell>
                                     <Table.Cell textAlign="center"
-                                        title='Ver Chec List de Mantencion'
-                                        onClick={() => {
-                                            consultarBitacoras(item.id);
-                                            setEstadoModal(!estadoModal)
-                                        }}>
-                                        <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Visualizar en PDF' />
+                                        // title='Ver Chec List de Mantencion'
+                                        /* onClick={() => {
+                                            // consultarBitacoras(item.id);
+                                            // setEstadoModal(!estadoModal)
+                                        }} */ >
+                                        <Link disabled to={`/checkmantencion/${item.id}`}>
+                                            {console.log(item.id)}
+                                            <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} /* title='Visualizar en PDF' */ title='Ver Chec List de Mantencion' />
+                                        </Link>
                                         {/* <PDFContent data={item} /> */}
 
                                     </Table.Cell>
@@ -128,7 +131,6 @@ const Bitacoras = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-
                                     {manteOrd.map((item, index) => {
                                         return (
                                             <Table.Row key={index}>
@@ -138,11 +140,10 @@ const Bitacoras = () => {
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Modelo</Table.Cell>
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{item.serie}</Table.Cell>
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{formatearFecha(item.fecha_mantencion)}</Table.Cell>
-                                                
+
                                             </Table.Row>
                                         )
                                     })}
-
                                 </Table.Body>
                             </Table>
                             {/* Detalle de bitacora Checks */}
@@ -210,7 +211,6 @@ const Bitacoras = () => {
                         ''
                     }
                 </Modal>
-
             </ListarProveedor>
         </div>
     );

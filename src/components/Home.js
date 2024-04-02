@@ -42,6 +42,7 @@ import AgregarItems from './AgregarItems';
 import EjecutarMantencion from './EjecutarMantencion';
 import Bitacoras from './Bitacoras';
 import Traspasos from './Traspasos';
+import CheckMantoPDF from './CheckMantoPDF';
 
 export const Home = () => {
   return (
@@ -79,6 +80,7 @@ export const Home = () => {
             <Route path="serviciotecnico/mantencion" element={<Mantenimiento/>}/>
             <Route path="ejecutarmantencion/:id" element={<EjecutarMantencion/>}/>
             <Route path="serviciotecnico/bitacora" element={<Bitacoras/>}/>
+            <Route path="checkmantencion/:id" element={<CheckMantoPDF/>}/>
             <Route path="clientes" element={<Clientes/>}/>
             <Route path="proveedores" element={<Proveedores/>}/>
             <Route path="actualizaproveedor/:id" element={<ActualizaProveedor/>}/>

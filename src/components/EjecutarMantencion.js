@@ -60,7 +60,6 @@ const EjecutarMantencion = () => {
     useEffect(() => {
         if (manto) {
             protocoloCab.current = manto.cab_id_protocol
-            console.log('id useeffect', manto.cab_id_protocol)
             setNombreProtocolo(manto.nombre_protocolo);
             setPrograma(manto.programa);
             setDias(manto.dias);
@@ -72,7 +71,7 @@ const EjecutarMantencion = () => {
             navigate('/')
         }
     }, [manto, navigate])
-    
+
     // console.log('protocolo cab despues del primer useeffect',protocoloCab.current)
     // Filtar por docuemto de Protocolo
     const consultarProtocolos = async () => {
@@ -86,7 +85,7 @@ const EjecutarMantencion = () => {
         const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsCheck(documenCheck);
 
-    const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
+        const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
         const docuLlen = await getDocs(docLlen);
         const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsMedicion(documenLlen);
@@ -633,20 +632,6 @@ const EjecutarMantencion = () => {
                                             })}
                                         </Table.Body>
                                     </Table>
-                                    {/* // {itemsSeg.map((item, index) => { */}
-                                    {/* //     if (item.item !== 'CLASIFICACION') { */}
-                                    {/* //         return ( */}
-                                    {/* //             <Select key={index} value={item.valor} onChange={e => { handleButtonClickSelec(e, index) }}> */}
-                                    {/* //                 <option>{item.item} :</option> */}
-                                    {/* //                 {Opcion.map((o, index) => { */}
-                                    {/* //                     return ( */}
-                                    {/* //                         <option key={index} >{o.text}</option> */}
-                                    {/* //                     ) */}
-                                    {/* //                 })} */}
-                                    {/* //             </Select> */}
-                                    {/* //         ) */}
-                                    {/* {/* //     }  */}
-                                    {/* // })} */}
                                 </ContentElemenMov>
                             </>
                         }
