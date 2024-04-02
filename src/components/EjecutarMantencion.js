@@ -71,7 +71,7 @@ const EjecutarMantencion = () => {
             navigate('/')
         }
     }, [manto, navigate])
-
+    
     // console.log('protocolo cab despues del primer useeffect',protocoloCab.current)
     // Filtar por docuemto de Protocolo
     const consultarProtocolos = async () => {
@@ -85,7 +85,7 @@ const EjecutarMantencion = () => {
         const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsCheck(documenCheck);
 
-        const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
+    const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
         const docuLlen = await getDocs(docLlen);
         const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsMedicion(documenLlen);
