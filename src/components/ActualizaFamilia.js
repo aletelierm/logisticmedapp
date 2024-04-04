@@ -100,7 +100,7 @@ const ActualizaFamilia = () => {
     return (
         <ContenedorCliente>
             <Contenedor>
-                <Titulo>Actualiazar Familia</Titulo>
+                <Titulo>Actualizar Familia</Titulo>
             </Contenedor>
 
             <Contenedor>

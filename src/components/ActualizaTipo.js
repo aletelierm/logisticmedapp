@@ -100,7 +100,7 @@ const ActualizaTipo = () => {
     return (
         <ContenedorCliente>
             <Contenedor>
-                <Titulo>Actualiazar Tipo Equipamiento</Titulo>
+                <Titulo>Actualizar Tipo Equipamiento</Titulo>
             </Contenedor>
 
             <Contenedor>

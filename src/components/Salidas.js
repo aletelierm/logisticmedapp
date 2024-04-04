@@ -1198,7 +1198,7 @@ const Salidas = () => {
                             </Select>
                         </ContentElemenSelect>
                         <ContentElemenSelect>
-                            <Label>Fecha Ingreso</Label>
+                            <Label>Fecha Salida</Label>
                             <Input
                                 disabled={confirmar}
                                 type='datetime-local'

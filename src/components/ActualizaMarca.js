@@ -100,7 +100,7 @@ const ActualizaMarca = () => {
     return (
         <ContenedorCliente>
             <Contenedor>
-                <Titulo>Actualiazar Marca</Titulo>
+                <Titulo>Actualizar Marca</Titulo>
             </Contenedor>
 
             <Contenedor>
