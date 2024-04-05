@@ -95,16 +95,17 @@ const Bitacoras = () => {
                                     <Table.Cell>{formatearFecha(item.fecha_mantencion)}</Table.Cell>
                                     <Table.Cell textAlign="center"
                                         // title='Ver Chec List de Mantencion'
-                                        /* onClick={() => {
+                                        // onClick={() => {
                                             // consultarBitacoras(item.id);
                                             // setEstadoModal(!estadoModal)
-                                        }} */ >
+                                        // }} 
+                                        >
+                                        {/* <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Visualizar en PDF' title='Ver Chec List de Mantencion' /> */}
                                         <Link disabled to={`/checkmantencion/${item.id}`}>
-                                            {console.log(item.id)}
-                                            <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} /* title='Visualizar en PDF' */ title='Ver Chec List de Mantencion' />
+                                        
+                                        <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} /* title='Visualizar en PDF' */ title ='Ver Chec List de Mantencion' />
                                         </Link>
                                         {/* <PDFContent data={item} /> */}
-
                                     </Table.Cell>
                                 </Table.Row>
                             )
