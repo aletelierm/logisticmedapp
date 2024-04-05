@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import generatePDF, { Margin, Options } from 'react-to-pdf'
 import { db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,6 +27,7 @@ const CheckMantoPDF = () => {
     const [tipo, setTipo] = useState('');
     const [serie, setSerie] = useState('');
     const [fechaManto, setFechaManto] = useState(null);
+    const targetRef = useRef();
     // const bitacoraCab = useRef(0);
 
     console.log(itemsSeg);
@@ -74,6 +76,14 @@ const CheckMantoPDF = () => {
         const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
+    // Configuración de react-to-pdf
+    const Options = {
+        filename: 'Documento.pdf',
+        margin: 30,
+        format: 'letter',
+        orientation: 'landscape',
+    };
+
 
     useEffect(() => {
         consultarBitacoras();
@@ -82,101 +92,127 @@ const CheckMantoPDF = () => {
 
     return (
         <>
-            <ContenedorProveedor  >
-                <Contenedor>
-                    <Titulo>{nombreProtocolo}</Titulo>
-                </Contenedor>
+            <ContenedorProveedor>
+            <ContenedorProveedor style={{ margin: '30px' }} ref={targetRef} >
+                {/* <Contenedor> */}
+                <Titulo>{nombreProtocolo}</Titulo>
+                {/* </Contenedor> */}
 
-                <ListarProveedor >
-                    {/* Contenido del cliente */}
-                    <Subtitulo>Identificacion del equipo Médicos</Subtitulo>
-                    <Table singleLine>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Cliente</Table.HeaderCell>
-                                <Table.HeaderCell>Tipo de equipo</Table.HeaderCell>
-                                <Table.HeaderCell>Marca</Table.HeaderCell>
-                                <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                <Table.HeaderCell>N° Serie</Table.HeaderCell>
-                                <Table.HeaderCell>Fecha de Revision</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            <Table.Row >
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{users.empresa}</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{tipo}</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Marca</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Modelo</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{serie}</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{fechaManto ? formatearFecha(fechaManto) : '00/00/00 00:00'}</Table.Cell>
-                            </Table.Row>
-                        </Table.Body>
-                    </Table>
-                </ListarProveedor>
+                {/* <ListarProveedor > */}
+                {/* Contenido del cliente */}
+                <Subtitulo>Identificacion del equipo Médicos</Subtitulo>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Cliente</Table.HeaderCell>
+                            <Table.HeaderCell>Tipo de equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Marca</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N° Serie</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha de Revision</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        <Table.Row >
+                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{users.empresa}</Table.Cell>
+                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{tipo}</Table.Cell>
+                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Marca</Table.Cell>
+                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Modelo</Table.Cell>
+                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{serie}</Table.Cell>
+                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{fechaManto ? formatearFecha(fechaManto) : '00/00/00 00:00'}</Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
+                {/* </ListarProveedor> */}
 
-                <ListarProveedor>
-                    {/* Detalle de bitacora Checks */}
-                    <Subtitulo>Protocolo de Mantencion</Subtitulo>
-                    <Table singleLine>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>N°</Table.HeaderCell>
-                                <Table.HeaderCell>item</Table.HeaderCell>
-                                <Table.HeaderCell>Resultado</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {itemsCheck.map((item, index) => {
-                                return (
-                                    <Table.Row key={index}>
-                                        <Table.Cell>{index + 1}</Table.Cell>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{item.item}</Table.Cell>
-                                        <Table.Cell style={{ textAlign: 'center' }} >{item.valor}</Table.Cell>
-                                    </Table.Row>
-                                )
-                            })}
-                        </Table.Body>
-                    </Table>
-                    <p>** Pruebas realiadas con Pulmón artificial, IMTMEDICAL EASYLUNG **</p>
-                </ListarProveedor>
+                {/* <ListarProveedor> */}
+                {/* Detalle de bitacora Checks */}
+                <Subtitulo>Protocolo de Mantencion</Subtitulo>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>item</Table.HeaderCell>
+                            <Table.HeaderCell>Resultado</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {itemsCheck.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell>{index + 1}</Table.Cell>
+                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{item.item}</Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }} >{item.valor}</Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
 
-                <ListarProveedor>
-                    {/* Detalle de bitacora Tabla de presion */}
-                    <Subtitulo>Test de Presión</Subtitulo>
-                    <Table singleLine>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Item</Table.HeaderCell>
-                                <Table.HeaderCell>Medicion</Table.HeaderCell>
-                                <Table.HeaderCell>Rango Ref.</Table.HeaderCell>
-                                <Table.HeaderCell>Test</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {itemsMedicion.map((item, index) => {
-                                return (
-                                    <Table.Row key={index}>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                                        <Table.Cell  >{item.valor}</Table.Cell>
-                                        <Table.Cell>Por definir</Table.Cell>
-                                        <Table.Cell>Por definir</Table.Cell>
-                                    </Table.Row>
-                                )
-                            })}
-                        </Table.Body>
-                    </Table>
-                    <p>** Medición efectuada con flujometro digital CITREX H4 IMTMEDICAL **</p>
-                </ListarProveedor>
+                    </Table.Body>
+                </Table>
+                <p>** Pruebas realiadas con Pulmón artificial, IMTMEDICAL EASYLUNG **</p>
+                {/* </ListarProveedor> */}
 
-                <Contenedor>
-                    <h3>Tecnico: {users.nombre + ' ' + users.apellido}</h3>
-                    <h4>SERVICIO TÉCNICO</h4>
-                    <p>soporte@dormirbien.cl</p>
-                    <p>General Parra #674 Oficina H, Providencia</p>
-                    <p>+569 59505300</p>
-                </Contenedor>
+                {/* <ListarProveedor> */}
+                {/* Detalle de bitacora Tabla de presion */}
+                <Subtitulo>Test de Presión</Subtitulo>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Item</Table.HeaderCell>
+                            <Table.HeaderCell>Medicion</Table.HeaderCell>
+                            <Table.HeaderCell>Rango Ref.</Table.HeaderCell>
+                            <Table.HeaderCell>Test</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {itemsMedicion.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                                    <Table.Cell  >{item.valor}</Table.Cell>
+                                    <Table.Cell>Por definir</Table.Cell>
+                                    <Table.Cell>Por definir</Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
 
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Item</Table.HeaderCell>
+                            <Table.HeaderCell>Medicion</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {itemsSeg.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                                    <Table.Cell  >{item.valor}</Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+                <p>** Medición efectuada con flujometro digital CITREX H4 IMTMEDICAL **</p>
+                {/* </ListarProveedor> */}
+
+                {/* <Contenedor> */}
+                <h3>Tecnico: {users.nombre + ' ' + users.apellido}</h3>
+                <h4>SERVICIO TÉCNICO</h4>
+                <p>soporte@dormirbien.cl</p>
+                <p>General Parra #674 Oficina H, Providencia</p>
+                <p>+569 59505300</p>
+                {/* </Contenedor> */}
+
+            </ContenedorProveedor>
+
+            <div>
                 <BotonGuardar style={{ marginTop: '30px' }} onClick={volver} >Volver</BotonGuardar>
+                <BotonGuardar onClick={() => generatePDF(targetRef, Options)}>Descargar PDF</BotonGuardar>
+            </div>
             </ContenedorProveedor>
         </>
     );
