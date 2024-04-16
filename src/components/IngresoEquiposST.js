@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
+import validarRut from '../funciones/validarRut';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
@@ -22,6 +23,7 @@ const IngresoEquiposST = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
+    const [nombre, setNombre] = useState('');
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
     const [correo, setCorreo] = useState('');
@@ -29,7 +31,11 @@ const IngresoEquiposST = () => {
     const [confirmar, setConfirmar] = useState(false);
     const [openModalCli, setOpenModalCli] = useState(false);
     const [region, setRegion] = useState('Arica y Parinacota');
+    const [comuna, setComuna] = useState('');
     const [checked, setChecked] = useState();
+    const [nomRsf, setNomRsf] = useState('');
+    const [dirRsf, setDirRsf] = useState('');
+    const [telRsf, setTelRsf] = useState('');
 
     // Validar rut
     const detectarCli = async (e) => {
@@ -65,15 +71,161 @@ const IngresoEquiposST = () => {
     }
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
 
+    // Guardar Cliente nuevo
+    const guardarCli = (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // //Comprobar que existe el rut en DB
+        // const existe = leer.filter(cli => cli.rut === rut).length === 0
+        //Patron para Comprobar que correo sea correcto
+        const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+        //Patron para valiar rut
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if (digito === 'k' || digito === 'K') digito = -1;
+        const validaR = validarRut(rut);
+
+        if (rut === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Rut no puede estar vacio'
+            })
+            return;
+        } else if (!expresionRegularRut.test(rut)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Formato incorrecto de rut'
+            })
+            return;
+        } else if (validaR !== parseInt(digito)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;
+        } else if (nombre === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Nombre no puede estar vacio'
+            })
+            return;
+        } else if (direccion === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Dirección no puede estar vacio'
+            })
+            return;
+        } else if (telefono === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo telefono no puede estar vacio'
+            })
+            return;
+        } else if (!expresionRegular.test(correo)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor ingresar un correo valido'
+            })
+            return;
+            // } else if (!existe) {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Rut ya existe'
+            //     })
+            //     return;
+        } else if (checked && nomRsf === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo nombre RSF no puede estar vacio'
+            })
+            return;
+        } else if (checked && dirRsf === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Dirección no puede estar vacio'
+            })
+            return;
+        } else if (checked && telRsf === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo telefono no puede estar vacio'
+            })
+            return;
+        } else {
+            // try {
+            // const nom = nombre.toLocaleUpperCase().trim();
+            // const dir = direccion.toLocaleUpperCase().trim();
+            // const nomrsf = nomRsf.toLocaleUpperCase().trim();
+            // const dirrsf = dirRsf.toLocaleUpperCase().trim();
+            // const telrsf = telRsf.toLocaleUpperCase().trim();
+            // const corr = correo.toLocaleLowerCase().trim();
+            // const ruts = rut.toLocaleUpperCase().trim();
+            //     AgregarClientesDb({
+            //         emp_id: users.emp_id,
+            //         rut: ruts,
+            //         nombre: nom,
+            //         direccion: dir,
+            //         telefono: telefono,
+            //         region: region,
+            //         comuna: comuna,
+            //         correo: corr,
+            //         nomrsf: nomrsf,
+            //         dirrsf: dirrsf,
+            //         telrsf: telrsf,
+            //         userAdd: user.email,
+            //         userMod: user.email,
+            //         fechaAdd: fechaAdd,
+            //         fechaMod: fechaMod
+            //     })
+            //     setRut('');
+            //     setNombre('');
+            //     setDireccion('');
+            //     setTelefono('');
+            //     setCorreo('');
+            //     setNomRsf('');
+            //     setDirRsf('');
+            //     setTelRsf('');
+            //     setChecked(false)
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'exito',
+            //         mensaje: 'Cliente registrado exitosamente'
+            //     })
+            //     setFlag(!flag);
+            //     return;
+            // } catch (error) {
+            //     console.log('se produjo un error al guardar', error);
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: error
+            //     })
+            // }
+        }
+    }
+
 
     return (
         <ContenedorProveedor>
             <Contenedor >
-                <Titulo>Orden de Ingrso de Equipos</Titulo>
+                <Titulo>Orden de Ingreso de Equipos</Titulo>
             </Contenedor>
             {/* Informacion del Cliente */}
             <Contenedor>
-                <Titulo>Informacion Cliente</Titulo>
+                <Titulo>Información Cliente</Titulo>
                 <Formulario action=''>
                     <ContentElemenMov>
                         <ContentElemenSelect>
@@ -127,7 +279,7 @@ const IngresoEquiposST = () => {
 
             {/* Informacion del Equipo */}
             <Contenedor>
-                <Titulo>Informacion Equipo</Titulo>
+                <Titulo>Información Equipo</Titulo>
                 <Formulario action=''>
                     <ContentElemenMov>
                         <ContentElemenSelect>
@@ -234,7 +386,7 @@ const IngresoEquiposST = () => {
                         style={{ width: '80%', height: '60px' }}
                         type='text'
                         name='descripcion'
-                        placeholder='Ingrese descripcion o detalles adicionales a la guía'
+                        placeholder='Ingrese observacion o detalles adicionales'
                     // value={descripcion}
                     // onChange={e => setDescripcion(e.target.value)}
                     />
@@ -252,7 +404,7 @@ const IngresoEquiposST = () => {
             {openModalCli && (
                 <Overlay>
                     <ConfirmaModal>
-                        <Titulo>Mis Pacientes</Titulo>
+                        <Titulo>Crear Cliente</Titulo>
                         <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
                         <Formulario action='' >
                             <ContentElemen>
@@ -262,29 +414,29 @@ const IngresoEquiposST = () => {
                                     type='text'
                                     name='rut'
                                     placeholder='Ingrese Rut sin puntos'
-                                // value={rut}
-                                // onChange={ev => setRut(ev.target.value)}
+                                    value={rut}
+                                    onChange={ev => setRut(ev.target.value)}
                                 />
                                 <Label>Nombre</Label>
                                 <Input
                                     type='text'
                                     name='nombre'
                                     placeholder='Ingrese Nombre'
-                                // value={nombre}
-                                // onChange={ev => setNombre(ev.target.value)}
+                                    value={nombre}
+                                    onChange={ev => setNombre(ev.target.value)}
                                 />
                                 <Label >Dirección</Label>
                                 <Input
                                     type='text'
                                     name='direccion'
                                     placeholder='Ingrese Dirección'
-                                // value={direccion}
-                                // onChange={ev => setDireccion(ev.target.value)}
+                                    value={direccion}
+                                    onChange={ev => setDireccion(ev.target.value)}
                                 />
                             </ContentElemen>
                             <ContentElemen>
                                 <Label>Region</Label>
-                                <Select /* value={region} onChange={e => setRegion(e.target.value)}*/ >
+                                <Select value={region} onChange={e => setRegion(e.target.value)} >
                                     {Regiones.map((r, index) => {
                                         return (
                                             <option key={index} >{r.region}</option>
@@ -292,7 +444,7 @@ const IngresoEquiposST = () => {
                                     })}
                                 </Select>
                                 <Label>Comuna</Label>
-                                <Select /* value={comuna} onChange={e => setComuna(e.target.value)} */ >
+                                <Select value={comuna} onChange={e => setComuna(e.target.value)} >
                                     {comunasxRegion.map((objeto, index) => {
                                         return (<option key={index}>{objeto.name}</option>)
                                     })}
@@ -304,16 +456,16 @@ const IngresoEquiposST = () => {
                                     type='number'
                                     name='telefono'
                                     placeholder='Ingrese Telefono'
-                                // value={telefono}
-                                // onChange={ev => setTelefono(ev.target.value)}
+                                    value={telefono}
+                                    onChange={ev => setTelefono(ev.target.value)}
                                 />
                                 <Label>Email</Label>
                                 <Input
                                     type='email'
                                     name='correo'
                                     placeholder='Ingrese Correo'
-                                // value={correo}
-                                // onChange={ev => setCorreo(ev.target.value)}
+                                    value={correo}
+                                    onChange={ev => setCorreo(ev.target.value)}
                                 />
                                 <Label>Responsable financiero?</Label>
                                 <Input
@@ -331,30 +483,30 @@ const IngresoEquiposST = () => {
                                         name="nombrersf"
                                         type="text"
                                         placeholder='Responsable financiero'
-                                    // value={nomRsf}
-                                    // onChange={ev => setNomRsf(ev.target.value)}
+                                        value={nomRsf}
+                                        onChange={ev => setNomRsf(ev.target.value)}
                                     />
                                     <Label>Dirección</Label>
                                     <Input
                                         name="direccionrsf"
                                         type="text"
                                         placeholder='Ingres dirección'
-                                    // value={dirRsf}
-                                    // onChange={ev => setDirRsf(ev.target.value)}
+                                        value={dirRsf}
+                                        onChange={ev => setDirRsf(ev.target.value)}
                                     />
                                     <Label>Telefono</Label>
                                     <Input
                                         name="telefonorsf"
                                         type="number"
                                         placeholder='Ingrese telefono'
-                                    // value={telRsf}
-                                    // onChange={ev => setTelRsf(ev.target.value)}
+                                        value={telRsf}
+                                        onChange={ev => setTelRsf(ev.target.value)}
                                     />
                                 </ContentElemen>
                                 : ''
                             }
                         </Formulario>
-                        <BotonGuardar /* onClick={handleSubmit} */ >Guardar</BotonGuardar>
+                        <BotonGuardar onClick={guardarCli} >Guardar</BotonGuardar>
                     </ConfirmaModal>
                 </Overlay>
             )}
