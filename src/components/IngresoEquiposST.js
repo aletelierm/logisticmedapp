@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Alertas from './Alertas';
-import { auth } from '../firebase/firebaseConfig';
+import { auth, db } from '../firebase/firebaseConfig';
+import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
@@ -16,6 +17,40 @@ const IngresoEquiposST = () => {
 
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [rut, setRut] = useState('');
+    const [entidad, setEntidad] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [direccion, setDireccion] = useState('');
+    const [correo, setCorreo] = useState('');
+    const [date, setDate] = useState('');
+    const [confirmar, setConfirmar] = useState(false);
+
+    // Validar rut
+    const detectarCli = async (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // setBtnGuardar(true)
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+            const rutCli = await getDocs(cli)
+            const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            if (rutCli.docs.length === 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe rut de Cliente'
+                })
+            } else {
+                setEntidad(final[0].nombre);
+                setTelefono(final[0].telefono);
+                setDireccion(final[0].direccion);
+                setCorreo(final[0].correo);
+                // setBtnGuardar(false)
+            }
+        }
+    }
+
+
     return (
         <ContenedorProveedor>
             <Contenedor >
@@ -28,11 +63,19 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Rut</Label>
-                            <Input />
+                            <Input
+                                disabled={confirmar}
+                                type='numero'
+                                placeholder='Ingrese Rut sin puntos'
+                                name='rut'
+                                value={rut}
+                                onChange={ev => setRut(ev.target.value)}
+                                onKeyDown={detectarCli}
+                            />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Nombre</Label>
-                            <Input />
+                            <Input value={entidad} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Fecha de Ingreso</Label>
@@ -40,9 +83,9 @@ const IngresoEquiposST = () => {
                                 // disabled={confirmar}
                                 type='datetime-local'
                                 placeholder='Seleccione Fecha'
-                            // name='date'
-                            // value={date}
-                            // onChange={ev => setDate(ev.target.value)}
+                                name='date'
+                                value={date}
+                                onChange={ev => setDate(ev.target.value)}
                             // min={fechaMinima.toISOString().slice(0, 16)}
                             // max={fechaMaxima.toISOString().slice(0, 16)}
                             />
@@ -51,15 +94,15 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Telefono</Label>
-                            <Input />
+                            <Input value={telefono} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Dirección</Label>
-                            <Input />
+                            <Input value={direccion} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Email</Label>
-                            <Input />
+                            <Input value={correo} disabled />
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
@@ -170,7 +213,7 @@ const IngresoEquiposST = () => {
                         </Table.Row>
                     </Table.Body>
                 </Table>
-                <ContentElemenMov style={{marginTop: '20px', marginBottom: '20px'}}>
+                <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
                     <Label>Observaciones</Label>
                     <TextArea
                         style={{ width: '80%', height: '60px' }}

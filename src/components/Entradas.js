@@ -155,7 +155,7 @@ const Entradas = () => {
             }
         }
     }
-    // Validar N°serie //Falta Revisar
+    // Validar N°serie
     const detectar = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
