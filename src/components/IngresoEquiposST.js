@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
+import styled from 'styled-components';
 import Alertas from './Alertas';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
-import { ContenedorProveedor, Contenedor, /* ListarProveedor,*/ Titulo, BotonGuardar, /*Boton , ConfirmaModal, ConfirmaBtn, Boton2, Overlay*/ } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, Formulario, Input, Label, /*, ListarEquipos, Select,*/ TextArea, Select } from '../elementos/CrearEquipos';
+import { Regiones } from './comunas';
+import * as IoIcons from 'react-icons/io';
+import { ContenedorProveedor, Contenedor, /* ListarProveedor,*/ Titulo, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay /*Boton */ } from '../elementos/General'
+import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, /*, ListarEquipos, Select,*/ TextArea, Select } from '../elementos/CrearEquipos';
 
 const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -24,6 +27,9 @@ const IngresoEquiposST = () => {
     const [correo, setCorreo] = useState('');
     const [date, setDate] = useState('');
     const [confirmar, setConfirmar] = useState(false);
+    const [openModalCli, setOpenModalCli] = useState(false);
+    const [region, setRegion] = useState('Arica y Parinacota');
+    const [checked, setChecked] = useState();
 
     // Validar rut
     const detectarCli = async (e) => {
@@ -40,6 +46,11 @@ const IngresoEquiposST = () => {
                     tipo: 'error',
                     mensaje: 'No existe rut de Cliente'
                 })
+                setOpenModalCli(!openModalCli)
+                setEntidad('');
+                setTelefono('');
+                setDireccion('');
+                setCorreo('');
             } else {
                 setEntidad(final[0].nombre);
                 setTelefono(final[0].telefono);
@@ -49,6 +60,10 @@ const IngresoEquiposST = () => {
             }
         }
     }
+    const handleChek = (e) => {
+        setChecked(e.target.checked)
+    }
+    const comunasxRegion = Regiones.find((option) => option.region === region).comunas
 
 
     return (
@@ -233,8 +248,137 @@ const IngresoEquiposST = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
+
+            {openModalCli && (
+                <Overlay>
+                    <ConfirmaModal>
+                        <Titulo>Mis Pacientes</Titulo>
+                        <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
+                        <Formulario action='' >
+                            <ContentElemen>
+                                <Label>Rut</Label>
+                                <Input
+                                    maxLength='10'
+                                    type='text'
+                                    name='rut'
+                                    placeholder='Ingrese Rut sin puntos'
+                                // value={rut}
+                                // onChange={ev => setRut(ev.target.value)}
+                                />
+                                <Label>Nombre</Label>
+                                <Input
+                                    type='text'
+                                    name='nombre'
+                                    placeholder='Ingrese Nombre'
+                                // value={nombre}
+                                // onChange={ev => setNombre(ev.target.value)}
+                                />
+                                <Label >Dirección</Label>
+                                <Input
+                                    type='text'
+                                    name='direccion'
+                                    placeholder='Ingrese Dirección'
+                                // value={direccion}
+                                // onChange={ev => setDireccion(ev.target.value)}
+                                />
+                            </ContentElemen>
+                            <ContentElemen>
+                                <Label>Region</Label>
+                                <Select /* value={region} onChange={e => setRegion(e.target.value)}*/ >
+                                    {Regiones.map((r, index) => {
+                                        return (
+                                            <option key={index} >{r.region}</option>
+                                        )
+                                    })}
+                                </Select>
+                                <Label>Comuna</Label>
+                                <Select /* value={comuna} onChange={e => setComuna(e.target.value)} */ >
+                                    {comunasxRegion.map((objeto, index) => {
+                                        return (<option key={index}>{objeto.name}</option>)
+                                    })}
+                                </Select>
+                            </ContentElemen>
+                            <ContentElemen>
+                                <Label >Telefono</Label>
+                                <Input
+                                    type='number'
+                                    name='telefono'
+                                    placeholder='Ingrese Telefono'
+                                // value={telefono}
+                                // onChange={ev => setTelefono(ev.target.value)}
+                                />
+                                <Label>Email</Label>
+                                <Input
+                                    type='email'
+                                    name='correo'
+                                    placeholder='Ingrese Correo'
+                                // value={correo}
+                                // onChange={ev => setCorreo(ev.target.value)}
+                                />
+                                <Label>Responsable financiero?</Label>
+                                <Input
+                                    style={{ width: "3%", color: "#328AC4" }}
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={handleChek}
+                                />
+                            </ContentElemen>
+
+                            {checked ?
+                                <ContentElemen>
+                                    <Label>Nombre</Label>
+                                    <Input
+                                        name="nombrersf"
+                                        type="text"
+                                        placeholder='Responsable financiero'
+                                    // value={nomRsf}
+                                    // onChange={ev => setNomRsf(ev.target.value)}
+                                    />
+                                    <Label>Dirección</Label>
+                                    <Input
+                                        name="direccionrsf"
+                                        type="text"
+                                        placeholder='Ingres dirección'
+                                    // value={dirRsf}
+                                    // onChange={ev => setDirRsf(ev.target.value)}
+                                    />
+                                    <Label>Telefono</Label>
+                                    <Input
+                                        name="telefonorsf"
+                                        type="number"
+                                        placeholder='Ingrese telefono'
+                                    // value={telRsf}
+                                    // onChange={ev => setTelRsf(ev.target.value)}
+                                    />
+                                </ContentElemen>
+                                : ''
+                            }
+                        </Formulario>
+                        <BotonGuardar /* onClick={handleSubmit} */ >Guardar</BotonGuardar>
+                    </ConfirmaModal>
+                </Overlay>
+            )}
+
         </ContenedorProveedor>
     )
 }
 
-export default IngresoEquiposST
+export default IngresoEquiposST;
+
+const BotonCerrar = styled.button`
+    position: absolute;
+    top:20px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all.3s ease all;
+    border-radius: 5px;
+    color: #1766DC;
+
+    &:hover{
+        background: #f2f2f2;
+    }
+`
