@@ -43,6 +43,7 @@ import EjecutarMantencion from './EjecutarMantencion';
 import Bitacoras from './Bitacoras';
 import Traspasos from './Traspasos';
 import CheckMantoPDF from './CheckMantoPDF';
+import IngresoEquiposST from './IngresoEquiposST';
 
 export const Home = () => {
   return (
@@ -85,6 +86,8 @@ export const Home = () => {
             <Route path="proveedores" element={<Proveedores/>}/>
             <Route path="actualizaproveedor/:id" element={<ActualizaProveedor/>}/>
             <Route path="actualizacliente/:id" element={<ActualizaCliente/>}/>
+            <Route path="serviciotecnico" element={<ServicioTecnico/>}/>        
+            <Route path="serviciotecnico/ingreso" element={<IngresoEquiposST/>}/>        
             <Route path="configuracion" element={<Configuracion/>}/>        
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="configuracion/agregarempresa" element={<AgregarEmpresa/>}/>

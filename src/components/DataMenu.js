@@ -85,7 +85,6 @@ export const DataMenu = [
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
       }
-
     ]
   },
   {
@@ -171,6 +170,21 @@ export const DataMenu = [
         title: 'Bitacora.',
         path: 'serviciotecnico/bitacora',
         icon: <MdIcons.MdOutlineWorkHistory />
+      }
+    ]
+  },
+  {
+    title: 'Servicio Tecnico',
+    path: 'serviciotecnico',
+    icon: <MdIcons.MdSettings />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: 'Ingreso de Equipos',
+        path: 'serviciotecnico/ingreso',
+        icon: <MdIcons.MdInput />
       }
     ]
   },
