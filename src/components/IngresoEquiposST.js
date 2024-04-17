@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query } from 'firebase/firestore';
+import { getDocs, getDoc, collection, where, query, doc } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
+import { Servicio } from './TipDoc';
 import { ContenedorProveedor, Contenedor, /* ListarProveedor,*/ Titulo, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay /*Boton */ } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, /*, ListarEquipos, Select,*/ TextArea, Select } from '../elementos/CrearEquipos';
 
@@ -36,6 +37,13 @@ const IngresoEquiposST = () => {
     const [nomRsf, setNomRsf] = useState('');
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
+    const [serie, setSerie] = useState('');
+    const [familia, setFamilia] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [marca, setMarca] = useState('');
+    const [modelo, setModelo] = useState('');
+    const [servicio, setServicio] = useState('');
+    const almacenar = useRef([]);
 
     // Validar rut
     const detectarCli = async (e) => {
@@ -66,11 +74,50 @@ const IngresoEquiposST = () => {
             }
         }
     }
+
+    // Validar N°serie
+    const detectarEq = async (e) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            // Exite N° serie en equipos   
+            const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', serie));
+            const serieEq = await getDocs(traerEq);
+            const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            // Exite ID en equipos
+            const traerId = await getDoc(doc(db, 'equipos', serie));
+            if (existe.length === 1) {
+                almacenar.current = existe;
+            } else if (traerId.exists()) {
+                const existeId = traerId.data();
+                const arreglo = [existeId];
+                const existe2 = arreglo.map((doc) => ({ ...doc, id: serie }));
+                almacenar.current = existe2;
+            } else {
+                console.log('almacenar', almacenar.current);
+            }
+
+            if (almacenar.current.length === 0) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No existe un Equipo con este N° Serie o Id'
+                })
+                setOpenModalCli(!openModalCli)
+            } else {
+                setFamilia(almacenar.current[0].familia);
+                setTipo(almacenar.current[0].tipo);
+                setMarca(almacenar.current[0].marca);
+                setModelo(almacenar.current[0].modelo);
+                // setBtnGuardar(false)
+            }
+        }
+    }
+
     const handleChek = (e) => {
         setChecked(e.target.checked)
     }
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
-
     // Guardar Cliente nuevo
     const guardarCli = (e) => {
         e.preventDefault();
@@ -136,13 +183,6 @@ const IngresoEquiposST = () => {
                 mensaje: 'Favor ingresar un correo valido'
             })
             return;
-            // } else if (!existe) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: 'Rut ya existe'
-            //     })
-            //     return;
         } else if (checked && nomRsf === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -217,6 +257,103 @@ const IngresoEquiposST = () => {
         }
     }
 
+    // Guardar Datos de Cliente en ingreso
+    const ingresoCli = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        //Comprobar que existe el rut en DB
+        const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+        const rutCli = await getDocs(cli)
+        const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        //Patron para Comprobar que correo sea correcto
+        const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+        //Patron para valiar rut
+        const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+        const temp = rut.split('-');
+        let digito = temp[1];
+        if (digito === 'k' || digito === 'K') digito = -1;
+        const validaR = validarRut(rut);
+
+        if (rut === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Rut no puede estar vacio'
+            })
+            return;
+        } else if (!expresionRegularRut.test(rut)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Formato incorrecto de rut'
+            })
+            return;
+        } else if (validaR !== parseInt(digito)) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Rut no válido'
+            })
+            return;
+        } else if (rutCli.docs.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No existe rut de Cliente'
+            })
+            setOpenModalCli(!openModalCli)
+            return;
+        } else if (date === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Fecha'
+            })
+            return;
+        } else {
+            // try {
+            // Fata definir nombre coleccion
+            // AgregarClientesDb({
+            //     emp_id: users.emp_id,
+            //     rut: rut,
+            //     nombre: nombre,
+            //     direccion: direccion,
+            //     telefono: telefono,
+            //     region: region,
+            //     comuna: comuna,
+            //     correo: correo,
+            //     nomrsf: nomRsf,
+            //     dirrsf: dirRsf,
+            //     telrsf: telRsf,
+            //     userAdd: user.email,
+            //     userMod: user.email,
+            //     fechaAdd: fechaAdd,
+            //     fechaMod: fechaMod
+            // })
+            // setRut('');
+            // setNombre('');
+            // setDireccion('');
+            // setTelefono('');
+            // setCorreo('');
+            // cambiarEstadoAlerta(true);
+            // cambiarAlerta({
+            //     tipo: 'exito',
+            //     mensaje: 'Cliente registrado exitosamente'
+            // })
+            // setFlag(!flag);
+            // return;
+            // } catch (error) {
+            // console.log('se produjo un error al guardar', error);
+            // cambiarEstadoAlerta(true);
+            // cambiarAlerta({
+            // tipo: 'error',
+            // mensaje: error
+            // })
+            // }
+        }
+    }
+
 
     return (
         <ContenedorProveedor>
@@ -273,7 +410,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar>Siguente</BotonGuardar>
+                    <BotonGuardar onClick={ingresoCli}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -284,30 +421,43 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>N° Serie</Label>
-                            <Input />
+                            <Input
+                                type='text'
+                                placeholder='Ingrese N° Serie'
+                                name='serie'
+                                value={serie}
+                                onChange={e => setSerie(e.target.value)}
+                                onKeyDown={detectarEq}
+                            />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Familia</Label>
+                            <Input value={familia} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Equipo</Label>
-                            <Input />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Marca</Label>
-                            <Input />
+                            <Input value={tipo} disabled />
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <ContentElemenMov>
                         <ContentElemenSelect>
+                            <Label>Marca</Label>
+                            <Input value={marca} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
                             <Label>Modelo</Label>
-                            <Input />
+                            <Input value={modelo} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Tipo de Servicio</Label>
-                            <Select>
-                                <option>Seleccione Opcion:</option>
-                                <option>Mantención Preventiva</option>
-                                <option>Mantención Correctiva</option>
-                                <option>Presupuesto</option>
-                                <option>Garantia</option>
+                            <Select
+                                disabled={confirmar}
+                                value={servicio}
+                                onChange={ev => setServicio(ev.target.value)}>
+                                <option>Selecciona Opción:</option>
+                                {Servicio.map((d) => {
+                                    return (<option key={d.key}>{d.text}</option>)
+                                })}
                             </Select>
                         </ContentElemenSelect>
                     </ContentElemenMov>
@@ -510,7 +660,6 @@ const IngresoEquiposST = () => {
                     </ConfirmaModal>
                 </Overlay>
             )}
-
         </ContenedorProveedor>
     )
 }
