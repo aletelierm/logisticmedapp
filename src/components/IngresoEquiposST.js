@@ -340,6 +340,76 @@ const IngresoEquiposST = () => {
         }
     }
 
+    // Guardar Cliente nuevo
+    const guardarEq = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // setFlag(false);
+
+        if (nomFamilia === '' || nomFamilia === 'Selecciona Opción:') {
+            console.log(nomFamilia);
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Familia'
+            })
+        } else if (nomTipo === '' || nomTipo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Tipo Equipamiento'
+            })
+        } else if (nomMarca === '' || nomMarca === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Marca'
+            })
+        } else if (nomModelo === '' || nomModelo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Seleccionar Modelo'
+            })
+        } else if (serie === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor Ingresar N° Serie'
+            })
+        } else {
+            // try {
+            //     //llama a la funcion guardar equipos y status, pasando los props
+            //     const ser = serie.trim()
+            //     EquipoDb({
+            //         familia: nomFamilia,
+            //         tipo: nomTipo,
+            //         marca: nomMarca,
+            //         modelo: nomModelo,
+            //         serie: ser,
+            //         rfid: rfid,
+            //         userAdd: user.email,
+            //         userMod: user.email,
+            //         fechaAdd: fechaAdd,
+            //         fechaMod: fechaMod,
+            //         emp_id: users.emp_id,
+            //         rut: users.rut,
+            //         nomEntidad: users.empresa,
+            //         status: 'PREPARACION'
+            //     })
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'exito',
+            //         mensaje: 'Equipo creado correctamente'
+            //     })
+            //     setFlag(!flag);
+            // } catch (error) {
+            //     console.log(error);
+            // }
+        }
+    }
+
     // Guardar Datos de Cliente en ingreso
     const ingresoCli = async (e) => {
         e.preventDefault();
@@ -800,7 +870,7 @@ const IngresoEquiposST = () => {
                                 />
                             </ContentElemen>
                         </Formulario>
-                        <BotonGuardar /* onClick={guardarEq} */ >Guardar</BotonGuardar>
+                        <BotonGuardar onClick={guardarEq} >Guardar</BotonGuardar>
                     </ConfirmaModal>
                 </Overlay>
             )}
