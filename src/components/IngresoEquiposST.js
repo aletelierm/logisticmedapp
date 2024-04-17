@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import validarRut from '../funciones/validarRut';
@@ -37,13 +37,92 @@ const IngresoEquiposST = () => {
     const [nomRsf, setNomRsf] = useState('');
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
+    const [openModalEq, setOpenModalEq] = useState(false);
     const [serie, setSerie] = useState('');
-    const [familia, setFamilia] = useState('');
-    const [tipo, setTipo] = useState('');
-    const [marca, setMarca] = useState('');
-    const [modelo, setModelo] = useState('');
+    const [familia, setFamilia] = useState([]);
+    const [tipo, setTipo] = useState([]);
+    const [marca, setMarca] = useState([]);
+    const [modelo, setModelo] = useState([]);
+    const [nomFamilia, setNomFamilia] = useState('');
+    const [nomTipo, setNomTipo] = useState('');
+    const [nomMarca, setNomMarca] = useState('');
+    const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
     const almacenar = useRef([]);
+
+    //Leer los datos de Familia
+    const getFamilia = async () => {
+        const traerFam = collection(db, 'familias');
+        const dato = query(traerFam, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+    //Leer los datos de Tipos
+    const getTipo = async () => {
+        const traerTip = collection(db, 'tipos');
+        const dato = query(traerTip, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+    //Leer los datos de Marcas
+    const getMarca = async () => {
+        const traerMar = collection(db, 'marcas');
+        const dato = query(traerMar, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setMarca(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+    //Leer los datos de Modelos
+    const getModelo = async () => {
+        const traerMod = collection(db, 'modelos');
+        const dato = query(traerMod, where('emp_id', '==', users.emp_id));
+        const data = await getDocs(dato)
+        setModelo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    }
+    // ordenar Familia, Tipo, Marca y Maodelo alfabeticamente
+    familia.sort((a, b) => {
+        const nameA = a.familia;
+        const nameB = b.familia;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    tipo.sort((a, b) => {
+        const nameA = a.tipo;
+        const nameB = b.tipo;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    marca.sort((a, b) => {
+        const nameA = a.marca;
+        const nameB = b.marca;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    modelo.sort((a, b) => {
+        const nameA = a.modelo;
+        const nameB = b.modelo;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
 
     // Validar rut
     const detectarCli = async (e) => {
@@ -103,12 +182,16 @@ const IngresoEquiposST = () => {
                     tipo: 'error',
                     mensaje: 'No existe un Equipo con este N° Serie o Id'
                 })
-                setOpenModalCli(!openModalCli)
+                setOpenModalEq(!openModalEq)
+                setNomFamilia('');
+                setNomTipo('');
+                setNomMarca('');
+                setNomModelo('');
             } else {
-                setFamilia(almacenar.current[0].familia);
-                setTipo(almacenar.current[0].tipo);
-                setMarca(almacenar.current[0].marca);
-                setModelo(almacenar.current[0].modelo);
+                setNomFamilia(almacenar.current[0].familia);
+                setNomTipo(almacenar.current[0].tipo);
+                setNomMarca(almacenar.current[0].marca);
+                setNomModelo(almacenar.current[0].modelo);
                 // setBtnGuardar(false)
             }
         }
@@ -354,6 +437,13 @@ const IngresoEquiposST = () => {
         }
     }
 
+    useEffect(() => {
+        getFamilia();
+        getTipo();
+        getMarca();
+        getModelo();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <ContenedorProveedor>
@@ -432,21 +522,21 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Familia</Label>
-                            <Input value={familia} disabled />
+                            <Input value={nomFamilia} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Equipo</Label>
-                            <Input value={tipo} disabled />
+                            <Input value={nomTipo} disabled />
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Marca</Label>
-                            <Input value={marca} disabled />
+                            <Input value={nomMarca} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Modelo</Label>
-                            <Input value={modelo} disabled />
+                            <Input value={nomModelo} disabled />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Tipo de Servicio</Label>
@@ -550,7 +640,7 @@ const IngresoEquiposST = () => {
                 estadoAlerta={estadoAlerta}
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
-
+            {/* Modal para crear Cliente */}
             {openModalCli && (
                 <Overlay>
                     <ConfirmaModal>
@@ -657,6 +747,60 @@ const IngresoEquiposST = () => {
                             }
                         </Formulario>
                         <BotonGuardar onClick={guardarCli} >Guardar</BotonGuardar>
+                    </ConfirmaModal>
+                </Overlay>
+            )}
+            {/* Modal para crear Equipo */}
+            {openModalEq && (
+                <Overlay>
+                    <ConfirmaModal>
+                        <Titulo>Crear Equipo</Titulo>
+                        <BotonCerrar onClick={() => setOpenModalEq(!openModalEq)}><IoIcons.IoMdClose /></BotonCerrar>
+                        <Formulario action='' >
+                            <ContentElemen>
+                                <Label>Familias</Label>
+                                <Select defaultValue='' value={nomFamilia} onChange={e => { setNomFamilia(e.target.value); sessionStorage.setItem('familia', e.target.value) }}>
+                                    <option>Selecciona Opción:</option>
+                                    {familia.map((d) => {
+                                        return (<option key={d.id}>{d.familia}</option>)
+                                    })}
+                                </Select>
+                                <Label>Tipo Equipamiento</Label>
+                                <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value); sessionStorage.setItem('tipo', e.target.value) }}>
+                                    <option>Selecciona Opción:</option>
+                                    {tipo.map((d) => {
+                                        return (<option key={d.id}>{d.tipo}</option>)
+                                    })}
+                                </Select>
+                            </ContentElemen>
+                            <ContentElemen>
+                                <Label>Marca</Label>
+                                <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value); sessionStorage.setItem('marca', e.target.value) }}>
+                                    <option>Selecciona Opción:</option>
+                                    {marca.map((d) => {
+                                        return (<option key={d.id}>{d.marca}</option>)
+                                    })}
+                                </Select>
+                                <Label>Modelo</Label>
+                                <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value); sessionStorage.setItem('modelo', e.target.value) }}>
+                                    <option>Selecciona Opción:</option>
+                                    {modelo.map((d) => {
+                                        return (<option key={d.id}>{d.modelo}</option>)
+                                    })}
+                                </Select>
+                            </ContentElemen>
+                            <ContentElemen style={{justifyContent: 'center'}}>
+                                <Label >N° Serie</Label>
+                                <Input
+                                    type='text'
+                                    placeholder='Ingrese N° Serie'
+                                    name='serie'
+                                    value={serie}
+                                    onChange={e => setSerie(e.target.value)}
+                                />
+                            </ContentElemen>
+                        </Formulario>
+                        <BotonGuardar /* onClick={guardarEq} */ >Guardar</BotonGuardar>
                     </ConfirmaModal>
                 </Overlay>
             )}
