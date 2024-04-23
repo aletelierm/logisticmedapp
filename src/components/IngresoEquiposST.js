@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
+import IngresoStCab from '../firebase/IngresoStCab';
 import validarRut from '../funciones/validarRut';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, where, query, doc } from 'firebase/firestore';
@@ -468,45 +469,41 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
-            // try {
-            // Fata definir nombre coleccion
-            // AgregarClientesDb({
-            //     emp_id: users.emp_id,
-            //     rut: rut,
-            //     nombre: nombre,
-            //     direccion: direccion,
-            //     telefono: telefono,
-            //     region: region,
-            //     comuna: comuna,
-            //     correo: correo,
-            //     nomrsf: nomRsf,
-            //     dirrsf: dirRsf,
-            //     telrsf: telRsf,
-            //     userAdd: user.email,
-            //     userMod: user.email,
-            //     fechaAdd: fechaAdd,
-            //     fechaMod: fechaMod
-            // })
-            // setRut('');
-            // setNombre('');
-            // setDireccion('');
-            // setTelefono('');
-            // setCorreo('');
-            // cambiarEstadoAlerta(true);
-            // cambiarAlerta({
-            //     tipo: 'exito',
-            //     mensaje: 'Cliente registrado exitosamente'
-            // })
-            // setFlag(!flag);
-            // return;
-            // } catch (error) {
-            // console.log('se produjo un error al guardar', error);
-            // cambiarEstadoAlerta(true);
-            // cambiarAlerta({
-            // tipo: 'error',
-            // mensaje: error
-            // })
-            // }
+            try {
+            IngresoStCab({
+                // folio: folio,
+                rut: rut,
+                nombre: entidad,
+                telefono: telefono,
+                direccion: direccion,
+                correo: correo,
+                date: date,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id
+            })
+            setRut('');
+            setNombre('');
+            setDireccion('');
+            setTelefono('');
+            setCorreo('');
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Cliente registrado exitosamente'
+            })
+            setFlag(!flag);
+            return;
+            } catch (error) {
+            console.log('se produjo un error al guardar', error);
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+            tipo: 'error',
+            mensaje: error
+            })
+            }
         }
     }
 
