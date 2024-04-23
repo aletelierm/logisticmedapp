@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
+import AgregarClientesDb from '../firebase/AgregarClientesDb';
 import validarRut from '../funciones/validarRut';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, where, query, doc } from 'firebase/firestore';
@@ -10,15 +11,15 @@ import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import { Servicio } from './TipDoc';
-import { ContenedorProveedor, Contenedor, /* ListarProveedor,*/ Titulo, BotonGuardar, ConfirmaModal, ConfirmaBtn, Boton2, Overlay /*Boton */ } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, /* ListarProveedor,*/ Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, /*, ListarEquipos, Select,*/ TextArea, Select } from '../elementos/CrearEquipos';
 
 const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
-    // let fechaAdd = new Date();
-    // let fechaMod = new Date();
+    let fechaAdd = new Date();
+    let fechaMod = new Date();
 
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
@@ -48,6 +49,8 @@ const IngresoEquiposST = () => {
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
+    const [flag, setFlag] = useState('');
+
     const almacenar = useRef([]);
 
     //Leer los datos de Familia
@@ -206,8 +209,6 @@ const IngresoEquiposST = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // //Comprobar que existe el rut en DB
-        // const existe = leer.filter(cli => cli.rut === rut).length === 0
         //Patron para Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         //Patron para valiar rut
@@ -288,55 +289,59 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
-            // try {
-            // const nom = nombre.toLocaleUpperCase().trim();
-            // const dir = direccion.toLocaleUpperCase().trim();
-            // const nomrsf = nomRsf.toLocaleUpperCase().trim();
-            // const dirrsf = dirRsf.toLocaleUpperCase().trim();
-            // const telrsf = telRsf.toLocaleUpperCase().trim();
-            // const corr = correo.toLocaleLowerCase().trim();
-            // const ruts = rut.toLocaleUpperCase().trim();
-            //     AgregarClientesDb({
-            //         emp_id: users.emp_id,
-            //         rut: ruts,
-            //         nombre: nom,
-            //         direccion: dir,
-            //         telefono: telefono,
-            //         region: region,
-            //         comuna: comuna,
-            //         correo: corr,
-            //         nomrsf: nomrsf,
-            //         dirrsf: dirrsf,
-            //         telrsf: telrsf,
-            //         userAdd: user.email,
-            //         userMod: user.email,
-            //         fechaAdd: fechaAdd,
-            //         fechaMod: fechaMod
-            //     })
-            //     setRut('');
-            //     setNombre('');
-            //     setDireccion('');
-            //     setTelefono('');
-            //     setCorreo('');
-            //     setNomRsf('');
-            //     setDirRsf('');
-            //     setTelRsf('');
-            //     setChecked(false)
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'exito',
-            //         mensaje: 'Cliente registrado exitosamente'
-            //     })
-            //     setFlag(!flag);
-            //     return;
-            // } catch (error) {
-            //     console.log('se produjo un error al guardar', error);
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: error
-            //     })
-            // }
+            try {
+                const ruts = rut.toLocaleUpperCase().trim();
+                const nom = nombre.toLocaleUpperCase().trim();
+                const dir = direccion.toLocaleUpperCase().trim();
+                const corr = correo.toLocaleLowerCase().trim();
+                const nomrsf = nomRsf.toLocaleUpperCase().trim();
+                const dirrsf = dirRsf.toLocaleUpperCase().trim();
+                const telrsf = telRsf.toLocaleUpperCase().trim();
+                AgregarClientesDb({
+                    emp_id: users.emp_id,
+                    rut: ruts,
+                    nombre: nom,
+                    direccion: dir,
+                    telefono: telefono,
+                    region: region,
+                    comuna: comuna,
+                    correo: corr,
+                    nomrsf: nomrsf,
+                    dirrsf: dirrsf,
+                    telrsf: telrsf,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod
+                })
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Cliente registrado exitosamente'
+                })
+                setFlag(!flag);
+                setRut('');
+                setNombre('');
+                setDireccion('');
+                setTelefono('');
+                setCorreo('');
+                setNomRsf('');
+                setDirRsf('');
+                setTelRsf('');
+                setChecked(false)
+                setOpenModalCli(!openModalCli)
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
+            setEntidad(nombre);
+            setTelefono(telefono);
+            setDireccion(direccion);
+            setCorreo(correo);
         }
     }
 
@@ -411,16 +416,14 @@ const IngresoEquiposST = () => {
     }
 
     // Guardar Datos de Cliente en ingreso
-    const ingresoCli = async (e) => {
+    const ingresoCab = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Comprobar que existe el rut en DB
         const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
         const rutCli = await getDocs(cli)
-        const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        //Patron para Comprobar que correo sea correcto
-        const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+        // const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
@@ -570,7 +573,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar onClick={ingresoCli}>Siguente</BotonGuardar>
+                    <BotonGuardar onClick={ingresoCab}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -859,7 +862,7 @@ const IngresoEquiposST = () => {
                                     })}
                                 </Select>
                             </ContentElemen>
-                            <ContentElemen style={{justifyContent: 'center'}}>
+                            <ContentElemen style={{ justifyContent: 'center' }}>
                                 <Label >N° Serie</Label>
                                 <Input
                                     type='text'
