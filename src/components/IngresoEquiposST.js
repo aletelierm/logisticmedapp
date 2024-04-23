@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
-import IngresoStCab from '../firebase/IngresoStCab';
+import IngresoStCabDB from '../firebase/IngresoStCabDB';
 import validarRut from '../funciones/validarRut';
+// import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, where, query, doc } from 'firebase/firestore';
 import { useContext } from 'react';
@@ -50,6 +51,7 @@ const IngresoEquiposST = () => {
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
+    // const [folio, setFolio] = useState('');
     const [flag, setFlag] = useState('');
 
     const almacenar = useRef([]);
@@ -157,6 +159,9 @@ const IngresoEquiposST = () => {
             }
         }
     }
+    const handleChek = (e) => {
+        setChecked(e.target.checked)
+    }
 
     // Validar N°serie
     const detectarEq = async (e) => {
@@ -201,9 +206,6 @@ const IngresoEquiposST = () => {
         }
     }
 
-    const handleChek = (e) => {
-        setChecked(e.target.checked)
-    }
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
     // Guardar Cliente nuevo
     const guardarCli = (e) => {
@@ -469,42 +471,47 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
+            // const nuevoFolio = await correlativos(users.emp_id, 'ingresoSt');
+            // setFolio(nuevoFolio);
+            // console.log('folio antes de guardar', nuevoFolio)
+            const fechaInSt = new Date(date);
             try {
-            IngresoStCab({
-                // folio: folio,
-                rut: rut,
-                nombre: entidad,
-                telefono: telefono,
-                direccion: direccion,
-                correo: correo,
-                date: date,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id
-            })
-            setRut('');
-            setNombre('');
-            setDireccion('');
-            setTelefono('');
-            setCorreo('');
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Cliente registrado exitosamente'
-            })
-            setFlag(!flag);
-            return;
+                IngresoStCabDB({
+                    folio: '',
+                    rut: rut,
+                    entidad: entidad,
+                    telefono: telefono,
+                    direccion: direccion,
+                    correo: correo,
+                    date: fechaInSt,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
+                })
+                setRut('');
+                setEntidad('');
+                setDireccion('');
+                setTelefono('');
+                setCorreo('');
+                setDate('')
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Datos registrados exitosamente'
+                })
+                setFlag(!flag);
+                return;
             } catch (error) {
-            console.log('se produjo un error al guardar', error);
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-            tipo: 'error',
-            mensaje: error
-            })
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
             }
         }
+        console.log('guardar cabecera')
     }
 
     useEffect(() => {
