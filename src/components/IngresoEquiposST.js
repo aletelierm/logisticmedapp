@@ -2,20 +2,20 @@ import React, { useState, useEffect /*useRef*/ } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
-import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
+// import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import IngresoStCabDB from '../firebase/IngresoStCabDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query /*, doc getDoc*/} from 'firebase/firestore';
+import { getDocs, collection, where, query /*, doc getDoc*/ } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import { Servicio } from './TipDoc';
-import { IoMdAdd } from "react-icons/io";
-import { ContenedorProveedor, Contenedor, /* ListarProveedor,*/ Titulo, BotonGuardar, ConfirmaModal, Overlay, Boton } from '../elementos/General'
+// import { IoMdAdd } from "react-icons/io";
+import { ContenedorProveedor, Contenedor, /* ListarProveedor, Boton*/ Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, /*, ListarEquipos, Select,*/ TextArea, Select } from '../elementos/CrearEquipos';
 
 const IngresoEquiposST = () => {
@@ -43,24 +43,19 @@ const IngresoEquiposST = () => {
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
     // const [openModalEq, setOpenModalEq] = useState(false);
-    const [openModalFam, setOpenModalFam] = useState(false);
-    // const [openModalTipo, setOpenModalTipo] = useState(false);
-    // const [openModalMar, setOpenModalMar] = useState(false);
-    // const [openModalMod, setOpenModalMod] = useState(false);
+    // const [openModalFam, setOpenModalFam] = useState(false);
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
     const [marca, setMarca] = useState([]);
     const [modelo, setModelo] = useState([]);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
-    const [nomFamilia2, setNomFamilia2] = useState('');
     const [nomTipo, setNomTipo] = useState('');
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
     // const [folio, setFolio] = useState('');
     const [flag, setFlag] = useState('');
-
     // const almacenar = useRef([]);
 
     //Leer los datos de Familia
@@ -424,40 +419,40 @@ const IngresoEquiposST = () => {
     //     }
     // }
     // Guardar Familia nuevo
-    const guardarFam = (e) => {
-        e.preventDefault();
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        
-        if (nomFamilia2 === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'No ha ingresado una Familia'
-            })
-        } else {
-            const fam = nomFamilia2.toLocaleUpperCase().trim()
-            AgregarFamiliaDb({
-                familia: fam,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id
-            })
-                .then(() => {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Familia Ingresada Correctamente'
-                    })
-                    setNomFamilia2('');
-                    setOpenModalFam(!openModalFam)
-                })
-        }
-    }
+    // const guardarFam = (e) => {
+    //     e.preventDefault();
+    //     cambiarEstadoAlerta(false);
+    //     cambiarAlerta({});
 
-    // Guardar Datos de Cliente en ingreso
+    //     if (nomFamilia2 === '') {
+    //         cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'No ha ingresado una Familia'
+    //         })
+    //     } else {
+    //         const fam = nomFamilia2.toLocaleUpperCase().trim()
+    //         AgregarFamiliaDb({
+    //             familia: fam,
+    //             userAdd: user.email,
+    //             userMod: user.email,
+    //             fechaAdd: fechaAdd,
+    //             fechaMod: fechaMod,
+    //             emp_id: users.emp_id
+    //         })
+    //             .then(() => {
+    //                 cambiarEstadoAlerta(true);
+    //                 cambiarAlerta({
+    //                     tipo: 'exito',
+    //                     mensaje: 'Familia Ingresada Correctamente'
+    //                 })
+    //                 setNomFamilia2('');
+    //                 setOpenModalFam(!openModalFam)
+    //             })
+    //     }
+    // }
+
+    // Guardar Datos de Cliente en ingreso en coleccion IngresoStCab
     const ingresoCab = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -550,7 +545,94 @@ const IngresoEquiposST = () => {
                 })
             }
         }
-        console.log('guardar cabecera')
+    }
+
+    // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
+    const ingresodet = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Familia'
+            })
+            return;
+        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Tipo de equipamiento'
+            })
+            return;
+        } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Marca'
+            })
+            return;
+        } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Modelo'
+            })
+            return;
+        } else if (serie === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Serie no puede estar vacio'
+            })
+            return;
+        } else if (servicio.length === 0 || servicio === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Tipo de Servicio'
+            })
+            return;
+        } else {
+            const fechaInSt = new Date(date);
+            // try {
+            // IngresoStDetDB({
+            //     id_cab_inst: '',
+            //     rut: rut,
+            //     entidad: entidad,
+            //     telefono: telefono,
+            //     direccion: direccion,
+            //     correo: correo,
+            //     date: fechaInSt,
+            //     userAdd: user.email,
+            //     userMod: user.email,
+            //     fechaAdd: fechaAdd,
+            //     fechaMod: fechaMod,
+            //     emp_id: users.emp_id
+            // })
+            // setRut('');
+            // setEntidad('');
+            // setDireccion('');
+            // setTelefono('');
+            // setCorreo('');
+            // setDate('')
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'exito',
+            //         mensaje: 'Datos registrados exitosamente'
+            //     })
+            //     setFlag(!flag);
+            //     return;
+            // } catch (error) {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: error
+            //     })
+            // }
+        }
     }
 
     useEffect(() => {
@@ -626,6 +708,44 @@ const IngresoEquiposST = () => {
                 <Formulario action=''>
                     <ContentElemenMov>
                         <ContentElemenSelect>
+                            <Label>Familia</Label>
+                            <Select value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
+                                <option>Selecciona Opción:</option>
+                                {familia.map((d) => {
+                                    return (<option key={d.id}>{d.familia}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Tipo Equipamiento</Label>
+                            <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value); sessionStorage.setItem('tipo', e.target.value) }}>
+                                <option>Selecciona Opción:</option>
+                                {tipo.map((d) => {
+                                    return (<option key={d.id}>{d.tipo}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Marca</Label>
+                            <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value); sessionStorage.setItem('marca', e.target.value) }}>
+                                <option>Selecciona Opción:</option>
+                                {marca.map((d) => {
+                                    return (<option key={d.id}>{d.marca}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Modelo</Label>
+                            <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value); sessionStorage.setItem('modelo', e.target.value) }}>
+                                <option>Selecciona Opción:</option>
+                                {modelo.map((d) => {
+                                    return (<option key={d.id}>{d.modelo}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
                             <Label>N° Serie</Label>
                             <Input
                                 type='text'
@@ -636,64 +756,6 @@ const IngresoEquiposST = () => {
                             // onKeyDown={detectarEq}
                             />
                         </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Familia</Label>
-                            <Select value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {familia.map((d) => {
-                                    return (<option key={d.id}>{d.familia}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                        <Boton style={{ padding: '0px', margin: '0px'}} onClick={() => {setOpenModalFam(!openModalFam)}} >
-                            <IoMdAdd
-                                style={{ fontSize: '24px', color: '#328AC4', marginTop: '28px', cursor: "pointer" }}
-                            />
-                        </Boton>
-                        <ContentElemenSelect>
-                            <Label>Tipo Equipamiento</Label>
-                            <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value); sessionStorage.setItem('tipo', e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {tipo.map((d) => {
-                                    return (<option key={d.id}>{d.tipo}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                        <Boton style={{ padding: '0px', marginLeft: '-40px'}} /* onClick={guardarTipo} */>
-                            <IoMdAdd
-                                style={{ fontSize: '24px', color: '#328AC4', marginTop: '28px', cursor: "pointer" }}
-                            />
-                        </Boton>
-                    </ContentElemenMov>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Marca</Label>
-                            <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value); sessionStorage.setItem('marca', e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {marca.map((d) => {
-                                    return (<option key={d.id}>{d.marca}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                        <Boton style={{ padding: '0px', margin: '0px'}} /* onClick={guardarMar} */>
-                            <IoMdAdd
-                                style={{ fontSize: '24px', color: '#328AC4', marginTop: '28px', cursor: "pointer" }}
-                            />
-                        </Boton>
-                        <ContentElemenSelect>
-                            <Label>Modelo</Label>
-                            <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value); sessionStorage.setItem('modelo', e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {modelo.map((d) => {
-                                    return (<option key={d.id}>{d.modelo}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                        <Boton style={{ padding: '0px', margin: '0px'}} /* onClick={guardarMod} */>
-                            <IoMdAdd
-                                style={{ fontSize: '24px', color: '#328AC4', marginTop: '28px', cursor: "pointer" }}
-                            />
-                        </Boton>
                         <ContentElemenSelect>
                             <Label>Tipo de Servicio</Label>
                             <Select
@@ -708,7 +770,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar>Siguente</BotonGuardar>
+                    <BotonGuardar onClick={ingresodet}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
