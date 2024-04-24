@@ -140,6 +140,7 @@ export const DataMenu = [
     icon: <MdIcons.MdMedicalServices />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
+
     subNav: [
       {
         title: 'Items',
@@ -185,7 +186,36 @@ export const DataMenu = [
         title: 'Ingreso de Equipos',
         path: 'serviciotecnico/ingreso',
         icon: <MdIcons.MdInput />
+      },
+      {
+        title: 'Items Test Ingreso',
+        path: 'serviciotecnico/itemstest',
+        icon: <IoIcons.IoIosAlbums />
+      },
+      {
+        title: 'Protocolo Test Ingreso',
+        path: 'serviciotecnico/protocolotest',
+        icon: <IoIcons.IoIosAlbums />
       }
+      // {
+      //   title: 'Test de Ingresos',
+      //   path: 'serviciotecnico/testingreso',
+      //   icon: <MdIcons.MdMedicalServices />,
+      //   iconClosed: <RiIcons.RiArrowDownSFill />,
+      //   iconOpened: <RiIcons.RiArrowUpSFill />,
+      //   subNav: [
+      //     {
+      //       title: 'Items Test Ingreso',
+      //       path: 'serviciotecnico/testingreso/items',
+      //       icon: <IoIcons.IoIosAlbums />
+      //     },
+      //     {
+      //       title: 'Protocolo Test Ingreso',
+      //       path: 'serviciotecnico/testingreso/protocolotest',
+      //       icon: <IoIcons.IoIosAlbums />
+      //     }
+      //   ]
+      // }
     ]
   },
   {
@@ -215,7 +245,7 @@ export const DataMenu = [
         title: 'Usuarios y Envios',
         path: 'configuracion/envios',
         icon: <MdIcons.MdEmail />
-      } 
+      }
     ]
   }
 ];
