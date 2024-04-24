@@ -9,7 +9,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContentElemenMov, Select, Label, ContentElemenSelect, Formulario } from '../elementos/CrearEquipos';
+import { ContentElemenMov, /*Select, Label,*/ ContentElemenSelect, Formulario } from '../elementos/CrearEquipos';
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
 
 const ItemsTest = () => {

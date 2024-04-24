@@ -7,9 +7,8 @@ import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
-import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
@@ -31,9 +30,9 @@ const ProtocolosTest = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [familia, setFamilia] = useState([]);
-    const [tipo, setTipo] = useState([]);
+    // const [tipo, setTipo] = useState([]);
     const [protocolCab, setProtocolCab] = useState([]);
-    const [protocolCabConf, setProtocolCabConf] = useState([]);
+    // const [protocolCabConf, setProtocolCabConf] = useState([]);
     const [mostrarProt, setMostrarProt] = useState([]);
     const [item, setItem] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
@@ -122,12 +121,12 @@ const ProtocolosTest = () => {
     //     return 0;
     // });
     // Leer Protocolos 
-    const leerProt = async (id) => {
-        const traer = collection(db, 'protocolos');
-        const doc = query(traer, where('cab_id', '==', id));
-        const documento = await getDocs(doc)
-        setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    }
+    // const leerProt = async (id) => {
+    //     const traer = collection(db, 'protocolos');
+    //     const doc = query(traer, where('cab_id', '==', id));
+    //     const documento = await getDocs(doc)
+    //     setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    // }
 
     // Sumar dias
     const sumarDias = (fecha, dias) => {
@@ -250,9 +249,9 @@ const ProtocolosTest = () => {
         // Validar en N° Serie en el documento de Entradas que se esta trabatando     
         const existeProt = protocolo.filter(doc => doc.item_id === item_id[0].id);
         // Filtar por docuemto de Cabecera de Protocolo
-        const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
-        const cabecera = await getDocs(cabProtocolo);
-        const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        // const cabecera = await getDocs(cabProtocolo);
+        // const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         if (existeProt.length > 0) {
             cambiarEstadoAlerta(true);
