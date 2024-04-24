@@ -495,8 +495,19 @@ const IngresoEquiposST = () => {
         let digito = temp[1];
         if (digito === 'k' || digito === 'K') digito = -1;
         const validaR = validarRut(rut);
+        // Filtar por docuemto de Cabecera
+        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('folio', '==', folio));
+        const cabecera = await getDocs(cab);
+        const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
-        if (rut === '') {
+        if (folio === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Folio no puede estar vacio'
+            })
+            return;
+        } else if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -532,6 +543,20 @@ const IngresoEquiposST = () => {
                 mensaje: 'Seleccione una Fecha'
             })
             return;
+        } else if (existeCab.length > 0) {
+            if (existeCab[0].confirmado) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe un documento con este folio y se encuentra Confirmado'
+                })
+            } else {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe un documento con este folio. Falta confirmar'
+                })
+            }
         } else {
             // const nuevoFolio = await correlativos(users.emp_id, 'ingresoSt');
             // setFolio(nuevoFolio);
@@ -539,7 +564,7 @@ const IngresoEquiposST = () => {
             const fechaInSt = new Date(date);
             try {
                 IngresoStCabDB({
-                    folio: '',
+                    folio: folio,
                     rut: rut,
                     entidad: entidad,
                     telefono: telefono,
@@ -695,9 +720,10 @@ const IngresoEquiposST = () => {
                 <Titulo>Información Cliente</Titulo>
                 <Formulario action=''>
                     <ContentElemenMov>
-                    <ContentElemenSelect>
+                        <ContentElemenSelect>
                             <Label>Folio</Label>
                             <Input
+                                disabled={confirmar}
                                 type='numero'
                                 placeholder='Ingrese Folio'
                                 name='folio'
@@ -724,7 +750,7 @@ const IngresoEquiposST = () => {
                         <ContentElemenSelect>
                             <Label>Fecha de Ingreso</Label>
                             <Input
-                                // disabled={confirmar}
+                                disabled={confirmar}
                                 type='datetime-local'
                                 placeholder='Seleccione Fecha'
                                 name='date'
