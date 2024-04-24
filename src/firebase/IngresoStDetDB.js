@@ -2,7 +2,7 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc } from "firebase/firestore";
 
-const IngresoStCabDB = async ({ folio, rut, entidad, telefono, direccion, correo, date, confirmado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+const IngresoStCabDB = async ({ folio, rut, entidad, telefono, direccion, correo, date, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
 
     return await addDoc(collection(db, 'ingresostcab'), {
         folio: folio,
@@ -12,7 +12,6 @@ const IngresoStCabDB = async ({ folio, rut, entidad, telefono, direccion, correo
         direccion: direccion,
         correo: correo,
         date: date,
-        confirmado: confirmado,
         useradd: userAdd,
         usermod: userMod,
         fechaadd: fechaAdd,

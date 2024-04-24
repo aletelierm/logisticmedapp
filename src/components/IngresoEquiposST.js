@@ -4,6 +4,7 @@ import Alertas from './Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
 // import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import IngresoStCabDB from '../firebase/IngresoStCabDB';
+// import IngresoStDetDB from '../firebase/IngresoStDetDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
@@ -13,9 +14,11 @@ import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
+import * as FaIcons from 'react-icons/fa';
 import { Servicio } from './TipDoc';
 // import { IoMdAdd } from "react-icons/io";
-import { ContenedorProveedor, Contenedor, /* ListarProveedor, Boton*/ Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
+import moment from 'moment';
+import { ContenedorProveedor, Contenedor, ListarProveedor, /*Boton*/ Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, /*, ListarEquipos, Select,*/ TextArea, Select } from '../elementos/CrearEquipos';
 
 const IngresoEquiposST = () => {
@@ -27,6 +30,13 @@ const IngresoEquiposST = () => {
 
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [cabecera, setCabecera] = useState([]);
+    const [familia, setFamilia] = useState([]);
+    const [tipo, setTipo] = useState([]);
+    const [marca, setMarca] = useState([]);
+    const [modelo, setModelo] = useState([]);
+    // const [folio, setFolio] = useState('');
+    const [folio, setFolio] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
     const [nombre, setNombre] = useState('');
@@ -44,20 +54,23 @@ const IngresoEquiposST = () => {
     const [telRsf, setTelRsf] = useState('');
     // const [openModalEq, setOpenModalEq] = useState(false);
     // const [openModalFam, setOpenModalFam] = useState(false);
-    const [familia, setFamilia] = useState([]);
-    const [tipo, setTipo] = useState([]);
-    const [marca, setMarca] = useState([]);
-    const [modelo, setModelo] = useState([]);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
-    // const [folio, setFolio] = useState('');
     const [flag, setFlag] = useState('');
     // const almacenar = useRef([]);
 
+    // Filtar por docuemto de Cabecera
+    const consultarCab = async () => {
+        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
+        const guardaCab = await getDocs(cab);
+        const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
+        setCabecera(existeCab);
+    }
+    console.log('cabecera', cabecera)
     //Leer los datos de Familia
     const getFamilia = async () => {
         const traerFam = collection(db, 'familias');
@@ -207,8 +220,23 @@ const IngresoEquiposST = () => {
     //         }
     //     }
     // }
-
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
+    // Cambiar fecha
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+        return formatear;
+    }
+    // Transformar fecha de moment a date
+    const fechaDate = (fecha) => {
+        // Convierte a milisegundos
+        const nuevaFecha = fecha.seconds * 1000
+        // Crea un objeto Date a partir del timestamp en milisegundos
+        const fechas = new Date(nuevaFecha);
+        // Formatea la fecha en el formato 'YYYY-MM-DDTHH:mm'
+        const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
+        setDate(formatoDatetimeLocal)
+    }
     // Guardar Cliente nuevo
     const guardarCli = (e) => {
         e.preventDefault();
@@ -518,12 +546,14 @@ const IngresoEquiposST = () => {
                     direccion: direccion,
                     correo: correo,
                     date: fechaInSt,
+                    confirmado: false,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
+                setFolio('');
                 setRut('');
                 setEntidad('');
                 setDireccion('');
@@ -547,93 +577,101 @@ const IngresoEquiposST = () => {
         }
     }
 
-    // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
-    const ingresoDet = async (e) => {
-        e.preventDefault();
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
+    // // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
+    // const ingresoDet = async (e) => {
+    //     e.preventDefault();
+    //     cambiarEstadoAlerta(false);
+    //     cambiarAlerta({});
+    //     // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
+    //     const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
+    //     const cabecera = await getDocs(cab);
+    //     const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
 
-        if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione una Familia'
-            })
-            return;
-        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione un Tipo de equipamiento'
-            })
-            return;
-        } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione una Marca'
-            })
-            return;
-        } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione un Modelo'
-            })
-            return;
-        } else if (serie === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Campo Serie no puede estar vacio'
-            })
-            return;
-        } else if (servicio.length === 0 || servicio === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione un Tipo de Servicio'
-            })
-            return;
-        } else {
-            const fechaInSt = new Date(date);
-            // try {
-            // IngresoStDetDB({
-            //     id_cab_inst: '',
-            //     rut: rut,
-            //     entidad: entidad,
-            //     telefono: telefono,
-            //     direccion: direccion,
-            //     correo: correo,
-            //     date: fechaInSt,
-            //     userAdd: user.email,
-            //     userMod: user.email,
-            //     fechaAdd: fechaAdd,
-            //     fechaMod: fechaMod,
-            //     emp_id: users.emp_id
-            // })
-            // setRut('');
-            // setEntidad('');
-            // setDireccion('');
-            // setTelefono('');
-            // setCorreo('');
-            // setDate('')
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'exito',
-            //         mensaje: 'Datos registrados exitosamente'
-            //     })
-            //     setFlag(!flag);
-            //     return;
-            // } catch (error) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: error
-            //     })
-            // }
-        }
-    }
+
+    //     if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+    //         cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'Seleccione una Familia'
+    //         })
+    //         return;
+    //     } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
+    //         cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'Seleccione un Tipo de equipamiento'
+    //         })
+    //         return;
+    //     } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
+    //         cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'Seleccione una Marca'
+    //         })
+    //         return;
+    //     } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
+    //         cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'Seleccione un Modelo'
+    //         })
+    //         return;
+    //     } else if (serie === '') {
+    //         cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'Campo Serie no puede estar vacio'
+    //         })
+    //         return;
+    //     } else if (servicio.length === 0 || servicio === 'Selecciona Opción:') {
+    //         cambiarEstadoAlerta(true);
+    //         cambiarAlerta({
+    //             tipo: 'error',
+    //             mensaje: 'Seleccione un Tipo de Servicio'
+    //         })
+    //         return;
+    //     } else {
+    //         const fechaInSt = new Date(date);
+    //         try {
+    //             IngresoStDetDB({
+    //                 id_cab_inst: existeCab[0].id,
+    //                 folio: folio,
+    //                 rut: rut,
+    //                 date: existeCab[0].date,
+    //                 id_test: '',
+    //                 familia: nomFamilia,
+    //                 tipo: nomTipo,
+    //                 marca: nomMarca,
+    //                 modelo: nomModelo,
+    //                 serie: serie,
+    //                 userAdd: user.email,
+    //                 userMod: user.email,
+    //                 fechaAdd: fechaAdd,
+    //                 fechaMod: fechaMod,
+    //                 emp_id: users.emp_id
+    //             })
+    //             setNomFamilia('');
+    //             setNomTipo('');
+    //             setNomMarca('');
+    //             setNomModelo('');
+    //             setSerie('');
+    //             setServicio('')
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'exito',
+    //                 mensaje: 'Datos registrados exitosamente'
+    //             })
+    //             setFlag(!flag);
+    //             return;
+    //         } catch (error) {
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'error',
+    //                 mensaje: error
+    //             })
+    //         }
+    //     }
+    // }
 
     useEffect(() => {
         getFamilia();
@@ -642,6 +680,10 @@ const IngresoEquiposST = () => {
         getModelo();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+    useEffect(() => {
+        consultarCab();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag, setFlag])
 
     return (
         <ContenedorProveedor>
@@ -653,6 +695,16 @@ const IngresoEquiposST = () => {
                 <Titulo>Información Cliente</Titulo>
                 <Formulario action=''>
                     <ContentElemenMov>
+                    <ContentElemenSelect>
+                            <Label>Folio</Label>
+                            <Input
+                                type='numero'
+                                placeholder='Ingrese Folio'
+                                name='folio'
+                                value={folio}
+                                onChange={ev => setFolio(ev.target.value)}
+                            />
+                        </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Rut</Label>
                             <Input
@@ -770,7 +822,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar onClick={ingresoDet}>Siguente</BotonGuardar>
+                    <BotonGuardar /*onClick={ingresoDet}*/>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -852,6 +904,48 @@ const IngresoEquiposST = () => {
                 <BotonGuardar>Guardar</BotonGuardar>
                 <BotonGuardar>Nuevo</BotonGuardar>
             </Contenedor>
+
+            {/* Lista de Documetos por confrmar */}
+            <ListarProveedor>
+                <Titulo>Listado de Documentos por Confirmar</Titulo>
+                <Table singleLine style={{ textAlign: 'center' }}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>folio</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Date</Table.HeaderCell>
+                            <Table.HeaderCell>Confirmar</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {cabecera.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id2}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.folio}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell onClick={() => {
+                                        setFolio(item.folio);
+                                        setRut(item.rut);
+                                        fechaDate(item.date)
+                                        setEntidad(item.entidad);
+                                        setTelefono(item.telefono);
+                                        setDireccion(item.direccion);
+                                        setCorreo(item.correo);
+                                        setConfirmar(true);
+                                        // setBtnConfirmar(false)
+                                        setFlag(!flag)
+                                    }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
 
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
