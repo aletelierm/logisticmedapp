@@ -46,7 +46,7 @@ import CheckMantoPDF from './CheckMantoPDF';
 import IngresoEquiposST from './IngresoEquiposST';
 import TestIngreso from './TestIngreso';
 import ItemsTest from './ItemsTest';
-// import ProtocolosTest from './ProtocolosTest';
+import ProtocolosTest from './ProtocolosTest';
 
 export const Home = () => {
   return (
@@ -93,7 +93,7 @@ export const Home = () => {
             <Route path="serviciotecnico/ingreso" element={<IngresoEquiposST/>}/>        
             <Route path="serviciotecnico/testingreso" element={<TestIngreso/>}/>        
             <Route path="serviciotecnico/itemstest" element={<ItemsTest/>}/>        
-            {/* <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>         */}
+            <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>        
             <Route path="configuracion" element={<Configuracion/>}/>        
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
