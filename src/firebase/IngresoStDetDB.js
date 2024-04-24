@@ -2,16 +2,20 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc } from "firebase/firestore";
 
-const IngresoStCabDB = async ({ folio, rut, entidad, telefono, direccion, correo, date, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
+const IngresoStDetDB = async ({ id_cab_inst, folio, rut, date, id_test, familia, tipo, marca, modelo, serie, servicio, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
 
-    return await addDoc(collection(db, 'ingresostcab'), {
+    return await addDoc(collection(db, 'ingresostdet'), {
+        id_cab_inst: id_cab_inst,
         folio: folio,
         rut: rut,
-        entidad: entidad,
-        telefono: telefono,
-        direccion: direccion,
-        correo: correo,
         date: date,
+        familia: familia,
+        tipo: tipo,
+        marca: marca,
+        modelo: modelo,
+        serie: serie,
+        servicio: servicio,
+        id_test: id_test,
         useradd: userAdd,
         usermod: userMod,
         fechaadd: fechaAdd,
@@ -20,4 +24,4 @@ const IngresoStCabDB = async ({ folio, rut, entidad, telefono, direccion, correo
     })
 }
 
-export default IngresoStCabDB;
+export default IngresoStDetDB;

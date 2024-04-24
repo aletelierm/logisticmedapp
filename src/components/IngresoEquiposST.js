@@ -4,7 +4,7 @@ import Alertas from './Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
 // import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import IngresoStCabDB from '../firebase/IngresoStCabDB';
-// import IngresoStDetDB from '../firebase/IngresoStDetDB';
+import IngresoStDetDB from '../firebase/IngresoStDetDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
@@ -35,7 +35,6 @@ const IngresoEquiposST = () => {
     const [tipo, setTipo] = useState([]);
     const [marca, setMarca] = useState([]);
     const [modelo, setModelo] = useState([]);
-    // const [folio, setFolio] = useState('');
     const [folio, setFolio] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
@@ -52,6 +51,8 @@ const IngresoEquiposST = () => {
     const [nomRsf, setNomRsf] = useState('');
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
+    const [btnGuardarCab, setBtnGuardarCab] = useState(false);
+    const [btnGuardarDet, setBtnGuardarDet] = useState(false);
     // const [openModalEq, setOpenModalEq] = useState(false);
     // const [openModalFam, setOpenModalFam] = useState(false);
     const [serie, setSerie] = useState('');
@@ -70,7 +71,6 @@ const IngresoEquiposST = () => {
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setCabecera(existeCab);
     }
-    console.log('cabecera', cabecera)
     //Leer los datos de Familia
     const getFamilia = async () => {
         const traerFam = collection(db, 'familias');
@@ -578,13 +578,14 @@ const IngresoEquiposST = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
-                setFolio('');
-                setRut('');
-                setEntidad('');
-                setDireccion('');
-                setTelefono('');
-                setCorreo('');
-                setDate('')
+                // setFolio('');
+                // setRut('');
+                // setEntidad('');
+                // setDireccion('');
+                // setTelefono('');
+                // setCorreo('');
+                // setDate('')
+                setBtnGuardarCab(true);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -602,101 +603,103 @@ const IngresoEquiposST = () => {
         }
     }
 
-    // // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
-    // const ingresoDet = async (e) => {
-    //     e.preventDefault();
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-    //     // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
-    //     const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
-    //     const cabecera = await getDocs(cab);
-    //     const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+    // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
+    const ingresoDet = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
+        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
+        const cabecera = await getDocs(cab);
+        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log(existeCab)
 
-
-    //     if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Seleccione una Familia'
-    //         })
-    //         return;
-    //     } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Seleccione un Tipo de equipamiento'
-    //         })
-    //         return;
-    //     } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Seleccione una Marca'
-    //         })
-    //         return;
-    //     } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Seleccione un Modelo'
-    //         })
-    //         return;
-    //     } else if (serie === '') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Campo Serie no puede estar vacio'
-    //         })
-    //         return;
-    //     } else if (servicio.length === 0 || servicio === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Seleccione un Tipo de Servicio'
-    //         })
-    //         return;
-    //     } else {
-    //         const fechaInSt = new Date(date);
-    //         try {
-    //             IngresoStDetDB({
-    //                 id_cab_inst: existeCab[0].id,
-    //                 folio: folio,
-    //                 rut: rut,
-    //                 date: existeCab[0].date,
-    //                 id_test: '',
-    //                 familia: nomFamilia,
-    //                 tipo: nomTipo,
-    //                 marca: nomMarca,
-    //                 modelo: nomModelo,
-    //                 serie: serie,
-    //                 userAdd: user.email,
-    //                 userMod: user.email,
-    //                 fechaAdd: fechaAdd,
-    //                 fechaMod: fechaMod,
-    //                 emp_id: users.emp_id
-    //             })
-    //             setNomFamilia('');
-    //             setNomTipo('');
-    //             setNomMarca('');
-    //             setNomModelo('');
-    //             setSerie('');
-    //             setServicio('')
-    //             cambiarEstadoAlerta(true);
-    //             cambiarAlerta({
-    //                 tipo: 'exito',
-    //                 mensaje: 'Datos registrados exitosamente'
-    //             })
-    //             setFlag(!flag);
-    //             return;
-    //         } catch (error) {
-    //             cambiarEstadoAlerta(true);
-    //             cambiarAlerta({
-    //                 tipo: 'error',
-    //                 mensaje: error
-    //             })
-    //         }
-    //     }
-    // }
+        if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Familia'
+            })
+            return;
+        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Tipo de equipamiento'
+            })
+            return;
+        } else if (nomMarca.length === 0 || nomMarca === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione una Marca'
+            })
+            return;
+        } else if (nomModelo.length === 0 || nomModelo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Modelo'
+            })
+            return;
+        } else if (serie === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Serie no puede estar vacio'
+            })
+            return;
+        } else if (servicio.length === 0 || servicio === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione un Tipo de Servicio'
+            })
+            return;
+        } else {
+            try {
+                IngresoStDetDB({
+                    id_cab_inst: existeCab[0].id,
+                    folio: folio,
+                    rut: rut,
+                    date: existeCab[0].date,
+                    id_test: '',
+                    familia: nomFamilia,
+                    tipo: nomTipo,
+                    marca: nomMarca,
+                    modelo: nomModelo,
+                    serie: serie,
+                    // serie: '',
+                    servicio: servicio,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
+                })
+                // setNomFamilia('');
+                // setNomTipo('');
+                // setNomMarca('');
+                // setNomModelo('');
+                // setSerie('');
+                // setServicio('')
+                setBtnGuardarDet(true);
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Datos registrados exitosamente'
+                })
+                setFlag(!flag);
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
+        }
+    }
 
     useEffect(() => {
         getFamilia();
@@ -776,7 +779,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar onClick={ingresoCab}>Siguente</BotonGuardar>
+                    <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -796,7 +799,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Tipo Equipamiento</Label>
-                            <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value); sessionStorage.setItem('tipo', e.target.value) }}>
+                            <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {tipo.map((d) => {
                                     return (<option key={d.id}>{d.tipo}</option>)
@@ -805,7 +808,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Marca</Label>
-                            <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value); sessionStorage.setItem('marca', e.target.value) }}>
+                            <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {marca.map((d) => {
                                     return (<option key={d.id}>{d.marca}</option>)
@@ -816,7 +819,7 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Modelo</Label>
-                            <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value); sessionStorage.setItem('modelo', e.target.value) }}>
+                            <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {modelo.map((d) => {
                                     return (<option key={d.id}>{d.modelo}</option>)
@@ -830,16 +833,16 @@ const IngresoEquiposST = () => {
                                 placeholder='Ingrese N° Serie'
                                 name='serie'
                                 value={serie}
-                                onChange={e => setSerie(e.target.value)}
+                                onChange={e => { setSerie(e.target.value) }}
                             // onKeyDown={detectarEq}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Tipo de Servicio</Label>
                             <Select
-                                disabled={confirmar}
+                                // disabled={confirmar}
                                 value={servicio}
-                                onChange={ev => setServicio(ev.target.value)}>
+                                onChange={e => {setServicio(e.target.value)}}>
                                 <option>Selecciona Opción:</option>
                                 {Servicio.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
@@ -847,8 +850,8 @@ const IngresoEquiposST = () => {
                             </Select>
                         </ContentElemenSelect>
                     </ContentElemenMov>
-                    {/* Guardar datos ingresados */}
-                    <BotonGuardar /*onClick={ingresoDet}*/>Siguente</BotonGuardar>
+                    {/* Guardar datos ingresados de detalle*/}
+                    <BotonGuardar /*disabled={setBtnGuardarDet}*/ onClick={ingresoDet}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -938,7 +941,7 @@ const IngresoEquiposST = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>folio</Table.HeaderCell>
+                            <Table.HeaderCell>Folio</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Date</Table.HeaderCell>
@@ -948,7 +951,7 @@ const IngresoEquiposST = () => {
                     <Table.Body>
                         {cabecera.map((item, index) => {
                             return (
-                                <Table.Row key={item.id2}>
+                                <Table.Row key={item.id}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.folio}</Table.Cell>
                                     <Table.Cell>{item.rut}</Table.Cell>
@@ -963,6 +966,7 @@ const IngresoEquiposST = () => {
                                         setDireccion(item.direccion);
                                         setCorreo(item.correo);
                                         setConfirmar(true);
+                                        setBtnGuardarCab(true);
                                         // setBtnConfirmar(false)
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
