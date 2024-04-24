@@ -548,7 +548,7 @@ const IngresoEquiposST = () => {
     }
 
     // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
-    const ingresodet = async (e) => {
+    const ingresoDet = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -770,7 +770,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar onClick={ingresodet}>Siguente</BotonGuardar>
+                    <BotonGuardar onClick={ingresoDet}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
