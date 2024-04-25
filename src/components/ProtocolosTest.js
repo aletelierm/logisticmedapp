@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react';
 import ProtocoloTestCabDB from '../firebase/ProtocoloTestCabDB';
-// import ProtocoloDB from '../firebase/ProtocoloDB';
+import ProtocoloTestDB from '../firebase/ProtocoloTestDB';
 import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
@@ -49,14 +49,14 @@ const ProtocolosTest = () => {
     const [mostrar, setMostrar] = useState(true);
     const [estadoModal, setEstadoModal] = useState(false);
 
-    //Leer los datos de Familia
+    //Leer los datos de Familia => Funcional
     const getFamilia = async () => {
         const traerFam = collection(db, 'familias');
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
     }
-    // Ordenar Listado por Familia
+    // Ordenar Listado por Familia => Funcional
     familia.sort((a, b) => {
         const nameA = a.familia;
         const nameB = b.familia;
@@ -68,13 +68,14 @@ const ProtocolosTest = () => {
         }
         return 0;
     });
-    // Filtar por Cabecera de Protocolo
+    // Filtar por Cabecera de Protocolo => Funcional
     const consultarCabProt = async () => {
         const doc = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolCab(documento);
     }
+    // Listo hasta aqui
     // // Filtar por Cabecera de Protocolo Cconfirmado
     // const consultarCabProtConf = async () => {
     //     const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true));
@@ -82,13 +83,14 @@ const ProtocolosTest = () => {
     //     const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     //     setProtocolCabConf(documento);
     // }
+    // Listado de Items Test Ingreso => Funcional
     const getItem = async () => {
         const traerit = collection(db, 'itemstest');
         const dato = query(traerit, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
         setItem(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
-    // Ordenar Listado por item
+    // Ordenar Listado por item =>  Funcional
     item.sort((a, b) => {
         const nameA = a.nombre;
         const nameB = b.nombre;
@@ -100,25 +102,25 @@ const ProtocolosTest = () => {
         }
         return 0;
     });
-    // // Filtar por docuemto de Entrada
-    // const consultarProtocolos = async () => {
-    //     const doc = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
-    //     const docu = await getDocs(doc);
-    //     const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
-    //     setProtocolo(documen);
-    // }
-    // // Ordenar Items Agregados a Protocolo, Alfabetico
-    // protocolo.sort((a, b) => {
-    //     const nameA = a.item;
-    //     const nameB = b.item;
-    //     if (nameA < nameB) {
-    //         return -1;
-    //     }
-    //     if (nameA > nameB) {
-    //         return 1;
-    //     }
-    //     return 0;
-    // });
+    // Filtar por detalle de protocolo => Funcional
+    const consultarProtocolos = async () => {
+        const doc = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia));
+        const docu = await getDocs(doc);
+        const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
+        setProtocolo(documen);
+    }
+    // Ordenar Items Agregados a Protocolo, Alfabetico => Funcional
+    protocolo.sort((a, b) => {
+        const nameA = a.item;
+        const nameB = b.item;
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
     // Leer Protocolos 
     // const leerProt = async (id) => {
     //     const traer = collection(db, 'protocolos');
@@ -150,7 +152,7 @@ const ProtocolosTest = () => {
     const handleCheckboxChange = (event) => {
         setConfirmar(event.target.checked);
     };
-    // Agregar Cabecera de Protocolo
+    // Agregar Cabecera de Protocolo => Funcional
     const addCabProtocolo = async (ev) => {
         ev.preventDefault();
         cambiarEstadoAlerta(false);
@@ -198,7 +200,7 @@ const ProtocolosTest = () => {
                     tipo: 'exito',
                     mensaje: 'Ingreso realizado exitosamente'
                 })
-                setNomFamilia('');
+                // setNomFamilia('');
                 setFlag(!flag);
                 setConfirmar(false);
                 setBtnGuardar(true);
@@ -213,18 +215,18 @@ const ProtocolosTest = () => {
             }
         }
     }
-    // Agregar Item a Protocolo
+    // Agregar Item a Protocolo => Funcional
     const AgregarItem = async (id) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Consultar si Item se encuentra en Documento
         const item_id = item.filter(it => it.id === id);
-        // Validar en N° Serie en el documento de Entradas que se esta trabatando     
+        // Validar Item en el documento de protocolo que se esta trabajando     
         const existeProt = protocolo.filter(doc => doc.item_id === item_id[0].id);
         // Filtar por docuemto de Cabecera de Protocolo
-        // const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
-        // const cabecera = await getDocs(cabProtocolo);
-        // const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        const cabProtocolo = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia));
+        const cabecera = await getDocs(cabProtocolo);
+        const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         if (existeProt.length > 0) {
             cambiarEstadoAlerta(true);
@@ -233,28 +235,20 @@ const ProtocolosTest = () => {
                 mensaje: 'Item ya se encuentra en este documento'
             })
         } else {
-            console.log(item_id)
             try {
-                // ProtocoloDB({
-                //     nombre: existeCabProtocolo[0].nombre,
-                //     familia: existeCabProtocolo[0].familia,
-                //     tipo: existeCabProtocolo[0].tipo,
-                //     programa: existeCabProtocolo[0].programa,
-                //     dias: existeCabProtocolo[0].dias,
-                //     item: item_id[0].nombre,
-                //     item_id: item_id[0].id,
-                //     categoria: item_id[0].categoria,
-                //     medida: item_id[0].medida,
-                //     inicial: item_id[0].inicial,
-                //     final: item_id[0].final,
-                //     cab_id: existeCabProtocolo[0].id,
-                //     userAdd: user.email,
-                //     userMod: user.email,
-                //     fechaAdd: fechaAdd,
-                //     fechaMod: fechaMod,
-                //     emp_id: users.emp_id,
-                //     confirmado: false
-                // });
+                ProtocoloTestDB({
+                    nombre: existeCabProtocolo[0].nombre,
+                    familia: existeCabProtocolo[0].familia,
+                    item: item_id[0].nombre,
+                    item_id: item_id[0].id,
+                    cab_id: existeCabProtocolo[0].id,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                    confirmado: false
+                });
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -372,7 +366,7 @@ const ProtocolosTest = () => {
     useEffect(() => {
         getFamilia();
         consultarCabProt();
-        // consultarProtocolos();
+        consultarProtocolos();
         // consultarCabProtConf();
         // getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -381,7 +375,7 @@ const ProtocolosTest = () => {
     useEffect(() => {
         getItem();
         consultarCabProt();
-        // consultarProtocolos();
+        consultarProtocolos();
         // consultarCabProtConf();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
@@ -442,13 +436,14 @@ const ProtocolosTest = () => {
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                                        <Table.Cell>{item.categoria}</Table.Cell>
+                                        <Table.Cell>{item.familia}</Table.Cell>
                                     </Table.Row>
                                 )
                             })}
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
+                {/* Hasta aqui */}
                 <BotonGuardar onClick={() => {
                     actualizarDocs();
                 }} disabled={btnConfirmar}>Confirmar</BotonGuardar>
@@ -515,6 +510,7 @@ const ProtocolosTest = () => {
                 }
             </ListarProveedor>
             {/* Lista de Prtocolos por terminar */}
+            {/* Listo */}
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Protocolos por terminar</Titulo>
@@ -525,22 +521,18 @@ const ProtocolosTest = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Familia</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {/* {protocolCab.map((item, index) => {
+                        {protocolCab.map((item, index) => {
                             return (
                                 <Table.Row key={index}>
                                     <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
-                                    <Table.Cell >{item.tipo}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} onClick={() => {
                                         setNomFamilia(item.familia);
-                                        setNomTipo(item.tipo)
-                                        setPrograma(item.programa);
                                         setBtnGuardar(true);
                                         // setConfirmar(true);
                                         setBtnNuevo(false)
@@ -549,7 +541,7 @@ const ProtocolosTest = () => {
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
-                        })} */}
+                        })}
                     </Table.Body>
                 </Table>
             </ListarProveedor>
