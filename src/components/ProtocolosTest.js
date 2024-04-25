@@ -16,7 +16,6 @@ import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Tit
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label, Contenido } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-// import moment from 'moment';
 import Swal from 'sweetalert2';
 
 const ProtocolosTest = () => {
@@ -51,18 +50,14 @@ const ProtocolosTest = () => {
         const traerFam = collection(db, 'familias');
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setFamilia(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     // Ordenar Listado por Familia => Funcional
     familia.sort((a, b) => {
         const nameA = a.familia;
         const nameB = b.familia;
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
+        if (nameA < nameB) { return -1; }
+        if (nameA > nameB) { return 1; }
         return 0;
     });
     // Filtar por Cabecera de Protocolo => Funcional
@@ -90,12 +85,8 @@ const ProtocolosTest = () => {
     item.sort((a, b) => {
         const nameA = a.nombre;
         const nameB = b.nombre;
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
+        if (nameA < nameB) { return -1; }
+        if (nameA > nameB) { return 1; }
         return 0;
     });
     // Filtar por detalle de protocolo => Funcional
@@ -109,33 +100,17 @@ const ProtocolosTest = () => {
     protocolo.sort((a, b) => {
         const nameA = a.item;
         const nameB = b.item;
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
+        if (nameA < nameB) { return -1; }
+        if (nameA > nameB) { return 1; }
         return 0;
     });
-    // Leer Protocolos 
+    // Leer Protocolos detalle
     const leerProt = async (id) => {
         const traer = collection(db, 'protocolostest');
         const doc = query(traer, where('cab_id', '==', id));
         const documento = await getDocs(doc)
         setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-    console.log(mostrarProt)
-    // Listo hasta aqui
-    // Sumar dias
-    // const sumarDias = (fecha, dias) => {
-    //     const dateObj = fecha.toDate();
-    //     const formatear = moment(dateObj);
-    //     const nuevafecha = formatear.add(dias, 'days');
-    //     const ultima = new Date(nuevafecha)
-    //     // return nuevafecha.format('DD/MM/YYYY HH:mm');
-    //     return ultima;
-    // }
-
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
@@ -309,8 +284,8 @@ const ProtocolosTest = () => {
     const nuevo = () => {
         setNomFamilia('');
         setBtnGuardar(false);
-        setBtnConfirmar(true);
         setBtnNuevo(true);
+        setBtnConfirmar(true);
     }
 
     useEffect(() => {
@@ -320,7 +295,6 @@ const ProtocolosTest = () => {
         consultarCabProtConf();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
     useEffect(() => {
         getItem();
         consultarCabProt();
@@ -392,11 +366,10 @@ const ProtocolosTest = () => {
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
-                <BotonGuardar onClick={() => {
-                    actualizarDocs();
-                }} disabled={btnConfirmar}>Confirmar</BotonGuardar>
+                <BotonGuardar 
+                onClick={() => {actualizarDocs();}} disabled={btnConfirmar}>Confirmar</BotonGuardar>
             </Contenedor>
-
+            {/* Listado de Items para agregar a protocolos */}
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Listado de Items</Titulo>
@@ -480,8 +453,8 @@ const ProtocolosTest = () => {
                                     <Table.Cell >{item.familia}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} onClick={() => {
                                         setNomFamilia(item.familia);
+                                        setConfirmar(true);
                                         setBtnGuardar(true);
-                                        // setConfirmar(true);
                                         setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
