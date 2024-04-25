@@ -73,6 +73,12 @@ export const DataMenuAdmin = [
         path: 'transacciones/salidas',
         icon: <MdIcons.MdOutput />,
         cName: 'sub-nav'
+      },
+      {
+        title: 'Traspasos',
+        path: 'transacciones/traspasos',
+        icon: <MdIcons.MdOutput />,
+        cName: 'sub-nav'
       }
       
     ]
@@ -121,6 +127,8 @@ export const DataMenuAdmin = [
         path: 'reportes/reporte5',
         icon: <FaIcons.FaListUl />,
         cName: 'sub-nav'
+
+        
       }
     ]
   }

@@ -11,7 +11,7 @@ const Footer = () => {
                 <ul className='contact'>
                     <li><FaWhatsapp style={{color:'#ffffff'}}/>  +569 76321481</li>
                     <li><TfiEmail style={{color: '#ffffff'}}/>  info@logisticmed.cl</li>
-                    <li><FiPhoneCall />  +569 54234538</li>
+                    <li><FiPhoneCall />  +569 59505300</li>
                 </ul>
                 <div className='reserved-right'>
                     <h4>© 5 REM 2024. Todos los derechos reservados.</h4>
