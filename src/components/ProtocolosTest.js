@@ -6,9 +6,9 @@ import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import * as FaIcons from 'react-icons/fa';
-// import * as MdIcons from 'react-icons/md';
+import * as MdIcons from 'react-icons/md';
 import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
@@ -30,15 +30,12 @@ const ProtocolosTest = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [familia, setFamilia] = useState([]);
-    // const [tipo, setTipo] = useState([]);
     const [protocolCab, setProtocolCab] = useState([]);
-    // const [protocolCabConf, setProtocolCabConf] = useState([]);
+    const [protocolCabConf, setProtocolCabConf] = useState([]);
     const [mostrarProt, setMostrarProt] = useState([]);
     const [item, setItem] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
-    const [programa, setPrograma] = useState([]);
     const [nomFamilia, setNomFamilia] = useState('');
-    const [nomTipo, setNomTipo] = useState('');
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
@@ -75,14 +72,13 @@ const ProtocolosTest = () => {
         const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolCab(documento);
     }
-    // Listo hasta aqui
-    // // Filtar por Cabecera de Protocolo Cconfirmado
-    // const consultarCabProtConf = async () => {
-    //     const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true));
-    //     const docu = await getDocs(doc);
-    //     const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    //     setProtocolCabConf(documento);
-    // }
+    // Filtar por Cabecera de Protocolo Cconfirmado => Funcional
+    const consultarCabProtConf = async () => {
+        const doc = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true));
+        const docu = await getDocs(doc);
+        const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setProtocolCabConf(documento);
+    }
     // Listado de Items Test Ingreso => Funcional
     const getItem = async () => {
         const traerit = collection(db, 'itemstest');
@@ -121,7 +117,8 @@ const ProtocolosTest = () => {
         }
         return 0;
     });
-    // Leer Protocolos 
+    // Listo hasta aqui
+    // // Leer Protocolos 
     // const leerProt = async (id) => {
     //     const traer = collection(db, 'protocolos');
     //     const doc = query(traer, where('cab_id', '==', id));
@@ -268,86 +265,39 @@ const ProtocolosTest = () => {
             }
         }
     }
-
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Filtar por docuemto de Cabecera
-        const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        const cabProtocolo = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia));
         const cabecera = await getDocs(cabProtocolo);
         const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // Buscar coincidencias de equipos
-        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('tipo', '==', nomTipo));
-        const dato = await getDocs(traerEq);
-        const equipo = (dato.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         if (protocolo.length === 0) {
             Swal.fire('No hay Datos por confirmar en este documento');
         } else {
-            if (equipo.length > 0) {
-                // Crea una nueva instancia de lote (batch)
-                const batch = writeBatch(db);
-                // Obtiene una referencia a una colección específica en Firestore
-                const mantoRef = collection(db, 'mantenciones');
-                // Itera a través de los nuevos documentos y agrégalos al lote
-                equipo.forEach((docs) => {
-                    const nuevoDocRef = doc(mantoRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-                    batch.set(nuevoDocRef, {
-                        cab_id_protocol: existeCabProtocolo[0].id,
-                        nombre_protocolo: existeCabProtocolo[0].nombre,
-                        programa: existeCabProtocolo[0].programa,
-                        dias: existeCabProtocolo[0].dias,
-                        fecha_inicio: existeCabProtocolo[0].fechaadd,
-                        // fecha_termino: sumarDias(existeCabProtocolo[0].fechaadd, existeCabProtocolo[0].dias),
-                        id_eq: docs.id,
-                        familia: docs.familia,
-                        tipo: docs.tipo,
-                        serie: docs.serie,
-                        useradd: user.email,
-                        usermod: user.email,
-                        fechaadd: fechaAdd,
-                        fechamod: fechaMod,
-                        emp_id: users.emp_id,
-                        enproceso: '0'
-                    });
+            // Actualizar la cabecera de protocolos
+            try {
+                await updateDoc(doc(db, 'protocolostestcab', existeCabProtocolo[0].id), {
+                    confirmado: true,
+                    usermod: user.email,
+                    fechamod: fechaMod
                 });
-                batch.commit()
-                    .then(() => {
-                        cambiarEstadoAlerta(true);
-                        cambiarAlerta({
-                            tipo: 'exito',
-                            mensaje: 'Docuemento creado correctamente.'
-                        });
-                    })
-                    .catch((error) => {
-                        Swal.fire('Se ha producido un error al crear docuemento de entrada retirado');
-                    });
-
-                // Actualizar la cabecera de protocolos
-                try {
-                    await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
-                        confirmado: true,
-                        usermod: user.email,
-                        fechamod: fechaMod
-                    });
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Documento confirmado exitosamente.'
-                    });
-                } catch (error) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Error al confirmar Cabecera:', error
-                    })
-                }
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Documento confirmado exitosamente.'
+                });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al confirmar Cabecera:', error
+                })
             }
             setFlag(!flag)
             setNomFamilia('');
-            setNomTipo('');
-            setPrograma('');
             setConfirmar(false);
             setBtnGuardar(false);
             setBtnConfirmar(true);
@@ -355,7 +305,7 @@ const ProtocolosTest = () => {
         }
     }
 
-    // Agregar una nueva cabecera
+    // Agregar una nueva cabecera => Funcional
     const nuevo = () => {
         setNomFamilia('');
         setBtnGuardar(false);
@@ -367,8 +317,7 @@ const ProtocolosTest = () => {
         getFamilia();
         consultarCabProt();
         consultarProtocolos();
-        // consultarCabProtConf();
-        // getEmpresa();
+        consultarCabProtConf();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -376,12 +325,12 @@ const ProtocolosTest = () => {
         getItem();
         consultarCabProt();
         consultarProtocolos();
-        // consultarCabProtConf();
+        consultarCabProtConf();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
     return (
-        <ContenedorProveedor style={{width: '80%'}}>
+        <ContenedorProveedor style={{ width: '80%' }}>
             <Contenedor>
                 <Titulo>Crear Protocolos Test de Ingreso</Titulo>
             </Contenedor>
@@ -520,7 +469,7 @@ const ProtocolosTest = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
-                            <Table.HeaderCell>Familia</Table.HeaderCell>
+                            <Table.HeaderCell>Categoria</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -555,23 +504,21 @@ const ProtocolosTest = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
-                            <Table.HeaderCell>Familia</Table.HeaderCell>
-                            <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                            <Table.HeaderCell>Categoria</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {/* {protocolCabConf.map((item, index) => {
+                        {protocolCabConf.map((item, index) => {
                             return (
                                 <Table.Row key={index}>
                                     <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
-                                    <Table.Cell >{item.tipo}</Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center', }}
                                         title='Ver Items'
                                         onClick={() => {
-                                            leerProt(item.id)
+                                            // leerProt(item.id)
                                             setEstadoModal(!estadoModal)
                                         }}
                                     >
@@ -579,7 +526,7 @@ const ProtocolosTest = () => {
                                     </Table.Cell>
                                 </Table.Row>
                             )
-                        })} */}
+                        })}
                     </Table.Body>
                 </Table>
             </ListarProveedor>

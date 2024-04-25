@@ -851,7 +851,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados de detalle*/}
-                    <BotonGuardar /*disabled={setBtnGuardarDet}*/ onClick={ingresoDet}>Siguente</BotonGuardar>
+                    <BotonGuardar disabled={btnGuardarDet} onClick={ingresoDet}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
