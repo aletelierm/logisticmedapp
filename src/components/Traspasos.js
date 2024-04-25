@@ -789,7 +789,7 @@ const Traspasos = () => {
                                 disabled
                                 type='number'
                                 name='NumDoc'
-                                placeholder='Ingrese N° Documento'
+                                placeholder=''
                                 value={folio}
                                 // onChange={ev => setNumDoc(folio)}
                             />
