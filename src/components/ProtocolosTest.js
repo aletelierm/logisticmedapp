@@ -117,15 +117,15 @@ const ProtocolosTest = () => {
         }
         return 0;
     });
+    // Leer Protocolos 
+    const leerProt = async (id) => {
+        const traer = collection(db, 'protocolostest');
+        const doc = query(traer, where('cab_id', '==', id));
+        const documento = await getDocs(doc)
+        setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+    console.log(mostrarProt)
     // Listo hasta aqui
-    // // Leer Protocolos 
-    // const leerProt = async (id) => {
-    //     const traer = collection(db, 'protocolos');
-    //     const doc = query(traer, where('cab_id', '==', id));
-    //     const documento = await getDocs(doc)
-    //     setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    // }
-
     // Sumar dias
     // const sumarDias = (fecha, dias) => {
     //     const dateObj = fecha.toDate();
@@ -392,7 +392,6 @@ const ProtocolosTest = () => {
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
-                {/* Hasta aqui */}
                 <BotonGuardar onClick={() => {
                     actualizarDocs();
                 }} disabled={btnConfirmar}>Confirmar</BotonGuardar>
@@ -459,7 +458,6 @@ const ProtocolosTest = () => {
                 }
             </ListarProveedor>
             {/* Lista de Prtocolos por terminar */}
-            {/* Listo */}
             <ListarProveedor>
                 <ContentElemenAdd>
                     <Titulo>Protocolos por terminar</Titulo>
@@ -518,7 +516,7 @@ const ProtocolosTest = () => {
                                     <Table.Cell style={{ textAlign: 'center', }}
                                         title='Ver Items'
                                         onClick={() => {
-                                            // leerProt(item.id)
+                                            leerProt(item.id)
                                             setEstadoModal(!estadoModal)
                                         }}
                                     >
@@ -547,7 +545,7 @@ const ProtocolosTest = () => {
                                         <Table.Row key={index}>
                                             <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
-                                            <Table.Cell style={{ fontSize: '13px', textAlign: 'center' }}>{item.categoria}</Table.Cell>
+                                            <Table.Cell style={{ fontSize: '13px' }}>{item.familia}</Table.Cell>
                                         </Table.Row>
                                     )
                                 })}
