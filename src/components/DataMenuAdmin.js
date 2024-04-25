@@ -121,6 +121,8 @@ export const DataMenuAdmin = [
         path: 'reportes/reporte5',
         icon: <FaIcons.FaListUl />,
         cName: 'sub-nav'
+
+        
       }
     ]
   }

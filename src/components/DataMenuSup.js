@@ -23,7 +23,23 @@ export const DataMenuSup = [
         title: 'Salidas',
         path: 'transacciones/salidas',
         icon: <MdIcons.MdOutput />,
-        cName: 'sub-nav'
+        cName: 'sub-nav',
+
+        subNav: [
+          {
+            title: 'Entradas',
+            path: 'transacciones/entradas',
+            icon: <MdIcons.MdInput />,
+            cName: 'sub-nav'
+          },
+          {
+            title: 'Salidas',
+            path: 'transacciones/salidas',
+            icon: <MdIcons.MdOutput />,
+            cName: 'sub-nav'
+          }
+          
+        ]
       }
       
     ]
