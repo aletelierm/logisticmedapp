@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import generatePDF, { Margin, Options } from 'react-to-pdf'
+import generatePDF from 'react-to-pdf'
 import { db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,12 +7,12 @@ import useObtenerBitacora from '../hooks/useObtenerBitacora';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Subtitulo, BotonGuardar } from '../elementos/General';
+import { ContenedorProveedor, Titulo, Subtitulo, BotonGuardar } from '../elementos/General';
 import moment from 'moment';
 
 const CheckMantoPDF = () => {
     //fecha hoy
-    const fechaHoy = new Date();
+    // const fechaHoy = new Date();
     const { users } = useContext(UserContext);
 
     const navigate = useNavigate();
@@ -73,7 +73,7 @@ const CheckMantoPDF = () => {
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-        const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+        // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
     // Configuración de react-to-pdf
@@ -85,7 +85,7 @@ const CheckMantoPDF = () => {
             bottom: '1in', // Margen inferior
             left: '1in' // Margen izquierdo
         },
-        format: 'letter',
+        // format: 'letter',
         orientation: 'landscape', // Orientación del PDF
         unit: 'in', // Unidad de medida
         format: 'a4' // Formato del PDF
