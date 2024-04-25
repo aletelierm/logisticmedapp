@@ -1,6 +1,6 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect, useRef } from 'react';
-// import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
+import React, { useState, useEffect } from 'react';
+import ProtocoloTestCabDB from '../firebase/ProtocoloTestCabDB';
 // import ProtocoloDB from '../firebase/ProtocoloDB';
 import Alertas from './Alertas';
 import Modal from './Modal';
@@ -16,7 +16,7 @@ import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Tit
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label, Contenido } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import moment from 'moment';
+// import moment from 'moment';
 import Swal from 'sweetalert2';
 
 const ProtocolosTest = () => {
@@ -48,7 +48,6 @@ const ProtocolosTest = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [mostrar, setMostrar] = useState(true);
     const [estadoModal, setEstadoModal] = useState(false);
-    const dias = useRef('');
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -71,7 +70,7 @@ const ProtocolosTest = () => {
     });
     // Filtar por Cabecera de Protocolo
     const consultarCabProt = async () => {
-        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
+        const doc = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolCab(documento);
@@ -129,14 +128,14 @@ const ProtocolosTest = () => {
     // }
 
     // Sumar dias
-    const sumarDias = (fecha, dias) => {
-        const dateObj = fecha.toDate();
-        const formatear = moment(dateObj);
-        const nuevafecha = formatear.add(dias, 'days');
-        const ultima = new Date(nuevafecha)
-        // return nuevafecha.format('DD/MM/YYYY HH:mm');
-        return ultima;
-    }
+    // const sumarDias = (fecha, dias) => {
+    //     const dateObj = fecha.toDate();
+    //     const formatear = moment(dateObj);
+    //     const nuevafecha = formatear.add(dias, 'days');
+    //     const ultima = new Date(nuevafecha)
+    //     // return nuevafecha.format('DD/MM/YYYY HH:mm');
+    //     return ultima;
+    // }
 
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();
@@ -157,29 +156,15 @@ const ProtocolosTest = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         // Filtar por docuemto de Cabecera de Protocolo
-        const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        const cabProtocolo = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia));
         const cabecera = await getDocs(cabProtocolo);
-        const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Seleccine Familia'
-            })
-            return;
-        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione Tipo de Equipamiento'
-            })
-            return;
-        } else if (programa.length === 0 || programa === 'Selecciona Opción:') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Seleccione Programa'
             })
             return;
         } else if (existeCabProtocolo.length > 0) {
@@ -197,35 +182,23 @@ const ProtocolosTest = () => {
                 })
             }
         } else {
-            if (programa === 'ANUAL') {
-                dias.current = 365
-            } else if (programa === 'SEMESTRAL') {
-                dias.current = 180
-            } else {
-                dias.current = 90
-            }
             try {
-                // ProtocoloCabDB({
-                //     nombre: 'PAUTA DE MANTENCIÓN ' + programa,
-                //     familia: nomFamilia,
-                //     tipo: nomTipo,
-                //     programa: programa,
-                //     dias: dias.current,
-                //     userAdd: user.email,
-                //     userMod: user.email,
-                //     fechaAdd: fechaAdd,
-                //     fechaMod: fechaMod,
-                //     emp_id: users.emp_id,
-                //     confirmado: false
-                // })
+                ProtocoloTestCabDB({
+                    nombre: 'TEST INGRESO ' + nomFamilia,
+                    familia: nomFamilia,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                    confirmado: false
+                })
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Ingreso realizado exitosamente'
                 })
-                // setNomFamilia('');
-                // setNomTipo('');
-                // setPrograma('');
+                setNomFamilia('');
                 setFlag(!flag);
                 setConfirmar(false);
                 setBtnGuardar(true);
@@ -332,7 +305,7 @@ const ProtocolosTest = () => {
                         programa: existeCabProtocolo[0].programa,
                         dias: existeCabProtocolo[0].dias,
                         fecha_inicio: existeCabProtocolo[0].fechaadd,
-                        fecha_termino: sumarDias(existeCabProtocolo[0].fechaadd, existeCabProtocolo[0].dias),
+                        // fecha_termino: sumarDias(existeCabProtocolo[0].fechaadd, existeCabProtocolo[0].dias),
                         id_eq: docs.id,
                         familia: docs.familia,
                         tipo: docs.tipo,
@@ -391,8 +364,6 @@ const ProtocolosTest = () => {
     // Agregar una nueva cabecera
     const nuevo = () => {
         setNomFamilia('');
-        setNomTipo('');
-        setPrograma('');
         setBtnGuardar(false);
         setBtnConfirmar(true);
         setBtnNuevo(true);
@@ -400,7 +371,7 @@ const ProtocolosTest = () => {
 
     useEffect(() => {
         getFamilia();
-        // consultarCabProt();
+        consultarCabProt();
         // consultarProtocolos();
         // consultarCabProtConf();
         // getEmpresa();
@@ -418,7 +389,7 @@ const ProtocolosTest = () => {
     return (
         <ContenedorProveedor style={{width: '80%'}}>
             <Contenedor>
-                <Titulo>Crear Protocolos</Titulo>
+                <Titulo>Crear Protocolos Test de Ingreso</Titulo>
             </Contenedor>
             <Contenedor>
                 <Formulario action=''>
