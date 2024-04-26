@@ -856,6 +856,7 @@ const IngresoEquiposST = () => {
             </Contenedor>
 
             {/* Test de Ingreso */}
+            {/* Falta llamar a los test creados categorizados por familia */}
             <Contenedor>
                 <Titulo>Test de Ingreso</Titulo>
                 <Table singleLine>
