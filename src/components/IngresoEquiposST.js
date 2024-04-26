@@ -668,6 +668,8 @@ const IngresoEquiposST = () => {
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
                     <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
+                    {/* Pendiente Boton Nuevo */}
+                    <BotonGuardar>Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -744,8 +746,6 @@ const IngresoEquiposST = () => {
             </Contenedor>
 
             {/* Test de Ingreso */}
-            {/* Falta llamar a los test creados categorizados por familia */}
-
             <Contenedor>
                 <Titulo>Test de Ingreso</Titulo>
                 <Table singleLine>
@@ -782,7 +782,6 @@ const IngresoEquiposST = () => {
                     />
                 </ContentElemenMov>
                 <BotonGuardar>Guardar</BotonGuardar>
-                <BotonGuardar>Nuevo</BotonGuardar>
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
