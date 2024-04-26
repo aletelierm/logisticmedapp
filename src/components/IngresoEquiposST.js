@@ -31,6 +31,8 @@ const IngresoEquiposST = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [cabecera, setCabecera] = useState([]);
+    // const [detalle, setDetalle] = useState([]);
+    const [protocolo, setProtocolo] = useState([]);
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
     const [marca, setMarca] = useState([]);
@@ -70,6 +72,29 @@ const IngresoEquiposST = () => {
         const guardaCab = await getDocs(cab);
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setCabecera(existeCab);
+    }
+    // Filtar por docuemto de Cabecera
+    const consultarDet = async (id) => {
+        const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+        const guardaDet = await getDocs(det);
+        const existeDet = (guardaDet.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
+        
+        if (existeDet.length > 0) {
+            setNomFamilia(existeDet[0].familia);
+            setNomTipo(existeDet[0].tipo);
+            setNomMarca(existeDet[0].marca);
+            setNomModelo(existeDet[0].modelo);
+            setSerie(existeDet[0].serie);
+            setServicio(existeDet[0].servicio);
+            consultarprot(existeDet[0].familia);
+        } else {
+            setNomFamilia('');
+            setNomTipo('');
+            setNomMarca('');
+            setNomModelo('');
+            setSerie('');
+            setServicio('');
+        }
     }
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -145,6 +170,15 @@ const IngresoEquiposST = () => {
         return 0;
     });
 
+    // Filtar por docuemto de Cabecera
+    const consultarprot = async (fam) => {
+        const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam));
+        const guardaprot = await getDocs(prot);
+        const existeprot = (guardaprot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setProtocolo(existeprot);
+    }
+    console.log('Protocolo por familia',protocolo)
+
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -178,48 +212,6 @@ const IngresoEquiposST = () => {
         setChecked(e.target.checked)
     }
 
-    // // Validar N°serie
-    // const detectarEq = async (e) => {
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-    //     if (e.key === 'Enter' || e.key === 'Tab') {
-    //         // Exite N° serie en equipos   
-    //         const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('serie', '==', serie));
-    //         const serieEq = await getDocs(traerEq);
-    //         const existe = (serieEq.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    //         // Exite ID en equipos
-    //         const traerId = await getDoc(doc(db, 'equipos', serie));
-    //         if (existe.length === 1) {
-    //             almacenar.current = existe;
-    //         } else if (traerId.exists()) {
-    //             const existeId = traerId.data();
-    //             const arreglo = [existeId];
-    //             const existe2 = arreglo.map((doc) => ({ ...doc, id: serie }));
-    //             almacenar.current = existe2;
-    //         } else {
-    //             console.log('almacenar', almacenar.current);
-    //         }
-
-    //         if (almacenar.current.length === 0) {
-    //             cambiarEstadoAlerta(true);
-    //             cambiarAlerta({
-    //                 tipo: 'error',
-    //                 mensaje: 'No existe un Equipo con este N° Serie o Id'
-    //             })
-    //             setOpenModalEq(!openModalEq)
-    //             setNomFamilia('');
-    //             setNomTipo('');
-    //             setNomMarca('');
-    //             setNomModelo('');
-    //         } else {
-    //             setNomFamilia(almacenar.current[0].familia);
-    //             setNomTipo(almacenar.current[0].tipo);
-    //             setNomMarca(almacenar.current[0].marca);
-    //             setNomModelo(almacenar.current[0].modelo);
-    //             // setBtnGuardar(false)
-    //         }
-    //     }
-    // }
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -377,109 +369,6 @@ const IngresoEquiposST = () => {
             setCorreo(correo);
         }
     }
-    // // Guardar Equipo nuevo
-    // const guardarEq = async (e) => {
-    //     e.preventDefault();
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-    //     // setFlag(false);
-
-    //     if (nomFamilia === '' || nomFamilia === 'Selecciona Opción:') {
-    //         console.log(nomFamilia);
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Favor Seleccionar Familia'
-    //         })
-    //     } else if (nomTipo === '' || nomTipo === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Favor Seleccionar Tipo Equipamiento'
-    //         })
-    //     } else if (nomMarca === '' || nomMarca === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Favor Seleccionar Marca'
-    //         })
-    //     } else if (nomModelo === '' || nomModelo === 'Selecciona Opción:') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Favor Seleccionar Modelo'
-    //         })
-    //     } else if (serie === '') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'Favor Ingresar N° Serie'
-    //         })
-    //     } else {
-    //         // try {
-    //         //     //llama a la funcion guardar equipos y status, pasando los props
-    //         //     const ser = serie.trim()
-    //         //     EquipoDb({
-    //         //         familia: nomFamilia,
-    //         //         tipo: nomTipo,
-    //         //         marca: nomMarca,
-    //         //         modelo: nomModelo,
-    //         //         serie: ser,
-    //         //         rfid: rfid,
-    //         //         userAdd: user.email,
-    //         //         userMod: user.email,
-    //         //         fechaAdd: fechaAdd,
-    //         //         fechaMod: fechaMod,
-    //         //         emp_id: users.emp_id,
-    //         //         rut: users.rut,
-    //         //         nomEntidad: users.empresa,
-    //         //         status: 'PREPARACION'
-    //         //     })
-    //         //     cambiarEstadoAlerta(true);
-    //         //     cambiarAlerta({
-    //         //         tipo: 'exito',
-    //         //         mensaje: 'Equipo creado correctamente'
-    //         //     })
-    //         //     setFlag(!flag);
-    //         // } catch (error) {
-    //         //     console.log(error);
-    //         // }
-    //     }
-    // }
-    // Guardar Familia nuevo
-    // const guardarFam = (e) => {
-    //     e.preventDefault();
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-
-    //     if (nomFamilia2 === '') {
-    //         cambiarEstadoAlerta(true);
-    //         cambiarAlerta({
-    //             tipo: 'error',
-    //             mensaje: 'No ha ingresado una Familia'
-    //         })
-    //     } else {
-    //         const fam = nomFamilia2.toLocaleUpperCase().trim()
-    //         AgregarFamiliaDb({
-    //             familia: fam,
-    //             userAdd: user.email,
-    //             userMod: user.email,
-    //             fechaAdd: fechaAdd,
-    //             fechaMod: fechaMod,
-    //             emp_id: users.emp_id
-    //         })
-    //             .then(() => {
-    //                 cambiarEstadoAlerta(true);
-    //                 cambiarAlerta({
-    //                     tipo: 'exito',
-    //                     mensaje: 'Familia Ingresada Correctamente'
-    //                 })
-    //                 setNomFamilia2('');
-    //                 setOpenModalFam(!openModalFam)
-    //             })
-    //     }
-    // }
-
     // Guardar Datos de Cliente en ingreso en coleccion IngresoStCab
     const ingresoCab = async (e) => {
         e.preventDefault();
@@ -669,7 +558,6 @@ const IngresoEquiposST = () => {
                     marca: nomMarca,
                     modelo: nomModelo,
                     serie: serie,
-                    // serie: '',
                     servicio: servicio,
                     userAdd: user.email,
                     userMod: user.email,
@@ -857,67 +745,29 @@ const IngresoEquiposST = () => {
 
             {/* Test de Ingreso */}
             {/* Falta llamar a los test creados categorizados por familia */}
+
             <Contenedor>
                 <Titulo>Test de Ingreso</Titulo>
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Item</Table.HeaderCell>
                             <Table.HeaderCell>Si</Table.HeaderCell>
                             <Table.HeaderCell>No</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>Equipo ¿Enciende?</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>¿Entrega flujo?</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Filtro espuma</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Accesorios</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Trajeta memoria</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Fuente de poder o cable</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Manguera</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Bolso</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Cámara de agua</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Climate control</Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                            <Table.Cell><Input type='checkbox' /></Table.Cell>
-                        </Table.Row>
+                    {protocolo.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.item}</Table.Cell>
+                                    <Table.Cell><Input type='checkbox'/></Table.Cell>
+                                    <Table.Cell><Input type='checkbox'/></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
                     </Table.Body>
                 </Table>
                 <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
@@ -946,6 +796,7 @@ const IngresoEquiposST = () => {
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Date</Table.HeaderCell>
+                            <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Confirmar</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -958,7 +809,9 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>Ingresado</Table.Cell>
                                     <Table.Cell onClick={() => {
+                                        consultarDet(item.id);
                                         setFolio(item.folio);
                                         setRut(item.rut);
                                         fechaDate(item.date)
@@ -1093,28 +946,6 @@ const IngresoEquiposST = () => {
                     </ConfirmaModal>
                 </Overlay>
             )}
-            {/* Modal para crear Equipo */}
-            {/* {openModalFam && (
-                <Overlay>
-                    <ConfirmaModal>
-                        <Titulo>Crear Familia</Titulo>
-                        <BotonCerrar onClick={() => setOpenModalFam(!openModalFam)}><IoIcons.IoMdClose /></BotonCerrar>
-                        <Formulario action='' >
-                            <ContentElemen>
-                                <Label>Familia</Label>
-                                <Input style={{ width: '400px' }} 
-                                    type='text'
-                                    placeholder='Ingrese Familia Equipamiento Médico'
-                                    // name='familia'
-                                    // value={nomFamilia2}
-                                    // onChange={e => setNomFamilia2(e.target.value)}
-                                />
-                            </ContentElemen>
-                        </Formulario>
-                        <BotonGuardar onClick={guardarFam} >Guardar</BotonGuardar>
-                    </ConfirmaModal>
-                </Overlay>
-            )} */}
         </ContenedorProveedor>
     )
 }

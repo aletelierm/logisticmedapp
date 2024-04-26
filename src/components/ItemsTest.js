@@ -7,9 +7,10 @@ import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
+import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { ContentElemenMov, /*Select, Label,*/ ContentElemenSelect, Formulario } from '../elementos/CrearEquipos';
+import { ContentElemenMov, ContentElemenSelect, Formulario } from '../elementos/CrearEquipos';
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, Boton } from '../elementos/General';
 
 const ItemsTest = () => {
@@ -21,9 +22,7 @@ const ItemsTest = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [alerta, cambiarAlerta] = useState({});
     const [item, setItem] = useState('');
-    // const [categoria, setCategoria] = useState('');
     const [leer, setLeer] = useState([]);
-    // const [familia, setFamilia] = useState([]);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
 
@@ -44,14 +43,12 @@ const ItemsTest = () => {
         }
         return 0;
     });
-    // //Leer los datos de Familia
-    // const getFamilia = async () => {
-    //     const traerFam = collection(db, 'familias');
-    //     const dato = query(traerFam, where('emp_id', '==', users.emp_id));
-    //     const data = await getDocs(dato)
-    //     setFamilia(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    // }
-
+    // Cambiar fecha
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+        return formatear;
+    }
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
@@ -71,18 +68,10 @@ const ItemsTest = () => {
                 tipo: 'error',
                 mensaje: 'No ha ingresado un Item'
             })
-        // } else if (categoria.length === 0 || categoria === 'Selecciona Opción:') {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'Seleccione una categoria'
-        //     })
-        //     return;
         } else {
             const it = item.toLocaleUpperCase().trim()
             ItemsTestDb({
                 nombre: it,
-                // categoria: categoria,
                 userAdd: user.email,
                 userMod: user.email,
                 fechaAdd: fechaAdd,
@@ -112,15 +101,10 @@ const ItemsTest = () => {
         // setPagina(0);
         setBuscardor(target.value)
     }
-
     useEffect(() => {
         getData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-    // useEffect(() => {
-    //     getFamilia();
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [])
 
     return (
         <ContenedorProveedor style={{ width: '90%' }}>
@@ -140,17 +124,6 @@ const ItemsTest = () => {
                                 onChange={e => setItem(e.target.value)}
                             />
                         </ContentElemenSelect>
-                        {/* <ContentElemenSelect>
-                            <Label>Categoria</Label>
-                            <Select
-                                value={categoria}
-                                onChange={ev => setCategoria(ev.target.value)}>
-                                <option>Selecciona Opción:</option>
-                                {familia.map((d, index) => {
-                                    return (<option key={index}>{d.familia}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect> */}
                         <Boton onClick={handleSubmit} >
                             <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4', marginTop: '20px' }} />
                         </Boton>
@@ -176,8 +149,8 @@ const ItemsTest = () => {
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Item</Table.HeaderCell>
-                            {/* <Table.HeaderCell>Categoria</Table.HeaderCell> */}
                             <Table.HeaderCell>Agregado por</Table.HeaderCell>
+                            <Table.HeaderCell>Agregado el</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -186,8 +159,8 @@ const ItemsTest = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                                    {/* <Table.Cell>{item.categoria}</Table.Cell> */}
                                     <Table.Cell>{item.useradd}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.fechaadd)}</Table.Cell>
                                 </Table.Row>
                             )
                         })}
