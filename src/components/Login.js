@@ -69,7 +69,7 @@ export default function Login() {
             <img
               height={150}         
               src="../../logo.png" alt="imagen" 
-              style={{width:'60%',marginLeft:'60px'}}
+              style={{width:'50%',height:'25%',marginLeft:'70px'}}
               />
           </Grid>
           </Grid>
