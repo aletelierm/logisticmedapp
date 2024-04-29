@@ -2,13 +2,12 @@ import React, { useState, useEffect /*useRef*/ } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
-// import AgregarFamiliaDb from '../firebase/AgregarFamiliaDb';
 import IngresoStCabDB from '../firebase/IngresoStCabDB';
 import IngresoStDetDB from '../firebase/IngresoStDetDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query /*, doc getDoc*/ } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, getDoc, writeBatch, updateDoc } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
@@ -16,10 +15,9 @@ import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
 import { Servicio } from './TipDoc';
-// import { IoMdAdd } from "react-icons/io";
 import moment from 'moment';
-import { ContenedorProveedor, Contenedor, ListarProveedor, /*Boton*/ Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
-import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, /*, ListarEquipos, Select,*/ TextArea, Select } from '../elementos/CrearEquipos';
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
+import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
 
 const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -55,16 +53,16 @@ const IngresoEquiposST = () => {
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
     const [btnGuardarDet, setBtnGuardarDet] = useState(false);
-    // const [openModalEq, setOpenModalEq] = useState(false);
-    // const [openModalFam, setOpenModalFam] = useState(false);
+    const [btnGuardarTest, setBtnGuardarTest] = useState(false);
+    const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
+    const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
-    // const almacenar = useRef([]);
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -78,7 +76,7 @@ const IngresoEquiposST = () => {
         const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
         const guardaDet = await getDocs(det);
         const existeDet = (guardaDet.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
-        
+
         if (existeDet.length > 0) {
             setNomFamilia(existeDet[0].familia);
             setNomTipo(existeDet[0].tipo);
@@ -177,8 +175,6 @@ const IngresoEquiposST = () => {
         const existeprot = (guardaprot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         setProtocolo(existeprot);
     }
-    console.log('Protocolo por familia',protocolo)
-
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -211,7 +207,13 @@ const IngresoEquiposST = () => {
     const handleChek = (e) => {
         setChecked(e.target.checked)
     }
-
+    const handleButtonClick = (index, buttonId) => {
+        setProtocolo((prevItems) => {
+            const nuevosElementos = [...prevItems];
+            nuevosElementos[index].valor = buttonId;
+            return nuevosElementos;
+        });
+    }
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -489,9 +491,39 @@ const IngresoEquiposST = () => {
                     mensaje: error
                 })
             }
+            // try {
+            //     TestInCabDB({
+            //         folio: folio,
+            //         rut: rut,
+            //         entidad: entidad,
+            //         telefono: telefono,
+            //         direccion: direccion,
+            //         correo: correo,
+            //         date: fechaInSt,
+            //         confirmado: false,
+            //         userAdd: user.email,
+            //         userMod: user.email,
+            //         fechaAdd: fechaAdd,
+            //         fechaMod: fechaMod,
+            //         emp_id: users.emp_id
+            //     })
+            //     setBtnGuardarCab(true);
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'exito',
+            //         mensaje: 'Cabecera Test de Ingreso registrados exitosamente'
+            //     })
+            //     setFlag(!flag);
+            //     return;
+            // } catch (error) {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: error
+            //     })
+            // }
         }
     }
-
     // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
     const ingresoDet = async (e) => {
         e.preventDefault();
@@ -501,7 +533,6 @@ const IngresoEquiposST = () => {
         const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(existeCab)
 
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -559,6 +590,7 @@ const IngresoEquiposST = () => {
                     modelo: nomModelo,
                     serie: serie,
                     servicio: servicio,
+                    observaciones: '',
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -587,6 +619,81 @@ const IngresoEquiposST = () => {
                 })
             }
         }
+    }
+    // Boton Guardar => Funcional
+    const guardarTest = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
+        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
+        const cabecera = await getDocs(cab);
+        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+        const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
+        const detalle = await getDocs(det);
+        const existeDet = (detalle.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log(existeDet[0].id)
+
+        const docCheck = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
+        const docuCheck = await getDocs(docCheck);
+        const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+        if (documenCheck.length === 0) {
+            // Crea una nueva instancia de lote (batch)
+            const batch = writeBatch(db);
+            // Obtiene una referencia a una colección específica en Firestore
+            const bitacoraTestRef = collection(db, 'testingreso');
+            // Itera a través de los nuevos documentos y agrégalos al lote de Checks
+            protocolo.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraTestRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.set(nuevoDocRef, {
+                    id_cab_inst: existeCab[0].id,
+                    folio: existeCab[0].folio,
+                    nombretest: docs.nombre,
+                    familia: docs.familia,
+                    item: docs.item,
+                    item_id: docs.item_id,
+                    valor: docs.valor,
+                    useradd: user.email,
+                    usermod: user.email,
+                    fechaadd: fechaAdd,
+                    fechamod: fechaMod,
+                    emp_id: users.emp_id,
+                });
+            });
+            batch.commit()
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Docuemento creado correctamente.'
+                    });
+                })
+                .catch((error) => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al guardar Test de Ingreso:', error
+                    })
+                })
+        } 
+        try {
+            await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
+                observaciones: obs,
+                usermod: user.email,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error al actualizar Mantencion:', error
+            })
+        }
+        setBtnGuardarTest(true);
+        setBtnConfirmar(false);
     }
 
     useEffect(() => {
@@ -732,7 +839,7 @@ const IngresoEquiposST = () => {
                             <Select
                                 // disabled={confirmar}
                                 value={servicio}
-                                onChange={e => {setServicio(e.target.value)}}>
+                                onChange={e => { setServicio(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {Servicio.map((d) => {
                                     return (<option key={d.key}>{d.text}</option>)
@@ -758,13 +865,23 @@ const IngresoEquiposST = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                    {protocolo.map((item, index) => {
+                        {protocolo.map((item, index) => {
                             return (
                                 <Table.Row key={item.id}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.item}</Table.Cell>
-                                    <Table.Cell><Input type='checkbox'/></Table.Cell>
-                                    <Table.Cell><Input type='checkbox'/></Table.Cell>
+                                    <Table.Cell>
+                                        <Input
+                                            type='checkbox'
+                                            onClick={() => handleButtonClick(index, 'si')}
+                                        />
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <Input
+                                            type='checkbox'
+                                            onClick={() => handleButtonClick(index, 'no')}
+                                        />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -777,11 +894,12 @@ const IngresoEquiposST = () => {
                         type='text'
                         name='descripcion'
                         placeholder='Ingrese observacion o detalles adicionales'
-                    // value={descripcion}
-                    // onChange={e => setDescripcion(e.target.value)}
+                        value={obs}
+                        onChange={e => setObs(e.target.value)}
                     />
                 </ContentElemenMov>
-                <BotonGuardar>Guardar</BotonGuardar>
+                <BotonGuardar disabled={btnGuardarTest} onClick={guardarTest}>Guardar</BotonGuardar>
+                <BotonGuardar disabled={btnConfirmar} /*onClick={guardarTest}*/>Confirmar</BotonGuardar>
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
