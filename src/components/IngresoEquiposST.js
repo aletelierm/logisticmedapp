@@ -1,4 +1,4 @@
-import React, { useState, useEffect /*useRef*/ } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components';
 import Alertas from './Alertas';
 import AgregarClientesDb from '../firebase/AgregarClientesDb';
@@ -16,6 +16,7 @@ import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
 import { Servicio } from './TipDoc';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
 
@@ -63,6 +64,7 @@ const IngresoEquiposST = () => {
     const [servicio, setServicio] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
+    const checktest = useRef([]);
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -85,11 +87,11 @@ const IngresoEquiposST = () => {
             setSerie(existeDet[0].serie);
             setServicio(existeDet[0].servicio);
             setObs(existeDet[0].observaciones);
-            if (item.enproceso ===  1) {
-                consultarTest(item.id)
-            } else {
-                consultarprot(existeDet[0].familia);
-            }
+            consultarprot(existeDet[0].familia);
+            // if (item.enproceso === 1) {
+            //     consultarTest(item.id)
+            // } else {
+            // }
         } else {
             setNomFamilia('');
             setNomTipo('');
@@ -178,7 +180,7 @@ const IngresoEquiposST = () => {
     const consultarprot = async (fam) => {
         const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam));
         const guardaprot = await getDocs(prot);
-        const existeprot = (guardaprot.docs.map((doc) => ({ ...doc.data(), id: doc.id, valorsi: false, valorno: false })))
+        const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
         setProtocolo(existeprot);
     }
     // Filtar por docuemto Test de Ingreso 
@@ -223,17 +225,17 @@ const IngresoEquiposST = () => {
     const handleButtonClick = (itemId, option) => {
         const updatedProt = protocolo.map(item => {
             if (item.id === itemId) {
-            return {
-                ...item,
-                valorsi: option === 'opcion1' ? true : false, 
-                valorno: option === 'opcion2' ? true : false
+                return {
+                    ...item,
+                    valorsi: option === 'opcion1' ? true : false,
+                    valorno: option === 'opcion2' ? true : false
+                }
             }
-        }
-        return item;
+            return item;
         })
         setProtocolo(updatedProt)
     };
-console.log('protocolo', protocolo)
+
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -483,7 +485,7 @@ console.log('protocolo', protocolo)
                     correo: correo,
                     date: fechaInSt,
                     confirmado: false,
-                    estado: 'porconfirmar',
+                    estado: 'POR CONFIRMAR',
                     enproceso: 0,
                     userAdd: user.email,
                     userMod: user.email,
@@ -656,11 +658,28 @@ console.log('protocolo', protocolo)
         const detalle = await getDocs(det);
         const existeDet = (detalle.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-        const docCheck = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
-        const docuCheck = await getDocs(docCheck);
-        const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // const docCheck = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
+        // const docuCheck = await getDocs(docCheck);
+        // const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log('protocolo', protocolo)
+        protocolo.forEach((docs, index) => {
+            checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
+        });
+        console.log('checktest.current', checktest.current)
 
-        if (documenCheck.length === 0) {
+        if (checktest.current.length > 0) {
+            Swal.fire(`Item ${checktest.current.map((i) => {
+                return i.id2;
+            })} deben estar seleccionados.`);
+        } else if (obs === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Observaciones no puede estar vacio'
+            })
+            return;
+        } else {
+            // if (documenCheck.length === 0) {
             // Crea una nueva instancia de lote (batch)
             const batch = writeBatch(db);
             // Obtiene una referencia a una colección específica en Firestore
@@ -699,35 +718,37 @@ console.log('protocolo', protocolo)
                         mensaje: 'Error al guardar Test de Ingreso:', error
                     })
                 })
-        } 
-        try {
-            await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
-                enproceso: 1,
-                usermod: user.email,
-                fechamod: fechaMod
-            });
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al actualizar cabecera de Ingreso:', error
-            })
+
+            try {
+                await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
+                    observaciones: obs,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar detalle de Ingreso:', error
+                })
+            }
+            try {
+                await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
+                    confirmado: true,
+                    estado: 'INGRESADO',
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar cabecera de Ingreso:', error
+                })
+            }
         }
-        try {
-            await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
-                observaciones: obs,
-                usermod: user.email,
-                fechamod: fechaMod
-            });
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al actualizar detalle de Ingreso:', error
-            })
-        }
-        setBtnGuardarTest(true);
-        setBtnConfirmar(false);
+        // setBtnGuardarTest(true);
+        // setBtnConfirmar(false);
     }
 
     useEffect(() => {
@@ -860,7 +881,7 @@ console.log('protocolo', protocolo)
                         <ContentElemenSelect>
                             <Label>N° Serie</Label>
                             <Input
-                            disabled={confirmar}
+                                disabled={confirmar}
                                 type='text'
                                 placeholder='Ingrese N° Serie'
                                 name='serie'
@@ -919,7 +940,7 @@ console.log('protocolo', protocolo)
                                             type='checkbox'
                                             checked={item.valorno}
                                             onChange={() => handleButtonClick(item.id, 'opcion2')}
-                                            
+
                                         />
                                     </Table.Cell>
                                 </Table.Row>
@@ -938,8 +959,8 @@ console.log('protocolo', protocolo)
                         onChange={e => setObs(e.target.value)}
                     />
                 </ContentElemenMov>
-                <BotonGuardar disabled={btnGuardarTest} onClick={guardarTest}>Guardar</BotonGuardar>
-                <BotonGuardar disabled={btnConfirmar} /*onClick={guardarTest}*/>Confirmar</BotonGuardar>
+                <BotonGuardar disabled={btnGuardarTest} onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
+                {/* <BotonGuardar disabled={btnConfirmar} onClick={guardarTest}>Confirmar</BotonGuardar> */}
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
@@ -981,7 +1002,7 @@ console.log('protocolo', protocolo)
                                         setBtnGuardarCab(true);
                                         // setBtnConfirmar(false)
                                         setFlag(!flag)
-                                        
+
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
