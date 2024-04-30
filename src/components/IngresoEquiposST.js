@@ -7,7 +7,7 @@ import IngresoStDetDB from '../firebase/IngresoStDetDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, doc, getDoc, writeBatch, updateDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, /*getDoc,*/ writeBatch, updateDoc } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
@@ -72,8 +72,8 @@ const IngresoEquiposST = () => {
         setCabecera(existeCab);
     }
     // Filtar por docuemto de Cabecera
-    const consultarDet = async (id) => {
-        const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+    const consultarDet = async (item) => {
+        const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', item.id));
         const guardaDet = await getDocs(det);
         const existeDet = (guardaDet.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
 
@@ -84,7 +84,12 @@ const IngresoEquiposST = () => {
             setNomModelo(existeDet[0].modelo);
             setSerie(existeDet[0].serie);
             setServicio(existeDet[0].servicio);
-            consultarprot(existeDet[0].familia);
+            setObs(existeDet[0].observaciones);
+            if (item.enproceso ===  1) {
+                consultarTest(item.id)
+            } else {
+                consultarprot(existeDet[0].familia);
+            }
         } else {
             setNomFamilia('');
             setNomTipo('');
@@ -92,6 +97,7 @@ const IngresoEquiposST = () => {
             setNomModelo('');
             setSerie('');
             setServicio('');
+            setObs('');
         }
     }
     //Leer los datos de Familia
@@ -168,12 +174,19 @@ const IngresoEquiposST = () => {
         return 0;
     });
 
-    // Filtar por docuemto de Cabecera
+    // Filtar por docuemto de protoolo
     const consultarprot = async (fam) => {
         const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam));
         const guardaprot = await getDocs(prot);
-        const existeprot = (guardaprot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        const existeprot = (guardaprot.docs.map((doc) => ({ ...doc.data(), id: doc.id, valorsi: false, valorno: false })))
         setProtocolo(existeprot);
+    }
+    // Filtar por docuemto Test de Ingreso 
+    const consultarTest = async (id) => {
+        const test = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+        const guardaTest = await getDocs(test);
+        const existeTest = (guardaTest.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setProtocolo(existeTest);
     }
     // Validar rut
     const detectarCli = async (e) => {
@@ -207,13 +220,20 @@ const IngresoEquiposST = () => {
     const handleChek = (e) => {
         setChecked(e.target.checked)
     }
-    const handleButtonClick = (index, buttonId) => {
-        setProtocolo((prevItems) => {
-            const nuevosElementos = [...prevItems];
-            nuevosElementos[index].valor = buttonId;
-            return nuevosElementos;
-        });
-    }
+    const handleButtonClick = (itemId, option) => {
+        const updatedProt = protocolo.map(item => {
+            if (item.id === itemId) {
+            return {
+                ...item,
+                valorsi: option === 'opcion1' ? true : false, 
+                valorno: option === 'opcion2' ? true : false
+            }
+        }
+        return item;
+        })
+        setProtocolo(updatedProt)
+    };
+console.log('protocolo', protocolo)
     const comunasxRegion = Regiones.find((option) => option.region === region).comunas
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -463,6 +483,8 @@ const IngresoEquiposST = () => {
                     correo: correo,
                     date: fechaInSt,
                     confirmado: false,
+                    estado: 'porconfirmar',
+                    enproceso: 0,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -583,7 +605,6 @@ const IngresoEquiposST = () => {
                     folio: folio,
                     rut: rut,
                     date: existeCab[0].date,
-                    id_test: '',
                     familia: nomFamilia,
                     tipo: nomTipo,
                     marca: nomMarca,
@@ -634,7 +655,6 @@ const IngresoEquiposST = () => {
         const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
         const detalle = await getDocs(det);
         const existeDet = (detalle.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(existeDet[0].id)
 
         const docCheck = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
         const docuCheck = await getDocs(docCheck);
@@ -655,7 +675,8 @@ const IngresoEquiposST = () => {
                     familia: docs.familia,
                     item: docs.item,
                     item_id: docs.item_id,
-                    valor: docs.valor,
+                    valorsi: docs.valorsi,
+                    valorno: docs.valorno,
                     useradd: user.email,
                     usermod: user.email,
                     fechaadd: fechaAdd,
@@ -680,6 +701,19 @@ const IngresoEquiposST = () => {
                 })
         } 
         try {
+            await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
+                enproceso: 1,
+                usermod: user.email,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error al actualizar cabecera de Ingreso:', error
+            })
+        }
+        try {
             await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
                 observaciones: obs,
                 usermod: user.email,
@@ -689,7 +723,7 @@ const IngresoEquiposST = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Error al actualizar Mantencion:', error
+                mensaje: 'Error al actualizar detalle de Ingreso:', error
             })
         }
         setBtnGuardarTest(true);
@@ -787,7 +821,7 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Familia</Label>
-                            <Select value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
+                            <Select disabled={confirmar} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {familia.map((d) => {
                                     return (<option key={d.id}>{d.familia}</option>)
@@ -796,7 +830,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Tipo Equipamiento</Label>
-                            <Select value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
+                            <Select disabled={confirmar} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {tipo.map((d) => {
                                     return (<option key={d.id}>{d.tipo}</option>)
@@ -805,7 +839,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Marca</Label>
-                            <Select value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
+                            <Select disabled={confirmar} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {marca.map((d) => {
                                     return (<option key={d.id}>{d.marca}</option>)
@@ -816,7 +850,7 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Modelo</Label>
-                            <Select value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
+                            <Select disabled={confirmar} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {modelo.map((d) => {
                                     return (<option key={d.id}>{d.modelo}</option>)
@@ -826,6 +860,7 @@ const IngresoEquiposST = () => {
                         <ContentElemenSelect>
                             <Label>N° Serie</Label>
                             <Input
+                            disabled={confirmar}
                                 type='text'
                                 placeholder='Ingrese N° Serie'
                                 name='serie'
@@ -837,7 +872,7 @@ const IngresoEquiposST = () => {
                         <ContentElemenSelect>
                             <Label>Tipo de Servicio</Label>
                             <Select
-                                // disabled={confirmar}
+                                disabled={confirmar}
                                 value={servicio}
                                 onChange={e => { setServicio(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
@@ -873,13 +908,18 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>
                                         <Input
                                             type='checkbox'
-                                            onClick={() => handleButtonClick(index, 'si')}
+                                            checked={item.valorsi}
+                                            // onChange={() => handleButtonClick(index, true, false)}
+                                            // onChange={() => handleButtonClick(index, true, false, 'opcion1')}
+                                            onChange={() => handleButtonClick(item.id, 'opcion1')}
                                         />
                                     </Table.Cell>
                                     <Table.Cell>
                                         <Input
                                             type='checkbox'
-                                            onClick={() => handleButtonClick(index, 'no')}
+                                            checked={item.valorno}
+                                            onChange={() => handleButtonClick(item.id, 'opcion2')}
+                                            
                                         />
                                     </Table.Cell>
                                 </Table.Row>
@@ -928,7 +968,8 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>Ingresado</Table.Cell>
                                     <Table.Cell onClick={() => {
-                                        consultarDet(item.id);
+                                        consultarDet(item);
+                                        // consultarTest(item.enproceso)
                                         setFolio(item.folio);
                                         setRut(item.rut);
                                         fechaDate(item.date)
@@ -940,6 +981,7 @@ const IngresoEquiposST = () => {
                                         setBtnGuardarCab(true);
                                         // setBtnConfirmar(false)
                                         setFlag(!flag)
+                                        
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
