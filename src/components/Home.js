@@ -47,6 +47,7 @@ import IngresoEquiposST from './IngresoEquiposST';
 import TestIngreso from './TestIngreso';
 import ItemsTest from './ItemsTest';
 import ProtocolosTest from './ProtocolosTest';
+import IngresoEquiposSTPDF from './IngresoEquiposSTPDF';
 
 export const Home = () => {
   return (
@@ -90,7 +91,8 @@ export const Home = () => {
             <Route path="actualizaproveedor/:id" element={<ActualizaProveedor/>}/>
             <Route path="actualizacliente/:id" element={<ActualizaCliente/>}/>
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>        
-            <Route path="serviciotecnico/ingreso" element={<IngresoEquiposST/>}/>        
+            <Route path="serviciotecnico/ingreso" element={<IngresoEquiposST/>}/> 
+            <Route path="ingresopdf/:id" element={<IngresoEquiposSTPDF/>}/>       
             <Route path="serviciotecnico/testingreso" element={<TestIngreso/>}/>        
             <Route path="serviciotecnico/itemstest" element={<ItemsTest/>}/>        
             <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>        

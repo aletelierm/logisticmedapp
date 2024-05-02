@@ -14,7 +14,9 @@ import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
+import { FaRegFilePdf } from "react-icons/fa";
 import { Servicio } from './TipDoc';
+import { useNavigate } from "react-router-dom";
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
@@ -24,6 +26,7 @@ const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
+    const navigate = useNavigate();
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -684,6 +687,10 @@ const IngresoEquiposST = () => {
                     mensaje: 'Error al actualizar cabecera de Ingreso:', error
                 })
             }
+            // navigate(`/ingresopdf/${existeCab[0].id}`)
+            // return (
+            //     <a to={`/ingresopdf/${existeCab[0].id}`}></a>
+            // );
         }
     }
 

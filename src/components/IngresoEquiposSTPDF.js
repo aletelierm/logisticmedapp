@@ -3,70 +3,84 @@ import generatePDF from 'react-to-pdf'
 import { db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
-import useObtenerBitacora from '../hooks/useObtenerBitacora';
+import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react';
 import { ContenedorProveedor, Titulo, Subtitulo, BotonGuardar } from '../elementos/General';
+import { ContentElemenMov, ContentElemenSelect, Input, Label, TextArea } from '../elementos/CrearEquipos';
 import moment from 'moment';
 
-const CheckMantoPDF = () => {
+const IngresoEquiposSTPDF = () => {
     //fecha hoy
     // const fechaHoy = new Date();
     const { users } = useContext(UserContext);
 
     const navigate = useNavigate();
     const { id } = useParams();
-    const [bitacora] = useObtenerBitacora(id);
+    const [ingreso] = useObtenerIngreso(id);
 
-    const [itemsCheck, setItemsCheck] = useState([]);
-    const [itemsMedicion, setItemsMedicion] = useState([]);
-    const [itemsSeg, setItemsSeg] = useState([]);
-    const [nombreProtocolo, setNombreProtocolo] = useState('');
+    const [detalle, setDetalle] = useState([]);
+    const [test, setTest] = useState([]);
+    // const [itemsSeg, setItemsSeg] = useState([]);
+    const [folio, setFolio] = useState('');
+    const [rut, setRut] = useState('');
+    const [entidad, setEntidad] = useState('');
+    const [date, setDate] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [direccion, setDireccion] = useState('');
+    const [correo, setCorreo] = useState('');
     const [familia, setFamilia] = useState('');
     const [tipo, setTipo] = useState('');
+    const [marca, setMarca] = useState('');
+    const [modelo, setModelo] = useState('');
     const [serie, setSerie] = useState('');
-    const [fechaManto, setFechaManto] = useState(null);
+    const [servicio, setServicio] = useState('');
+    const [obs, setObs] = useState('');
+
     const targetRef = useRef();
     // const bitacoraCab = useRef(0);
 
-    console.log(itemsSeg);
-    console.log(familia);
-
     const volver = () => {
-        navigate('/serviciotecnico/bitacora')
+        navigate('/serviciotecnico/ingreso')
     }
 
     useEffect(() => {
-        if (bitacora) {
+        if (ingreso) {
             // bitacoraCab.current = bitacora.id
-            setNombreProtocolo(bitacora.nombre_protocolo);
-            setFamilia(bitacora.familia);
-            setTipo(bitacora.tipo);
-            setSerie(bitacora.serie);
-            console.log('bitacora.fecha', bitacora.fecha_mantencion)
-            setFechaManto(bitacora.fecha_mantencion);
+            setFolio(ingreso.folio);
+            setRut(ingreso.rut);
+            setEntidad(ingreso.entidad);
+            setDate(ingreso.date);
+            setTelefono(ingreso.telefono);
+            setDireccion(ingreso.direccion);
+            setCorreo(ingreso.correo);
         } else {
-            navigate('/serviciotecnico/bitacora')
+            navigate('/serviciotecnico/ingreso')
         }
-    }, [bitacora, navigate])
+    }, [ingreso, navigate])
 
+    // Detalle de Ingreso de equipo
+    const consultarIngresosDet = async () => {
+        const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+        const deta = await getDocs(det);
+        const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setDetalle(existeDet);
+
+        setFamilia(existeDet[0].familia);
+        setTipo(existeDet[0].tipo);
+        setMarca(existeDet[0].marca);
+        setModelo(existeDet[0].modelo);
+        setSerie(existeDet[0].serie);
+        setServicio(existeDet[0].servicio);
+        setObs(existeDet[0].observaciones);
+    }
     // Detalle de Bitacoras por categoria
-    const consultarBitacoras = async () => {
-        const docCheck = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', id), where('categoria', '==', 'CHECK'));
-        const docuCheck = await getDocs(docCheck);
-        const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setItemsCheck(documenCheck);
-
-        const docLlen = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', id), where('categoria', '==', 'MEDICION'));
-        const docuLlen = await getDocs(docLlen);
-        const documenLlen = (docuLlen.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setItemsMedicion(documenLlen);
-
-        const docSel = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', id), where('categoria', '==', 'SEGURIDAD'));
-        const docuSel = await getDocs(docSel);
-        const documenSel = (docuSel.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setItemsSeg(documenSel);
+    const consultarTest = async () => {
+        const test = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+        const testIn = await getDocs(test);
+        const existeTest = (testIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setTest(existeTest);
     }
 
     // Cambiar fecha
@@ -93,7 +107,8 @@ const CheckMantoPDF = () => {
 
 
     useEffect(() => {
-        consultarBitacoras();
+        consultarIngresosDet();
+        consultarTest();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -102,120 +117,109 @@ const CheckMantoPDF = () => {
             <ContenedorProveedor>
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
                     {/* <Contenedor> */}
-                    <Titulo style={{fontSize: '20px'}}>{nombreProtocolo}</Titulo>
+                    <Titulo style={{ fontSize: '20px' }}>Orden de Ingreso</Titulo>
                     {/* </Contenedor> */}
 
-                    {/* <ListarProveedor > */}
-                    {/* Contenido del cliente */}
-                    <Subtitulo style={{fontSize: '16px'}}>Identificacion del equipo Médicos</Subtitulo>
-                    <Table singleLine style={{fontSize: '10px', lineHeight: '10px'}}>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Cliente</Table.HeaderCell>
-                                <Table.HeaderCell>Tipo de equipo</Table.HeaderCell>
-                                <Table.HeaderCell>Marca</Table.HeaderCell>
-                                <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                <Table.HeaderCell>N° Serie</Table.HeaderCell>
-                                <Table.HeaderCell>Fecha de Revision</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            <Table.Row >
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{users.empresa}</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{tipo}</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Marca</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >Modelo</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{serie}</Table.Cell>
-                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{fechaManto ? formatearFecha(fechaManto) : '00/00/00 00:00'}</Table.Cell>
-                            </Table.Row>
-                        </Table.Body>
-                    </Table>
-                    {/* </ListarProveedor> */}
+                    {/* Informacion Cliente */}
+                    <Subtitulo style={{ fontSize: '16px' }}>Informacion Cliente</Subtitulo>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Folio</Label>
+                            <Input disabled value={folio} />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Rut</Label>
+                            <Input disabled value={rut} />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Nombre</Label>
+                            <Input value={entidad} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Fecha de Ingreso</Label>
+                            <Input disabled value={date} />
+                        </ContentElemenSelect>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Telefono</Label>
+                            <Input value={telefono} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Dirección</Label>
+                            <Input value={direccion} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Email</Label>
+                            <Input value={correo} disabled />
+                        </ContentElemenSelect>
+                    </ContentElemenMov>
 
-                    {/* <ListarProveedor> */}
-                    {/* Detalle de bitacora Checks */}
-                    <Subtitulo style={{fontSize: '16px'}}>Protocolo de Mantencion</Subtitulo>
-                    <Table singleLine style={{fontSize: '10px',lineHeight: '10px'}}>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>N°</Table.HeaderCell>
-                                <Table.HeaderCell>item</Table.HeaderCell>
-                                <Table.HeaderCell>Resultado</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {itemsCheck.map((item, index) => {
-                                return (
-                                    <Table.Row key={index}>
-                                        <Table.Cell>{index + 1}</Table.Cell>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }} >{item.item}</Table.Cell>
-                                        <Table.Cell style={{ textAlign: 'center' }} >{item.valor}</Table.Cell>
-                                    </Table.Row>
-                                )
-                            })}
+                    {/* Informacion Equipo */}
+                    <Subtitulo style={{ fontSize: '16px' }}>Protocolo de Mantencion</Subtitulo>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Familia</Label>
+                            <Input value={familia} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Tipo Equipamiento</Label>
+                            <Input value={tipo} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Marca</Label>
+                            <Input value={marca} disabled />
+                        </ContentElemenSelect>
+                    </ContentElemenMov>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Modelo</Label>
+                            <Input value={modelo} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>N° Serie</Label>
+                            <Input value={serie} disabled />
+                        </ContentElemenSelect>
+                        <ContentElemenSelect>
+                            <Label>Tipo de Servicio</Label>
+                            <Input value={servicio} disabled />
+                        </ContentElemenSelect>
+                    </ContentElemenMov>
 
-                        </Table.Body>
-                    </Table>
-                    <p>** Pruebas realiadas con Pulmón artificial, IMTMEDICAL EASYLUNG **</p>
-                    {/* </ListarProveedor> */}
-
-                    {/* <ListarProveedor> */}
-                    {/* Detalle de bitacora Tabla de presion */}
-                    <Subtitulo style={{fontSize: '16px'}}>Test de Presión</Subtitulo>
-                    <Table singleLine style={{fontSize: '10px', lineHeight: '10px'}}>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Item</Table.HeaderCell>
-                                <Table.HeaderCell>Medicion</Table.HeaderCell>
-                                <Table.HeaderCell>Rango Ref.</Table.HeaderCell>
-                                <Table.HeaderCell>Test</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {itemsMedicion.map((item, index) => {
-                                return (
-                                    <Table.Row key={index}>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                                        <Table.Cell  >{item.valor}</Table.Cell>
-                                        <Table.Cell>Por definir</Table.Cell>
-                                        <Table.Cell>Por definir</Table.Cell>
-                                    </Table.Row>
-                                )
-                            })}
-                        </Table.Body>
-                    </Table>
-
-                    <Table singleLine style={{fontSize: '10px', lineHeight: '10px'}}>
+                    {/* Test Ingreso */}
+                    <Subtitulo style={{ fontSize: '16px' }}>Test de Presión</Subtitulo>
+                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>Item</Table.HeaderCell>
-                                <Table.HeaderCell>Medicion</Table.HeaderCell>
+                                <Table.HeaderCell>Si</Table.HeaderCell>
+                                <Table.HeaderCell>No</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {itemsSeg.map((item, index) => {
+                            {test.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                                        <Table.Cell  >{item.valor}</Table.Cell>
+                                        <Table.Cell  >{item.valorsi}</Table.Cell>
+                                        <Table.Cell>{item.valorno}</Table.Cell>
                                     </Table.Row>
                                 )
                             })}
                         </Table.Body>
                     </Table>
-                    <p>** Medición efectuada con flujometro digital CITREX H4 IMTMEDICAL **</p>
-                    {/* </ListarProveedor> */}
+                    <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
+                        <Label>Observaciones</Label>
+                        <TextArea style={{ width: '80%', height: '60px' }} value={obs} disabled />
+                    </ContentElemenMov>
 
-                    {/* <Contenedor> */}
-                    <div style={{fontSize: '10px', lineHeight: '10px'}}>
-                    <h3>Tecnico: {users.nombre + ' ' + users.apellido}</h3>
-                    <h4>SERVICIO TÉCNICO</h4>
-                    <p>soporte@dormirbien.cl</p>
-                    <p>General Parra #674 Oficina H, Providencia</p>
-                    <p>+569 59505300</p>
+                    <div style={{ fontSize: '10px', lineHeight: '10px' }}>
+                        <h3>Tecnico: {users.nombre + ' ' + users.apellido}</h3>
+                        <h4>SERVICIO TÉCNICO</h4>
+                        <p>soporte@dormirbien.cl</p>
+                        <p>General Parra #674 Oficina H, Providencia</p>
+                        <p>+569 59505300</p>
                     </div>
-                    {/* </Contenedor> */}
-
                 </ContenedorProveedor>
 
                 <div>
@@ -227,4 +231,4 @@ const CheckMantoPDF = () => {
     );
 }
 
-export default CheckMantoPDF;
+export default IngresoEquiposSTPDF;
