@@ -8,7 +8,7 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react';
 import { ContenedorProveedor, Titulo, Subtitulo, BotonGuardar } from '../elementos/General';
-import { ContentElemenMov, ContentElemenSelect, Input, Label, TextArea } from '../elementos/CrearEquipos';
+import { Input } from '../elementos/CrearEquipos';
 import moment from 'moment';
 
 const IngresoEquiposSTPDF = () => {
@@ -30,12 +30,6 @@ const IngresoEquiposSTPDF = () => {
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
     const [correo, setCorreo] = useState('');
-    const [familia, setFamilia] = useState('');
-    const [tipo, setTipo] = useState('');
-    const [marca, setMarca] = useState('');
-    const [modelo, setModelo] = useState('');
-    const [serie, setSerie] = useState('');
-    const [servicio, setServicio] = useState('');
     const [obs, setObs] = useState('');
 
     const targetRef = useRef();
@@ -55,6 +49,7 @@ const IngresoEquiposSTPDF = () => {
             setTelefono(ingreso.telefono);
             setDireccion(ingreso.direccion);
             setCorreo(ingreso.correo);
+            setObs(ingreso.observaciones);
         } else {
             navigate('/serviciotecnico/ingreso')
         }
@@ -66,15 +61,6 @@ const IngresoEquiposSTPDF = () => {
         const deta = await getDocs(det);
         const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setDetalle(existeDet);
-        console.log(detalle)
-
-        setFamilia(detalle[0].familia);
-        setTipo(detalle[0].tipo);
-        setMarca(detalle[0].marca);
-        setModelo(detalle[0].modelo);
-        setSerie(detalle[0].serie);
-        setServicio(detalle[0].servicio);
-        setObs(detalle[0].observaciones);
     }
     // Detalle de Bitacoras por categoria
     const consultarTest = async () => {
