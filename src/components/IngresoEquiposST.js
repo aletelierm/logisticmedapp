@@ -14,9 +14,9 @@ import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
-import { FaRegFilePdf } from "react-icons/fa";
+// import { FaRegFilePdf } from "react-icons/fa";
 import { Servicio } from './TipDoc';
-import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
@@ -26,7 +26,7 @@ const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
@@ -65,7 +65,10 @@ const IngresoEquiposST = () => {
     const [servicio, setServicio] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
+    const [openPdf, SetOpenPdf] = useState(false);
     const checktest = useRef([]);
+    const id = useRef('');
+
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -600,6 +603,7 @@ const IngresoEquiposST = () => {
         const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        id.current = existeCab[0].id;
 
         const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
         const detalle = await getDocs(det);
@@ -608,6 +612,7 @@ const IngresoEquiposST = () => {
         protocolo.forEach((docs, index) => {
             checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
         });
+
 
         if (checktest.current.length > 0) {
             Swal.fire(`Item ${checktest.current.map((i) => {
@@ -687,6 +692,7 @@ const IngresoEquiposST = () => {
                     mensaje: 'Error al actualizar cabecera de Ingreso:', error
                 })
             }
+            SetOpenPdf(true);
             // navigate(`/ingresopdf/${existeCab[0].id}`)
             // return (
             //     <a to={`/ingresopdf/${existeCab[0].id}`}></a>
@@ -897,6 +903,9 @@ const IngresoEquiposST = () => {
                     />
                 </ContentElemenMov>
                 <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
+                { openPdf && (
+                    <BotonGuardar><Link to={`/ingresopdf/${id.current}`}>Ver PDF</Link></BotonGuardar>
+                )}
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}

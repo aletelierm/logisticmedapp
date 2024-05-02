@@ -66,14 +66,15 @@ const IngresoEquiposSTPDF = () => {
         const deta = await getDocs(det);
         const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setDetalle(existeDet);
+        console.log(detalle)
 
-        setFamilia(existeDet[0].familia);
-        setTipo(existeDet[0].tipo);
-        setMarca(existeDet[0].marca);
-        setModelo(existeDet[0].modelo);
-        setSerie(existeDet[0].serie);
-        setServicio(existeDet[0].servicio);
-        setObs(existeDet[0].observaciones);
+        setFamilia(detalle[0].familia);
+        setTipo(detalle[0].tipo);
+        setMarca(detalle[0].marca);
+        setModelo(detalle[0].modelo);
+        setSerie(detalle[0].serie);
+        setServicio(detalle[0].servicio);
+        setObs(detalle[0].observaciones);
     }
     // Detalle de Bitacoras por categoria
     const consultarTest = async () => {
@@ -122,72 +123,62 @@ const IngresoEquiposSTPDF = () => {
 
                     {/* Informacion Cliente */}
                     <Subtitulo style={{ fontSize: '16px' }}>Informacion Cliente</Subtitulo>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Folio</Label>
-                            <Input disabled value={folio} />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Rut</Label>
-                            <Input disabled value={rut} />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Nombre</Label>
-                            <Input value={entidad} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Fecha de Ingreso</Label>
-                            <Input disabled value={date} />
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Telefono</Label>
-                            <Input value={telefono} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Dirección</Label>
-                            <Input value={direccion} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Email</Label>
-                            <Input value={correo} disabled />
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
+                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Folio</Table.HeaderCell>
+                                <Table.HeaderCell>Rut</Table.HeaderCell>
+                                <Table.HeaderCell>Nombre</Table.HeaderCell>
+                                <Table.HeaderCell>Fecha</Table.HeaderCell>
+                                <Table.HeaderCell>Telefono</Table.HeaderCell>
+                                <Table.HeaderCell>Dirección</Table.HeaderCell>
+                                <Table.HeaderCell>Email</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            <Table.Row>
+                                <Table.Cell>{folio}</Table.Cell>
+                                <Table.Cell>{rut}</Table.Cell>
+                                <Table.Cell>{entidad}</Table.Cell>
+                                <Table.Cell>{formatearFecha(date)}</Table.Cell>
+                                <Table.Cell>{telefono}</Table.Cell>
+                                <Table.Cell>{direccion}</Table.Cell>
+                                <Table.Cell>{correo}</Table.Cell>
+                            </Table.Row>
+                        </Table.Body>
+                    </Table>
 
                     {/* Informacion Equipo */}
-                    <Subtitulo style={{ fontSize: '16px' }}>Protocolo de Mantencion</Subtitulo>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Familia</Label>
-                            <Input value={familia} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Tipo Equipamiento</Label>
-                            <Input value={tipo} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Marca</Label>
-                            <Input value={marca} disabled />
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Modelo</Label>
-                            <Input value={modelo} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>N° Serie</Label>
-                            <Input value={serie} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Tipo de Servicio</Label>
-                            <Input value={servicio} disabled />
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
+                    <Subtitulo style={{ fontSize: '16px' }}>Informacion Equipo</Subtitulo>
+                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Familia</Table.HeaderCell>
+                                <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                                <Table.HeaderCell>Marca</Table.HeaderCell>
+                                <Table.HeaderCell>Modelo</Table.HeaderCell>
+                                <Table.HeaderCell>Serie</Table.HeaderCell>
+                                <Table.HeaderCell>Servicio</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {detalle.map((item, index) => {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell >{item.familia}</Table.Cell>
+                                        <Table.Cell  >{item.tipo}</Table.Cell>
+                                        <Table.Cell>{item.marca}</Table.Cell>
+                                        <Table.Cell>{item.modelo}</Table.Cell>
+                                        <Table.Cell>{item.serie}</Table.Cell>
+                                        <Table.Cell>{item.servicio}</Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
+                        </Table.Body>
+                    </Table>
 
                     {/* Test Ingreso */}
-                    <Subtitulo style={{ fontSize: '16px' }}>Test de Presión</Subtitulo>
+                    <Subtitulo style={{ fontSize: '16px' }}>Test de Ingreso</Subtitulo>
                     <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
                         <Table.Header>
                             <Table.Row>
@@ -201,17 +192,30 @@ const IngresoEquiposSTPDF = () => {
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                                        <Table.Cell  >{item.valorsi}</Table.Cell>
-                                        <Table.Cell>{item.valorno}</Table.Cell>
+                                        <Table.Cell><Input type='checkbox' checked={item.valorsi}></Input></Table.Cell>
+                                        <Table.Cell><Input type='checkbox' checked={item.valorno}></Input></Table.Cell>
                                     </Table.Row>
                                 )
                             })}
                         </Table.Body>
                     </Table>
-                    <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
-                        <Label>Observaciones</Label>
-                        <TextArea style={{ width: '80%', height: '60px' }} value={obs} disabled />
-                    </ContentElemenMov>
+
+                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Observaciones</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {detalle.map((item, index) => {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{obs}</Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
+                        </Table.Body>
+                    </Table>
 
                     <div style={{ fontSize: '10px', lineHeight: '10px' }}>
                         <h3>Tecnico: {users.nombre + ' ' + users.apellido}</h3>
