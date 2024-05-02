@@ -7,7 +7,7 @@ import IngresoStDetDB from '../firebase/IngresoStDetDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, doc, /*getDoc,*/ writeBatch, updateDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, writeBatch, updateDoc } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
@@ -30,7 +30,6 @@ const IngresoEquiposST = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [cabecera, setCabecera] = useState([]);
-    // const [detalle, setDetalle] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
@@ -55,8 +54,6 @@ const IngresoEquiposST = () => {
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
     const [btnGuardarDet, setBtnGuardarDet] = useState(false);
-    // const [btnGuardarTest, setBtnGuardarTest] = useState(false);
-    // const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
@@ -90,10 +87,6 @@ const IngresoEquiposST = () => {
             setObs(existeDet[0].observaciones);
             consultarprot(existeDet[0].familia);
             setConfirmarDet(true);
-            // if (item.enproceso === 1) {
-            //     consultarTest(item.id)
-            // } else {
-            // }
         } else {
             setNomFamilia('');
             setNomTipo('');
@@ -110,28 +103,28 @@ const IngresoEquiposST = () => {
         const traerFam = collection(db, 'familias');
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setFamilia(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     //Leer los datos de Tipos
     const getTipo = async () => {
         const traerTip = collection(db, 'tipos');
         const dato = query(traerTip, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setTipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     //Leer los datos de Marcas
     const getMarca = async () => {
         const traerMar = collection(db, 'marcas');
         const dato = query(traerMar, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setMarca(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setMarca(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     //Leer los datos de Modelos
     const getModelo = async () => {
         const traerMod = collection(db, 'modelos');
         const dato = query(traerMod, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setModelo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setModelo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     // ordenar Familia, Tipo, Marca y Maodelo alfabeticamente
     familia.sort((a, b) => {
@@ -186,13 +179,6 @@ const IngresoEquiposST = () => {
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
         setProtocolo(existeprot);
     }
-    // // Filtar por docuemto Test de Ingreso 
-    // const consultarTest = async (id) => {
-    //     const test = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
-    //     const guardaTest = await getDocs(test);
-    //     const existeTest = (guardaTest.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    //     setProtocolo(existeTest);
-    // }
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -218,7 +204,6 @@ const IngresoEquiposST = () => {
                 setTelefono(final[0].telefono);
                 setDireccion(final[0].direccion);
                 setCorreo(final[0].correo);
-                // setBtnGuardar(false)
             }
         }
     }
@@ -495,13 +480,6 @@ const IngresoEquiposST = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
-                // setFolio('');
-                // setRut('');
-                // setEntidad('');
-                // setDireccion('');
-                // setTelefono('');
-                // setCorreo('');
-                // setDate('')
                 setBtnGuardarCab(true);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -517,37 +495,6 @@ const IngresoEquiposST = () => {
                     mensaje: error
                 })
             }
-            // try {
-            //     TestInCabDB({
-            //         folio: folio,
-            //         rut: rut,
-            //         entidad: entidad,
-            //         telefono: telefono,
-            //         direccion: direccion,
-            //         correo: correo,
-            //         date: fechaInSt,
-            //         confirmado: false,
-            //         userAdd: user.email,
-            //         userMod: user.email,
-            //         fechaAdd: fechaAdd,
-            //         fechaMod: fechaMod,
-            //         emp_id: users.emp_id
-            //     })
-            //     setBtnGuardarCab(true);
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'exito',
-            //         mensaje: 'Cabecera Test de Ingreso registrados exitosamente'
-            //     })
-            //     setFlag(!flag);
-            //     return;
-            // } catch (error) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: error
-            //     })
-            // }
         }
     }
     // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
@@ -622,12 +569,6 @@ const IngresoEquiposST = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
-                // setNomFamilia('');
-                // setNomTipo('');
-                // setNomMarca('');
-                // setNomModelo('');
-                // setSerie('');
-                // setServicio('')
                 consultarprot(nomFamilia);
                 setBtnGuardarDet(true);
                 cambiarEstadoAlerta(true);
@@ -804,8 +745,6 @@ const IngresoEquiposST = () => {
                                 name='date'
                                 value={date}
                                 onChange={ev => setDate(ev.target.value)}
-                            // min={fechaMinima.toISOString().slice(0, 16)}
-                            // max={fechaMaxima.toISOString().slice(0, 16)}
                             />
                         </ContentElemenSelect>
                     </ContentElemenMov>
@@ -882,7 +821,6 @@ const IngresoEquiposST = () => {
                                 name='serie'
                                 value={serie}
                                 onChange={e => { setSerie(e.target.value) }}
-                            // onKeyDown={detectarEq}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -925,8 +863,6 @@ const IngresoEquiposST = () => {
                                         <Input
                                             type='checkbox'
                                             checked={item.valorsi}
-                                            // onChange={() => handleButtonClick(index, true, false)}
-                                            // onChange={() => handleButtonClick(index, true, false, 'opcion1')}
                                             onChange={() => handleButtonClick(item.id, 'opcion1')}
                                         />
                                     </Table.Cell>
@@ -935,7 +871,6 @@ const IngresoEquiposST = () => {
                                             type='checkbox'
                                             checked={item.valorno}
                                             onChange={() => handleButtonClick(item.id, 'opcion2')}
-
                                         />
                                     </Table.Cell>
                                 </Table.Row>
@@ -955,7 +890,6 @@ const IngresoEquiposST = () => {
                     />
                 </ContentElemenMov>
                 <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
-                {/* <BotonGuardar disabled={btnConfirmar} onClick={guardarTest}>Confirmar</BotonGuardar> */}
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
@@ -985,7 +919,6 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.estado}</Table.Cell>
                                     <Table.Cell onClick={() => {
                                         consultarDet(item);
-                                        // consultarTest(item.enproceso)
                                         setFolio(item.folio);
                                         setRut(item.rut);
                                         fechaDate(item.date)
@@ -995,9 +928,7 @@ const IngresoEquiposST = () => {
                                         setCorreo(item.correo);
                                         setConfirmar(true);
                                         setBtnGuardarCab(true);
-                                        // setBtnConfirmar(false)
                                         setFlag(!flag)
-
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
