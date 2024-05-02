@@ -7,14 +7,16 @@ import IngresoStDetDB from '../firebase/IngresoStDetDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, doc, /*getDoc,*/ writeBatch, updateDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, writeBatch, updateDoc } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
+// import { FaRegFilePdf } from "react-icons/fa";
 import { Servicio } from './TipDoc';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
@@ -24,13 +26,13 @@ const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
     const user = auth.currentUser;
     const { users } = useContext(UserContext);
+    // const navigate = useNavigate();
     let fechaAdd = new Date();
     let fechaMod = new Date();
 
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [cabecera, setCabecera] = useState([]);
-    // const [detalle, setDetalle] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
@@ -45,6 +47,7 @@ const IngresoEquiposST = () => {
     const [correo, setCorreo] = useState('');
     const [date, setDate] = useState('');
     const [confirmar, setConfirmar] = useState(false);
+    const [confirmarDet, setConfirmarDet] = useState(false);
     const [openModalCli, setOpenModalCli] = useState(false);
     const [region, setRegion] = useState('Arica y Parinacota');
     const [comuna, setComuna] = useState('');
@@ -54,8 +57,6 @@ const IngresoEquiposST = () => {
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
     const [btnGuardarDet, setBtnGuardarDet] = useState(false);
-    const [btnGuardarTest, setBtnGuardarTest] = useState(false);
-    const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
@@ -64,7 +65,10 @@ const IngresoEquiposST = () => {
     const [servicio, setServicio] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
+    const [openPdf, SetOpenPdf] = useState(false);
     const checktest = useRef([]);
+    const id = useRef('');
+
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -88,10 +92,7 @@ const IngresoEquiposST = () => {
             setServicio(existeDet[0].servicio);
             setObs(existeDet[0].observaciones);
             consultarprot(existeDet[0].familia);
-            // if (item.enproceso === 1) {
-            //     consultarTest(item.id)
-            // } else {
-            // }
+            setConfirmarDet(true);
         } else {
             setNomFamilia('');
             setNomTipo('');
@@ -100,6 +101,7 @@ const IngresoEquiposST = () => {
             setSerie('');
             setServicio('');
             setObs('');
+            setConfirmarDet(false);
         }
     }
     //Leer los datos de Familia
@@ -107,28 +109,28 @@ const IngresoEquiposST = () => {
         const traerFam = collection(db, 'familias');
         const dato = query(traerFam, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setFamilia(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setFamilia(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     //Leer los datos de Tipos
     const getTipo = async () => {
         const traerTip = collection(db, 'tipos');
         const dato = query(traerTip, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setTipo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setTipo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     //Leer los datos de Marcas
     const getMarca = async () => {
         const traerMar = collection(db, 'marcas');
         const dato = query(traerMar, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setMarca(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setMarca(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     //Leer los datos de Modelos
     const getModelo = async () => {
         const traerMod = collection(db, 'modelos');
         const dato = query(traerMod, where('emp_id', '==', users.emp_id));
         const data = await getDocs(dato)
-        setModelo(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+        setModelo(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
     // ordenar Familia, Tipo, Marca y Maodelo alfabeticamente
     familia.sort((a, b) => {
@@ -183,13 +185,6 @@ const IngresoEquiposST = () => {
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
         setProtocolo(existeprot);
     }
-    // Filtar por docuemto Test de Ingreso 
-    const consultarTest = async (id) => {
-        const test = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
-        const guardaTest = await getDocs(test);
-        const existeTest = (guardaTest.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-        setProtocolo(existeTest);
-    }
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
@@ -215,7 +210,6 @@ const IngresoEquiposST = () => {
                 setTelefono(final[0].telefono);
                 setDireccion(final[0].direccion);
                 setCorreo(final[0].correo);
-                // setBtnGuardar(false)
             }
         }
     }
@@ -486,20 +480,12 @@ const IngresoEquiposST = () => {
                     date: fechaInSt,
                     confirmado: false,
                     estado: 'POR CONFIRMAR',
-                    enproceso: 0,
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
-                // setFolio('');
-                // setRut('');
-                // setEntidad('');
-                // setDireccion('');
-                // setTelefono('');
-                // setCorreo('');
-                // setDate('')
                 setBtnGuardarCab(true);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -515,37 +501,6 @@ const IngresoEquiposST = () => {
                     mensaje: error
                 })
             }
-            // try {
-            //     TestInCabDB({
-            //         folio: folio,
-            //         rut: rut,
-            //         entidad: entidad,
-            //         telefono: telefono,
-            //         direccion: direccion,
-            //         correo: correo,
-            //         date: fechaInSt,
-            //         confirmado: false,
-            //         userAdd: user.email,
-            //         userMod: user.email,
-            //         fechaAdd: fechaAdd,
-            //         fechaMod: fechaMod,
-            //         emp_id: users.emp_id
-            //     })
-            //     setBtnGuardarCab(true);
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'exito',
-            //         mensaje: 'Cabecera Test de Ingreso registrados exitosamente'
-            //     })
-            //     setFlag(!flag);
-            //     return;
-            // } catch (error) {
-            //     cambiarEstadoAlerta(true);
-            //     cambiarAlerta({
-            //         tipo: 'error',
-            //         mensaje: error
-            //     })
-            // }
         }
     }
     // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
@@ -620,12 +575,7 @@ const IngresoEquiposST = () => {
                     fechaMod: fechaMod,
                     emp_id: users.emp_id
                 })
-                // setNomFamilia('');
-                // setNomTipo('');
-                // setNomMarca('');
-                // setNomModelo('');
-                // setSerie('');
-                // setServicio('')
+                consultarprot(nomFamilia);
                 setBtnGuardarDet(true);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -653,19 +603,16 @@ const IngresoEquiposST = () => {
         const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        id.current = existeCab[0].id;
 
         const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
         const detalle = await getDocs(det);
         const existeDet = (detalle.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-        // const docCheck = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
-        // const docuCheck = await getDocs(docCheck);
-        // const documenCheck = (docuCheck.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log('protocolo', protocolo)
         protocolo.forEach((docs, index) => {
             checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
         });
-        console.log('checktest.current', checktest.current)
+
 
         if (checktest.current.length > 0) {
             Swal.fire(`Item ${checktest.current.map((i) => {
@@ -679,7 +626,6 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
-            // if (documenCheck.length === 0) {
             // Crea una nueva instancia de lote (batch)
             const batch = writeBatch(db);
             // Obtiene una referencia a una colección específica en Firestore
@@ -746,9 +692,12 @@ const IngresoEquiposST = () => {
                     mensaje: 'Error al actualizar cabecera de Ingreso:', error
                 })
             }
+            SetOpenPdf(true);
+            // navigate(`/ingresopdf/${existeCab[0].id}`)
+            // return (
+            //     <a to={`/ingresopdf/${existeCab[0].id}`}></a>
+            // );
         }
-        // setBtnGuardarTest(true);
-        // setBtnConfirmar(false);
     }
 
     useEffect(() => {
@@ -809,8 +758,6 @@ const IngresoEquiposST = () => {
                                 name='date'
                                 value={date}
                                 onChange={ev => setDate(ev.target.value)}
-                            // min={fechaMinima.toISOString().slice(0, 16)}
-                            // max={fechaMaxima.toISOString().slice(0, 16)}
                             />
                         </ContentElemenSelect>
                     </ContentElemenMov>
@@ -842,7 +789,7 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Familia</Label>
-                            <Select disabled={confirmar} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
+                            <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {familia.map((d) => {
                                     return (<option key={d.id}>{d.familia}</option>)
@@ -851,7 +798,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Tipo Equipamiento</Label>
-                            <Select disabled={confirmar} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
+                            <Select disabled={confirmarDet} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {tipo.map((d) => {
                                     return (<option key={d.id}>{d.tipo}</option>)
@@ -860,7 +807,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Marca</Label>
-                            <Select disabled={confirmar} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
+                            <Select disabled={confirmarDet} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {marca.map((d) => {
                                     return (<option key={d.id}>{d.marca}</option>)
@@ -871,7 +818,7 @@ const IngresoEquiposST = () => {
                     <ContentElemenMov>
                         <ContentElemenSelect>
                             <Label>Modelo</Label>
-                            <Select disabled={confirmar} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
+                            <Select disabled={confirmarDet} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
                                 {modelo.map((d) => {
                                     return (<option key={d.id}>{d.modelo}</option>)
@@ -881,19 +828,18 @@ const IngresoEquiposST = () => {
                         <ContentElemenSelect>
                             <Label>N° Serie</Label>
                             <Input
-                                disabled={confirmar}
+                                disabled={confirmarDet}
                                 type='text'
                                 placeholder='Ingrese N° Serie'
                                 name='serie'
                                 value={serie}
                                 onChange={e => { setSerie(e.target.value) }}
-                            // onKeyDown={detectarEq}
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Tipo de Servicio</Label>
                             <Select
-                                disabled={confirmar}
+                                disabled={confirmarDet}
                                 value={servicio}
                                 onChange={e => { setServicio(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
@@ -930,8 +876,6 @@ const IngresoEquiposST = () => {
                                         <Input
                                             type='checkbox'
                                             checked={item.valorsi}
-                                            // onChange={() => handleButtonClick(index, true, false)}
-                                            // onChange={() => handleButtonClick(index, true, false, 'opcion1')}
                                             onChange={() => handleButtonClick(item.id, 'opcion1')}
                                         />
                                     </Table.Cell>
@@ -940,7 +884,6 @@ const IngresoEquiposST = () => {
                                             type='checkbox'
                                             checked={item.valorno}
                                             onChange={() => handleButtonClick(item.id, 'opcion2')}
-
                                         />
                                     </Table.Cell>
                                 </Table.Row>
@@ -959,8 +902,10 @@ const IngresoEquiposST = () => {
                         onChange={e => setObs(e.target.value)}
                     />
                 </ContentElemenMov>
-                <BotonGuardar disabled={btnGuardarTest} onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
-                {/* <BotonGuardar disabled={btnConfirmar} onClick={guardarTest}>Confirmar</BotonGuardar> */}
+                <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
+                { openPdf && (
+                    <BotonGuardar><Link to={`/ingresopdf/${id.current}`}>Ver PDF</Link></BotonGuardar>
+                )}
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
@@ -987,10 +932,9 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>Ingresado</Table.Cell>
+                                    <Table.Cell>{item.estado}</Table.Cell>
                                     <Table.Cell onClick={() => {
                                         consultarDet(item);
-                                        // consultarTest(item.enproceso)
                                         setFolio(item.folio);
                                         setRut(item.rut);
                                         fechaDate(item.date)
@@ -1000,9 +944,7 @@ const IngresoEquiposST = () => {
                                         setCorreo(item.correo);
                                         setConfirmar(true);
                                         setBtnGuardarCab(true);
-                                        // setBtnConfirmar(false)
                                         setFlag(!flag)
-
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
