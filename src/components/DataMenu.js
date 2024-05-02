@@ -157,11 +157,11 @@ export const DataMenu = [
       //   path: 'serviciotecnico/programas',
       //   icon: <IoIcons.IoIosTimer />
       // },
-      {
+     /*  {
         title: 'Reportes',
         path: 'serviciotecnico/certificados',
         icon: <FaIcons.FaCertificate />
-      },
+      }, */
       {
         title: 'Ejecutar Mant.',
         path: 'serviciotecnico/mantencion',
@@ -195,6 +195,11 @@ export const DataMenu = [
       {
         title: 'Protocolo Test Ingreso',
         path: 'serviciotecnico/protocolotest',
+        icon: <IoIcons.IoIosAlbums />
+      },
+      {
+        title: 'Asignar',
+        path: 'serviciotecnico/asignar',
         icon: <IoIcons.IoIosAlbums />
       }
       // {
