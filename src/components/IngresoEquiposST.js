@@ -66,7 +66,6 @@ const IngresoEquiposST = () => {
     const [servicio, setServicio] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
-    const [openPdf, SetOpenPdf] = useState(false);
     const checktest = useRef([]);
     const id = useRef('');
 
@@ -909,9 +908,6 @@ const IngresoEquiposST = () => {
                     />
                 </ContentElemenMov>
                 <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
-                {openPdf && (
-                    <BotonGuardar><Link to={`/ingresopdf/${id.current}`}>Ver PDF</Link></BotonGuardar>
-                )}
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
