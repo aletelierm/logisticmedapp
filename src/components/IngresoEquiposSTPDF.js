@@ -22,7 +22,6 @@ const IngresoEquiposSTPDF = () => {
 
     const [detalle, setDetalle] = useState([]);
     const [test, setTest] = useState([]);
-    // const [itemsSeg, setItemsSeg] = useState([]);
     const [folio, setFolio] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
@@ -30,9 +29,7 @@ const IngresoEquiposSTPDF = () => {
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
     const [correo, setCorreo] = useState('');
-
     const targetRef = useRef();
-    // const bitacoraCab = useRef(0);
 
     const volver = () => {
         navigate('/serviciotecnico/ingreso')
@@ -40,7 +37,6 @@ const IngresoEquiposSTPDF = () => {
 
     useEffect(() => {
         if (ingreso) {
-            // bitacoraCab.current = bitacora.id
             setFolio(ingreso.folio);
             setRut(ingreso.rut);
             setEntidad(ingreso.entidad);
@@ -60,7 +56,7 @@ const IngresoEquiposSTPDF = () => {
         const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setDetalle(existeDet);
     }
-    // Detalle de Bitacoras por categoria
+    // Detalle de test de ingreso
     const consultarTest = async () => {
         const test = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
         const testIn = await getDocs(test);
@@ -90,7 +86,6 @@ const IngresoEquiposSTPDF = () => {
         format: 'a4' // Formato del PDF
     };
 
-
     useEffect(() => {
         consultarIngresosDet();
         consultarTest();
@@ -100,7 +95,6 @@ const IngresoEquiposSTPDF = () => {
     return (
         <>
             <ContenedorProveedor>
-
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div>
@@ -131,7 +125,6 @@ const IngresoEquiposSTPDF = () => {
                                 <Table.Cell>{folio}</Table.Cell>
                                 <Table.Cell>{rut}</Table.Cell>
                                 <Table.Cell>{entidad}</Table.Cell>
-                                {/* <Table.Cell>{formatearFecha(date)}</Table.Cell> */}
                                 <Table.Cell>{date ? formatearFecha(date) : '00/00/00 00:00'}</Table.Cell>
                                 <Table.Cell>{telefono}</Table.Cell>
                                 <Table.Cell>{direccion}</Table.Cell>
