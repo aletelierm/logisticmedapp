@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { ListarProveedor, Titulo, BotonGuardar} from '../elementos/General';
-import {  Contenido, Input } from '../elementos/CrearEquipos';
+import { ListarProveedor, Titulo, BotonGuardar, Overlay,ConfirmaModal} from '../elementos/General';
+import {  Contenido, Input ,ContentElemen, Formulario, Select, Label} from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table, TableBody } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
+import styled from 'styled-components';
+import Alertas from './Alertas';
 /* import { Link } from 'react-router-dom'; */
-import { getDocs, collection, where, query } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
-import Modal from './Modal';
+/* import Modal from './Modal'; */
 /* import * as FaIcons from 'react-icons/fa'; */
 import * as MdIcons from 'react-icons/md';
+import * as IoIcons from 'react-icons/io';
 /* import * as MdIcons from 'react-icons/md'; */
 // import Swal from 'sweetalert2';
 
@@ -20,26 +23,40 @@ const Asignar = () => {
     const fechaHoy = new Date();
 
     const { users } = useContext(UserContext);
-    const [asignar, setAsignar] = useState([]);
-    const [estadoModal, setEstadoModal] = useState(false);
-    const [mostrarDet, setMostrarDet] = useState(false);
+    const [asignar, setAsignar] = useState([]);    
+    const [asignados, setAsignados] = useState([]);    
+    const [mostrarDet, setMostrarDet] = useState([]);
     const [testIngreso, setTestIngreso] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
+    const [idCabIngreso, setIdCabIngreso] = useState(null)
+    const [openModalCli, setOpenModalCli] = useState(false);
+    const [tecnico, setTecnico] = useState('')
+    const [alerta, cambiarAlerta] = useState({});
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
    
 
-    // Leer datos de cabecera Entradas
+    // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id),where('estado','==','INGRESADO'));
         const data = await getDocs(dato)
         setAsignar(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+
+    // Leer datos de cabecera Asignados
+    const getAsignadoscab = async () => {
+        const traerCabecera = collection(db, 'ingresostcab');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id),where('estado','==','ASIGNADO'));
+        const data = await getDocs(dato)
+        setAsignados(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
   
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-        const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-        console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj)
+       /*  const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+        console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj) */
         return formatear;
     }
 
@@ -58,11 +75,54 @@ const Asignar = () => {
         setTestIngreso(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    //Ordenar fechas
+    const leerUsuarios = async ()=>{
+        const traer = collection(db, 'usuarios');
+        const doc = query(traer, where('emp_id', '==', users.emp_id));
+        const documento = await getDocs(doc)
+        setUsuarios(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+
+    //Ordenar x folio
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
+    const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
+
+    //Funcion handlesubmit para validar y asignar
+    const asignarUsuario = async (e)=>{
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        if (tecnico.length === 0 || tecnico==='Selecciona Tecnico:'){
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Favor seleccione un usuario'
+            })
+            return;
+        }else{
+            try {
+                await updateDoc(doc(db, 'ingresostcab',idCabIngreso), {
+                    tecnico: tecnico,
+                    estado: 'ASIGNADO'
+                });
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Usuario Asignado correctamente'
+                })
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar el usuario tecnico:', error
+                })
+            }
+        }
+    }
 
     useEffect(() => {
-        getIngresostcab();        
+        getIngresostcab(); 
+        leerUsuarios();
+        getAsignadoscab();       
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -80,9 +140,8 @@ const Asignar = () => {
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>                           
-                            <Table.HeaderCell>Ver</Table.HeaderCell> 
-                            <Table.HeaderCell>Asignar a</Table.HeaderCell> 
-                            {/* <Table.HeaderCell></Table.HeaderCell> */}
+                            <Table.HeaderCell>Ver</Table.HeaderCell>                          
+                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -99,8 +158,9 @@ const Asignar = () => {
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
                                             leerDetalleIngreso(item.id)
+                                            setIdCabIngreso(item.id)
                                             leerTestIngreso(item.id)
-                                            setEstadoModal(!estadoModal)
+                                            setOpenModalCli(!openModalCli)
                                         }}
                                         ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                         <Table.Cell></Table.Cell>                      
@@ -108,10 +168,57 @@ const Asignar = () => {
                             )
                         })}
                     </Table.Body>
+                </Table>  
+            </ListarProveedor>
+            <ListarProveedor>
+                <Titulo>Asignados</Titulo>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Estado</Table.HeaderCell>                           
+                            <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>                            
+                            <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {asignadosOrd.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.folio}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>                                    
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.estado}</Table.Cell>                          
+                                    <Table.Cell>{item.tecnico}</Table.Cell>                          
+                                    {/* <Table.Cell 
+                                        title='Ver Documento Ingreso'
+                                        onClick={() => {
+                                            leerDetalleIngreso(item.id)
+                                            leerTestIngreso(item.id)
+                                            setOpenModalCli(!openModalCli)
+                                            
+                                        }}
+                                        ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell> */}
+                                        <Table.Cell></Table.Cell>                      
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
                 </Table>
-                <Modal estado={estadoModal} cambiarEstado={setEstadoModal}>
-                {mostrarDet.length > 0 &&
-                    <Contenido style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {openModalCli && (
+                <Overlay>
+                    <ConfirmaModal>
+                        <Titulo>Asignar Ingreso</Titulo>
+                        <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
+                        <Formulario action='' >
+                            <ContentElemen>
+                            <Contenido /* style={{ maxHeight: '400px', overflowY: 'auto' }} */>
                         <Table singleLine>
                             <Table.Header>
                                 <Table.Row>
@@ -140,8 +247,7 @@ const Asignar = () => {
                         {mostrarDet.map((item, index) => {
                                     return (                                        
                                         <Table.Row key={index}>
-                                            <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
-                                                                                                                               
+                                            <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>                                                                                                                               
                                         </Table.Row>                                       
                                     )
                                 })}
@@ -170,54 +276,50 @@ const Asignar = () => {
                                 })}
                             </TableBody>
                         </Table>
-                        <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar>
-                    </Contenido>
-                }
-            </Modal>
-            </ListarProveedor>
-            <ListarProveedor>
-                <Titulo>Asignados</Titulo>
-                <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
-                            <Table.HeaderCell>Estado</Table.HeaderCell>                           
-                            <Table.HeaderCell>Ver</Table.HeaderCell> 
-                            <Table.HeaderCell>Asignar a</Table.HeaderCell> 
-                            {/* <Table.HeaderCell></Table.HeaderCell> */}
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {asignarOrd.map((item, index) => {
-                            return (
-                                <Table.Row key={index}>
-                                    <Table.Cell >{index + 1}</Table.Cell>
-                                    <Table.Cell>{item.folio}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>                                    
-                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{item.estado}</Table.Cell>                          
-                                    <Table.Cell 
-                                        title='Ver Documento Ingreso'
-                                        onClick={() => {
-                                            leerDetalleIngreso(item.id)
-                                            leerTestIngreso(item.id)
-                                            setEstadoModal(!estadoModal)
-                                        }}
-                                        ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                                        <Table.Cell></Table.Cell>                      
-                                </Table.Row>
-                            )
-                        })}
-                    </Table.Body>
-                </Table>
-            </ListarProveedor>         
+                        {/* <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar> */}
+                                 </Contenido>
+                            </ContentElemen>
+                            <ContentElemen>                            
+                                <Label>Seleccionar Usuario:</Label>
+                                <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
+                                    <option>Selecciona Tecnico:</option>
+                                    {usuarios.map((objeto, index) => {
+                                        return (<option key={index}>{objeto.correo}</option>)
+                                    })}
+                                </Select>
+                            </ContentElemen>
+                            <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
+                        </Formulario>
+                        
+                    </ConfirmaModal>
+                </Overlay>
+                )}
+            </ListarProveedor> 
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />        
         </div>
     );
 };
 
 export default Asignar;
+
+const BotonCerrar = styled.button`
+    position: absolute;
+    top:20px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all.3s ease all;
+    border-radius: 5px;
+    color: #1766DC;
+
+    &:hover{
+        background: #f2f2f2;
+    }
+`
