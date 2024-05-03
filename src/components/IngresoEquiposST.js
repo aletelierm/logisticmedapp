@@ -488,6 +488,7 @@ const IngresoEquiposST = () => {
                     date: fechaInSt,
                     confirmado: false,
                     estado: 'POR CONFIRMAR',
+                    tecnico: '',
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,

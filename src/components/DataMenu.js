@@ -201,6 +201,11 @@ export const DataMenu = [
         title: 'Asignar',
         path: 'serviciotecnico/asignar',
         icon: <IoIcons.IoIosAlbums />
+      },
+      {
+        title: 'Asignados a Tecnico',
+        path: 'serviciotecnico/asignadostecnicos',
+        icon: <IoIcons.IoIosAlbums />
       }
       // {
       //   title: 'Test de Ingresos',
