@@ -57,7 +57,8 @@ const IngresoEquiposST = () => {
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
-    const [btnGuardarDet, setBtnGuardarDet] = useState(false);
+    const [btnGuardarDet, setBtnGuardarDet] = useState(true);
+    const [btnNuevo, setBtnNuevo] = useState(true);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
@@ -66,7 +67,6 @@ const IngresoEquiposST = () => {
     const [servicio, setServicio] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
-    const [openPdf, SetOpenPdf] = useState(false);
     const checktest = useRef([]);
     const id = useRef('');
 
@@ -488,6 +488,7 @@ const IngresoEquiposST = () => {
                     date: fechaInSt,
                     confirmado: false,
                     estado: 'POR CONFIRMAR',
+                    tecnico: '',
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -495,6 +496,8 @@ const IngresoEquiposST = () => {
                     emp_id: users.emp_id
                 })
                 setBtnGuardarCab(true);
+                setBtnGuardarDet(false);
+                setBtnNuevo(false);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -700,7 +703,44 @@ const IngresoEquiposST = () => {
                     mensaje: 'Error al actualizar cabecera de Ingreso:', error
                 })
             }
+            setFolio('');
+            setRut('');
+            setEntidad('');
+            setDate('');
+            setTelefono('');
+            setDireccion('');
+            setCorreo('');
+            setNomFamilia('');
+            setNomTipo('');
+            setNomMarca('');
+            setNomModelo('');
+            setSerie('');
+            setServicio('');
+            setObs('');
         }
+    }
+
+    // Agregar un Nuevo Ingreso
+    const nuevo = () => {
+        setFolio('');
+        setRut('');
+        setEntidad('');
+        setDate('');
+        setTelefono('');
+        setDireccion('');
+        setCorreo('');
+        setNomFamilia('');
+        setNomTipo('');
+        setNomMarca('');
+        setNomModelo('');
+        setSerie('');
+        setServicio('');
+        setObs('');
+        setConfirmar(false);
+        setBtnGuardarCab(false);
+        setBtnGuardarDet(true);
+        setBtnNuevo(true);
+        setFlag(!flag)
     }
 
     useEffect(() => {
@@ -784,7 +824,7 @@ const IngresoEquiposST = () => {
                     {/* Guardar datos ingresados */}
                     <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
                     {/* Pendiente Boton Nuevo */}
-                    <BotonGuardar>Nuevo</BotonGuardar>
+                    <BotonGuardar disabled={btnNuevo} onClick={nuevo}>Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -909,9 +949,6 @@ const IngresoEquiposST = () => {
                     />
                 </ContentElemenMov>
                 <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
-                {openPdf && (
-                    <BotonGuardar><Link to={`/ingresopdf/${id.current}`}>Ver PDF</Link></BotonGuardar>
-                )}
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}

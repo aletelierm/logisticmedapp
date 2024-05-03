@@ -22,7 +22,6 @@ const IngresoEquiposSTPDF = () => {
 
     const [detalle, setDetalle] = useState([]);
     const [test, setTest] = useState([]);
-    // const [itemsSeg, setItemsSeg] = useState([]);
     const [folio, setFolio] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
@@ -30,10 +29,7 @@ const IngresoEquiposSTPDF = () => {
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
     const [correo, setCorreo] = useState('');
-    const [obs, setObs] = useState('');
-
     const targetRef = useRef();
-    // const bitacoraCab = useRef(0);
 
     const volver = () => {
         navigate('/serviciotecnico/ingreso')
@@ -41,7 +37,6 @@ const IngresoEquiposSTPDF = () => {
 
     useEffect(() => {
         if (ingreso) {
-            // bitacoraCab.current = bitacora.id
             setFolio(ingreso.folio);
             setRut(ingreso.rut);
             setEntidad(ingreso.entidad);
@@ -49,7 +44,6 @@ const IngresoEquiposSTPDF = () => {
             setTelefono(ingreso.telefono);
             setDireccion(ingreso.direccion);
             setCorreo(ingreso.correo);
-            setObs(ingreso.observaciones);
         } else {
             navigate('/serviciotecnico/ingreso')
         }
@@ -62,7 +56,7 @@ const IngresoEquiposSTPDF = () => {
         const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setDetalle(existeDet);
     }
-    // Detalle de Bitacoras por categoria
+    // Detalle de test de ingreso
     const consultarTest = async () => {
         const test = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
         const testIn = await getDocs(test);
@@ -92,7 +86,6 @@ const IngresoEquiposSTPDF = () => {
         format: 'a4' // Formato del PDF
     };
 
-
     useEffect(() => {
         consultarIngresosDet();
         consultarTest();
@@ -103,6 +96,14 @@ const IngresoEquiposSTPDF = () => {
         <>
             <ContenedorProveedor>
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div>
+                            <img src='../../ILZdSWD4irkgKTdzqsf0.png' alt='LogoEmprsa' style={{ height: '140px' }} />
+                        </div>
+                        <div style={{ marginTop: '50px', marginRight: '30px' }}>
+                            <h3>www.dormirbien.cl</h3>
+                        </div>
+                    </div>
                     <Titulo style={{ fontSize: '24px' }}>Orden de Ingreso</Titulo>
 
                     {/* Informacion Cliente */}
@@ -124,7 +125,6 @@ const IngresoEquiposSTPDF = () => {
                                 <Table.Cell>{folio}</Table.Cell>
                                 <Table.Cell>{rut}</Table.Cell>
                                 <Table.Cell>{entidad}</Table.Cell>
-                                {/* <Table.Cell>{formatearFecha(date)}</Table.Cell> */}
                                 <Table.Cell>{date ? formatearFecha(date) : '00/00/00 00:00'}</Table.Cell>
                                 <Table.Cell>{telefono}</Table.Cell>
                                 <Table.Cell>{direccion}</Table.Cell>
@@ -177,7 +177,7 @@ const IngresoEquiposSTPDF = () => {
                             {test.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell>{index + 1 }</Table.Cell>
+                                        <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.valorsi}></Input></Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.valorno}></Input></Table.Cell>

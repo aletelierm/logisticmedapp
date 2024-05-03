@@ -49,6 +49,7 @@ import ItemsTest from './ItemsTest';
 import ProtocolosTest from './ProtocolosTest';
 import IngresoEquiposSTPDF from './IngresoEquiposSTPDF';
 import Asignar from './Asignar';
+import AsignadosTecnicos from './AsignadosTecnicos';
 
 export const Home = () => {
   return (
@@ -98,6 +99,7 @@ export const Home = () => {
             <Route path="serviciotecnico/itemstest" element={<ItemsTest/>}/>        
             <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>       
             <Route path="serviciotecnico/asignar" element={<Asignar/>}/>       
+            <Route path="serviciotecnico/asignadostecnicos" element={<AsignadosTecnicos/>}/>       
             <Route path="configuracion" element={<Configuracion/>}/>        
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
