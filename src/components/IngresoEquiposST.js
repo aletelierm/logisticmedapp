@@ -494,6 +494,8 @@ const IngresoEquiposST = () => {
                     emp_id: users.emp_id
                 })
                 setBtnGuardarCab(true);
+                setBtnGuardarDet(false);
+                setBtnNuevo(false);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -699,7 +701,44 @@ const IngresoEquiposST = () => {
                     mensaje: 'Error al actualizar cabecera de Ingreso:', error
                 })
             }
+            setFolio('');
+            setRut('');
+            setEntidad('');
+            setDate('');
+            setTelefono('');
+            setDireccion('');
+            setCorreo('');
+            setNomFamilia('');
+            setNomTipo('');
+            setNomMarca('');
+            setNomModelo('');
+            setSerie('');
+            setServicio('');
+            setObs('');
         }
+    }
+
+    // Agregar un Nuevo Ingreso
+    const nuevo = () => {
+        setFolio('');
+        setRut('');
+        setEntidad('');
+        setDate('');
+        setTelefono('');
+        setDireccion('');
+        setCorreo('');
+        setNomFamilia('');
+        setNomTipo('');
+        setNomMarca('');
+        setNomModelo('');
+        setSerie('');
+        setServicio('');
+        setObs('');
+        setConfirmar(false);
+        setBtnGuardarCab(false);
+        setBtnGuardarDet(true);
+        setBtnNuevo(true);
+        setFlag(!flag)
     }
 
     useEffect(() => {
@@ -783,7 +822,7 @@ const IngresoEquiposST = () => {
                     {/* Guardar datos ingresados */}
                     <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
                     {/* Pendiente Boton Nuevo */}
-                    <BotonGuardar>Nuevo</BotonGuardar>
+                    <BotonGuardar disabled={setBtnNuevo} onClick={nuevo}>Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
