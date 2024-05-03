@@ -71,12 +71,12 @@ const IngresoEquiposSTPDF = () => {
     }
 
     // Cambiar fecha
-    const formatearFecha = (fecha) => {
+    /* const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
-    }
+    } */
     // Configuración de react-to-pdf
     const Options = {
         filename: 'Documento.pdf',
@@ -103,6 +103,9 @@ const IngresoEquiposSTPDF = () => {
         <>
             <ContenedorProveedor>
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
+                    <div>
+                    <img src='../../ILZdSWD4irkgKTdzqsf0.png' alt='LogoEmprsa' style={{ height: '60px', width: '100px' }} />
+                    </div>
                     {/* <Contenedor> */}
                     <Titulo style={{ fontSize: '20px' }}>Orden de Ingreso</Titulo>
                     {/* </Contenedor> */}
@@ -126,7 +129,7 @@ const IngresoEquiposSTPDF = () => {
                                 <Table.Cell>{folio}</Table.Cell>
                                 <Table.Cell>{rut}</Table.Cell>
                                 <Table.Cell>{entidad}</Table.Cell>
-                                <Table.Cell>{formatearFecha(date)}</Table.Cell>
+                                {/* <Table.Cell>{formatearFecha(date)}</Table.Cell> */}
                                 <Table.Cell>{telefono}</Table.Cell>
                                 <Table.Cell>{direccion}</Table.Cell>
                                 <Table.Cell>{correo}</Table.Cell>

@@ -102,6 +102,9 @@ const CheckMantoPDF = () => {
             <ContenedorProveedor>
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
                     {/* <Contenedor> */}
+                    <div>
+                        <img src='../../ILZdSWD4irkgKTdzqsf0.png' alt='LogoEmprsa' style={{ height: '60px', width: '100px' }} />
+                    </div>
                     <Titulo style={{fontSize: '20px'}}>{nombreProtocolo}</Titulo>
                     {/* </Contenedor> */}
 
