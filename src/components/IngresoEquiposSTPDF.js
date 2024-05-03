@@ -103,13 +103,11 @@ const IngresoEquiposSTPDF = () => {
         <>
             <ContenedorProveedor>
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
-                    {/* <Contenedor> */}
-                    <Titulo style={{ fontSize: '20px' }}>Orden de Ingreso</Titulo>
-                    {/* </Contenedor> */}
+                    <Titulo style={{ fontSize: '24px' }}>Orden de Ingreso</Titulo>
 
                     {/* Informacion Cliente */}
-                    <Subtitulo style={{ fontSize: '16px' }}>Informacion Cliente</Subtitulo>
-                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
+                    <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
+                    <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>Folio</Table.HeaderCell>
@@ -126,7 +124,8 @@ const IngresoEquiposSTPDF = () => {
                                 <Table.Cell>{folio}</Table.Cell>
                                 <Table.Cell>{rut}</Table.Cell>
                                 <Table.Cell>{entidad}</Table.Cell>
-                                <Table.Cell>{formatearFecha(date)}</Table.Cell>
+                                {/* <Table.Cell>{formatearFecha(date)}</Table.Cell> */}
+                                <Table.Cell>{date ? formatearFecha(date) : '00/00/00 00:00'}</Table.Cell>
                                 <Table.Cell>{telefono}</Table.Cell>
                                 <Table.Cell>{direccion}</Table.Cell>
                                 <Table.Cell>{correo}</Table.Cell>
@@ -135,8 +134,8 @@ const IngresoEquiposSTPDF = () => {
                     </Table>
 
                     {/* Informacion Equipo */}
-                    <Subtitulo style={{ fontSize: '16px' }}>Informacion Equipo</Subtitulo>
-                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
+                    <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
+                    <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>Familia</Table.HeaderCell>
@@ -164,10 +163,11 @@ const IngresoEquiposSTPDF = () => {
                     </Table>
 
                     {/* Test Ingreso */}
-                    <Subtitulo style={{ fontSize: '16px' }}>Test de Ingreso</Subtitulo>
-                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
+                    <Subtitulo style={{ fontSize: '18px' }}>Test de Ingreso</Subtitulo>
+                    <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
                         <Table.Header>
                             <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
                                 <Table.HeaderCell>Item</Table.HeaderCell>
                                 <Table.HeaderCell>Si</Table.HeaderCell>
                                 <Table.HeaderCell>No</Table.HeaderCell>
@@ -177,6 +177,7 @@ const IngresoEquiposSTPDF = () => {
                             {test.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
+                                        <Table.Cell>{index + 1 }</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.valorsi}></Input></Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.valorno}></Input></Table.Cell>
@@ -186,7 +187,7 @@ const IngresoEquiposSTPDF = () => {
                         </Table.Body>
                     </Table>
 
-                    <Table singleLine style={{ fontSize: '10px', lineHeight: '10px' }}>
+                    <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>Observaciones</Table.HeaderCell>
@@ -196,7 +197,7 @@ const IngresoEquiposSTPDF = () => {
                             {detalle.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{obs}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.observaciones}</Table.Cell>
                                     </Table.Row>
                                 )
                             })}

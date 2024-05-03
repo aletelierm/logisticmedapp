@@ -14,7 +14,7 @@ import { Table } from 'semantic-ui-react'
 import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
-// import { FaRegFilePdf } from "react-icons/fa";
+import { FaRegFilePdf } from "react-icons/fa";
 import { Servicio } from './TipDoc';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
@@ -33,6 +33,7 @@ const IngresoEquiposST = () => {
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [cabecera, setCabecera] = useState([]);
+    const [ingresado, setIngresado] = useState([]);
     const [protocolo, setProtocolo] = useState([]);
     const [familia, setFamilia] = useState([]);
     const [tipo, setTipo] = useState([]);
@@ -76,6 +77,13 @@ const IngresoEquiposST = () => {
         const guardaCab = await getDocs(cab);
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setCabecera(existeCab);
+    }
+    // Filtar por docuemto de Cabecera
+    const consultarIn = async () => {
+        const ing = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('estado', '==', 'INGRESADO'));
+        const ingreso = await getDocs(ing);
+        const existeIn = (ingreso.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
+        setIngresado(existeIn);
     }
     // Filtar por docuemto de Cabecera
     const consultarDet = async (item) => {
@@ -692,11 +700,6 @@ const IngresoEquiposST = () => {
                     mensaje: 'Error al actualizar cabecera de Ingreso:', error
                 })
             }
-            SetOpenPdf(true);
-            // navigate(`/ingresopdf/${existeCab[0].id}`)
-            // return (
-            //     <a to={`/ingresopdf/${existeCab[0].id}`}></a>
-            // );
         }
     }
 
@@ -705,10 +708,13 @@ const IngresoEquiposST = () => {
         getTipo();
         getMarca();
         getModelo();
+        consultarCab();
+        consultarIn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
         consultarCab();
+        consultarIn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
@@ -903,7 +909,7 @@ const IngresoEquiposST = () => {
                     />
                 </ContentElemenMov>
                 <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
-                { openPdf && (
+                {openPdf && (
                     <BotonGuardar><Link to={`/ingresopdf/${id.current}`}>Ver PDF</Link></BotonGuardar>
                 )}
             </Contenedor>
@@ -946,6 +952,43 @@ const IngresoEquiposST = () => {
                                         setBtnGuardarCab(true);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
+
+            {/* Lista de Documetos Ingresados */}
+            <ListarProveedor>
+                <Titulo>Listado de Documentos Ingresados</Titulo>
+                <Table singleLine style={{ textAlign: 'center' }}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Date</Table.HeaderCell>
+                            <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>Ver PDF</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {ingresado.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.folio}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell >
+                                        <Link disabled to={`/ingresopdf/${item.id}`}>
+                                            <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Chec List de Mantencion' />
+                                        </Link>
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
