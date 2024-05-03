@@ -57,7 +57,8 @@ const IngresoEquiposST = () => {
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
-    const [btnGuardarDet, setBtnGuardarDet] = useState(false);
+    const [btnGuardarDet, setBtnGuardarDet] = useState(true);
+    const [btnNuevo, setBtnNuevo] = useState(true);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
@@ -822,7 +823,7 @@ const IngresoEquiposST = () => {
                     {/* Guardar datos ingresados */}
                     <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
                     {/* Pendiente Boton Nuevo */}
-                    <BotonGuardar disabled={setBtnNuevo} onClick={nuevo}>Nuevo</BotonGuardar>
+                    <BotonGuardar disabled={btnNuevo} onClick={nuevo}>Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
