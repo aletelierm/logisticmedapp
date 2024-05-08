@@ -58,6 +58,7 @@ const IngresoEquiposST = () => {
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
     const [btnGuardarDet, setBtnGuardarDet] = useState(true);
+    const [btnGuardarTest, setBtnGuardarTest] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
@@ -202,7 +203,31 @@ const IngresoEquiposST = () => {
             const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutCli = await getDocs(cli)
             const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            if (rutCli.docs.length === 0) {
+
+            //Patron para Comprobar que correo sea correcto
+            const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+            //Patron para valiar rut
+            const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+            const temp = rut.split('-');
+            let digito = temp[1];
+            if (digito === 'k' || digito === 'K') digito = -1;
+            const validaR = validarRut(rut);
+
+            if (!expresionRegularRut.test(rut)) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Formato incorrecto de rut'
+                })
+                return;
+            } else if (validaR !== parseInt(digito)) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Rut no válido'
+                })
+                return;
+            } else if (rutCli.docs.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
