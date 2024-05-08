@@ -743,6 +743,7 @@ const IngresoEquiposST = () => {
             setSerie('');
             setServicio('');
             setObs('');
+            consultarprot('');
             setBtnGuardarTest(true);
             setFlag(!flag)
         }
@@ -764,6 +765,7 @@ const IngresoEquiposST = () => {
         setSerie('');
         setServicio('');
         setObs('');
+        consultarprot('');
         setConfirmar(false);
         setBtnGuardarCab(false);
         setBtnGuardarDet(true);
