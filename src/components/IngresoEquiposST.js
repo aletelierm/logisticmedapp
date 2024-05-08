@@ -203,9 +203,6 @@ const IngresoEquiposST = () => {
             const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutCli = await getDocs(cli)
             const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-
-            //Patron para Comprobar que correo sea correcto
-            const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
             //Patron para valiar rut
             const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
             const temp = rut.split('-');
@@ -979,7 +976,7 @@ const IngresoEquiposST = () => {
                         onChange={e => setObs(e.target.value)}
                     />
                 </ContentElemenMov>
-                <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
+                <BotonGuardar disabled={btnGuardarTest} onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
