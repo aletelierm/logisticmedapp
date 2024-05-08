@@ -90,7 +90,7 @@ const IngresoEquiposST = () => {
     const consultarDet = async (item) => {
         const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', item.id));
         const guardaDet = await getDocs(det);
-        const existeDet = (guardaDet.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
+        const existeDet = (guardaDet.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 
         if (existeDet.length > 0) {
             setNomFamilia(existeDet[0].familia);
@@ -613,6 +613,7 @@ const IngresoEquiposST = () => {
                 })
                 consultarprot(nomFamilia);
                 setBtnGuardarDet(true);
+                setBtnGuardarTest(false);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -742,6 +743,8 @@ const IngresoEquiposST = () => {
             setSerie('');
             setServicio('');
             setObs('');
+            setBtnGuardarTest(true);
+            setFlag(!flag)
         }
     }
 
@@ -764,8 +767,9 @@ const IngresoEquiposST = () => {
         setConfirmar(false);
         setBtnGuardarCab(false);
         setBtnGuardarDet(true);
+        setBtnGuardarTest(true);
         setBtnNuevo(true);
-        setFlag(!flag)
+        setFlag(!flag);
     }
 
     useEffect(() => {
@@ -1012,6 +1016,9 @@ const IngresoEquiposST = () => {
                                         setCorreo(item.correo);
                                         setConfirmar(true);
                                         setBtnGuardarCab(true);
+                                        setBtnGuardarDet(false);
+                                        setBtnGuardarTest(true);
+                                        setBtnNuevo(false);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
