@@ -58,6 +58,7 @@ const IngresoEquiposST = () => {
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
     const [btnGuardarDet, setBtnGuardarDet] = useState(true);
+    const [btnGuardarTest, setBtnGuardarTest] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
@@ -89,7 +90,7 @@ const IngresoEquiposST = () => {
     const consultarDet = async (item) => {
         const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', item.id));
         const guardaDet = await getDocs(det);
-        const existeDet = (guardaDet.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
+        const existeDet = (guardaDet.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 
         if (existeDet.length > 0) {
             setNomFamilia(existeDet[0].familia);
@@ -202,7 +203,28 @@ const IngresoEquiposST = () => {
             const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutCli = await getDocs(cli)
             const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            if (rutCli.docs.length === 0) {
+            //Patron para valiar rut
+            const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+            const temp = rut.split('-');
+            let digito = temp[1];
+            if (digito === 'k' || digito === 'K') digito = -1;
+            const validaR = validarRut(rut);
+
+            if (!expresionRegularRut.test(rut)) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Formato incorrecto de rut'
+                })
+                return;
+            } else if (validaR !== parseInt(digito)) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Rut no válido'
+                })
+                return;
+            } else if (rutCli.docs.length === 0) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -588,6 +610,7 @@ const IngresoEquiposST = () => {
                 })
                 consultarprot(nomFamilia);
                 setBtnGuardarDet(true);
+                setBtnGuardarTest(false);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -717,6 +740,9 @@ const IngresoEquiposST = () => {
             setSerie('');
             setServicio('');
             setObs('');
+            consultarprot('');
+            setBtnGuardarTest(true);
+            setFlag(!flag)
         }
     }
 
@@ -736,11 +762,13 @@ const IngresoEquiposST = () => {
         setSerie('');
         setServicio('');
         setObs('');
+        consultarprot('');
         setConfirmar(false);
         setBtnGuardarCab(false);
         setBtnGuardarDet(true);
+        setBtnGuardarTest(true);
         setBtnNuevo(true);
-        setFlag(!flag)
+        setFlag(!flag);
     }
 
     useEffect(() => {
@@ -948,7 +976,7 @@ const IngresoEquiposST = () => {
                         onChange={e => setObs(e.target.value)}
                     />
                 </ContentElemenMov>
-                <BotonGuardar onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
+                <BotonGuardar disabled={btnGuardarTest} onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
@@ -987,6 +1015,9 @@ const IngresoEquiposST = () => {
                                         setCorreo(item.correo);
                                         setConfirmar(true);
                                         setBtnGuardarCab(true);
+                                        setBtnGuardarDet(false);
+                                        setBtnGuardarTest(true);
+                                        setBtnNuevo(false);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
