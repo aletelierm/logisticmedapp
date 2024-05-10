@@ -39,6 +39,7 @@ const ProtocolosTest = () => {
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
+    const [btnAgregarItem, setBtnAgregarItem] = useState(true);
     const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
@@ -176,6 +177,7 @@ const ProtocolosTest = () => {
                 setFlag(!flag);
                 setConfirmar(false);
                 setBtnGuardar(true);
+                setBtnAgregarItem(false);
                 setBtnNuevo(false);
                 return;
             } catch (error) {
@@ -284,8 +286,10 @@ const ProtocolosTest = () => {
     const nuevo = () => {
         setNomFamilia('');
         setBtnGuardar(false);
+        setBtnAgregarItem(true);
         setBtnNuevo(true);
         setBtnConfirmar(true);
+        setFlag(!flag)
     }
 
     useEffect(() => {
@@ -421,7 +425,9 @@ const ProtocolosTest = () => {
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                         <Table.Cell style={{ textAlign: 'center' }}>
-                                            <Boton onClick={() => AgregarItem(item.id)}><RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' /></Boton>
+                                            <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
+                                                <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
+                                            </Boton>
                                         </Table.Cell>
                                     </Table.Row>
                                 )
@@ -455,6 +461,7 @@ const ProtocolosTest = () => {
                                         setNomFamilia(item.familia);
                                         setConfirmar(true);
                                         setBtnGuardar(true);
+                                        setBtnAgregarItem(false);
                                         setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
@@ -489,8 +496,8 @@ const ProtocolosTest = () => {
                                     <Table.Cell style={{ textAlign: 'center', }}
                                         title='Ver Items'
                                         onClick={() => {
-                                            leerProt(item.id)
-                                            setEstadoModal(!estadoModal)
+                                            leerProt(item.id);
+                                            setEstadoModal(!estadoModal);
                                         }}
                                     >
                                         <MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
