@@ -102,7 +102,8 @@ const Asignar = () => {
             try {
                 await updateDoc(doc(db, 'ingresostcab',idCabIngreso), {
                     tecnico: tecnico,
-                    estado: 'ASIGNADO'
+                    estado: 'ASIGNADO',
+                    fechamod: fechaHoy
                 });
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -180,6 +181,7 @@ const Asignar = () => {
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha Asignación</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>                           
                             <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>                            
                             <Table.HeaderCell></Table.HeaderCell>
@@ -194,6 +196,7 @@ const Asignar = () => {
                                     <Table.Cell>{item.rut}</Table.Cell>
                                     <Table.Cell>{item.entidad}</Table.Cell>                                    
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>                          
                                     <Table.Cell>{item.tecnico}</Table.Cell>                          
                                     {/* <Table.Cell 

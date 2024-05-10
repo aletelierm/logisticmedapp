@@ -517,7 +517,7 @@ const Traspasos = () => {
         cambiarAlerta({});
 
         if (dataSalida.length === 0) {
-            Swal.fire('No hay Datos pr confirmar en este documento');
+            Swal.fire('No hay Datos por confirmar en este documento');
         } else {
             // const existeCab = cabecera.filter(cab => cab.tipdoc === nomTipDoc && cab.numdoc === numDoc && cab.rut === rut);
             if (nomTipoOut === 'PACIENTE') {
