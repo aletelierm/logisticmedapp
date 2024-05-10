@@ -25,6 +25,7 @@ const ItemsTest = () => {
     const [leer, setLeer] = useState([]);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
+    const [botonDisabled, setBotonDisabled] = useState(false);
 
     const getData = async () => {
         const traerit = collection(db, 'itemstest');
@@ -53,31 +54,33 @@ const ItemsTest = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Consulta si exite campo en el arreglo
-        const existe = leer.filter(it => it.nombre === item.toLocaleUpperCase().trim()).length === 0;
+        if(!botonDisabled){
+            setBotonDisabled(true)
+            // Consulta si exite campo en el arreglo
+            const existe = leer.filter(it => it.nombre === item.toLocaleUpperCase().trim()).length === 0;
 
-        if (!existe) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Ya existe este Item'
+            if (!existe) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este Item'
             })
-        } else if (item === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'No ha ingresado un Item'
-            })
-        } else {
-            const it = item.toLocaleUpperCase().trim()
-            ItemsTestDb({
-                nombre: it,
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id
-            })
+            } else if (item === '') {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'No ha ingresado un Item'
+                })
+            } else {
+                const it = item.toLocaleUpperCase().trim()
+                ItemsTestDb({
+                    nombre: it,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
+                })
                 .then(() => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -87,8 +90,13 @@ const ItemsTest = () => {
                     setItem('');
                     setFlag(!flag)
                 })
+             }
+            }
+            setTimeout(()=>{
+                setBotonDisabled(false);
+            },1000);
         }
-    }
+        
 
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();

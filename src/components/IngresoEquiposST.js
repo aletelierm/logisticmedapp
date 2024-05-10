@@ -21,6 +21,7 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
+import correlativos from '../funciones/correlativosMultiEmpresa';
 
 const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -437,14 +438,7 @@ const IngresoEquiposST = () => {
         const cabecera = await getDocs(cab);
         const existeCab = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })));
 
-        if (folio === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Campo Folio no puede estar vacio'
-            })
-            return;
-        } else if (rut === '') {
+        if (rut === '') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -495,13 +489,12 @@ const IngresoEquiposST = () => {
                 })
             }
         } else {
-            // const nuevoFolio = await correlativos(users.emp_id, 'ingresoSt');
-            // setFolio(nuevoFolio);
-            // console.log('folio antes de guardar', nuevoFolio)
+            const nuevoFolio = await correlativos(users.emp_id, 'ingresosst');
+            setFolio(nuevoFolio);          
             const fechaInSt = new Date(date);
             try {
                 IngresoStCabDB({
-                    folio: folio,
+                    folio: nuevoFolio,
                     rut: rut,
                     entidad: entidad,
                     telefono: telefono,
@@ -799,12 +792,12 @@ const IngresoEquiposST = () => {
                         <ContentElemenSelect>
                             <Label>Folio</Label>
                             <Input
-                                disabled={confirmar}
+                                disabled
                                 type='numero'
-                                placeholder='Ingrese Folio'
+                                placeholder='Folio'
                                 name='folio'
                                 value={folio}
-                                onChange={ev => setFolio(ev.target.value)}
+                                /* onChange={ev => setFolio(ev.target.value)} */
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
