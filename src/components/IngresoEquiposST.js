@@ -1009,7 +1009,7 @@ const IngresoEquiposST = () => {
                                         setConfirmar(true);
                                         setBtnGuardarCab(true);
                                         setBtnGuardarDet(false);
-                                        setBtnGuardarTest(true);
+                                        setBtnGuardarTest(false);
                                         setBtnNuevo(false);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
