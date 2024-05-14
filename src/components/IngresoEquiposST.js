@@ -394,11 +394,11 @@ const IngresoEquiposST = () => {
                     mensaje: 'Cliente registrado exitosamente'
                 })
                 setFlag(!flag);
-                setRut('');
-                setNombre('');
-                setDireccion('');
-                setTelefono('');
-                setCorreo('');
+                setRut(ruts);
+                setEntidad(nom);
+                setTelefono(telefono);
+                setDireccion(dir);
+                setCorreo(corr);
                 setNomRsf('');
                 setDirRsf('');
                 setTelRsf('');
@@ -412,10 +412,6 @@ const IngresoEquiposST = () => {
                     mensaje: error
                 })
             }
-            setEntidad(nombre);
-            setTelefono(telefono);
-            setDireccion(direccion);
-            setCorreo(correo);
         }
     }
     // Guardar Datos de Cliente en ingreso en coleccion IngresoStCab
@@ -604,6 +600,7 @@ const IngresoEquiposST = () => {
                 consultarprot(nomFamilia);
                 setBtnGuardarDet(true);
                 setBtnGuardarTest(false);
+                setConfirmarDet(true);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -757,6 +754,7 @@ const IngresoEquiposST = () => {
         setObs('');
         consultarprot('');
         setConfirmar(false);
+        setConfirmarDet(false);
         setBtnGuardarCab(false);
         setBtnGuardarDet(true);
         setBtnGuardarTest(true);
@@ -1007,6 +1005,7 @@ const IngresoEquiposST = () => {
                                         setDireccion(item.direccion);
                                         setCorreo(item.correo);
                                         setConfirmar(true);
+                                        setConfirmarDet(true);
                                         setBtnGuardarCab(true);
                                         setBtnGuardarDet(false);
                                         setBtnGuardarTest(false);
