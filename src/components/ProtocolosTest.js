@@ -45,6 +45,7 @@ const ProtocolosTest = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [mostrar, setMostrar] = useState(true);
     const [estadoModal, setEstadoModal] = useState(false);
+    const [botonDisabled, setBotonDisabled] = useState(false);
 
     //Leer los datos de Familia => Funcional
     const getFamilia = async () => {
@@ -202,6 +203,8 @@ const ProtocolosTest = () => {
         const cabecera = await getDocs(cabProtocolo);
         const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
+        if(!botonDisabled){
+        setBotonDisabled(true)
         if (existeProt.length > 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -241,6 +244,10 @@ const ProtocolosTest = () => {
                 })
             }
         }
+    }
+    setTimeout(()=>{
+        setBotonDisabled(false);
+    },1000);
     }
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
