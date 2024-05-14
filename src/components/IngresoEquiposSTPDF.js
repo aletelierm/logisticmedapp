@@ -98,7 +98,7 @@ const IngresoEquiposSTPDF = () => {
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div>
-                            <img src='../../ILZdSWD4irkgKTdzqsf0.png' alt='LogoEmprsa' style={{ height: '140px' }} />
+                            <img src={`../../${users.emp_id}.png`} alt='LogoEmprsa' style={{ height: '140px' }} />
                         </div>
                         <div style={{ marginTop: '50px', marginRight: '30px' }}>
                             <h3>www.dormirbien.cl</h3>
