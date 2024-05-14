@@ -20,7 +20,7 @@ import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulari
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import ReactDOMServer from 'react-dom/server';
 import Swal from 'sweetalert2';
-import subirArchivos from '.././funciones/subirArchivos';
+/* import subirArchivos from '.././funciones/subirArchivos'; */
 
 const Salidas = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -68,7 +68,7 @@ const Salidas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [mostrarSubir, setMostrarSubir] = useState(true);
-    const [archivo, setArchivo] = useState(null);
+   /*  const [archivo, setArchivo] = useState(null); */
     const inOut = useRef('');
     const almacenar = useRef([]);
     const salidaid = useRef([]);
@@ -1073,7 +1073,8 @@ const Salidas = () => {
         setShowConfirmationAnular(false);
     }
 
-    const subida = async (e) => {
+    //Funcion para subir archivos al storega
+    /* const subida = async (e) => {
         e.preventDefault();
         if (archivo !== null) {
             try {
@@ -1091,7 +1092,8 @@ const Salidas = () => {
             })
         }
 
-    }
+    } */
+
     const cuerpoCorreo = (data) => {
         return ReactDOMServer.renderToString(
             <div style={{ backgroundColor: '#EEF2EF' }}>
@@ -1291,7 +1293,7 @@ const Salidas = () => {
                         onChange={handleCheckboxChange}
                         disabled={btnNuevo}
                     >Nuevo</BotonGuardar>
-                    {mostrarSubir &&
+                   {/*  {mostrarSubir &&
                         (
                             <>
                                 <div>
@@ -1303,7 +1305,7 @@ const Salidas = () => {
 
                             </>
                         )
-                    }
+                    } */}
                 </Formulario>
             </Contenedor>
             <Contenedor>

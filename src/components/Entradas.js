@@ -20,7 +20,7 @@ import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, Boton, BotonG
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Input, Label, TextArea } from '../elementos/CrearEquipos';
 import Swal from 'sweetalert2';
 import Spinner from './Spinner';
-import subirArchivos from '.././funciones/subirArchivos';
+/* import subirArchivos from '.././funciones/subirArchivos'; */
 
 
 const Entradas = () => {
@@ -66,9 +66,9 @@ const Entradas = () => {
     const [btnConfirmar, setBtnConfirmar] = useState(false);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [cargando, setCargando] = useState(false);
-    const [mostrarSubir, setMostrarSubir] = useState(true);
-    const [archivo, setArchivo] = useState(null);
-    const [url, setUrl] = useState('');
+    /* const [mostrarSubir, setMostrarSubir] = useState(true); */
+    /* const [archivo, setArchivo] = useState(null); */
+    /* const [url, setUrl] = useState(''); */
     const almacenar = useRef([]);
     const entradaid = useRef([]);
 
@@ -317,7 +317,7 @@ const Entradas = () => {
                 })
             }
         } else {
-            setMostrarSubir(!mostrarSubir);
+            /* setMostrarSubir(!mostrarSubir); */
             setCargando(true);
             const fechaInOut = new Date(date);
             console.log('fecha actual con new date', fechaInOut)
@@ -331,7 +331,8 @@ const Entradas = () => {
                     entidad: entidad,
                     descripcion: descripcion,
                     tipMov: 1,
-                    url: url,
+                    /* url: url, */
+                    url: '',
                     confirmado: false,
                     observacion: '',
                     userAdd: user.email,
@@ -797,7 +798,8 @@ const Entradas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    const subida = async (e) => {
+    //Funcion para subir archivos al storage
+    /* const subida = async (e) => {
         e.preventDefault();
         if (archivo !== null) {
             try {
@@ -817,7 +819,7 @@ const Entradas = () => {
             })
         }
 
-    }
+    } */
     // Opcion 1
     // Poner miles en el precio
     // Crear un objeto Intl.NumberFormat para español en Chile
@@ -943,7 +945,7 @@ const Entradas = () => {
                     >
                         Nuevo</BotonGuardar>
 
-                    {mostrarSubir &&
+                    {/* {mostrarSubir &&
                         (
                             <>
                                 <div>
@@ -955,7 +957,7 @@ const Entradas = () => {
 
                             </>
                         )
-                    }
+                    } */}
                 </Formulario>
             </Contenedor>
             <Contenedor>
