@@ -19,7 +19,7 @@ import { Servicio } from './TipDoc';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Swal from 'sweetalert2';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay, ConfirmaBtn, Boton2 } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
 import correlativos from '../funciones/correlativosMultiEmpresa';
 
@@ -51,6 +51,9 @@ const IngresoEquiposST = () => {
     const [confirmar, setConfirmar] = useState(false);
     const [confirmarDet, setConfirmarDet] = useState(false);
     const [openModalCli, setOpenModalCli] = useState(false);
+    const [showConfirmationCab, setShowConfirmationCab] = useState(false);
+    const [showConfirmationDet, setShowConfirmationDet] = useState(false);
+    const [showConfirmationTest, setShowConfirmationTest] = useState(false);
     const [region, setRegion] = useState('Arica y Parinacota');
     const [comuna, setComuna] = useState('');
     const [checked, setChecked] = useState();
@@ -103,6 +106,7 @@ const IngresoEquiposST = () => {
             setObs(existeDet[0].observaciones);
             consultarprot(existeDet[0].familia);
             setConfirmarDet(true);
+            setBtnGuardarDet(true);
         } else {
             setNomFamilia('');
             setNomTipo('');
@@ -394,11 +398,11 @@ const IngresoEquiposST = () => {
                     mensaje: 'Cliente registrado exitosamente'
                 })
                 setFlag(!flag);
-                setRut('');
-                setNombre('');
-                setDireccion('');
-                setTelefono('');
-                setCorreo('');
+                setRut(ruts);
+                setEntidad(nom);
+                setTelefono(telefono);
+                setDireccion(dir);
+                setCorreo(corr);
                 setNomRsf('');
                 setDirRsf('');
                 setTelRsf('');
@@ -412,14 +416,10 @@ const IngresoEquiposST = () => {
                     mensaje: error
                 })
             }
-            setEntidad(nombre);
-            setTelefono(telefono);
-            setDireccion(direccion);
-            setCorreo(correo);
         }
     }
     // Guardar Datos de Cliente en ingreso en coleccion IngresoStCab
-    const ingresoCab = async (e) => {
+    const validarCab = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -489,55 +489,68 @@ const IngresoEquiposST = () => {
                 })
             }
         } else {
-            const nuevoFolio = await correlativos(users.emp_id, 'ingresosst');
-            setFolio(nuevoFolio);          
-            const fechaInSt = new Date(date);
-            try {
-                IngresoStCabDB({
-                    folio: nuevoFolio,
-                    rut: rut,
-                    entidad: entidad,
-                    telefono: telefono,
-                    direccion: direccion,
-                    correo: correo,
-                    date: fechaInSt,
-                    confirmado: false,
-                    estado: 'POR CONFIRMAR',
-                    tecnico: '',
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    emp_id: users.emp_id
-                })
-                setBtnGuardarCab(true);
-                setBtnGuardarDet(false);
-                setBtnNuevo(false);
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Datos registrados exitosamente'
-                })
-                setFlag(!flag);
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
-            }
+            setShowConfirmationCab(true);
+            setBtnGuardarCab(true)
         }
     }
-    // Guardar Datos de equipo en ingreso en coleccion IngresoStdet
-    const ingresoDet = async (e) => {
+    // Guardar Datos de Cliente en ingreso en coleccion IngresoStCab
+    const ingresoCab = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
-        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+        const nuevoFolio = await correlativos(users.emp_id, 'ingresosst');
+        setFolio(nuevoFolio);
+        const fechaInSt = new Date(date);
+        try {
+            IngresoStCabDB({
+                folio: nuevoFolio,
+                rut: rut,
+                entidad: entidad,
+                telefono: telefono,
+                direccion: direccion,
+                correo: correo,
+                date: fechaInSt,
+                confirmado: false,
+                estado: 'POR CONFIRMAR',
+                tecnico: '',
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id
+            })
+            setBtnGuardarCab(true);
+            setBtnGuardarDet(false);
+            setBtnNuevo(false);
+            setConfirmar(true)
+            setShowConfirmationCab(false);
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Datos registrados exitosamente'
+            })
+            setFlag(!flag);
+            return;
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: error
+            })
+        }
+    }
+    // Cancelar Ingreso Cabecera
+    const cancelDeleteCab = () => {
+        setShowConfirmationCab(false);
+        setBtnGuardarCab(false)
+    }
+
+    // Validar Datos de equipo y abrir modal de confirmacion
+    const validarDet = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
 
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -582,42 +595,88 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
-            try {
-                IngresoStDetDB({
-                    id_cab_inst: existeCab[0].id,
-                    folio: folio,
-                    rut: rut,
-                    date: existeCab[0].date,
-                    familia: nomFamilia,
-                    tipo: nomTipo,
-                    marca: nomMarca,
-                    modelo: nomModelo,
-                    serie: serie,
-                    servicio: servicio,
-                    observaciones: '',
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod,
-                    emp_id: users.emp_id
-                })
-                consultarprot(nomFamilia);
-                setBtnGuardarDet(true);
-                setBtnGuardarTest(false);
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Datos registrados exitosamente'
-                })
-                setFlag(!flag);
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
-            }
+            setShowConfirmationDet(true);
+            setBtnGuardarDet(true);
+        }
+    }
+    // guardar los campos de ingreso detalle
+    const ingresoDet = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
+        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
+        const cabecera = await getDocs(cab);
+        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+        try {
+            IngresoStDetDB({
+                id_cab_inst: existeCab[0].id,
+                folio: folio,
+                rut: rut,
+                date: existeCab[0].date,
+                familia: nomFamilia,
+                tipo: nomTipo,
+                marca: nomMarca,
+                modelo: nomModelo,
+                serie: serie,
+                servicio: servicio,
+                observaciones: '',
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod,
+                emp_id: users.emp_id
+            })
+            consultarprot(nomFamilia);
+            setBtnGuardarDet(true);
+            setBtnGuardarTest(false);
+            setConfirmarDet(true);
+            setShowConfirmationDet(false);
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Datos registrados exitosamente'
+            })
+            setFlag(!flag);
+            return;
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: error
+            })
+        }
+    }
+    // Cancelar Ingreso detalle
+    const cancelDeleteDet = () => {
+        setShowConfirmationDet(false);
+        setBtnGuardarDet(false)
+    }
+
+    // Boton Guardar => Funcional
+    const validarTest = async (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        protocolo.forEach((docs, index) => {
+            checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
+        });
+
+        if (checktest.current.length > 0) {
+            Swal.fire(`Item ${checktest.current.map((i) => {
+                return i.id2;
+            })} deben estar seleccionados.`);
+        } else if (obs === '') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Campo Observaciones no puede estar vacio'
+            })
+            return;
+        } else {
+            setShowConfirmationTest(true);
+            setBtnGuardarTest(true);
         }
     }
     // Boton Guardar => Funcional
@@ -640,103 +699,95 @@ const IngresoEquiposST = () => {
             checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
         });
 
+        // Crea una nueva instancia de lote (batch)
+        const batch = writeBatch(db);
+        // Obtiene una referencia a una colección específica en Firestore
+        const bitacoraTestRef = collection(db, 'testingreso');
+        // Itera a través de los nuevos documentos y agrégalos al lote de Checks
+        protocolo.forEach((docs) => {
+            const nuevoDocRef = doc(bitacoraTestRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+            batch.set(nuevoDocRef, {
+                id_cab_inst: existeCab[0].id,
+                folio: existeCab[0].folio,
+                nombretest: docs.nombre,
+                familia: docs.familia,
+                item: docs.item,
+                item_id: docs.item_id,
+                valorsi: docs.valorsi,
+                valorno: docs.valorno,
+                useradd: user.email,
+                usermod: user.email,
+                fechaadd: fechaAdd,
+                fechamod: fechaMod,
+                emp_id: users.emp_id,
+            });
+        });
+        batch.commit()
+            .then(() => {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Docuemento creado correctamente.'
+                });
+            })
+            .catch((error) => {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al guardar Test de Ingreso:', error
+                })
+            })
 
-        if (checktest.current.length > 0) {
-            Swal.fire(`Item ${checktest.current.map((i) => {
-                return i.id2;
-            })} deben estar seleccionados.`);
-        } else if (obs === '') {
+        try {
+            await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
+                observaciones: obs,
+                usermod: user.email,
+                fechamod: fechaMod
+            });
+        } catch (error) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Campo Observaciones no puede estar vacio'
+                mensaje: 'Error al actualizar detalle de Ingreso:', error
             })
-            return;
-        } else {
-            // Crea una nueva instancia de lote (batch)
-            const batch = writeBatch(db);
-            // Obtiene una referencia a una colección específica en Firestore
-            const bitacoraTestRef = collection(db, 'testingreso');
-            // Itera a través de los nuevos documentos y agrégalos al lote de Checks
-            protocolo.forEach((docs) => {
-                const nuevoDocRef = doc(bitacoraTestRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-                batch.set(nuevoDocRef, {
-                    id_cab_inst: existeCab[0].id,
-                    folio: existeCab[0].folio,
-                    nombretest: docs.nombre,
-                    familia: docs.familia,
-                    item: docs.item,
-                    item_id: docs.item_id,
-                    valorsi: docs.valorsi,
-                    valorno: docs.valorno,
-                    useradd: user.email,
-                    usermod: user.email,
-                    fechaadd: fechaAdd,
-                    fechamod: fechaMod,
-                    emp_id: users.emp_id,
-                });
-            });
-            batch.commit()
-                .then(() => {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'exito',
-                        mensaje: 'Docuemento creado correctamente.'
-                    });
-                })
-                .catch((error) => {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Error al guardar Test de Ingreso:', error
-                    })
-                })
-
-            try {
-                await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
-                    observaciones: obs,
-                    usermod: user.email,
-                    fechamod: fechaMod
-                });
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Error al actualizar detalle de Ingreso:', error
-                })
-            }
-            try {
-                await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
-                    confirmado: true,
-                    estado: 'INGRESADO',
-                    usermod: user.email,
-                    fechamod: fechaMod
-                });
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Error al actualizar cabecera de Ingreso:', error
-                })
-            }
-            setFolio('');
-            setRut('');
-            setEntidad('');
-            setDate('');
-            setTelefono('');
-            setDireccion('');
-            setCorreo('');
-            setNomFamilia('');
-            setNomTipo('');
-            setNomMarca('');
-            setNomModelo('');
-            setSerie('');
-            setServicio('');
-            setObs('');
-            consultarprot('');
-            setBtnGuardarTest(true);
-            setFlag(!flag)
         }
+        try {
+            await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
+                confirmado: true,
+                estado: 'INGRESADO',
+                usermod: user.email,
+                fechamod: fechaMod
+            });
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error al actualizar cabecera de Ingreso:', error
+            })
+        }
+        setFolio('');
+        setRut('');
+        setEntidad('');
+        setDate('');
+        setTelefono('');
+        setDireccion('');
+        setCorreo('');
+        setNomFamilia('');
+        setNomTipo('');
+        setNomMarca('');
+        setNomModelo('');
+        setSerie('');
+        setServicio('');
+        setObs('');
+        consultarprot('');
+        setBtnGuardarTest(true);
+        setShowConfirmationTest(false);
+        setFlag(!flag)
+    }
+    // Cancelar Ingreso detalle
+    const cancelDeleteTest = () => {
+        setShowConfirmationTest(false);
+        setBtnGuardarTest(false)
     }
 
     // Agregar un Nuevo Ingreso
@@ -757,6 +808,7 @@ const IngresoEquiposST = () => {
         setObs('');
         consultarprot('');
         setConfirmar(false);
+        setConfirmarDet(false);
         setBtnGuardarCab(false);
         setBtnGuardarDet(true);
         setBtnGuardarTest(true);
@@ -797,7 +849,7 @@ const IngresoEquiposST = () => {
                                 placeholder='Folio'
                                 name='folio'
                                 value={folio}
-                                /* onChange={ev => setFolio(ev.target.value)} */
+                            /* onChange={ev => setFolio(ev.target.value)} */
                             />
                         </ContentElemenSelect>
                         <ContentElemenSelect>
@@ -843,7 +895,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
+                    <BotonGuardar disabled={btnGuardarCab} onClick={validarCab}>Siguente</BotonGuardar>
                     {/* Pendiente Boton Nuevo */}
                     <BotonGuardar disabled={btnNuevo} onClick={nuevo}>Nuevo</BotonGuardar>
                 </Formulario>
@@ -917,7 +969,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados de detalle*/}
-                    <BotonGuardar disabled={btnGuardarDet} onClick={ingresoDet}>Siguente</BotonGuardar>
+                    <BotonGuardar disabled={btnGuardarDet} onClick={validarDet}>Siguente</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -969,7 +1021,7 @@ const IngresoEquiposST = () => {
                         onChange={e => setObs(e.target.value)}
                     />
                 </ContentElemenMov>
-                <BotonGuardar disabled={btnGuardarTest} onClick={guardarTest}>Guardar y Confirmar</BotonGuardar>
+                <BotonGuardar disabled={btnGuardarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
             </Contenedor>
 
             {/* Lista de Documetos por confrmar */}
@@ -1007,9 +1059,10 @@ const IngresoEquiposST = () => {
                                         setDireccion(item.direccion);
                                         setCorreo(item.correo);
                                         setConfirmar(true);
+                                        setConfirmarDet(true);
                                         setBtnGuardarCab(true);
                                         setBtnGuardarDet(false);
-                                        setBtnGuardarTest(false);
+                                        setBtnGuardarTest(true);
                                         setBtnNuevo(false);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
@@ -1172,6 +1225,48 @@ const IngresoEquiposST = () => {
                     </ConfirmaModal>
                 </Overlay>
             )}
+            {/* Modal de confirmacion de informacion de Cliente */}
+            {
+                showConfirmationCab && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={ingresoCab}>Guardar</Boton2>
+                                <Boton2 onClick={cancelDeleteCab}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+            {/* Modal de confirmacion de informacion de equipos */}
+            {
+                showConfirmationDet && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 onClick={cancelDeleteDet}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+            {/* Modal de confirmacion de Test de Ingreso */}
+            {
+                showConfirmationTest && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={guardarTest}>Guardar</Boton2>
+                                <Boton2 onClick={cancelDeleteTest}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
         </ContenedorProveedor>
     )
 }
