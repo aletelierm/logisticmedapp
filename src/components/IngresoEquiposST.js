@@ -87,8 +87,8 @@ const IngresoEquiposST = () => {
     const consultarIn = async () => {
         const ing = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('estado', '==', 'INGRESADO'));
         const ingreso = await getDocs(ing);
-        const existeIn = (ingreso.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
-        setIngresado(existeIn);
+        const existeIn = (ingreso.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))       
+        setIngresado(existeIn.sort((a, b) => a.folio - b.folio));
     }
     // Filtar por docuemto de Cabecera
     const consultarDet = async (item) => {
