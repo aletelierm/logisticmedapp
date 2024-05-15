@@ -196,7 +196,7 @@ const ConfirmaBtn = styled.div`
         display: flex;
         justify-content: space-between;
 `
-const Overlay = styled.div`
+const Overlay = styled.div`    
     width: 100vw;
     height: 100vh;
     position: fixed;
