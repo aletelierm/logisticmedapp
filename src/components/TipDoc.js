@@ -70,7 +70,6 @@ export const Traspaso= [
 
 export const Servicio= [
     { key: '1', value: '1', text: 'MANTENCION PREVENTIVO' },
-    { key: '2', value: '2', text: 'MANTENCION CORRECTIVO' },
     { key: '3', value: '3', text: 'PRESUPUESTO' },
     { key: '4', value: '4', text: 'GARANTIA' },
 ];

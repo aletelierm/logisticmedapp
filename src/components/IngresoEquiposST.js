@@ -87,7 +87,7 @@ const IngresoEquiposST = () => {
     const consultarIn = async () => {
         const ing = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('estado', '==', 'INGRESADO'));
         const ingreso = await getDocs(ing);
-        const existeIn = (ingreso.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))       
+        const existeIn = (ingreso.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setIngresado(existeIn.sort((a, b) => a.folio - b.folio));
     }
     // Filtar por docuemto de Cabecera
@@ -283,7 +283,7 @@ const IngresoEquiposST = () => {
         setDate(formatoDatetimeLocal)
     }
     // Guardar Cliente nuevo
-    const guardarCli = (e) => {
+    const validarCli = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -367,59 +367,73 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
-            try {
-                const ruts = rut.toLocaleUpperCase().trim();
-                const nom = nombre.toLocaleUpperCase().trim();
-                const dir = direccion.toLocaleUpperCase().trim();
-                const corr = correo.toLocaleLowerCase().trim();
-                const nomrsf = nomRsf.toLocaleUpperCase().trim();
-                const dirrsf = dirRsf.toLocaleUpperCase().trim();
-                const telrsf = telRsf.toLocaleUpperCase().trim();
-                AgregarClientesDb({
-                    emp_id: users.emp_id,
-                    rut: ruts,
-                    nombre: nom,
-                    direccion: dir,
-                    telefono: telefono,
-                    region: region,
-                    comuna: comuna,
-                    correo: corr,
-                    nomrsf: nomrsf,
-                    dirrsf: dirrsf,
-                    telrsf: telrsf,
-                    userAdd: user.email,
-                    userMod: user.email,
-                    fechaAdd: fechaAdd,
-                    fechaMod: fechaMod
-                })
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Cliente registrado exitosamente'
-                })
-                setFlag(!flag);
-                setRut(ruts);
-                setEntidad(nom);
-                setTelefono(telefono);
-                setDireccion(dir);
-                setCorreo(corr);
-                setNomRsf('');
-                setDirRsf('');
-                setTelRsf('');
-                setChecked(false)
-                setOpenModalCli(!openModalCli)
-                return;
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: error
-                })
-            }
+            setShowConfirmationCab(true);
         }
     }
+    // Guardar Cliente nuevo
+    const guardarCli = (e) => {
+        e.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+
+        try {
+            const ruts = rut.toLocaleUpperCase().trim();
+            const nom = nombre.toLocaleUpperCase().trim();
+            const dir = direccion.toLocaleUpperCase().trim();
+            const corr = correo.toLocaleLowerCase().trim();
+            const nomrsf = nomRsf.toLocaleUpperCase().trim();
+            const dirrsf = dirRsf.toLocaleUpperCase().trim();
+            const telrsf = telRsf.toLocaleUpperCase().trim();
+            AgregarClientesDb({
+                emp_id: users.emp_id,
+                rut: ruts,
+                nombre: nom,
+                direccion: dir,
+                telefono: telefono,
+                region: region,
+                comuna: comuna,
+                correo: corr,
+                nomrsf: nomrsf,
+                dirrsf: dirrsf,
+                telrsf: telrsf,
+                userAdd: user.email,
+                userMod: user.email,
+                fechaAdd: fechaAdd,
+                fechaMod: fechaMod
+            })
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Cliente registrado exitosamente'
+            })
+            setFlag(!flag);
+            setRut(ruts);
+            setEntidad(nom);
+            setTelefono(telefono);
+            setDireccion(dir);
+            setCorreo(corr);
+            setNomRsf('');
+            setDirRsf('');
+            setTelRsf('');
+            setChecked(false)
+            setOpenModalCli(!openModalCli)
+            setShowConfirmationCab(false);
+            return;
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: error
+            })
+        }
+    }
+
+    // Cancelar Ingreso Cabecera
+    const cancelDeleteCab = () => {
+        setShowConfirmationCab(false);
+    }
     // Guardar Datos de Cliente en ingreso en coleccion IngresoStCab
-    const validarCab = async (e) => {
+    const ingresoCab = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
@@ -489,63 +503,47 @@ const IngresoEquiposST = () => {
                 })
             }
         } else {
-            setShowConfirmationCab(true);
-            setBtnGuardarCab(true)
+            const nuevoFolio = await correlativos(users.emp_id, 'ingresosst');
+            setFolio(nuevoFolio);
+            const fechaInSt = new Date(date);
+            try {
+                IngresoStCabDB({
+                    folio: nuevoFolio,
+                    rut: rut,
+                    entidad: entidad,
+                    telefono: telefono,
+                    direccion: direccion,
+                    correo: correo,
+                    date: fechaInSt,
+                    confirmado: false,
+                    estado: 'POR CONFIRMAR',
+                    tecnico: '',
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id
+                })
+                setBtnGuardarCab(true);
+                setBtnGuardarDet(false);
+                setBtnNuevo(false);
+                setConfirmar(true)
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Datos registrados exitosamente'
+                })
+                setFlag(!flag);
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
         }
     }
-    // Guardar Datos de Cliente en ingreso en coleccion IngresoStCab
-    const ingresoCab = async (e) => {
-        e.preventDefault();
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-
-        const nuevoFolio = await correlativos(users.emp_id, 'ingresosst');
-        setFolio(nuevoFolio);
-        const fechaInSt = new Date(date);
-        try {
-            IngresoStCabDB({
-                folio: nuevoFolio,
-                rut: rut,
-                entidad: entidad,
-                telefono: telefono,
-                direccion: direccion,
-                correo: correo,
-                date: fechaInSt,
-                confirmado: false,
-                estado: 'POR CONFIRMAR',
-                tecnico: '',
-                userAdd: user.email,
-                userMod: user.email,
-                fechaAdd: fechaAdd,
-                fechaMod: fechaMod,
-                emp_id: users.emp_id
-            })
-            setBtnGuardarCab(true);
-            setBtnGuardarDet(false);
-            setBtnNuevo(false);
-            setConfirmar(true)
-            setShowConfirmationCab(false);
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Datos registrados exitosamente'
-            })
-            setFlag(!flag);
-            return;
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: error
-            })
-        }
-    }
-    // Cancelar Ingreso Cabecera
-    const cancelDeleteCab = () => {
-        setShowConfirmationCab(false);
-        setBtnGuardarCab(false)
-    }
-
     // Validar Datos de equipo y abrir modal de confirmacion
     const validarDet = async (e) => {
         e.preventDefault();
@@ -895,7 +893,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar disabled={btnGuardarCab} onClick={validarCab}>Siguente</BotonGuardar>
+                    <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
                     {/* Pendiente Boton Nuevo */}
                     <BotonGuardar disabled={btnNuevo} onClick={nuevo}>Nuevo</BotonGuardar>
                 </Formulario>
@@ -1221,7 +1219,7 @@ const IngresoEquiposST = () => {
                                 : ''
                             }
                         </Formulario>
-                        <BotonGuardar onClick={guardarCli} >Guardar</BotonGuardar>
+                        <BotonGuardar onClick={validarCli} >Guardar</BotonGuardar>
                     </ConfirmaModal>
                 </Overlay>
             )}
@@ -1230,9 +1228,9 @@ const IngresoEquiposST = () => {
                 showConfirmationCab && (
                     <Overlay>
                         <ConfirmaModal className="confirmation-modal">
-                            <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
+                            <h2>¿Estás seguro de que deseas guardar estos datos de cliente?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: 'red' }} onClick={ingresoCab}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: 'red' }} onClick={guardarCli}>Guardar</Boton2>
                                 <Boton2 onClick={cancelDeleteCab}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
