@@ -3,4 +3,6 @@ export const Roles = [
     {key: 2, value: 2, text: 'BODEGA'},
     {key: 3, value: 3, text: 'ADMIN'},  
     {key: 4, value: 4, text: 'TRANSPORTE'},  
+    {key: 5, value: 5, text: 'SERVICIO TECNICO'},  
+
 ];
