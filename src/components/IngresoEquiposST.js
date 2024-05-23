@@ -54,6 +54,8 @@ const IngresoEquiposST = () => {
     const [showConfirmationCab, setShowConfirmationCab] = useState(false);
     const [showConfirmationDet, setShowConfirmationDet] = useState(false);
     const [showConfirmationTest, setShowConfirmationTest] = useState(false);
+    const [mostrarInfoEq, setMostrarInfoEq] = useState(false);
+    const [mostrarTest, setMostrarTest] = useState(false);
     const [region, setRegion] = useState('Arica y Parinacota');
     const [comuna, setComuna] = useState('');
     const [checked, setChecked] = useState();
@@ -74,7 +76,6 @@ const IngresoEquiposST = () => {
     const [flag, setFlag] = useState('');
     const checktest = useRef([]);
     const id = useRef('');
-
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
@@ -107,6 +108,7 @@ const IngresoEquiposST = () => {
             consultarprot(existeDet[0].familia);
             setConfirmarDet(true);
             setBtnGuardarDet(true);
+            setMostrarTest(true);
         } else {
             setNomFamilia('');
             setNomTipo('');
@@ -116,6 +118,7 @@ const IngresoEquiposST = () => {
             setServicio('');
             setObs('');
             setConfirmarDet(false);
+            setMostrarTest(false);
         }
     }
     //Leer los datos de Familia
@@ -427,7 +430,6 @@ const IngresoEquiposST = () => {
             })
         }
     }
-
     // Cancelar Ingreso Cabecera
     const cancelDeleteCab = () => {
         setShowConfirmationCab(false);
@@ -527,7 +529,8 @@ const IngresoEquiposST = () => {
                 setBtnGuardarCab(true);
                 setBtnGuardarDet(false);
                 setBtnNuevo(false);
-                setConfirmar(true)
+                setConfirmar(true);
+                setMostrarInfoEq(true);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -631,6 +634,7 @@ const IngresoEquiposST = () => {
             setBtnGuardarTest(false);
             setConfirmarDet(true);
             setShowConfirmationDet(false);
+            setMostrarTest(true);
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'exito',
@@ -780,6 +784,8 @@ const IngresoEquiposST = () => {
         consultarprot('');
         setBtnGuardarTest(true);
         setShowConfirmationTest(false);
+        setMostrarInfoEq(false);
+        setMostrarTest(false);
         setFlag(!flag)
     }
     // Cancelar Ingreso detalle
@@ -811,6 +817,8 @@ const IngresoEquiposST = () => {
         setBtnGuardarDet(true);
         setBtnGuardarTest(true);
         setBtnNuevo(true);
+        setMostrarInfoEq(false);
+        setMostrarTest(false);
         setFlag(!flag);
     }
 
@@ -893,86 +901,92 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar disabled={btnGuardarCab} onClick={ingresoCab}>Siguente</BotonGuardar>
+                    <BotonGuardar disabled={btnGuardarCab} style={{backgroundColor: btnGuardarCab  && '#8F8B85', cursor: btnGuardarCab && 'default'}} onClick={ingresoCab}>Siguente</BotonGuardar>
                     {/* Pendiente Boton Nuevo */}
-                    <BotonGuardar disabled={btnNuevo} onClick={nuevo}>Nuevo</BotonGuardar>
+                    <BotonGuardar disabled={btnNuevo} style={{backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }} onClick={nuevo}>Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
             {/* Informacion del Equipo */}
-            <Contenedor>
-                <Titulo>Información Equipo</Titulo>
-                <Formulario action=''>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Familia</Label>
-                            <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {familia.map((d) => {
-                                    return (<option key={d.id}>{d.familia}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Tipo Equipamiento</Label>
-                            <Select disabled={confirmarDet} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {tipo.map((d) => {
-                                    return (<option key={d.id}>{d.tipo}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Marca</Label>
-                            <Select disabled={confirmarDet} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {marca.map((d) => {
-                                    return (<option key={d.id}>{d.marca}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Modelo</Label>
-                            <Select disabled={confirmarDet} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {modelo.map((d) => {
-                                    return (<option key={d.id}>{d.modelo}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>N° Serie</Label>
-                            <Input
-                                disabled={confirmarDet}
-                                type='text'
-                                placeholder='Ingrese N° Serie'
-                                name='serie'
-                                value={serie}
-                                onChange={e => { setSerie(e.target.value) }}
-                            />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Tipo de Servicio</Label>
-                            <Select
-                                disabled={confirmarDet}
-                                value={servicio}
-                                onChange={e => { setServicio(e.target.value) }}>
-                                <option>Selecciona Opción:</option>
-                                {Servicio.map((d) => {
-                                    return (<option key={d.key}>{d.text}</option>)
-                                })}
-                            </Select>
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
-                    {/* Guardar datos ingresados de detalle*/}
-                    <BotonGuardar disabled={btnGuardarDet} onClick={validarDet}>Siguente</BotonGuardar>
-                </Formulario>
-            </Contenedor>
+            {
+                mostrarInfoEq && (
+                    <Contenedor >
+                        <Titulo>Información Equipo</Titulo>
+                        <Formulario action=''>
+                            <ContentElemenMov>
+                                <ContentElemenSelect>
+                                    <Label>Familia</Label>
+                                    <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
+                                        <option>Selecciona Opción:</option>
+                                        {familia.map((d) => {
+                                            return (<option key={d.id}>{d.familia}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemenSelect>
+                                <ContentElemenSelect>
+                                    <Label>Tipo Equipamiento</Label>
+                                    <Select disabled={confirmarDet} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
+                                        <option>Selecciona Opción:</option>
+                                        {tipo.map((d) => {
+                                            return (<option key={d.id}>{d.tipo}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemenSelect>
+                                <ContentElemenSelect>
+                                    <Label>Marca</Label>
+                                    <Select disabled={confirmarDet} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
+                                        <option>Selecciona Opción:</option>
+                                        {marca.map((d) => {
+                                            return (<option key={d.id}>{d.marca}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemenSelect>
+                            </ContentElemenMov>
+                            <ContentElemenMov>
+                                <ContentElemenSelect>
+                                    <Label>Modelo</Label>
+                                    <Select disabled={confirmarDet} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
+                                        <option>Selecciona Opción:</option>
+                                        {modelo.map((d) => {
+                                            return (<option key={d.id}>{d.modelo}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemenSelect>
+                                <ContentElemenSelect>
+                                    <Label>N° Serie</Label>
+                                    <Input
+                                        disabled={confirmarDet}
+                                        type='text'
+                                        placeholder='Ingrese N° Serie'
+                                        name='serie'
+                                        value={serie}
+                                        onChange={e => { setSerie(e.target.value) }}
+                                    />
+                                </ContentElemenSelect>
+                                <ContentElemenSelect>
+                                    <Label>Tipo de Servicio</Label>
+                                    <Select
+                                        disabled={confirmarDet}
+                                        value={servicio}
+                                        onChange={e => { setServicio(e.target.value) }}>
+                                        <option>Selecciona Opción:</option>
+                                        {Servicio.map((d) => {
+                                            return (<option key={d.key}>{d.text}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemenSelect>
+                            </ContentElemenMov>
+                            {/* Guardar datos ingresados de detalle*/}
+                            <BotonGuardar disabled={btnGuardarDet} style={{backgroundColor: btnGuardarDet && '#8F8B85', cursor: btnGuardarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
+                        </Formulario>
+                    </Contenedor>
+                )
+            }
 
             {/* Test de Ingreso */}
-            <Contenedor>
+            {
+                mostrarTest && (
+                    <Contenedor>
                 <Titulo>Test de Ingreso</Titulo>
                 <Table singleLine>
                     <Table.Header>
@@ -1021,8 +1035,11 @@ const IngresoEquiposST = () => {
                 </ContentElemenMov>
                 <BotonGuardar disabled={btnGuardarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
             </Contenedor>
+                )
+            }
+            
 
-            {/* Lista de Documetos por confrmar */}
+            {/* Lista de Documetos por confirmar */}
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
                 <Table singleLine style={{ textAlign: 'center' }}>
@@ -1061,6 +1078,7 @@ const IngresoEquiposST = () => {
                                         setBtnGuardarCab(true);
                                         setBtnGuardarDet(false);
                                         setBtnGuardarTest(true);
+                                        setMostrarInfoEq(true);
                                         setBtnNuevo(false);
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
@@ -1114,115 +1132,117 @@ const IngresoEquiposST = () => {
                 cambiarEstadoAlerta={cambiarEstadoAlerta}
             />
             {/* Modal para crear Cliente */}
-            {openModalCli && (
-                <Overlay>
-                    <ConfirmaModal>
-                        <Titulo>Crear Cliente</Titulo>
-                        <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
-                        <Formulario action='' >
-                            <ContentElemen>
-                                <Label>Rut</Label>
-                                <Input
-                                    maxLength='10'
-                                    type='text'
-                                    name='rut'
-                                    placeholder='Ingrese Rut sin puntos'
-                                    value={rut}
-                                    onChange={ev => setRut(ev.target.value)}
-                                />
-                                <Label>Nombre</Label>
-                                <Input
-                                    type='text'
-                                    name='nombre'
-                                    placeholder='Ingrese Nombre'
-                                    value={nombre}
-                                    onChange={ev => setNombre(ev.target.value)}
-                                />
-                                <Label >Dirección</Label>
-                                <Input
-                                    type='text'
-                                    name='direccion'
-                                    placeholder='Ingrese Dirección'
-                                    value={direccion}
-                                    onChange={ev => setDireccion(ev.target.value)}
-                                />
-                            </ContentElemen>
-                            <ContentElemen>
-                                <Label>Region</Label>
-                                <Select value={region} onChange={e => setRegion(e.target.value)} >
-                                    {Regiones.map((r, index) => {
-                                        return (
-                                            <option key={index} >{r.region}</option>
-                                        )
-                                    })}
-                                </Select>
-                                <Label>Comuna</Label>
-                                <Select value={comuna} onChange={e => setComuna(e.target.value)} >
-                                    {comunasxRegion.map((objeto, index) => {
-                                        return (<option key={index}>{objeto.name}</option>)
-                                    })}
-                                </Select>
-                            </ContentElemen>
-                            <ContentElemen>
-                                <Label >Telefono</Label>
-                                <Input
-                                    type='number'
-                                    name='telefono'
-                                    placeholder='Ingrese Telefono'
-                                    value={telefono}
-                                    onChange={ev => setTelefono(ev.target.value)}
-                                />
-                                <Label>Email</Label>
-                                <Input
-                                    type='email'
-                                    name='correo'
-                                    placeholder='Ingrese Correo'
-                                    value={correo}
-                                    onChange={ev => setCorreo(ev.target.value)}
-                                />
-                                <Label>Responsable financiero?</Label>
-                                <Input
-                                    style={{ width: "3%", color: "#328AC4" }}
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={handleChek}
-                                />
-                            </ContentElemen>
-
-                            {checked ?
+            {
+                openModalCli && (
+                    <Overlay>
+                        <ConfirmaModal>
+                            <Titulo>Crear Cliente</Titulo>
+                            <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
+                            <Formulario action='' >
                                 <ContentElemen>
+                                    <Label>Rut</Label>
+                                    <Input
+                                        maxLength='10'
+                                        type='text'
+                                        name='rut'
+                                        placeholder='Ingrese Rut sin puntos'
+                                        value={rut}
+                                        onChange={ev => setRut(ev.target.value)}
+                                    />
                                     <Label>Nombre</Label>
                                     <Input
-                                        name="nombrersf"
-                                        type="text"
-                                        placeholder='Responsable financiero'
-                                        value={nomRsf}
-                                        onChange={ev => setNomRsf(ev.target.value)}
+                                        type='text'
+                                        name='nombre'
+                                        placeholder='Ingrese Nombre'
+                                        value={nombre}
+                                        onChange={ev => setNombre(ev.target.value)}
                                     />
-                                    <Label>Dirección</Label>
+                                    <Label >Dirección</Label>
                                     <Input
-                                        name="direccionrsf"
-                                        type="text"
-                                        placeholder='Ingres dirección'
-                                        value={dirRsf}
-                                        onChange={ev => setDirRsf(ev.target.value)}
-                                    />
-                                    <Label>Telefono</Label>
-                                    <Input
-                                        name="telefonorsf"
-                                        type="number"
-                                        placeholder='Ingrese telefono'
-                                        value={telRsf}
-                                        onChange={ev => setTelRsf(ev.target.value)}
+                                        type='text'
+                                        name='direccion'
+                                        placeholder='Ingrese Dirección'
+                                        value={direccion}
+                                        onChange={ev => setDireccion(ev.target.value)}
                                     />
                                 </ContentElemen>
-                                : ''
-                            }
-                        </Formulario>
-                        <BotonGuardar onClick={validarCli} >Guardar</BotonGuardar>
-                    </ConfirmaModal>
-                </Overlay>
-            )}
+                                <ContentElemen>
+                                    <Label>Region</Label>
+                                    <Select value={region} onChange={e => setRegion(e.target.value)} >
+                                        {Regiones.map((r, index) => {
+                                            return (
+                                                <option key={index} >{r.region}</option>
+                                            )
+                                        })}
+                                    </Select>
+                                    <Label>Comuna</Label>
+                                    <Select value={comuna} onChange={e => setComuna(e.target.value)} >
+                                        {comunasxRegion.map((objeto, index) => {
+                                            return (<option key={index}>{objeto.name}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemen>
+                                <ContentElemen>
+                                    <Label >Telefono</Label>
+                                    <Input
+                                        type='number'
+                                        name='telefono'
+                                        placeholder='Ingrese Telefono'
+                                        value={telefono}
+                                        onChange={ev => setTelefono(ev.target.value)}
+                                    />
+                                    <Label>Email</Label>
+                                    <Input
+                                        type='email'
+                                        name='correo'
+                                        placeholder='Ingrese Correo'
+                                        value={correo}
+                                        onChange={ev => setCorreo(ev.target.value)}
+                                    />
+                                    <Label>Responsable financiero?</Label>
+                                    <Input
+                                        style={{ width: "3%", color: "#328AC4" }}
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={handleChek}
+                                    />
+                                </ContentElemen>
+
+                                {checked ?
+                                    <ContentElemen>
+                                        <Label>Nombre</Label>
+                                        <Input
+                                            name="nombrersf"
+                                            type="text"
+                                            placeholder='Responsable financiero'
+                                            value={nomRsf}
+                                            onChange={ev => setNomRsf(ev.target.value)}
+                                        />
+                                        <Label>Dirección</Label>
+                                        <Input
+                                            name="direccionrsf"
+                                            type="text"
+                                            placeholder='Ingres dirección'
+                                            value={dirRsf}
+                                            onChange={ev => setDirRsf(ev.target.value)}
+                                        />
+                                        <Label>Telefono</Label>
+                                        <Input
+                                            name="telefonorsf"
+                                            type="number"
+                                            placeholder='Ingrese telefono'
+                                            value={telRsf}
+                                            onChange={ev => setTelRsf(ev.target.value)}
+                                        />
+                                    </ContentElemen>
+                                    : ''
+                                }
+                            </Formulario>
+                            <BotonGuardar onClick={validarCli} >Guardar</BotonGuardar>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
             {/* Modal de confirmacion de informacion de Cliente */}
             {
                 showConfirmationCab && (
@@ -1265,7 +1285,7 @@ const IngresoEquiposST = () => {
                     </Overlay>
                 )
             }
-        </ContenedorProveedor>
+        </ContenedorProveedor >
     )
 }
 
