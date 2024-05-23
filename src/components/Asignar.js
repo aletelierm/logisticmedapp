@@ -24,6 +24,7 @@ const Asignar = () => {
     const { users } = useContext(UserContext);
     const [asignar, setAsignar] = useState([]);
     const [asignados, setAsignados] = useState([]);
+    const [cerrados, setCerrados] = useState([]);
     const [mostrarDet, setMostrarDet] = useState([]);
     const [testIngreso, setTestIngreso] = useState([]);
     const [usuarios, setUsuarios] = useState([]);
@@ -48,6 +49,14 @@ const Asignar = () => {
         const dato = query(traerCabecera, where('emp_id', '==', users.emp_id), where('estado', '==', 'ASIGNADO'));
         const data = await getDocs(dato)
         setAsignados(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
+    }
+
+    // Leer datos de cabecera Cerrados
+    const getCerradoscab = async () => {
+        const traerCabecera = collection(db, 'ingresostcab');
+        const dato = query(traerCabecera, where('emp_id', '==', users.emp_id), where('estado', '==', 'CERRADO'));
+        const data = await getDocs(dato)
+        setCerrados(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
 
     // Cambiar fecha
@@ -84,6 +93,7 @@ const Asignar = () => {
     //Ordenar x folio
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
     const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
+    const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)
 
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
@@ -125,6 +135,7 @@ const Asignar = () => {
         getIngresostcab();
         leerUsuarios();
         getAsignadoscab();
+        getCerradoscab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -214,6 +225,123 @@ const Asignar = () => {
                                         }}
                                         ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell> */}
                                     <Table.Cell></Table.Cell>
+                                </Table.Row>
+                            )
+                        })}
+                    </Table.Body>
+                </Table>
+                {openModalCli && (
+                    <Overlay>
+                        <ConfirmaModal>
+                            <Titulo>Asignar Ingreso</Titulo>
+                            <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
+                            <Formulario action='' style={{ maxHeight: '600px', overflowY: 'auto' }} >
+                                <ContentElemen>
+                                    <Contenido /* style={{ maxHeight: '400px', overflowY: 'auto' }} */>
+                                        <Table singleLine>
+                                            <Table.Header>
+                                                <Table.Row>
+                                                    <Table.HeaderCell>Tipo</Table.HeaderCell>
+                                                    <Table.HeaderCell>Marca</Table.HeaderCell>
+                                                    <Table.HeaderCell>Modelo</Table.HeaderCell>
+                                                    <Table.HeaderCell>Serie</Table.HeaderCell>
+                                                    <Table.HeaderCell>Servicio</Table.HeaderCell>
+                                                </Table.Row>
+                                            </Table.Header>
+                                            <Table.Body >
+                                                {mostrarDet.map((item, index) => {
+                                                    return (
+                                                        <Table.Row key={index}>
+                                                            <Table.Cell style={{ fontSize: '13px' }}>{item.tipo}</Table.Cell>
+                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.marca}</Table.Cell>
+                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.modelo}</Table.Cell>
+                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.serie}</Table.Cell>
+                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.servicio}</Table.Cell>
+                                                        </Table.Row>
+                                                    )
+                                                })}
+                                            </Table.Body>
+                                        </Table>
+                                        <Table>
+                                            {mostrarDet.map((item, index) => {
+                                                return (
+                                                    <Table.Row key={index}>
+                                                        <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
+                                                    </Table.Row>
+                                                )
+                                            })}
+                                        </Table>
+                                        <Table>
+                                            <Table.Header>
+                                                <Table.Row>
+                                                    <Table.HeaderCell>N</Table.HeaderCell>
+                                                    <Table.HeaderCell>Item Test</Table.HeaderCell>
+                                                    <Table.HeaderCell>Si</Table.HeaderCell>
+                                                    <Table.HeaderCell>No</Table.HeaderCell>
+                                                </Table.Row>
+                                            </Table.Header>
+                                            <TableBody>
+                                                {testIngreso.map((item, index) => {
+                                                    return (
+                                                        <Table.Row key={index}>
+                                                            <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
+                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
+                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
+                                                                checked={item.valorsi} ></Input></Table.Cell>
+                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
+                                                                checked={item.valorno}></Input></Table.Cell>
+                                                        </Table.Row>
+                                                    )
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                        {/* <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar> */}
+                                    </Contenido>
+                                </ContentElemen>
+                                <ContentElemen>
+                                    <Label>Seleccionar Usuario:</Label>
+                                    <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
+                                        <option>Selecciona Tecnico:</option>
+                                        {usuarios.map((objeto, index) => {
+                                            return (<option key={index}>{objeto.correo}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemen>
+                                <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
+                            </Formulario>
+
+                        </ConfirmaModal>
+                    </Overlay>
+                )}
+            </ListarProveedor>
+
+            <ListarProveedor>
+                <Titulo>Cerrados</Titulo>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha Cierre</Table.HeaderCell>
+                            <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {cerradosOrd.map((item, index) => {
+                            return (
+                                <Table.Row key={index}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.folio}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.fecha_out)}</Table.Cell>
+                                    <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell>{item.tecnico}</Table.Cell>
                                 </Table.Row>
                             )
                         })}
