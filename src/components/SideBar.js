@@ -5,7 +5,7 @@ import { DataMenuJadmin } from './DataMenuJ';
 import { DataMenuAdmin } from './DataMenuAdmin';
 import { DataMenuSup } from './DataMenuSup';
 import { DataMenuTransp } from './DataMenuTransp';
-import { DataMenuSt } from './DataMenuTransp';
+import { DataMenuSt } from './DataMenuSt';
 import SubMenu from './SubMenu';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
