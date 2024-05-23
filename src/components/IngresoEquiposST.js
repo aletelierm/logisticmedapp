@@ -520,6 +520,7 @@ const IngresoEquiposST = () => {
                     confirmado: false,
                     estado: 'POR CONFIRMAR',
                     tecnico: '',
+                    fecha_out: '',
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -1038,7 +1039,6 @@ const IngresoEquiposST = () => {
                 )
             }
             
-
             {/* Lista de Documetos por confirmar */}
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>

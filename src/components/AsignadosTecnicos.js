@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import Alertas from './Alertas';
 import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table, TableBody } from 'semantic-ui-react'
-import { db } from '../firebase/firebaseConfig';
+import { auth, db } from '../firebase/firebaseConfig';
 /* import { Link } from 'react-router-dom'; */
-import { getDocs, collection, where, query } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
 import Modal from './Modal';
 /* import * as FaIcons from 'react-icons/fa'; */
@@ -17,12 +18,16 @@ import * as MdIcons from 'react-icons/md';
 const AsignadosTecnicos = () => {
     //fecha hoy
     const fechaHoy = new Date();
-
+    const user = auth.currentUser;
     const { users } = useContext(UserContext);
+
+    const [alerta, cambiarAlerta] = useState({});
+    const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [asignar, setAsignar] = useState([]);
     const [estadoModal, setEstadoModal] = useState(false);
     const [mostrarDet, setMostrarDet] = useState(false);
     const [testIngreso, setTestIngreso] = useState([]);
+    const [flag, setFlag] = useState(false);
 
 
     // Leer datos de cabecera Entradas
@@ -37,7 +42,7 @@ const AsignadosTecnicos = () => {
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-        const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+        // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
 
@@ -57,12 +62,43 @@ const AsignadosTecnicos = () => {
     }
 
     //Ordenar fechas
-    const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
+    const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
+
+    // Guardar Cliente nuevo
+    const cerrar = async (id) => {
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        console.log(id)
+
+        try {
+            await updateDoc(doc(db, 'ingresostcab', id), {
+                estado: 'CERRADO',
+                usermod: user.email,
+                fecha_out: fechaHoy
+            });
+            cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Cierre realizado correctamente'
+                })
+                setFlag(!flag);
+        } catch (error) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Error a cerrar mantenimiento:', error
+            })
+        }
+    }
 
     useEffect(() => {
         getIngresostcab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+    useEffect(() => {
+        getIngresostcab();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flag, setFlag])
 
     return (
         <div>
@@ -78,7 +114,7 @@ const AsignadosTecnicos = () => {
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
-                            <Table.HeaderCell>Ejecutar</Table.HeaderCell>
+                            <Table.HeaderCell style={{textAlign: 'center'}}>Ejecutar</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -99,7 +135,9 @@ const AsignadosTecnicos = () => {
                                             setEstadoModal(!estadoModal)
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                                    <Table.Cell></Table.Cell>
+                                    <Table.Cell>
+                                        <BotonGuardar style={{ backgroundColor: '#69080A' }} onClick={() => cerrar(item.id)} >Cerrar</BotonGuardar>
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -171,6 +209,11 @@ const AsignadosTecnicos = () => {
                     }
                 </Modal>
             </ListarProveedor>
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
         </div>
     );
 };
