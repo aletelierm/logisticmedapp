@@ -108,7 +108,6 @@ const IngresoEquiposST = () => {
             consultarprot(existeDet[0].familia);
             setConfirmarDet(true);
             setBtnGuardarDet(true);
-            setBtnGuardarTest(false);
             setMostrarTest(true);
         } else {
             setNomFamilia('');
@@ -198,10 +197,23 @@ const IngresoEquiposST = () => {
 
     // Filtar por docuemto de protoolo
     const consultarprot = async (fam) => {
+        // cambiarEstadoAlerta(false);
+        // cambiarAlerta({});
         const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam));
         const guardaprot = await getDocs(prot);
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
         setProtocolo(existeprot);
+        // if (existeprot.length > 0){
+        //     setProtocolo(existeprot);
+        //     setBtnGuardarTest(false);
+        // } else {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'No exite un Test de Ingreso para esta Familia. Favor crear'
+        //     })
+        //     setBtnGuardarTest(true);
+        // }
     }
     // Validar rut
     const detectarCli = async (e) => {
@@ -554,6 +566,7 @@ const IngresoEquiposST = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        consultarprot(nomFamilia)
 
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
@@ -595,6 +608,13 @@ const IngresoEquiposST = () => {
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Seleccione un Tipo de Servicio'
+            })
+            return;
+        } else if (protocolo.length === 0) {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'No exite un Test de Ingreso para esta Familia. Favor crear'
             })
             return;
         } else {
