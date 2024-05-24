@@ -650,7 +650,7 @@ const Protocolos = () => {
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
                                     <Table.Cell >{item.tipo}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center', }}
+                                    <Table.Cell style={{ textAlign: 'center', cursor:'pointer' }}
                                         title='Ver Items'
                                         onClick={() => {
                                             leerProt(item.id)

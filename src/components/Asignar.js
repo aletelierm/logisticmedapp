@@ -179,7 +179,7 @@ const Asignar = () => {
                                             leerTestIngreso(item.id)
                                             setOpenModalCli(!openModalCli)
                                         }}
-                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4', cursor:'pointer' }} /></Table.Cell>
                                     <Table.Cell></Table.Cell>
                                 </Table.Row>
                             )
