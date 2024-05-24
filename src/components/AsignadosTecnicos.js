@@ -12,6 +12,8 @@ import moment from 'moment';
 import Modal from './Modal';
 /* import * as FaIcons from 'react-icons/fa'; */
 import * as MdIcons from 'react-icons/md';
+// import { GrDocumentLocked } from "react-icons/gr";
+import { HiClipboardDocumentCheck } from "react-icons/hi2";
 /* import * as MdIcons from 'react-icons/md'; */
 // import Swal from 'sweetalert2';
 
@@ -77,11 +79,11 @@ const AsignadosTecnicos = () => {
                 fecha_out: fechaHoy
             });
             cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Cierre realizado correctamente'
-                })
-                setFlag(!flag);
+            cambiarAlerta({
+                tipo: 'exito',
+                mensaje: 'Cierre realizado correctamente'
+            })
+            setFlag(!flag);
         } catch (error) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -114,7 +116,7 @@ const AsignadosTecnicos = () => {
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
-                            <Table.HeaderCell style={{textAlign: 'center'}}>Ejecutar</Table.HeaderCell>
+                            <Table.HeaderCell /*style={{ textAlign: 'center' }}*/ >Ejecutar</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -135,9 +137,11 @@ const AsignadosTecnicos = () => {
                                             leerTestIngreso(item.id)
                                             setEstadoModal(!estadoModal)
                                         }}
-                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                                    <Table.Cell>
-                                        <BotonGuardar style={{ backgroundColor: '#69080A' }} onClick={() => cerrar(item.id)} >Cerrar</BotonGuardar>
+                                    ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }}>
+                                    <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id)} />
+                                        {/* <GrDocumentLocked style={{ fontSize: '20px', backgroundColor: '#69080A' }} onClick={() => cerrar(item.id)} /> */}
+                                        {/* <BotonGuardar style={{ backgroundColor: '#69080A' }} onClick={() => cerrar(item.id}) >Cerrar</BotonGuardar> */}
                                     </Table.Cell>
                                 </Table.Row>
                             )

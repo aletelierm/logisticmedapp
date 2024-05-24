@@ -108,6 +108,7 @@ const IngresoEquiposST = () => {
             consultarprot(existeDet[0].familia);
             setConfirmarDet(true);
             setBtnGuardarDet(true);
+            setBtnGuardarTest(false);
             setMostrarTest(true);
         } else {
             setNomFamilia('');
