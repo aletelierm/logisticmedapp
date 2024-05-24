@@ -128,6 +128,7 @@ const AsignadosTecnicos = () => {
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
                                     <Table.Cell
+                                        style={{cursor: 'pointer'}}
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
                                             leerDetalleIngreso(item.id)
