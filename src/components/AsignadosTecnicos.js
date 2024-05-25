@@ -6,16 +6,11 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-/* import { Link } from 'react-router-dom'; */
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
 import Modal from './Modal';
-/* import * as FaIcons from 'react-icons/fa'; */
 import * as MdIcons from 'react-icons/md';
-// import { GrDocumentLocked } from "react-icons/gr";
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
-/* import * as MdIcons from 'react-icons/md'; */
-// import Swal from 'sweetalert2';
 
 const AsignadosTecnicos = () => {
     //fecha hoy

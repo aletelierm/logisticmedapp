@@ -7,15 +7,11 @@ import { Table, TableBody } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
 import styled from 'styled-components';
 import Alertas from './Alertas';
-/* import { Link } from 'react-router-dom'; */
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
-/* import Modal from './Modal'; */
-/* import * as FaIcons from 'react-icons/fa'; */
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
-/* import * as MdIcons from 'react-icons/md'; */
-// import Swal from 'sweetalert2';
+import EnviarCorreo from '../funciones/EnviarCorreo';
 
 const Asignar = () => {
     //fecha hoy
@@ -118,7 +114,7 @@ const Asignar = () => {
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Usuario Asignado correctamente'
-                })
+                })                
                 setFlag(!flag);
                 setOpenModalCli(!openModalCli);
             } catch (error) {
@@ -127,6 +123,13 @@ const Asignar = () => {
                     tipo: 'error',
                     mensaje: 'Error al actualizar el usuario tecnico:', error
                 })
+            }
+            console.log(tecnico)
+            console.log(mostrarDet[0].folio)
+            try {
+                EnviarCorreo(tecnico,'Orden de ingreso asignada ',`Se le ha asignado la orden N.${mostrarDet[0].folio} para ser atendida.`)
+            } catch (error) {
+                console.log(error)
             }
         }
     }

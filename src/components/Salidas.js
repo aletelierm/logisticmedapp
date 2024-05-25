@@ -1073,15 +1073,7 @@ const Salidas = () => {
         setShowConfirmationAnular(false);
     }
 
-   /*  const enviarEmail = ()=>{
-        try {
-            EnviarCorreo('aletelier@fantasilandia.cl','correo prueba','mensaje')
-        } catch (error) {
-            console.log(error)
-        }
-        
-    } */
-    //Funcion para subir archivos al storega
+     //Funcion para subir archivos al storega
     /* const subida = async (e) => {
         e.preventDefault();
         if (archivo !== null) {
