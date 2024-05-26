@@ -11,6 +11,7 @@ import moment from 'moment';
 import Modal from './Modal';
 import * as MdIcons from 'react-icons/md';
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
+import EnviarCorreo from '../funciones/EnviarCorreo';
 
 const AsignadosTecnicos = () => {
     //fecha hoy
@@ -62,11 +63,10 @@ const AsignadosTecnicos = () => {
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
 
     // Guardar Cliente nuevo
-    const cerrar = async (id) => {
+    const cerrar = async (id,folio) => {
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        console.log(id)
-
+        cambiarAlerta({});        
+        leerDetalleIngreso(id)
         try {
             await updateDoc(doc(db, 'ingresostcab', id), {
                 estado: 'CERRADO',
@@ -85,6 +85,14 @@ const AsignadosTecnicos = () => {
                 tipo: 'error',
                 mensaje: 'Error a cerrar mantenimiento:', error
             })
+        }       
+        //Envia correo cuando usuario cierra una orden asignada
+        //pendiente usar los correos que se definan para recibir el email
+        //mientras quedara en duro
+        try {
+            EnviarCorreo('gerencia@dormirbien.cl','Orden de ingreso Cerrada ',`El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -134,7 +142,7 @@ const AsignadosTecnicos = () => {
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }}>
-                                    <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id)} />
+                                    <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id,item.folio)} />
                                         {/* <GrDocumentLocked style={{ fontSize: '20px', backgroundColor: '#69080A' }} onClick={() => cerrar(item.id)} /> */}
                                         {/* <BotonGuardar style={{ backgroundColor: '#69080A' }} onClick={() => cerrar(item.id}) >Cerrar</BotonGuardar> */}
                                     </Table.Cell>
