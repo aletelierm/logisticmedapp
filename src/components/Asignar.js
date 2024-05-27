@@ -114,7 +114,7 @@ const Asignar = () => {
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Usuario Asignado correctamente'
-                })
+                })                
                 setFlag(!flag);
                 setOpenModalCli(!openModalCli);
             } catch (error) {

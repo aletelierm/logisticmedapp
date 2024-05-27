@@ -443,7 +443,7 @@ const CrearEquipos = () => {
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
-                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px' }} title='Exportar Equipos a Excel' />
+                    <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', cursor:'pointer' }} title='Exportar Equipos a Excel' />
                 </ContentElemenAdd>
 
                 <Table singleLine>
@@ -472,7 +472,7 @@ const CrearEquipos = () => {
                                         <Table.Cell>{item.serie}</Table.Cell>
                                         <Table.Cell>{item.rfid}</Table.Cell>
                                         <Table.Cell
-                                            style={{ textAlign: 'center' }}
+                                            style={{ textAlign: 'center', cursor:'pointer' }}
                                             title='Ver Satus del Equipo'
                                             onClick={() => {
                                                 leerStatus(item.id)

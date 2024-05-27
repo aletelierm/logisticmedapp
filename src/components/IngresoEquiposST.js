@@ -1085,7 +1085,7 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
-                                    <Table.Cell onClick={() => {
+                                    <Table.Cell style={{cursor:'pointer'}}onClick={() => {
                                         consultarDet(item);
                                         setFolio(item.folio);
                                         setRut(item.rut);

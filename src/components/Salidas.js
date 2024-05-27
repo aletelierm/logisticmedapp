@@ -1073,7 +1073,7 @@ const Salidas = () => {
         setShowConfirmationAnular(false);
     }
 
-    //Funcion para subir archivos al storega
+     //Funcion para subir archivos al storega
     /* const subida = async (e) => {
         e.preventDefault();
         if (archivo !== null) {
@@ -1160,7 +1160,7 @@ const Salidas = () => {
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Salida de Equipos</Titulo>
+                <Titulo>Salida de Equipos</Titulo>                
             </Contenedor>
             <Contenedor>
                 <Formulario action=''>

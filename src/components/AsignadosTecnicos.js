@@ -6,16 +6,12 @@ import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-/* import { Link } from 'react-router-dom'; */
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
 import Modal from './Modal';
-/* import * as FaIcons from 'react-icons/fa'; */
 import * as MdIcons from 'react-icons/md';
-// import { GrDocumentLocked } from "react-icons/gr";
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
-/* import * as MdIcons from 'react-icons/md'; */
-// import Swal from 'sweetalert2';
+import EnviarCorreo from '../funciones/EnviarCorreo';
 
 const AsignadosTecnicos = () => {
     //fecha hoy
@@ -67,11 +63,10 @@ const AsignadosTecnicos = () => {
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
 
     // Guardar Cliente nuevo
-    const cerrar = async (id) => {
+    const cerrar = async (id,folio) => {
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        console.log(id)
-
+        cambiarAlerta({});        
+        leerDetalleIngreso(id)
         try {
             await updateDoc(doc(db, 'ingresostcab', id), {
                 estado: 'CERRADO',
@@ -90,6 +85,14 @@ const AsignadosTecnicos = () => {
                 tipo: 'error',
                 mensaje: 'Error a cerrar mantenimiento:', error
             })
+        }       
+        //Envia correo cuando usuario cierra una orden asignada
+        //pendiente usar los correos que se definan para recibir el email
+        //mientras quedara en duro
+        try {
+            EnviarCorreo('gerencia@dormirbien.cl','Orden de ingreso Cerrada ',`El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -130,6 +133,7 @@ const AsignadosTecnicos = () => {
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
                                     <Table.Cell
+                                        style={{cursor: 'pointer'}}
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
                                             leerDetalleIngreso(item.id)

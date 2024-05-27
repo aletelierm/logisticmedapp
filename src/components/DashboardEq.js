@@ -45,8 +45,8 @@ const App = () => {
       <ContenedorElementos>
         <Titulo>Donde estan Mis Equipos</Titulo>
       </ContenedorElementos>
-      <ContenedorElementos >
-        <div style={{ width: "600px", height: "400px", padding: "20px", marginLeft: "100px" }}>
+      <ContenedorElementos style={{width:"600px"}}>
+        <div style={{ /* width:'600px', */ height: "400px", padding: "20px", marginLeft: "10px" }}>
           <GraficoTorta datos={datos} />
         </div>
       </ContenedorElementos>

@@ -93,7 +93,7 @@ const ReporteMovimientos = () => {
                                         <Table.Cell>{item.rut}</Table.Cell>
                                         <Table.Cell>{item.entidad}</Table.Cell>
                                         <Table.Cell
-                                            style={{ textAlign: 'center' }}
+                                            style={{ textAlign: 'center', cursor:'pointer' }}
                                             title='Ver Movimientos'
                                             onClick={() => {
                                                 if(item.tipmov ===1){

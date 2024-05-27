@@ -454,6 +454,7 @@ const ProtocolosTest = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Categoria</Table.HeaderCell>
+                            <Table.HeaderCell>Continuar</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -464,7 +465,7 @@ const ProtocolosTest = () => {
                                     <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }} onClick={() => {
+                                    <Table.Cell style={{ textAlign: 'center', cursor:'pointer' }} onClick={() => {
                                         setNomFamilia(item.familia);
                                         setConfirmar(true);
                                         setBtnGuardar(true);
@@ -490,6 +491,7 @@ const ProtocolosTest = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Categoria</Table.HeaderCell>
+                            <Table.HeaderCell>Ver</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -507,7 +509,7 @@ const ProtocolosTest = () => {
                                             setEstadoModal(!estadoModal);
                                         }}
                                     >
-                                        <MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
+                                        <MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4', cursor:'pointer' }} />
                                     </Table.Cell>
                                 </Table.Row>
                             )
