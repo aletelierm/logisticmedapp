@@ -195,11 +195,12 @@ const IngresoEquiposST = () => {
         return 0;
     });
 
-    // Filtar por docuemto de protoolo
+    // Filtar por docuemto de protoolo no confirmado
+    //**** revisar si sirve esta funcion */
     const consultarprot = async (fam) => {
         // cambiarEstadoAlerta(false);
         // cambiarAlerta({});
-        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', fam), where('confirmado','==','false'));
+        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', fam), where('confirmado','==',true));
         const guardaprot = await getDocs(prot);
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
         setProtocolo(existeprot);       
@@ -555,7 +556,10 @@ const IngresoEquiposST = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        consultarprot(nomFamilia)
+        //Comprobar que existe protocolo
+        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==',nomFamilia), where('confirmado','==',true));
+        const existeprot = await getDocs(prot);
+        
         console.log('familia:',nomFamilia)
         console.log('protocolo',protocolo)
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
@@ -600,7 +604,7 @@ const IngresoEquiposST = () => {
                 mensaje: 'Seleccione un Tipo de Servicio'
             })
             return;
-        } else if (protocolo.length === 0) {
+        } else if (existeprot.docs.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
