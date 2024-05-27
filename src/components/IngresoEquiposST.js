@@ -199,7 +199,7 @@ const IngresoEquiposST = () => {
     const consultarprot = async (fam) => {
         // cambiarEstadoAlerta(false);
         // cambiarAlerta({});
-        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', fam));
+        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', fam), where('confirmado','==','false'));
         const guardaprot = await getDocs(prot);
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
         setProtocolo(existeprot);       
