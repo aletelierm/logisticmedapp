@@ -7,15 +7,11 @@ import { Table, TableBody } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
 import styled from 'styled-components';
 import Alertas from './Alertas';
-/* import { Link } from 'react-router-dom'; */
+import EnviarCorreo from '../funciones/EnviarCorreo';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
-/* import Modal from './Modal'; */
-/* import * as FaIcons from 'react-icons/fa'; */
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
-/* import * as MdIcons from 'react-icons/md'; */
-// import Swal from 'sweetalert2';
 
 const Asignar = () => {
     //fecha hoy
@@ -128,8 +124,42 @@ const Asignar = () => {
                     mensaje: 'Error al actualizar el usuario tecnico:', error
                 })
             }
+
+            // try {
+            //     // const mensaje = cuerpoCorreo(mostrarDet);
+            //     EnviarCorreo(tecnico, 'Se le a asignado la Orden de Ingreso N° ', /*mostrarDet[0].folio*/)
+            // } catch (error) {
+            //     console.log('error', error)
+            // }
         }
     }
+
+    // const cuerpoCorreo = (data) => {
+    //     return ReactDOMServer.renderToString(
+    //         <div style={{ backgroundColor: '#EEF2EF' }}>
+    //             <h2>Salida de Bodega</h2>
+    //             <div style={{ backgroundColor: '#EEF2EF' }}>
+    //                 <p>Tipo de Salida :{data[0].tipoinout}</p>
+    //                 <p>Numero Documento :{data[0].numdoc} </p>
+    //                 <p>Tipo de Documento:{data[0].tipdoc} </p>
+    //                 <p>Nombre :{data[0].entidad} </p>
+    //                 <p>Rut :{data[0].rut} </p>
+    //             </div>
+    //             <br />
+    //             <h3>Listado de equipos</h3>
+    //             <p>Los siguientes equipos se encuentran en transito</p>
+    //             <ul style={{ listStyle: 'none' }}>
+    //                 {data.map((item, index) => (
+    //                     <li key={index}>
+    //                         <h5>{index + 1 + ".-" + item.tipo + " " + item.marca + " " + item.modelo + "    S/N : " + item.serie}</h5>
+    //                     </li>
+    //                 ))}
+    //             </ul>
+    //             <br />
+    //             <h4>En espera de ser confirmados por el destinatario</h4>
+    //         </div>
+    //     )
+    // }
 
     useEffect(() => {
         getIngresostcab();
@@ -158,7 +188,6 @@ const Asignar = () => {
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -180,7 +209,6 @@ const Asignar = () => {
                                             setOpenModalCli(!openModalCli)
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                                    <Table.Cell></Table.Cell>
                                 </Table.Row>
                             )
                         })}
