@@ -197,18 +197,17 @@ const IngresoEquiposST = () => {
 
     // Filtar por docuemto de protoolo no confirmado => Funcional
     const consultarprot = async (fam) => {
-        // cambiarEstadoAlerta(false);
-        // cambiarAlerta({});
         const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
         const guardaprot = await getDocs(prot);
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
         setProtocolo(existeprot)
     }
+    protocolo.sort((a, b) => a.fechamod - b.fechamod)
+
     // Validar rut
     const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // setBtnGuardar(true)
         if (e.key === 'Enter' || e.key === 'Tab') {
             const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
             const rutCli = await getDocs(cli)
@@ -444,7 +443,6 @@ const IngresoEquiposST = () => {
         //Comprobar que existe el rut en DB
         const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
         const rutCli = await getDocs(cli)
-        // const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
         //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
@@ -559,8 +557,8 @@ const IngresoEquiposST = () => {
         const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==',nomFamilia), where('confirmado','==',true));
         const existeprot = await getDocs(prot);
         
-        console.log('familia:',nomFamilia)
-        console.log('protocolo',protocolo)
+        // console.log('familia:',nomFamilia)
+        // console.log('protocolo',protocolo)
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -852,7 +850,7 @@ const IngresoEquiposST = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    console.log(btnGuardarTest)
+    // console.log(btnGuardarTest)
     return (
         <ContenedorProveedor>
             <Contenedor >
