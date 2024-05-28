@@ -195,25 +195,15 @@ const IngresoEquiposST = () => {
         return 0;
     });
 
-    // Filtar por docuemto de protoolo
+    // Filtar por docuemto de protoolo no confirmado
+    //**** revisar si sirve esta funcion */
     const consultarprot = async (fam) => {
         // cambiarEstadoAlerta(false);
         // cambiarAlerta({});
-        const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam));
+        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', fam), where('confirmado','==',true));
         const guardaprot = await getDocs(prot);
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
-        setProtocolo(existeprot);
-        // if (existeprot.length > 0){
-        //     setProtocolo(existeprot);
-        //     setBtnGuardarTest(false);
-        // } else {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'No exite un Test de Ingreso para esta Familia. Favor crear'
-        //     })
-        //     setBtnGuardarTest(true);
-        // }
+        setProtocolo(existeprot);       
     }
     // Validar rut
     const detectarCli = async (e) => {
@@ -566,8 +556,12 @@ const IngresoEquiposST = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        consultarprot(nomFamilia)
-
+        //Comprobar que existe protocolo
+        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==',nomFamilia), where('confirmado','==',true));
+        const existeprot = await getDocs(prot);
+        
+        console.log('familia:',nomFamilia)
+        console.log('protocolo',protocolo)
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -610,7 +604,7 @@ const IngresoEquiposST = () => {
                 mensaje: 'Seleccione un Tipo de Servicio'
             })
             return;
-        } else if (protocolo.length === 0) {
+        } else if (existeprot.docs.length === 0) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
@@ -859,6 +853,7 @@ const IngresoEquiposST = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
+    console.log(btnGuardarTest)
     return (
         <ContenedorProveedor>
             <Contenedor >
@@ -1098,10 +1093,10 @@ const IngresoEquiposST = () => {
                                         setConfirmarDet(true);
                                         setBtnGuardarCab(true);
                                         setBtnGuardarDet(false);
-                                        setBtnGuardarTest(true);
-                                        setMostrarInfoEq(true);
+                                        setBtnGuardarTest(false);
+                                        setMostrarInfoEq(true);                                        
                                         setBtnNuevo(false);
-                                        setFlag(!flag)
+                                        setFlag(!flag)                                        
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
