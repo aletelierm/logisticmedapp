@@ -195,15 +195,14 @@ const IngresoEquiposST = () => {
         return 0;
     });
 
-    // Filtar por docuemto de protoolo no confirmado
-    //**** revisar si sirve esta funcion */
+    // Filtar por docuemto de protoolo no confirmado => Funcional
     const consultarprot = async (fam) => {
         // cambiarEstadoAlerta(false);
         // cambiarAlerta({});
-        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', fam), where('confirmado','==',true));
+        const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
         const guardaprot = await getDocs(prot);
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
-        setProtocolo(existeprot);       
+        setProtocolo(existeprot)
     }
     // Validar rut
     const detectarCli = async (e) => {
