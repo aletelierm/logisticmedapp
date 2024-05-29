@@ -1260,8 +1260,8 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guardar estos datos de cliente?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: 'red' }} onClick={guardarCli}>Guardar</Boton2>
-                                <Boton2 onClick={cancelDeleteCab}>Cancelar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={guardarCli}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteCab}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
                     </Overlay>
@@ -1274,8 +1274,8 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: 'red' }} onClick={ingresoDet}>Guardar</Boton2>
-                                <Boton2 onClick={cancelDeleteDet}>Cancelar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteDet}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
                     </Overlay>
@@ -1288,8 +1288,8 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: 'red' }} onClick={guardarTest}>Guardar</Boton2>
-                                <Boton2 onClick={cancelDeleteTest}>Cancelar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={guardarTest}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteTest}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
                     </Overlay>
