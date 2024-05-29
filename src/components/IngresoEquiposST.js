@@ -199,7 +199,7 @@ const IngresoEquiposST = () => {
     const consultarprot = async (fam) => {
         const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
         const guardaprot = await getDocs(prot);
-        const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valorsi: false, valorno: false })))
+        const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, /*id2: index + 1,*/ valorsi: false, valorno: false })))
         setProtocolo(existeprot)
     }
     protocolo.sort((a, b) => a.fechamod - b.fechamod)
@@ -554,7 +554,7 @@ const IngresoEquiposST = () => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Comprobar que existe protocolo
-        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==',nomFamilia), where('confirmado','==',true));
+        const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('confirmado', '==', true));
         const existeprot = await getDocs(prot);
 
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
@@ -667,11 +667,23 @@ const IngresoEquiposST = () => {
         setBtnGuardarDet(false)
     }
 
+    // // Agregar numero a protocolo para validación
+    // const agregarNumero = () => {
+    //     const nuevoarreglo = protocolo.map((p, index) => ({
+    //         ...p,
+    //         id2: index + 1
+    //     }));
+    //     setProtocolo(nuevoarreglo);
+    // }
+    // console.log(protocolo)
+
     // Boton Guardar => Funcional
     const validarTest = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        // agregarNumero();
+
         protocolo.forEach((docs, index) => {
             checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
         });
@@ -912,9 +924,9 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     {/* Guardar datos ingresados */}
-                    <BotonGuardar disabled={btnGuardarCab} style={{backgroundColor: btnGuardarCab  && '#8F8B85', cursor: btnGuardarCab && 'default'}} onClick={ingresoCab}>Siguente</BotonGuardar>
+                    <BotonGuardar disabled={btnGuardarCab} style={{ backgroundColor: btnGuardarCab && '#8F8B85', cursor: btnGuardarCab && 'default' }} onClick={ingresoCab}>Siguente</BotonGuardar>
                     {/* Pendiente Boton Nuevo */}
-                    <BotonGuardar disabled={btnNuevo} style={{backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }} onClick={nuevo}>Nuevo</BotonGuardar>
+                    <BotonGuardar disabled={btnNuevo} style={{ backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }} onClick={nuevo}>Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
 
@@ -988,7 +1000,7 @@ const IngresoEquiposST = () => {
                                 </ContentElemenSelect>
                             </ContentElemenMov>
                             {/* Guardar datos ingresados de detalle*/}
-                            <BotonGuardar disabled={btnGuardarDet} style={{backgroundColor: btnGuardarDet && '#8F8B85', cursor: btnGuardarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
+                            <BotonGuardar disabled={btnGuardarDet} style={{ backgroundColor: btnGuardarDet && '#8F8B85', cursor: btnGuardarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
                         </Formulario>
                     </Contenedor>
                 )
@@ -998,57 +1010,57 @@ const IngresoEquiposST = () => {
             {
                 mostrarTest && (
                     <Contenedor>
-                <Titulo>Test de Ingreso</Titulo>
-                <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell>Si</Table.HeaderCell>
-                            <Table.HeaderCell>No</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {protocolo.map((item, index) => {
-                            return (
-                                <Table.Row key={item.id}>
-                                    <Table.Cell >{index + 1}</Table.Cell>
-                                    <Table.Cell>{item.item}</Table.Cell>
-                                    <Table.Cell>
-                                        <Input
-                                            type='checkbox'
-                                            checked={item.valorsi}
-                                            onChange={() => handleButtonClick(item.id, 'opcion1')}
-                                        />
-                                    </Table.Cell>
-                                    <Table.Cell>
-                                        <Input
-                                            type='checkbox'
-                                            checked={item.valorno}
-                                            onChange={() => handleButtonClick(item.id, 'opcion2')}
-                                        />
-                                    </Table.Cell>
+                        <Titulo>Test de Ingreso</Titulo>
+                        <Table singleLine>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>N°</Table.HeaderCell>
+                                    <Table.HeaderCell>Item</Table.HeaderCell>
+                                    <Table.HeaderCell>Si</Table.HeaderCell>
+                                    <Table.HeaderCell>No</Table.HeaderCell>
                                 </Table.Row>
-                            )
-                        })}
-                    </Table.Body>
-                </Table>
-                <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
-                    <Label>Observaciones</Label>
-                    <TextArea
-                        style={{ width: '80%', height: '60px' }}
-                        type='text'
-                        name='descripcion'
-                        placeholder='Ingrese observacion o detalles adicionales'
-                        value={obs}
-                        onChange={e => setObs(e.target.value)}
-                    />
-                </ContentElemenMov>
-                <BotonGuardar disabled={btnGuardarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
-            </Contenedor>
+                            </Table.Header>
+                            <Table.Body>
+                                {protocolo.map((item, index) => {
+                                    return (
+                                        <Table.Row key={item.id}>
+                                            <Table.Cell >{index + 1}</Table.Cell>
+                                            <Table.Cell>{item.item}</Table.Cell>
+                                            <Table.Cell>
+                                                <Input
+                                                    type='checkbox'
+                                                    checked={item.valorsi}
+                                                    onChange={() => handleButtonClick(item.id, 'opcion1')}
+                                                />
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                <Input
+                                                    type='checkbox'
+                                                    checked={item.valorno}
+                                                    onChange={() => handleButtonClick(item.id, 'opcion2')}
+                                                />
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    )
+                                })}
+                            </Table.Body>
+                        </Table>
+                        <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
+                            <Label>Observaciones</Label>
+                            <TextArea
+                                style={{ width: '80%', height: '60px' }}
+                                type='text'
+                                name='descripcion'
+                                placeholder='Ingrese observacion o detalles adicionales'
+                                value={obs}
+                                onChange={e => setObs(e.target.value)}
+                            />
+                        </ContentElemenMov>
+                        <BotonGuardar disabled={btnGuardarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
+                    </Contenedor>
                 )
             }
-            
+
             {/* Lista de Documetos por confirmar */}
             <ListarProveedor>
                 <Titulo>Listado de Documentos por Confirmar</Titulo>
@@ -1074,7 +1086,7 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
-                                    <Table.Cell style={{cursor:'pointer'}}onClick={() => {
+                                    <Table.Cell style={{ cursor: 'pointer' }} onClick={() => {
                                         consultarDet(item);
                                         setFolio(item.folio);
                                         setRut(item.rut);
@@ -1088,9 +1100,9 @@ const IngresoEquiposST = () => {
                                         setBtnGuardarCab(true);
                                         setBtnGuardarDet(false);
                                         setBtnGuardarTest(false);
-                                        setMostrarInfoEq(true);                                        
+                                        setMostrarInfoEq(true);
                                         setBtnNuevo(false);
-                                        setFlag(!flag)                                        
+                                        setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
