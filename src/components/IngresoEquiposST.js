@@ -556,9 +556,7 @@ const IngresoEquiposST = () => {
         //Comprobar que existe protocolo
         const prot = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==',nomFamilia), where('confirmado','==',true));
         const existeprot = await getDocs(prot);
-        
-        // console.log('familia:',nomFamilia)
-        // console.log('protocolo',protocolo)
+
         if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -733,7 +731,7 @@ const IngresoEquiposST = () => {
                 useradd: user.email,
                 usermod: user.email,
                 fechaadd: fechaAdd,
-                fechamod: fechaMod,
+                fechamod: docs.fechamod,
                 emp_id: users.emp_id,
             });
         });
@@ -850,7 +848,6 @@ const IngresoEquiposST = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    // console.log(btnGuardarTest)
     return (
         <ContenedorProveedor>
             <Contenedor >
