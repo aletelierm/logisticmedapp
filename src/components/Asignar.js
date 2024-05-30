@@ -78,6 +78,7 @@ const Asignar = () => {
         const documento = await getDocs(doc)
         setTestIngreso(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
+    testIngreso.sort((a, b) => a.fechamod - b.fechamod)
 
     const leerUsuarios = async () => {
         const traer = collection(db, 'usuarios');

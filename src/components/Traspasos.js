@@ -97,12 +97,13 @@ const Traspasos = () => {
     }
     // Filtar por docuemto de Salida
     const consultarOut = async () => {
-        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', numDoc), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
+        const doc = query(collection(db, 'salidas'), where('emp_id', '==', users.emp_id), where('numdoc', '==', folio), where('tipdoc', '==', nomTipDoc), where('rut', '==', rut));
         const docu = await getDocs(doc);
         const documen = (docu.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         const documento = documen.sort(OrdenaFecha);
         setDataSalida(documento)
     }
+    console.log(dataSalida)
     // Filtar usuario transportista
     const transportista = async () => {
         const trans = query(collection(db, 'usuarios'), where('emp_id', '==', users.emp_id), where('rol', '==', 'TRANSPORTE'));
@@ -417,7 +418,7 @@ const Traspasos = () => {
                 setBtnConfirmar(false);
                 try {
                     SalidasDB({
-                        numDoc: numDoc,
+                        numDoc: existeCab[0].numdoc,
                         tipDoc: nomTipDoc,
                         date: existeCab[0].date,
                         tipoInOut: nomTipoOut,
@@ -465,7 +466,7 @@ const Traspasos = () => {
                 setBtnConfirmar(false);
                 try {
                     SalidasDB({
-                        numDoc: numDoc,
+                        numDoc: existeCab1[0].numdoc,
                         tipDoc: nomTipDoc,
                         date: existeCab1[0].date,
                         tipoInOut: nomTipoOut,

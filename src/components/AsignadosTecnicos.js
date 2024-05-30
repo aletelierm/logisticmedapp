@@ -58,6 +58,7 @@ const AsignadosTecnicos = () => {
         const documento = await getDocs(doc)
         setTestIngreso(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
+    testIngreso.sort((a, b) => a.fechamod - b.fechamod)
 
     //Ordenar fechas
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);

@@ -113,6 +113,7 @@ const ProtocolosTest = () => {
         const documento = await getDocs(doc)
         setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
+    mostrarProt.sort((a, b) => a.fechamod - b.fechamod)
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)

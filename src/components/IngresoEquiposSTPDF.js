@@ -63,6 +63,7 @@ const IngresoEquiposSTPDF = () => {
         const existeTest = (testIn.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setTest(existeTest);
     }
+    test.sort((a, b) => a.fechamod - b.fechamod)
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
