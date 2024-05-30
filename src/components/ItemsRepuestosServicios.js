@@ -190,7 +190,7 @@ const ItemsRepuestosServicios = () => {
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Item</Table.HeaderCell>
                             <Table.HeaderCell>Precio</Table.HeaderCell>
-                            {/* <Table.HeaderCell>Agregado el</Table.HeaderCell> */}
+                            <Table.HeaderCell>Agregado el</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -200,7 +200,7 @@ const ItemsRepuestosServicios = () => {
                                     <Table.Cell>{index + 1}</Table.Cell>
                                     <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                     <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                                    {/* <Table.Cell>{formatearFecha(item.fechaadd)}</Table.Cell> */}
+                                    <Table.Cell>{formatearFecha(item.fechaadd)}</Table.Cell>
                                 </Table.Row>
                             )
                         })}

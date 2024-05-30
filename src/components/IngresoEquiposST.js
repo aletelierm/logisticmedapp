@@ -200,9 +200,9 @@ const IngresoEquiposST = () => {
         const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
         const guardaprot = await getDocs(prot);
         const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, /*id2: index + 1,*/ valorsi: false, valorno: false })))
-        setProtocolo(existeprot)
+        setProtocolo(existeprot.sort((a, b) => a.fechamod - b.fechamod))
     }
-    protocolo.sort((a, b) => a.fechamod - b.fechamod)
+    // protocolo.sort((a, b) => a.fechamod - b.fechamod)
 
     // Validar rut
     const detectarCli = async (e) => {
@@ -684,13 +684,21 @@ const IngresoEquiposST = () => {
         cambiarAlerta({});
         // agregarNumero();
 
+        const nuevoarreglo = protocolo.map((p, index) => ({
+            ...p,
+            id2: index + 1
+        }));
+
         protocolo.forEach((docs, index) => {
             checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
         });
 
         if (checktest.current.length > 0) {
             Swal.fire(`Item ${checktest.current.map((i) => {
-                return i.id2;
+                return ' ' + i.item;
+                // return (
+                //     <li>{i.item}</li>
+                // )
             })} deben estar seleccionados.`);
         } else if (obs === '') {
             cambiarEstadoAlerta(true);
