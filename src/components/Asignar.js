@@ -316,9 +316,9 @@ const Asignar = () => {
                                                             <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                readOnly={item.valorsi} ></Input></Table.Cell>
+                                                                checked={item.valorsi} readOnly></Input></Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                readOnly={item.valorno}></Input></Table.Cell>
+                                                                checked={item.valorno} readOnly></Input></Table.Cell>
                                                         </Table.Row>
                                                     )
                                                 })}
@@ -433,9 +433,9 @@ const Asignar = () => {
                                                             <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorsi} ></Input></Table.Cell>
+                                                                checked={item.valorsi} readOnly></Input></Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorno}></Input></Table.Cell>
+                                                                checked={item.valorno} readOnly></Input></Table.Cell>
                                                         </Table.Row>
                                                     )
                                                 })}
