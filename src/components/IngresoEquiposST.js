@@ -684,10 +684,10 @@ const IngresoEquiposST = () => {
         cambiarAlerta({});
         // agregarNumero();
 
-        const nuevoarreglo = protocolo.map((p, index) => ({
+        /* const nuevoarreglo = protocolo.map((p, index) => ({
             ...p,
             id2: index + 1
-        }));
+        })); */
 
         protocolo.forEach((docs, index) => {
             checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)

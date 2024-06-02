@@ -457,7 +457,7 @@ const Clientes = () => {
                             })
                         }
                     </Table.Body>
-                </Table>
+                </Table>                
             </ListarProveedor>
             <Alerta
                 tipo={alerta.tipo}

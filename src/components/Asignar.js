@@ -91,12 +91,12 @@ const Asignar = () => {
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
     const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
     const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)
-
+    
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});
+        cambiarAlerta({});       
         if (tecnico.length === 0 || tecnico === 'Selecciona Tecnico:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -104,7 +104,7 @@ const Asignar = () => {
                 mensaje: 'Favor seleccione un usuario'
             })
             return;
-        } else {
+        } else {            
             try {
                 await updateDoc(doc(db, 'ingresostcab', idCabIngreso), {
                     tecnico: tecnico,
@@ -115,7 +115,13 @@ const Asignar = () => {
                 cambiarAlerta({
                     tipo: 'exito',
                     mensaje: 'Usuario Asignado correctamente'
-                })                
+                })
+                //Envío de correo cuando se asigna un tecnico
+                try {            
+                    EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso',`Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`)
+                } catch (error) {
+                   console.log('error', error)
+                 }              
                 setFlag(!flag);
                 setOpenModalCli(!openModalCli);
             } catch (error) {
@@ -125,13 +131,7 @@ const Asignar = () => {
                     mensaje: 'Error al actualizar el usuario tecnico:', error
                 })
             }
-
-            // try {
-            //     // const mensaje = cuerpoCorreo(mostrarDet);
-            //     EnviarCorreo(tecnico, 'Se le a asignado la Orden de Ingreso N° ', /*mostrarDet[0].folio*/)
-            // } catch (error) {
-            //     console.log('error', error)
-            // }
+            
         }
     }
 
@@ -316,9 +316,9 @@ const Asignar = () => {
                                                             <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorsi} ></Input></Table.Cell>
+                                                                readOnly={item.valorsi} ></Input></Table.Cell>
                                                             <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorno}></Input></Table.Cell>
+                                                                readOnly={item.valorno}></Input></Table.Cell>
                                                         </Table.Row>
                                                     )
                                                 })}
