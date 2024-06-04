@@ -45,12 +45,12 @@ import Traspasos from './Traspasos';
 import CheckMantoPDF from './CheckMantoPDF';
 import IngresoEquiposST from './IngresoEquiposST';
 import TestIngreso from './TestIngreso';
-import ItemsTest from './ItemsTest';
+import ItemsST from './ItemsST';
 import ProtocolosTest from './ProtocolosTest';
 import IngresoEquiposSTPDF from './IngresoEquiposSTPDF';
 import Asignar from './Asignar';
 import AsignadosTecnicos from './AsignadosTecnicos';
-import ItemsRepuestosServicios from './ItemsRepuestosServicios';
+// import ItemsRepuestosServicios from './ItemsRepuestosServicios';
 
 export const Home = () => {
   return (
@@ -97,11 +97,11 @@ export const Home = () => {
             <Route path="serviciotecnico/ingreso" element={<IngresoEquiposST/>}/> 
             <Route path="ingresopdf/:id" element={<IngresoEquiposSTPDF/>}/>       
             <Route path="serviciotecnico/testingreso" element={<TestIngreso/>}/>        
-            <Route path="serviciotecnico/itemstest" element={<ItemsTest/>}/>        
+            <Route path="serviciotecnico/itemsst" element={<ItemsST/>}/>        
             <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>       
             <Route path="serviciotecnico/asignar" element={<Asignar/>}/>       
             <Route path="serviciotecnico/asignadostecnicos" element={<AsignadosTecnicos/>}/>       
-            <Route path="serviciotecnico/itemsrepuestosyservicios" element={<ItemsRepuestosServicios/>}/>       
+            {/* <Route path="serviciotecnico/itemsrepuestosyservicios" element={<ItemsRepuestosServicios/>}/>        */}
             <Route path="configuracion" element={<Configuracion/>}/>        
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
             <Route path="configuracion/agregarempresa" element={<AgregarEmpresa/>}/>
