@@ -14,7 +14,7 @@ import Transaccion from './Transaccion';
 import ServicioTecnico from './ServicioTecnico';
 import Protocolos from './Protocolos';
 // import Programas from './Programas';
-import Certificados from './Certificados';
+// import Certificados from './Certificados';
 import Mantenimiento from './Mantenimiento';
 import Configuracion from './Configuracion';
 import NavbarSesion from './NavbarSesion';
@@ -44,12 +44,13 @@ import Bitacoras from './Bitacoras';
 import Traspasos from './Traspasos';
 import CheckMantoPDF from './CheckMantoPDF';
 import IngresoEquiposST from './IngresoEquiposST';
-import TestIngreso from './TestIngreso';
+// import TestIngreso from './TestIngreso';
 import ItemsST from './ItemsST';
 import ProtocolosTest from './ProtocolosTest';
 import IngresoEquiposSTPDF from './IngresoEquiposSTPDF';
 import Asignar from './Asignar';
 import AsignadosTecnicos from './AsignadosTecnicos';
+import EjecutarPresupuesto from './EjecutarPresupuesto';
 // import ItemsRepuestosServicios from './ItemsRepuestosServicios';
 
 export const Home = () => {
@@ -84,7 +85,7 @@ export const Home = () => {
             <Route path="serviciotecnico/items" element={<AgregarItems/>}/>            
             <Route path="serviciotecnico/protocolos" element={<Protocolos/>}/>            
             {/* <Route path="serviciotecnico/programas" element={<Programas/>}/> */}
-            <Route path="serviciotecnico/certificados" element={<Certificados/>}/>
+            {/* <Route path="serviciotecnico/certificados" element={<Certificados/>}/> */}
             <Route path="serviciotecnico/mantencion" element={<Mantenimiento/>}/>
             <Route path="ejecutarmantencion/:id" element={<EjecutarMantencion/>}/>
             <Route path="serviciotecnico/bitacora" element={<Bitacoras/>}/>
@@ -96,11 +97,12 @@ export const Home = () => {
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>        
             <Route path="serviciotecnico/ingreso" element={<IngresoEquiposST/>}/> 
             <Route path="ingresopdf/:id" element={<IngresoEquiposSTPDF/>}/>       
-            <Route path="serviciotecnico/testingreso" element={<TestIngreso/>}/>        
+            {/* <Route path="serviciotecnico/testingreso" element={<TestIngreso/>}/>         */}
             <Route path="serviciotecnico/itemsst" element={<ItemsST/>}/>        
             <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>       
             <Route path="serviciotecnico/asignar" element={<Asignar/>}/>       
-            <Route path="serviciotecnico/asignadostecnicos" element={<AsignadosTecnicos/>}/>       
+            <Route path="serviciotecnico/asignadostecnicos" element={<AsignadosTecnicos/>}/>  
+            <Route path="ejecutarpresupuesto/:id" element={<EjecutarPresupuesto/>}/>
             {/* <Route path="serviciotecnico/itemsrepuestosyservicios" element={<ItemsRepuestosServicios/>}/>        */}
             <Route path="configuracion" element={<Configuracion/>}/>        
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>
