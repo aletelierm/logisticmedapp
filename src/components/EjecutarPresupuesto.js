@@ -1,6 +1,7 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useRef } from 'react';
 import Alertas from './Alertas';
+import PresupuestoDB from '../firebase/PresupuestoDB';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
@@ -45,9 +46,10 @@ const EjecutarPresupuesto = () => {
   const [btnConfirmar, setBtnConfirmar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [mostrar, setMostrar] = useState(true);
+  const [botonDisabled, setBotonDisabled] = useState(false);
 
   const volver = () => {
-    navigate('/serviciotecnico/ingreso')
+    navigate('/serviciotecnico/asignadostecnicos')
   }
 
   useEffect(() => {
@@ -78,6 +80,7 @@ const EjecutarPresupuesto = () => {
     const existePresupuesto = (presu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     setPresupuesto(existePresupuesto);
   }
+  console.log(presupuesto)
   // Listado de Items Test Ingreso => Funcional
   const getItem = async () => {
     const traerit = collection(db, 'itemsst');
@@ -173,15 +176,16 @@ const EjecutarPresupuesto = () => {
   //   }
   // }
   // Agregar Item a Protocolo => Funcional
-  const AgregarItem = async (id) => {
+  const AgregarItem = async (id_item) => {
     cambiarEstadoAlerta(false);
     cambiarAlerta({});
     // Consultar si Item se encuentra en Documento
-    const item_id = itemrs.filter(it => it.id === id);
-    console.log(item_id)
+    const item_id = itemrs.filter(it => it.id === id_item);
     // Validar Item en el documento de protocolo que se esta trabajando     
     const existePresupuesto = presupuesto.filter(doc => doc.item_id === item_id[0].id);
-    
+
+    if (!botonDisabled) {
+      setBotonDisabled(true)
       if (existePresupuesto.length > 0) {
         cambiarEstadoAlerta(true);
         cambiarAlerta({
@@ -189,43 +193,44 @@ const EjecutarPresupuesto = () => {
           mensaje: 'Item ya se encuentra en este documento'
         })
       } else {
-      // try {
-      //   PresupuestoDB({
-      //     id_cab_inst: id,
-      //     folio: folio,
-      //     item_id: item_id[0].id,
-      //     item: item_id[0].nombre,
-      //     categoria: item_id[0].categoria,
-      //     price: item_id[0].price,
-      //     estado: 'Presupuesto Realizado',
-      //     userAdd: user.email,
-      //     userMod: user.email,
-      //     fechaAdd: fechaAdd,
-      //     fechaMod: fechaMod,
-      //     emp_id: users.emp_id,
-      //   });
-      //   cambiarEstadoAlerta(true);
-      //   cambiarAlerta({
-      //     tipo: 'exito',
-      //     mensaje: 'Item Agregado correctamente'
-      //   })
-      //   setFlag(!flag);
-      //   // setConfirmar(false);
-      //   // setBtnGuardar(true);
-      //   // setBtnNuevo(false);
-      //   setBtnConfirmar(false);
-      //   return;
-      // } catch (error) {
-      //   cambiarEstadoAlerta(true);
-      //   cambiarAlerta({
-      //     tipo: 'error',
-      //     mensaje: error
-      //   })
-      // }
+        try {
+          PresupuestoDB({
+            id_cab_inst: id,
+            folio: folio,
+            item_id: item_id[0].id,
+            item: item_id[0].nombre,
+            categoria: item_id[0].categoria,
+            price: item_id[0].price,
+            estado: 'Presupuesto Realizado',
+            userAdd: user.email,
+            userMod: user.email,
+            fechaAdd: fechaAdd,
+            fechaMod: fechaMod,
+            emp_id: users.emp_id,
+          });
+          cambiarEstadoAlerta(true);
+          cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Item Agregado correctamente'
+          })
+          setFlag(!flag);
+          // setConfirmar(false);
+          // setBtnGuardar(true);
+          // setBtnNuevo(false);
+          setBtnConfirmar(false);
+          return;
+        } catch (error) {
+          cambiarEstadoAlerta(true);
+          cambiarAlerta({
+            tipo: 'error',
+            mensaje: error
+          })
+        }
+      }
     }
-    // setTimeout(() => {
-    //   setBotonDisabled(false);
-    // }, 1000);
+    setTimeout(() => {
+      setBotonDisabled(false);
+    }, 1000);
   }
   // // Función para actualizar varios documentos por lotes
   // const actualizarDocs = async () => {
@@ -435,7 +440,7 @@ const EjecutarPresupuesto = () => {
                     <Table.Cell >{item.categoria}</Table.Cell>
                     <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
                     <Table.Cell style={{ textAlign: 'center' }}>
-                      <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
+                      <Boton /*disabled={btnAgregarItem}*/ onClick={() => AgregarItem(item.id)}>
                         <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
                       </Boton>
                     </Table.Cell>
