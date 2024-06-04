@@ -78,8 +78,8 @@ const ProtocolosTest = () => {
     }
     // Listado de Items Test Ingreso => Funcional
     const getItem = async () => {
-        const traerit = collection(db, 'itemstest');
-        const dato = query(traerit, where('emp_id', '==', users.emp_id));
+        const traerit = collection(db, 'itemsst');
+        const dato = query(traerit, where('emp_id', '==', users.emp_id), where('categoria', '==', 'TEST INGRESO'));
         const data = await getDocs(dato)
         setItem(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     }
@@ -236,6 +236,7 @@ const ProtocolosTest = () => {
                 setConfirmar(false);
                 setBtnGuardar(true);
                 setBtnNuevo(false);
+                setBtnConfirmar(false);
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -423,7 +424,7 @@ const ProtocolosTest = () => {
                             <Table.Row>
                                 <Table.HeaderCell>N°</Table.HeaderCell>
                                 <Table.HeaderCell>Item</Table.HeaderCell>
-                                <Table.HeaderCell>Agregar</Table.HeaderCell>
+                                <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
