@@ -1,19 +1,19 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Alertas from './Alertas';
 import PresupuestoDB from '../firebase/PresupuestoDB';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
+import { getDocs, collection, where, query/*, updateDoc, doc */} from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import * as FaIcons from 'react-icons/fa';
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Subtitulo } from '../elementos/General'
-import { ListarEquipos, Select, Formulario, Label, Contenido } from '../elementos/CrearEquipos';
+import { ListarEquipos/*, Select, Formulario, Label, Contenido */} from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import moment from 'moment';
@@ -42,7 +42,7 @@ const EjecutarPresupuesto = () => {
   const [correo, setCorreo] = useState('');
   const [buscador, setBuscardor] = useState('');
   const [flag, setFlag] = useState(false);
-  const [btnAgregarItem, setBtnAgregarItem] = useState(false);
+  // const [btnAgregarItem, setBtnAgregarItem] = useState(false);
   const [btnConfirmar, setBtnConfirmar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [mostrar, setMostrar] = useState(true);
@@ -73,7 +73,7 @@ const EjecutarPresupuesto = () => {
     const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     setDetalle(existeDet);
   }
-  // Detalle de Ingreso de equipo
+  // Detalle de Ingreso de equipo => No funcional
   const consultarPresupuesto = async () => {
     const pre = query(collection(db, 'presupuesto'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
     const presu = await getDocs(pre);
@@ -367,7 +367,8 @@ const EjecutarPresupuesto = () => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {presupuesto.map((item, index) => {
+              {/* Pendiente */}
+              {/* {presupuesto.map((item, index) => {
                 return (
                   <Table.Row key={index}>
                     <Table.Cell>{index + 1}</Table.Cell>
@@ -376,7 +377,7 @@ const EjecutarPresupuesto = () => {
                     <Table.Cell>${item.precio.toLocaleString()}.-</Table.Cell>
                   </Table.Row>
                 )
-              })}
+              })} */}
             </Table.Body>
           </Table>
         </ListarEquipos>

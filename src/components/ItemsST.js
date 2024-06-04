@@ -8,7 +8,7 @@ import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
-import moment from 'moment';
+// import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { ContentElemenMov, ContentElemenSelect, Formulario, Label, Select } from '../elementos/CrearEquipos';
@@ -47,12 +47,12 @@ const ItemsTest = () => {
         }
         return 0;
     });
-    // Cambiar fecha
-    const formatearFecha = (fecha) => {
-        const dateObj = fecha.toDate();
-        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-        return formatear;
-    }
+    // // Cambiar fecha
+    // const formatearFecha = (fecha) => {
+    //     const dateObj = fecha.toDate();
+    //     const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+    //     return formatear;
+    // }
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
