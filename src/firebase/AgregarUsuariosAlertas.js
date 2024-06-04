@@ -2,7 +2,7 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc } from "firebase/firestore";
 
-const AgregarUsuariosAlertasDB = async  ({userAdd, userMod, fechaAdd, fechaMod, emp_id,empresa,nombre,correo,salida,rfid,confirma}) => {
+const AgregarUsuariosAlertasDB = async  ({userAdd, userMod, fechaAdd, fechaMod, emp_id,empresa,nombre,correo,salida,rfid,confirma,tecnico}) => {
 
     return await addDoc(collection(db, 'usuariosalertas'),{
         nombre: nombre,
@@ -10,6 +10,7 @@ const AgregarUsuariosAlertasDB = async  ({userAdd, userMod, fechaAdd, fechaMod, 
         salida: salida,
         rfid: rfid,
         confirma: confirma,
+        tecnico: tecnico,
         useradd: userAdd,
         usermod: userMod,
         fechaadd: fechaAdd,
