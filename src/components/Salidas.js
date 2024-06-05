@@ -78,7 +78,7 @@ const Salidas = () => {
     //Lectura de usuario para alertas de salida
     const getAlertasSalidas = async () => {
         const traerAlertas = collection(db, 'usuariosalertas');
-        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id));
+        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id),where('salida','==',true));
         const data = await getDocs(dato);
         setAlertasalida(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }

@@ -26,9 +26,18 @@ const AsignadosTecnicos = () => {
     const [estadoModal, setEstadoModal] = useState(false);
     const [mostrarDet, setMostrarDet] = useState(false);
     const [testIngreso, setTestIngreso] = useState([]);
+    const [alertaOrdenIngreso, setAlertaOrdenIngreso] = useState([]);
     const [flag, setFlag] = useState(false);
 
+    //Lectura de usuario para alertas de ST-Asignados
+    const getAlertasOrdenIngreso = async () => {
+        const traerAlertas = collection(db, 'usuariosalertas');
+        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id),where('tecnico','==',true));
+        const data = await getDocs(dato);
+        setAlertaOrdenIngreso(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
 
+    console.log(alertaOrdenIngreso);
     // Leer datos de cabecera Entradas
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');
@@ -87,20 +96,30 @@ const AsignadosTecnicos = () => {
                 tipo: 'error',
                 mensaje: 'Error a cerrar mantenimiento:', error
             })
+<<<<<<< HEAD
         }
         //Envia correo cuando usuario cierra una orden asignada
         //pendiente usar los correos que se definan para recibir el email
         //mientras quedara en duro
         try {
             EnviarCorreo('gerencia@dormirbien.cl', 'Orden de ingreso Cerrada ', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
+=======
+        }       
+        //Envia correo al administrador cuando usuario cierra una orden de ingreso
+        try {
+            alertaOrdenIngreso.forEach((destino) => {
+                EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
+            })
+>>>>>>> master
         } catch (error) {
-            console.log(error)
+            console.log('error', error)
         }
     }
     console.log(cerrar)
 
     useEffect(() => {
         getIngresostcab();
+        getAlertasOrdenIngreso();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -145,9 +164,13 @@ const AsignadosTecnicos = () => {
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
+<<<<<<< HEAD
                                         <Link disabled to={`/ejecutarpresupuesto/${item.id}`}>
                                             <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} /*onClick={() => cerrar(item.id)}*/ />
                                         </Link>
+=======
+                                        <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id,item.folio)} />
+>>>>>>> master
                                     </Table.Cell>
                                 </Table.Row>
                             )

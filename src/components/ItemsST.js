@@ -47,12 +47,22 @@ const ItemsTest = () => {
         }
         return 0;
     });
+<<<<<<< HEAD
     // // Cambiar fecha
     // const formatearFecha = (fecha) => {
     //     const dateObj = fecha.toDate();
     //     const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
     //     return formatear;
     // }
+=======
+    // Transformar fecha timestap a momeent.
+    const formatearFecha = (fecha) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+        return formatear;
+    }
+
+>>>>>>> master
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
