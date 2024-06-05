@@ -8,6 +8,7 @@ import { getDocs, collection, where, query } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BiAddToQueue } from "react-icons/bi";
 import * as FaIcons from 'react-icons/fa';
+import { TbNotes, TbNotesOff } from "react-icons/tb";
 // import moment from 'moment';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -28,6 +29,10 @@ const ItemsTest = () => {
     const [leer, setLeer] = useState([]);
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [mostrar, setMostrar] = useState(true);
+    const [isOpenRS, setIsOpenRS] = useState(false);
+    const [mostrarRS, setMostrarRS] = useState(true);
     const [botonDisabled, setBotonDisabled] = useState(false);
 
     const getData = async () => {
@@ -186,7 +191,7 @@ const ItemsTest = () => {
                         <ContentElemenMov>
                             <ContentElemenSelect>
                                 <Label>Categoria</Label>
-                                <Select style={{width: '300px'}} value={categoria} onChange={e => { setCategoria(e.target.value) }}>
+                                <Select style={{ width: '300px' }} value={categoria} onChange={e => { setCategoria(e.target.value) }}>
                                     <option>Selecciona Opción:</option>
                                     {ItemST.map((d) => {
                                         return (<option key={d.id}>{d.text}</option>)
@@ -226,7 +231,7 @@ const ItemsTest = () => {
             {/* Listado Items Test de Ingreso */}
             <ListarProveedor>
                 <ContentElemenAdd>
-                    <Titulo>Listado de Items</Titulo>
+                    <Titulo>Listado de Items Test de Ingreso</Titulo>
                 </ContentElemenAdd>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
@@ -236,33 +241,119 @@ const ItemsTest = () => {
                         value={buscador}
                         onChange={onBuscarCambios}
                     />
+                    {mostrar ?
+                        <Boton onClick={() => {
+                            setIsOpen(true)
+                            setFlag(!flag)
+                            setMostrar(false)
+                        }}
+                            style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                            title='Mostrar Listado de Items'
+                        >
+                            <TbNotes />
+                        </Boton>
+                        :
+                        <Boton onClick={() => {
+                            setIsOpen(false)
+                            setMostrar(true)
+                        }}
+                            style={{ fontSize: '28px', color: '#328AC4' }}
+                            title='No mostrar Listado de Items'
+                        >
+                            <TbNotesOff />
+                        </Boton>
+                    }
                 </ContentElemenAdd>
-                <Table singleLine>
+                {isOpen &&
+                    <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>Item</Table.HeaderCell>
+                            <Table.HeaderCell>Categoria</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Precio</Table.HeaderCell> */}
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {filtroItem().map((item, index) => {
+                            if (item.categoria === 'TEST INGRESO')
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                                        <Table.Cell>{item.categoria}</Table.Cell>
+                                        {/* <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell> */}
+                                    </Table.Row>
+                                )
+                        })}
+                    </Table.Body>
+                </Table>
+                }
+                
+            </ListarProveedor>
+            {/* Listado Items Repuestos y Servicios */}
+            <ListarProveedor>
+                <ContentElemenAdd>
+                    <Titulo>Listado de Items Repuestos y Servicios</Titulo>
+                </ContentElemenAdd>
+                <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
+                    <InputAdd
+                        type='text'
+                        placeholder='Buscar Item'
+                        value={buscador}
+                        onChange={onBuscarCambios}
+                    />
+                    {mostrarRS ?
+                        <Boton onClick={() => {
+                            setIsOpenRS(true)
+                            setFlag(!flag)
+                            setMostrarRS(false)
+                        }}
+                            style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                            title='Mostrar Listado de Items'
+                        >
+                            <TbNotes />
+                        </Boton>
+                        :
+                        <Boton onClick={() => {
+                            setIsOpenRS(false)
+                            setMostrarRS(true)
+                        }}
+                            style={{ fontSize: '28px', color: '#328AC4' }}
+                            title='No mostrar Listado de Items'
+                        >
+                            <TbNotesOff />
+                        </Boton>
+                    }
+                </ContentElemenAdd>
+                {isOpenRS &&
+                    <Table singleLine>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
                             <Table.HeaderCell>Item</Table.HeaderCell>
                             <Table.HeaderCell>Categoria</Table.HeaderCell>
                             <Table.HeaderCell>Precio</Table.HeaderCell>
-                            {/* <Table.HeaderCell>Agregado por</Table.HeaderCell> */}
-                            {/* <Table.HeaderCell>Agregado el</Table.HeaderCell> */}
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {filtroItem().map((item, index) => {
-                            return (
-                                <Table.Row key={index}>
-                                    <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                                    <Table.Cell>{item.categoria}</Table.Cell>
-                                    <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                                    {/* <Table.Cell>{item.useradd}</Table.Cell> */}
-                                    {/* <Table.Cell>{formatearFecha(item.fechaadd)}</Table.Cell> */}
-                                </Table.Row>
-                            )
+                            if (item.categoria !== 'TEST INGRESO') {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                                        <Table.Cell>{item.categoria}</Table.Cell>
+                                        <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                                    </Table.Row>
+                                )
+                            }
                         })}
                     </Table.Body>
                 </Table>
+                }
+                
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
