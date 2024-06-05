@@ -276,7 +276,7 @@ const ItemsTest = () => {
                     </Table.Header>
                     <Table.Body>
                         {filtroItem().map((item, index) => {
-                            if (item.categoria === 'TEST INGRESO')
+                            if (item.categoria === 'TEST INGRESO') {
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
@@ -285,6 +285,7 @@ const ItemsTest = () => {
                                         {/* <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell> */}
                                     </Table.Row>
                                 )
+                            }
                         })}
                     </Table.Body>
                 </Table>
