@@ -106,7 +106,7 @@ const AsignadosTecnicos = () => {
             console.log('error', error)
         }
     }
-    console.log(cerrar)
+    // console.log(cerrar)
 
     useEffect(() => {
         getIngresostcab();

@@ -75,12 +75,11 @@ const EjecutarPresupuesto = () => {
   }
   // Detalle de Ingreso de equipo => No funcional
   const consultarPresupuesto = async () => {
-    const pre = query(collection(db, 'presupuesto'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+    const pre = query(collection(db, 'presupuestos'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
     const presu = await getDocs(pre);
     const existePresupuesto = (presu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     setPresupuesto(existePresupuesto);
   }
-  console.log(presupuesto)
   // Listado de Items Test Ingreso => Funcional
   const getItem = async () => {
     const traerit = collection(db, 'itemsst');
@@ -116,7 +115,7 @@ const EjecutarPresupuesto = () => {
   }
   // Hasta aqui hacia arriba
 
-  // // Agregar Cabecera de Protocolo => Funcional
+  // // Agregar Cabecera de Protocolo
   // const addCabProtocolo = async (ev) => {
   //   ev.preventDefault();
   //   cambiarEstadoAlerta(false);
@@ -181,6 +180,7 @@ const EjecutarPresupuesto = () => {
     cambiarAlerta({});
     // Consultar si Item se encuentra en Documento
     const item_id = itemrs.filter(it => it.id === id_item);
+    console.log(item_id[0].id)
     // Validar Item en el documento de protocolo que se esta trabajando     
     const existePresupuesto = presupuesto.filter(doc => doc.item_id === item_id[0].id);
 
@@ -350,8 +350,8 @@ const EjecutarPresupuesto = () => {
           </Table.Body>
         </Table>
       </Contenedor>
-      {/* Listo hasta aqui 04-06-2024 16:39 */}
 
+      {/* Listado de item agregados a presupuesto */}
       <Contenedor>
         <ContentElemenAdd>
           <Titulo>Items Agregados a Presupuesto</Titulo>
@@ -367,17 +367,16 @@ const EjecutarPresupuesto = () => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {/* Pendiente */}
-              {/* {presupuesto.map((item, index) => {
+              {presupuesto.map((item, index) => {
                 return (
                   <Table.Row key={index}>
                     <Table.Cell>{index + 1}</Table.Cell>
                     <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
                     <Table.Cell>{item.categoria}</Table.Cell>
-                    <Table.Cell>${item.precio.toLocaleString()}.-</Table.Cell>
+                    <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
                   </Table.Row>
                 )
-              })} */}
+              })}
             </Table.Body>
           </Table>
         </ListarEquipos>
