@@ -47,12 +47,13 @@ const ItemsTest = () => {
         }
         return 0;
     });
-    // Cambiar fecha
+    // Transformar fecha timestap a momeent.
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
+
     const handleSubmit = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);

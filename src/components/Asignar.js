@@ -29,7 +29,7 @@ const Asignar = () => {
     const [tecnico, setTecnico] = useState('')
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [flag, setFlag] = useState(false);
+    const [flag, setFlag] = useState(false);    
 
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
