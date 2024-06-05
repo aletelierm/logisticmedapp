@@ -96,21 +96,12 @@ const AsignadosTecnicos = () => {
                 tipo: 'error',
                 mensaje: 'Error a cerrar mantenimiento:', error
             })
-<<<<<<< HEAD
-        }
-        //Envia correo cuando usuario cierra una orden asignada
-        //pendiente usar los correos que se definan para recibir el email
-        //mientras quedara en duro
-        try {
-            EnviarCorreo('gerencia@dormirbien.cl', 'Orden de ingreso Cerrada ', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
-=======
         }       
         //Envia correo al administrador cuando usuario cierra una orden de ingreso
         try {
             alertaOrdenIngreso.forEach((destino) => {
                 EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
             })
->>>>>>> master
         } catch (error) {
             console.log('error', error)
         }
@@ -164,13 +155,9 @@ const AsignadosTecnicos = () => {
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
-<<<<<<< HEAD
                                         <Link disabled to={`/ejecutarpresupuesto/${item.id}`}>
                                             <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} /*onClick={() => cerrar(item.id)}*/ />
                                         </Link>
-=======
-                                        <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id,item.folio)} />
->>>>>>> master
                                     </Table.Cell>
                                 </Table.Row>
                             )
