@@ -11,8 +11,8 @@ const ContenedorProveedor = styled.div`
 `
 
 const Contenedor = styled.div`
-    margin-top: 20px;
-    padding: 20px;
+    margin-top: 15px;
+    padding: 15px;
     border: 2px solid #d1d1d1;
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
@@ -76,10 +76,11 @@ const Titulo = styled.h2`
     // color:  #83d394;
     color:  #328AC4;
     margin: 0rem;
+    font-size: 1.3rem ;
 
     /* Media query para pantallas aún más pequeñas */
     @media screen and (max-width: 576px) {
-        font-size: 1.2rem ;
+        font-size: 1rem ;
     }
 `
 
@@ -87,11 +88,11 @@ const Subtitulo = styled.h3`
     // color:  #83d394;
     color:  #328AC4;
     margin: 0rem;
-    font-size: 1.5rem ;
+    font-size: 1rem ;
 
     /* Media query para pantallas aún más pequeñas */
     @media screen and (max-width: 576px) {
-        font-size: 1.2rem ;
+        font-size: 0.75rem ;
     }
 `
 
@@ -100,7 +101,7 @@ const InputAdd = styled.input`
     border: 2px solid #328AC4;
     border-radius: 10px;
     padding: 5px 30px;
-    font-size: 16px;
+    font-size: 12px;
     text-align: center;
     width: 100%;
 
@@ -113,6 +114,7 @@ const InputUpdate = styled.input`
     border: 2px solid #328AC4;
     border-radius: 6px;
     padding: 5px;
+    font-size: 12px;
     transition: all.3s ease all;
     &:focus{
         border: 3px solid #83d394;
