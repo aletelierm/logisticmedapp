@@ -266,18 +266,17 @@ const ItemsTest = () => {
                 </ContentElemenAdd>
                 {isOpen &&
                     <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell>Categoria</Table.HeaderCell>
-                            {/* <Table.HeaderCell>Precio</Table.HeaderCell> */}
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {filtroItem().map((item, index) => {
-                            if (item.categoria === 'TEST INGRESO') {
-                                return (
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Item</Table.HeaderCell>
+                                <Table.HeaderCell>Categoria</Table.HeaderCell>
+                                {/* <Table.HeaderCell>Precio</Table.HeaderCell> */}
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {filtroItem.map((item, index) => (
+                                item.categoria === 'TEST INGRESO' && (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
@@ -285,12 +284,12 @@ const ItemsTest = () => {
                                         {/* <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell> */}
                                     </Table.Row>
                                 )
-                            }
-                        })}
-                    </Table.Body>
-                </Table>
+                            )
+                            )}
+                        </Table.Body>
+                    </Table>
                 }
-                
+
             </ListarProveedor>
             {/* Listado Items Repuestos y Servicios */}
             <ListarProveedor>
@@ -330,18 +329,17 @@ const ItemsTest = () => {
                 </ContentElemenAdd>
                 {isOpenRS &&
                     <Table singleLine>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Item</Table.HeaderCell>
-                            <Table.HeaderCell>Categoria</Table.HeaderCell>
-                            <Table.HeaderCell>Precio</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {filtroItem().map((item, index) => {
-                            if (item.categoria !== 'TEST INGRESO') {
-                                return (
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Item</Table.HeaderCell>
+                                <Table.HeaderCell>Categoria</Table.HeaderCell>
+                                <Table.HeaderCell>Precio</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {filtroItem().map((item, index) => (
+                                item.categoria !== 'TEST INGRESO' && (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
@@ -349,12 +347,12 @@ const ItemsTest = () => {
                                         <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
                                     </Table.Row>
                                 )
-                            }
-                        })}
-                    </Table.Body>
-                </Table>
+                            )
+                            )}
+                        </Table.Body>
+                    </Table>
                 }
-                
+
             </ListarProveedor>
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}

@@ -15,7 +15,7 @@ import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
 import { FaRegFilePdf } from "react-icons/fa";
-import { Categoria, Servicio } from './TipDoc';
+import { Servicio } from './TipDoc';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Swal from 'sweetalert2';
