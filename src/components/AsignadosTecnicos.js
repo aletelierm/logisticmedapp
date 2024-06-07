@@ -4,7 +4,7 @@ import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-/* import { Link } from 'react-router-dom'; */
+// import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
@@ -131,7 +131,7 @@ const AsignadosTecnicos = () => {
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
-                            {/* <Table.HeaderCell>Presupuesto</Table.HeaderCell> */}
+                            <Table.HeaderCell>Presupuesto</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
                             <Table.HeaderCell /*style={{ textAlign: 'center' }}*/ >Ejecutar</Table.HeaderCell>
                         </Table.Row>
@@ -146,7 +146,7 @@ const AsignadosTecnicos = () => {
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
-                                    {/* <Table.Cell>Realizado</Table.Cell> */}
+                                    <Table.Cell>Realizado</Table.Cell>
                                     <Table.Cell
                                         style={{ cursor: 'pointer' }}
                                         title='Ver Documento Ingreso'
