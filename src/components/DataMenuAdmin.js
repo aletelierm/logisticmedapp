@@ -131,5 +131,25 @@ export const DataMenuAdmin = [
         
       }
     ]
+  },
+  {
+    title: 'Mantenciones',
+    path: 'serviciotecnico',
+    icon: <MdIcons.MdMedicalServices />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: 'Ejecutar Mant.',
+        path: 'serviciotecnico/mantencion',
+        icon: <IoIcons.IoIosPlay />
+      },
+      {
+        title: 'Bitacora.',
+        path: 'serviciotecnico/bitacora',
+        icon: <MdIcons.MdOutlineWorkHistory />
+      }
+    ]
   }
 ];

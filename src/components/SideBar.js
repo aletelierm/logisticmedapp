@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { FaBars } from 'react-icons/fa';
 import { DataMenu } from './DataMenu';
 import { DataMenuJadmin } from './DataMenuJ';
+import { DataMenuSt } from './DataMenuSt';
 import { DataMenuAdmin } from './DataMenuAdmin';
 import { DataMenuSup } from './DataMenuSup';
+import { DataMenuTec } from './DataMenuTec';
 import { DataMenuTransp } from './DataMenuTransp';
-import { DataMenuSt } from './DataMenuSt';
 import SubMenu from './SubMenu';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -18,11 +19,12 @@ const SideBar = ({ children }) => {
 
     useEffect(() => {
         if (users.rol === 'DADMIN') setMenu(DataMenu)
-        if (users.rol === 'JADMIN') setMenu(DataMenuJadmin)
-        if (users.rol === 'ADMIN') setMenu(DataMenuAdmin)
-        if (users.rol === 'SUPERVISOR') setMenu(DataMenuSup)
-        if (users.rol === 'TRANSPORTE') setMenu(DataMenuTransp)
-        if (users.rol === 'SERVICIO TECNICO') setMenu(DataMenuSt)
+        if (users.rol === 'ADMIN-LM') setMenu(DataMenuJadmin)
+        if (users.rol === 'TECNICO-LM') setMenu(DataMenuSt)
+        if (users.rol === 'ADMIN-HC') setMenu(DataMenuAdmin)
+        if (users.rol === 'SUPERVISOR-HC') setMenu(DataMenuSup)
+        if (users.rol === 'TECNICO-HC') setMenu(DataMenuTec)
+        if (users.rol === 'TRANSPORTE-HC') setMenu(DataMenuTransp)
     }, [users])
 
     return (
