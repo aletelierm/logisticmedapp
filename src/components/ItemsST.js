@@ -67,11 +67,11 @@ const ItemsTest = () => {
             // Consulta si exite campo en el arreglo
             const existe = leer.filter(it => it.nombre === item.toLocaleUpperCase().trim()).length === 0;
 
-            if (!existe) {
+            if (categoria.length === 0 || categoria === 'Selecciona Opción:') {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'Ya existe este Item'
+                    mensaje: 'No ha seleccionado una categoria'
                 })
             } else if (item === '') {
                 cambiarEstadoAlerta(true);
@@ -79,11 +79,11 @@ const ItemsTest = () => {
                     tipo: 'error',
                     mensaje: 'No ha ingresado un Item'
                 })
-            } else if (categoria.length === 0 || categoria === 'Selecciona Opción:') {
+            } else if (!existe) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'No ha seleccionado una categoria'
+                    mensaje: 'Ya existe este Item'
                 })
             } else {
                 const it = item.toLocaleUpperCase().trim()
@@ -172,6 +172,18 @@ const ItemsTest = () => {
 
             <Contenedor>
                 <Formulario action=''>
+                    <ContentElemenMov>
+                        <ContentElemenSelect>
+                            <Label>Categoria</Label>
+                            <Select style={{ width: '300px' }} value={categoria} onChange={e => { setCategoria(e.target.value) }}>
+                                <option>Selecciona Opción:</option>
+                                {ItemST.map((d) => {
+                                    return (<option key={d.id}>{d.text}</option>)
+                                })}
+                            </Select>
+                        </ContentElemenSelect>
+
+                    </ContentElemenMov>
                     <ContentElemenMov style={{ width: '100%' }}>
                         <ContentElemenSelect style={{ width: '100%', paddingTop: '40px' }}>
                             <InputAdd
@@ -182,49 +194,33 @@ const ItemsTest = () => {
                                 onChange={e => setItem(e.target.value)}
                             />
                         </ContentElemenSelect>
-                        <Boton onClick={handleSubmit} >
-                            <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4', marginTop: '20px' }} />
-                        </Boton>
-                    </ContentElemenMov>
-
-                    <ContentElemenMov>
-                        <ContentElemenMov>
-                            <ContentElemenSelect>
-                                <Label>Categoria</Label>
-                                <Select style={{ width: '300px' }} value={categoria} onChange={e => { setCategoria(e.target.value) }}>
-                                    <option>Selecciona Opción:</option>
-                                    {ItemST.map((d) => {
-                                        return (<option key={d.id}>{d.text}</option>)
-                                    })}
-                                </Select>
-                            </ContentElemenSelect>
-                        </ContentElemenMov>
                         {categoria === 'REPUESTO' || categoria === 'SERVICIO' ?
-                            <ContentElemenMov>
-                                <ContentElemenSelect>
-                                    <Label>Precio</Label>
-                                    <InputAdd
-                                        type='number'
-                                        name='price'
-                                        value={price}
-                                        onChange={e => {
-                                            if (/^[1-9]\d*$/.test(e.target.value)) {
-                                                setPrice(Number(e.target.value))
-                                            } else {
-                                                cambiarEstadoAlerta(true);
-                                                cambiarAlerta({
-                                                    tipo: 'error',
-                                                    mensaje: 'Por favor ingrese un numero positivo'
-                                                })
-                                                setPrice('')
-                                            }
-                                        }}
-                                    />
-                                </ContentElemenSelect>
-                            </ContentElemenMov>
+                            <ContentElemenSelect >
+                                <Label>Precio</Label>
+                                <InputAdd
+                                    type='number'
+                                    name='price'
+                                    value={price}
+                                    onChange={e => {
+                                        if (/^[1-9]\d*$/.test(e.target.value)) {
+                                            setPrice(Number(e.target.value))
+                                        } else {
+                                            cambiarEstadoAlerta(true);
+                                            cambiarAlerta({
+                                                tipo: 'error',
+                                                mensaje: 'Por favor ingrese un numero positivo'
+                                            })
+                                            setPrice('')
+                                        }
+                                    }}
+                                />
+                            </ContentElemenSelect>
                             :
                             ''
                         }
+                        <Boton onClick={handleSubmit} >
+                            <BiAddToQueue style={{ fontSize: '32px', color: '#328AC4', marginTop: '20px' }} />
+                        </Boton>
                     </ContentElemenMov>
                 </Formulario>
             </Contenedor>
@@ -289,7 +285,6 @@ const ItemsTest = () => {
                         </Table.Body>
                     </Table>
                 }
-
             </ListarProveedor>
             {/* Listado Items Repuestos y Servicios */}
             <ListarProveedor>
