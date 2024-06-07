@@ -7,7 +7,7 @@ import IngresoStDetDB from '../firebase/IngresoStDetDB';
 import validarRut from '../funciones/validarRut';
 // import correlativos from '../funciones/correlativosMultiEmpresa';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, doc, writeBatch, updateDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, doc, writeBatch, updateDoc, addDoc } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react'
@@ -771,6 +771,7 @@ const IngresoEquiposST = () => {
                 })
             })
 
+
         try {
             await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
                 observaciones: obs,
@@ -798,6 +799,26 @@ const IngresoEquiposST = () => {
                 mensaje: 'Error al actualizar cabecera de Ingreso:', error
             })
         }
+
+        if (existeDet[0].servicio === 'PRESUPUESTO') {
+            try {
+                //Guarda el status incial del equipo          
+                await addDoc(collection(db, 'statusst'), {
+                    id_cab_inst: existeCab[0].id,
+                    folio: existeCab[0].folio,
+                    status: 'EVALUACION',
+                    fecha_realizado: '',
+                    fecha_enviado: '',
+                    fecha_aceptado: '',
+                    fecha_rechazado: ''
+                });
+                console.log('Se guardo status st')
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+
         setFolio('');
         setRut('');
         setEntidad('');

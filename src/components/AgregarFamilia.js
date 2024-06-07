@@ -147,7 +147,7 @@ const AgregarFamilia = () => {
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-                    <Table.Body>
+                    <Table.Body style={{fontSize: '12px'}}>
                         {filtroFamilia().map((item, index) => {
                             return (
                                 <Table.Row key={index}>

@@ -459,7 +459,7 @@ const CrearEquipos = () => {
                             <Table.HeaderCell>Ubicación</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-                    <Table.Body>
+                    <Table.Body style={{fontSize: '12px'}}>
                         {
                             filtro().map((item, index) => {
                                 return (
