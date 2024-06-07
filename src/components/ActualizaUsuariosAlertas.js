@@ -22,7 +22,8 @@ export const ActulizaUsuariosAlertas = () => {
     const [ isCheckedSalida, setIsCheckedSalida] = useState(false);
     const [ isCheckedRfid, setIsCheckedRfid] = useState(false);
     const [ isCheckedConfirma, setIsCheckedConfirma] = useState(false);    
-    const [ isCheckedStecnico, setIsCheckedStecnico] = useState(false);    
+    const [ isCheckedStecnico, setIsCheckedStecnico] = useState(false);
+    const [isCheckedMantencion, setIsCheckedMantencion] = useState(false);    
     const [nombre, setNombre] = useState('');
     const [entidad, setEntidad] = useState(''); 
     const [alerta, cambiarAlerta] = useState({});
@@ -37,6 +38,7 @@ export const ActulizaUsuariosAlertas = () => {
             setIsCheckedConfirma(usuariosAlertas.confirma);
             setIsCheckedRfid(usuariosAlertas.rfid);
             setIsCheckedStecnico(usuariosAlertas.tecnico)
+            setIsCheckedMantencion(usuariosAlertas.mantencion)
         } else {
             navigate('/')
         }
@@ -57,6 +59,9 @@ export const ActulizaUsuariosAlertas = () => {
             case 4:
                 setIsCheckedStecnico(isChecked);
                 break;
+            case 5:
+                setIsCheckedMantencion(isChecked);
+                break;
             default:
             break;
         }   
@@ -74,6 +79,7 @@ export const ActulizaUsuariosAlertas = () => {
                 rfid: isCheckedRfid,
                 confirma: isCheckedConfirma,
                 tecnico: isCheckedStecnico,
+                mantencion: isCheckedMantencion,
                 userMod: useraddmod ,
                 fechaMod: fechaactual
             })
@@ -151,6 +157,14 @@ export const ActulizaUsuariosAlertas = () => {
                             name='tecnico'                          
                             onChange={(ev) => handleCheck(ev, 4)}
                             checked={isCheckedStecnico}
+                        />
+                         <Label>Mantencion</Label>
+                        <Input
+                            style={{ width: "3%" }}
+                            type='checkbox'
+                            name='mantencion'
+                            onChange={(ev) => handleCheck(ev, 5)}
+                            checked={isCheckedMantencion}
                         />
                     </ContentElemen>
                 </Formulario>

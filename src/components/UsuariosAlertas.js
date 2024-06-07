@@ -22,6 +22,7 @@ export const UsuariosEnvios = () => {
     const [isCheckedRfid, setIsCheckedRfid] = useState(false);
     const [isCheckedConfirma, setIsCheckedConfirma] = useState(false);
     const [isCheckedStecnico, setIsCheckedStecnico] = useState(false);
+    const [isCheckedMantencion, setIsCheckedMantencion] = useState(false);
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [entidad, setEntidad] = useState('');
@@ -81,8 +82,11 @@ export const UsuariosEnvios = () => {
             case 3:
                 setIsCheckedConfirma(isChecked);
                 break;
-                case 4:
+            case 4:
                 setIsCheckedStecnico(isChecked);
+                break;
+            case 5:
+                setIsCheckedMantencion(isChecked);
                 break;
             default:
                 break;
@@ -136,7 +140,8 @@ export const UsuariosEnvios = () => {
                     salida: isCheckedSalida,
                     rfid: isCheckedRfid,
                     confirma: isCheckedConfirma,
-                    tecnico: isCheckedStecnico
+                    tecnico: isCheckedStecnico,
+                    mantencion: isCheckedMantencion
                 })
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -266,9 +271,17 @@ export const UsuariosEnvios = () => {
                         <Input
                             style={{ width: "3%" }}
                             type='checkbox'
-                            name='confirma'
+                            name='tencio'
                             onChange={(ev) => handleCheck(ev, 4)}
                             checked={isCheckedStecnico}
+                        />
+                         <Label>Mantencion</Label>
+                        <Input
+                            style={{ width: "3%" }}
+                            type='checkbox'
+                            name='mantencion'
+                            onChange={(ev) => handleCheck(ev, 5)}
+                            checked={isCheckedMantencion}
                         />
                     </ContentElemen>
                 </Formulario>
@@ -297,6 +310,7 @@ export const UsuariosEnvios = () => {
                             <Table.HeaderCell>Rfid</Table.HeaderCell>
                             <Table.HeaderCell>Confirma</Table.HeaderCell>
                             <Table.HeaderCell>S.Tecnico</Table.HeaderCell>
+                            <Table.HeaderCell>Mantención</Table.HeaderCell>
                             <Table.HeaderCell>Accion</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -313,6 +327,7 @@ export const UsuariosEnvios = () => {
                                         <Table.Cell><Input type='checkbox' checked={item.rfid} disabled style={{ width: '100%' }} /></Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.confirma} disabled style={{ width: '100%' }} /></Table.Cell>
                                         <Table.Cell><Input type='checkbox' checked={item.tecnico} disabled style={{ width: '100%' }} /></Table.Cell>
+                                        <Table.Cell><Input type='checkbox' checked={item.mantencion} disabled style={{ width: '100%' }} /></Table.Cell>
                                         <Table.Cell style={{ textAlign: 'center' }}>
                                             <Link to={`/configuracion/actualizaalerta/${item.id}`}>
                                                 <FaRegEdit style={{ fontSize: '20px', color: '#328AC4' }} />

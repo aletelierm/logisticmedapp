@@ -2,7 +2,7 @@
 import { db } from './firebaseConfig';
 import { updateDoc, doc } from "firebase/firestore";
 
-const ActualizaUsuariosAlertasDB = async  ({id,userMod,fechaMod,salida,rfid,confirma,tecnico}) => {
+const ActualizaUsuariosAlertasDB = async  ({id,userMod,fechaMod,salida,rfid,confirma,tecnico,mantencion}) => {
 
     const docum = doc(db,'usuariosalertas', id);
     return await updateDoc(docum, {       
@@ -10,6 +10,7 @@ const ActualizaUsuariosAlertasDB = async  ({id,userMod,fechaMod,salida,rfid,conf
         rfid: rfid,
         confirma: confirma,
         tecnico: tecnico,
+        mantencion: mantencion,
         userMod: userMod,     
         fechaMod: fechaMod,     
     });

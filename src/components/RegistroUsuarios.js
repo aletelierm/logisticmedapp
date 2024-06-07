@@ -31,6 +31,7 @@ export const RegistroUsuarios = () => {
     const [nomEmpresa, setNomEmpresa] = useState([]);
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
+    const [flag, setFlag] = useState(false);
     //Lee datos de las empresas
     const getEmpresa = async () => {
         const dataEmpresa = await getDocs(collection(db, "empresas"));
@@ -46,6 +47,11 @@ export const RegistroUsuarios = () => {
         getEmpresa();
         getUsuarios();
     }, [])
+
+    useEffect(()=>{
+        getUsuarios();
+    },[flag,setFlag])
+
     //Lee input de formulario
     const handleChange = (e) => {
         switch (e.target.name) {
@@ -155,6 +161,7 @@ export const RegistroUsuarios = () => {
                     tipo: 'exito',
                     mensaje: 'Usuario Registrado correctamente'
                 })
+                setFlag(!flag);
             } catch (error) {
                 console.log('El error es', error.code);
                 cambiarEstadoAlerta(true);
