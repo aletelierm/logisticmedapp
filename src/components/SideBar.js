@@ -18,11 +18,11 @@ const SideBar = ({ children }) => {
 
     useEffect(() => {
         if (users.rol === 'DADMIN') setMenu(DataMenu)
-        if (users.rol === 'JADMIN') setMenu(DataMenuJadmin)
-        if (users.rol === 'ADMIN') setMenu(DataMenuAdmin)
-        if (users.rol === 'SUPERVISOR') setMenu(DataMenuSup)
-        if (users.rol === 'TRANSPORTE') setMenu(DataMenuTransp)
-        if (users.rol === 'SERVICIO TECNICO') setMenu(DataMenuSt)
+        if (users.rol === 'ADMIN-LM') setMenu(DataMenuJadmin)
+        if (users.rol === 'ADMIN-HC') setMenu(DataMenuAdmin)
+        if (users.rol === 'SUPERVISOR-HC') setMenu(DataMenuSup)
+        if (users.rol === 'TRANSPORTE-HC') setMenu(DataMenuTransp)
+        if (users.rol === 'TECNICO-LM') setMenu(DataMenuSt)
     }, [users])
 
     return (
