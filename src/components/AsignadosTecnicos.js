@@ -4,7 +4,7 @@ import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-/* import { Link } from 'react-router-dom'; */
+import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
@@ -36,7 +36,8 @@ const AsignadosTecnicos = () => {
         const data = await getDocs(dato);
         setAlertaOrdenIngreso(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-  
+
+    console.log(alertaOrdenIngreso);
     // Leer datos de cabecera Entradas
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');

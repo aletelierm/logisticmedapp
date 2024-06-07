@@ -2,10 +2,11 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc } from "firebase/firestore";
 
-const ItemsRSDb = async  ({nombre, price, userAdd, userMod, fechaAdd, fechaMod, emp_id}) => {
+const ItemsSTDb = async  ({nombre, categoria, price, userAdd, userMod, fechaAdd, fechaMod, emp_id}) => {
 
-    return await addDoc(collection(db, 'itemsrs'),{
+    return await addDoc(collection(db, 'itemsst'),{
         nombre: nombre,
+        categoria: categoria,
         price: price,
         useradd: userAdd,
         usermod: userMod,
@@ -15,4 +16,4 @@ const ItemsRSDb = async  ({nombre, price, userAdd, userMod, fechaAdd, fechaMod, 
     })
 }
 
-export default ItemsRSDb;
+export default ItemsSTDb;
