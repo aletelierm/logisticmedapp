@@ -271,7 +271,7 @@ const ItemsTest = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {filtroItem.map((item, index) => (
+                            {filtroItem().map((item, index) => (
                                 item.categoria === 'TEST INGRESO' && (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
