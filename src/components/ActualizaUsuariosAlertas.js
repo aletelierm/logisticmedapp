@@ -22,7 +22,6 @@ export const ActulizaUsuariosAlertas = () => {
     const [ isCheckedSalida, setIsCheckedSalida] = useState(false);
     const [ isCheckedRfid, setIsCheckedRfid] = useState(false);
     const [ isCheckedConfirma, setIsCheckedConfirma] = useState(false);    
-    const [ isCheckedStecnico, setIsCheckedStecnico] = useState(false);    
     const [nombre, setNombre] = useState('');
     const [entidad, setEntidad] = useState(''); 
     const [alerta, cambiarAlerta] = useState({});
@@ -36,7 +35,6 @@ export const ActulizaUsuariosAlertas = () => {
             setIsCheckedSalida(usuariosAlertas.salida);
             setIsCheckedConfirma(usuariosAlertas.confirma);
             setIsCheckedRfid(usuariosAlertas.rfid);
-            setIsCheckedStecnico(usuariosAlertas.tecnico)
         } else {
             navigate('/')
         }
@@ -54,11 +52,8 @@ export const ActulizaUsuariosAlertas = () => {
             case 3:
                 setIsCheckedConfirma(isChecked);
                 break;
-            case 4:
-                setIsCheckedStecnico(isChecked);
+                default:
                 break;
-            default:
-            break;
         }   
     }
 
@@ -73,7 +68,6 @@ export const ActulizaUsuariosAlertas = () => {
                 salida: isCheckedSalida,
                 rfid: isCheckedRfid,
                 confirma: isCheckedConfirma,
-                tecnico: isCheckedStecnico,
                 userMod: useraddmod ,
                 fechaMod: fechaactual
             })
@@ -143,14 +137,6 @@ export const ActulizaUsuariosAlertas = () => {
                             name='confirma'                          
                             onChange={(ev) => handleCheck(ev, 3)}
                             checked={isCheckedConfirma}
-                        />
-                        <Label>S.Tecnico</Label>
-                        <Input
-                            style={{width:"3%"}}
-                            type='checkbox'
-                            name='tecnico'                          
-                            onChange={(ev) => handleCheck(ev, 4)}
-                            checked={isCheckedStecnico}
                         />
                     </ContentElemen>
                 </Formulario>

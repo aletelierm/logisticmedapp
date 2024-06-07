@@ -188,8 +188,8 @@ export const DataMenu = [
         icon: <MdIcons.MdInput />
       },
       {
-        title: 'Items Servicio Tecnico',
-        path: 'serviciotecnico/itemsst',
+        title: 'Items Test Ingreso',
+        path: 'serviciotecnico/itemstest',
         icon: <IoIcons.IoIosAlbums />
       },
       {
@@ -207,11 +207,11 @@ export const DataMenu = [
         path: 'serviciotecnico/asignadostecnicos',
         icon: <IoIcons.IoIosAlbums />
       },
-      // {
-      //   title: 'Items Repuestos y Servicios',
-      //   path: 'serviciotecnico/itemsrepuestosyservicios',
-      //   icon: <IoIcons.IoIosAlbums />
-      // }
+      {
+        title: 'Items Repuestos y Servicios',
+        path: 'serviciotecnico/itemsrepuestosyservicios',
+        icon: <IoIcons.IoIosAlbums />
+      }
       // {
       //   title: 'Test de Ingresos',
       //   path: 'serviciotecnico/testingreso',

@@ -4,7 +4,6 @@ import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
@@ -26,18 +25,9 @@ const AsignadosTecnicos = () => {
     const [estadoModal, setEstadoModal] = useState(false);
     const [mostrarDet, setMostrarDet] = useState(false);
     const [testIngreso, setTestIngreso] = useState([]);
-    const [alertaOrdenIngreso, setAlertaOrdenIngreso] = useState([]);
     const [flag, setFlag] = useState(false);
 
-    //Lectura de usuario para alertas de ST-Asignados
-    const getAlertasOrdenIngreso = async () => {
-        const traerAlertas = collection(db, 'usuariosalertas');
-        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id),where('tecnico','==',true));
-        const data = await getDocs(dato);
-        setAlertaOrdenIngreso(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    }
 
-    console.log(alertaOrdenIngreso);
     // Leer datos de cabecera Entradas
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');
@@ -73,10 +63,10 @@ const AsignadosTecnicos = () => {
     //Ordenar fechas
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
 
-    // Cerrar Asignación
-    const cerrar = async (id, folio) => {
+    // Guardar Cliente nuevo
+    const cerrar = async (id,folio) => {
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});
+        cambiarAlerta({});        
         leerDetalleIngreso(id)
         try {
             await updateDoc(doc(db, 'ingresostcab', id), {
@@ -97,20 +87,18 @@ const AsignadosTecnicos = () => {
                 mensaje: 'Error a cerrar mantenimiento:', error
             })
         }       
-        //Envia correo al administrador cuando usuario cierra una orden de ingreso
+        //Envia correo cuando usuario cierra una orden asignada
+        //pendiente usar los correos que se definan para recibir el email
+        //mientras quedara en duro
         try {
-            alertaOrdenIngreso.forEach((destino) => {
-                EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
-            })
+            EnviarCorreo('gerencia@dormirbien.cl','Orden de ingreso Cerrada ',`El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
         } catch (error) {
-            console.log('error', error)
+            console.log(error)
         }
     }
-    // console.log(cerrar)
 
     useEffect(() => {
         getIngresostcab();
-        getAlertasOrdenIngreso();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -131,7 +119,6 @@ const AsignadosTecnicos = () => {
                             <Table.HeaderCell>Entidad</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
-                            <Table.HeaderCell>Presupuesto</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
                             <Table.HeaderCell /*style={{ textAlign: 'center' }}*/ >Ejecutar</Table.HeaderCell>
                         </Table.Row>
@@ -146,9 +133,8 @@ const AsignadosTecnicos = () => {
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
-                                    <Table.Cell>Realizado</Table.Cell>
                                     <Table.Cell
-                                        style={{ cursor: 'pointer' }}
+                                        style={{cursor: 'pointer'}}
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
                                             leerDetalleIngreso(item.id)
@@ -157,9 +143,7 @@ const AsignadosTecnicos = () => {
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
-                                        <Link disabled to={`/ejecutarpresupuesto/${item.id}`}>
-                                            <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} /*onClick={() => cerrar(item.id)}*/ />
-                                        </Link>
+                                        <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id)} />
                                     </Table.Cell>
                                 </Table.Row>
                             )
