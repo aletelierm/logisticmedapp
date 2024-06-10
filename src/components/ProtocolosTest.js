@@ -338,14 +338,14 @@ const ProtocolosTest = () => {
                         </ContentElemenSelect>
                     </ContentElemenMov>
                     <BotonGuardar
-                        style={{ margin: '10px 10px' }}
+                        style={{ margin: '10px 10px', backgroundColor: btnGuardar && '#8F8B85', cursor: btnGuardar && 'default' }}
                         onClick={addCabProtocolo}
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnGuardar}
                     >Guardar</BotonGuardar>
                     <BotonGuardar
-                        style={{ margin: '10px 0' }}
+                        style={{ margin: '10px 0', backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }}
                         onClick={nuevo}
                         checked={confirmar}
                         onChange={handleCheckboxChange}
@@ -379,7 +379,7 @@ const ProtocolosTest = () => {
                         </Table.Body>
                     </Table>
                 </ListarEquipos>
-                <BotonGuardar 
+                <BotonGuardar style={{ backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }}
                 onClick={() => {actualizarDocs();}} disabled={btnConfirmar}>Confirmar</BotonGuardar>
             </Contenedor>
             {/* Listado de Items para agregar a protocolos */}
