@@ -751,7 +751,7 @@ const IngresoEquiposST = () => {
                 useradd: user.email,
                 usermod: user.email,
                 fechaadd: new Date(),
-                fechamod: new Date(),
+                fechamod: docs.fechamod,
                 emp_id: users.emp_id,
             });
         });
