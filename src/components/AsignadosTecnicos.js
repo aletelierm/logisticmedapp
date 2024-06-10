@@ -183,7 +183,7 @@ const AsignadosTecnicos = () => {
                                     {mostrarDet.map((item, index) => {
                                         return (
                                             <Table.Row key={index}>
-                                                <Table.Cell style={{ fontSize: '13px' }}>{item.tipo}</Table.Cell>
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.tipo}</Table.Cell>
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.marca}</Table.Cell>
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.modelo}</Table.Cell>
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.serie}</Table.Cell>
