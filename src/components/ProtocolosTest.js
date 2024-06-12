@@ -46,6 +46,7 @@ const ProtocolosTest = () => {
     const [mostrar, setMostrar] = useState(true);
     const [estadoModal, setEstadoModal] = useState(false);
     const [botonDisabled, setBotonDisabled] = useState(false);
+    const [botonDisbaledColor, setBotonDisabledColor] = useState('#328AC4')
 
     //Leer los datos de Familia => Funcional
     const getFamilia = async () => {
@@ -195,6 +196,7 @@ const ProtocolosTest = () => {
     const AgregarItem = async (id) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        setBotonDisabledColor('#808080')
         // Consultar si Item se encuentra en Documento
         const item_id = item.filter(it => it.id === id);
         // Validar Item en el documento de protocolo que se esta trabajando     
@@ -236,8 +238,7 @@ const ProtocolosTest = () => {
                 setConfirmar(false);
                 setBtnGuardar(true);
                 setBtnNuevo(false);
-                setBtnConfirmar(false);
-                return;
+                setBtnConfirmar(false);               
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -249,7 +250,8 @@ const ProtocolosTest = () => {
     }
     setTimeout(()=>{
         setBotonDisabled(false);
-    },1000);
+        setBotonDisabledColor('#328AC4')
+    },3000);
     }
     // Función para actualizar varios documentos por lotes
     const actualizarDocs = async () => {
@@ -435,7 +437,7 @@ const ProtocolosTest = () => {
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                         <Table.Cell style={{ textAlign: 'center' }}>
                                             <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
-                                                <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
+                                                <RiPlayListAddLine style={{ fontSize: '20px', color: botonDisbaledColor }} title='Agregar Item a protocolo' />
                                             </Boton>
                                         </Table.Cell>
                                     </Table.Row>

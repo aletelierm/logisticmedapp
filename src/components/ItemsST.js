@@ -145,7 +145,7 @@ const ItemsTest = () => {
         }
         setTimeout(() => {
             setBotonDisabled(false);
-        }, 1000);
+        }, 500);
     }
 
     const filtroItem = () => {
