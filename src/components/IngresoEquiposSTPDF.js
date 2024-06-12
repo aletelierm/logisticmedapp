@@ -198,19 +198,19 @@ const IngresoEquiposSTPDF = () => {
                             {detalle.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.observaciones}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '16px' }}>{item.observaciones}</Table.Cell>
                                     </Table.Row>
                                 )
                             })}
                         </Table.Body>
                     </Table>
 
-                    <div style={{ fontSize: '10px', lineHeight: '10px' }}>
-                        <h3>Tecnico: {users.nombre + ' ' + users.apellido}</h3>
-                        <h4>SERVICIO TÉCNICO</h4>
+                    <div style={{ fontSize: '12px', lineHeight: '10px' }}>
+                        <h4 style={{margin: '14px 0px'}}>Ingresado por: {users.nombre + ' ' + users.apellido}</h4>
+                        <h5 style={{margin: '14px 0px'}}>SERVICIO TÉCNICO</h5>
                         <p>soporte@dormirbien.cl</p>
                         <p>General Parra #674 Oficina H, Providencia</p>
-                        <p>+569 59505300</p>
+                        <p>Contacto: +569 76321481 / +569 54234538</p>
                     </div>
                 </ContenedorProveedor>
 
