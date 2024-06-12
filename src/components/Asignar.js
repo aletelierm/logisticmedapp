@@ -29,7 +29,9 @@ const Asignar = () => {
     const [tecnico, setTecnico] = useState('')
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
-    const [flag, setFlag] = useState(false);    
+    const [flag, setFlag] = useState(false);
+    const [tituloModal, setTituloModal] = useState('');
+    const [mostrarSelec, setMostrarSelec] = useState(false);
 
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
@@ -91,12 +93,12 @@ const Asignar = () => {
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
     const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
     const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)
-    
+
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});       
+        cambiarAlerta({});
         if (tecnico.length === 0 || tecnico === 'Selecciona Tecnico:') {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
@@ -104,7 +106,7 @@ const Asignar = () => {
                 mensaje: 'Favor seleccione un usuario'
             })
             return;
-        } else {            
+        } else {
             try {
                 await updateDoc(doc(db, 'ingresostcab', idCabIngreso), {
                     tecnico: tecnico,
@@ -117,11 +119,11 @@ const Asignar = () => {
                     mensaje: 'Usuario Asignado correctamente'
                 })
                 //Envío de correo cuando se asigna un tecnico
-                try {            
-                    EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso',`Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`)
+                try {
+                    EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso', `Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`)
                 } catch (error) {
-                   console.log('error', error)
-                 }              
+                    console.log('error', error)
+                }
                 setFlag(!flag);
                 setOpenModalCli(!openModalCli);
             } catch (error) {
@@ -131,7 +133,7 @@ const Asignar = () => {
                     mensaje: 'Error al actualizar el usuario tecnico:', error
                 })
             }
-            
+
         }
     }
 
@@ -175,6 +177,8 @@ const Asignar = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
+    console.log(mostrarSelec)
+
     return (
         <div>
             <ListarProveedor>
@@ -208,8 +212,11 @@ const Asignar = () => {
                                             setIdCabIngreso(item.id)
                                             leerTestIngreso(item.id)
                                             setOpenModalCli(!openModalCli)
+                                            setTituloModal('Asignar Ingreso')
+                                            setMostrarSelec(true);
                                         }}
-                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -229,7 +236,7 @@ const Asignar = () => {
                             <Table.HeaderCell>Fecha Asignación</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
+                            <Table.HeaderCell>Ver</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -244,104 +251,22 @@ const Asignar = () => {
                                     <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
                                     <Table.Cell>{item.tecnico}</Table.Cell>
-                                    {/* <Table.Cell 
+                                    <Table.Cell
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
                                             leerDetalleIngreso(item.id)
                                             leerTestIngreso(item.id)
                                             setOpenModalCli(!openModalCli)
-                                            
+                                            setTituloModal('Detalle de Ingreso')
+                                            setMostrarSelec(false);
                                         }}
-                                        ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell> */}
-                                    <Table.Cell></Table.Cell>
+                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
                     </Table.Body>
                 </Table>
-                {openModalCli && (
-                    <Overlay>
-                        <ConfirmaModal>
-                            <Titulo>Asignar Ingreso</Titulo>
-                            <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
-                            <Formulario action='' style={{ maxHeight: '600px', overflowY: 'auto' }} >
-                                <ContentElemen>
-                                    <Contenido /* style={{ maxHeight: '400px', overflowY: 'auto' }} */>
-                                        <Table singleLine>
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>Tipo</Table.HeaderCell>
-                                                    <Table.HeaderCell>Marca</Table.HeaderCell>
-                                                    <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                                    <Table.HeaderCell>Serie</Table.HeaderCell>
-                                                    <Table.HeaderCell>Servicio</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-                                            <Table.Body >
-                                                {mostrarDet.map((item, index) => {
-                                                    return (
-                                                        <Table.Row key={index}>
-                                                            <Table.Cell style={{ fontSize: '13px' }}>{item.tipo}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.marca}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.modelo}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.serie}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.servicio}</Table.Cell>
-                                                        </Table.Row>
-                                                    )
-                                                })}
-                                            </Table.Body>
-                                        </Table>
-                                        <Table>
-                                            {mostrarDet.map((item, index) => {
-                                                return (
-                                                    <Table.Row key={index}>
-                                                        <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
-                                                    </Table.Row>
-                                                )
-                                            })}
-                                        </Table>
-                                        <Table>
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>N</Table.HeaderCell>
-                                                    <Table.HeaderCell>Item Test</Table.HeaderCell>
-                                                    <Table.HeaderCell>Si</Table.HeaderCell>
-                                                    <Table.HeaderCell>No</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-                                            <TableBody>
-                                                {testIngreso.map((item, index) => {
-                                                    return (
-                                                        <Table.Row key={index}>
-                                                            <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorsi} readOnly></Input></Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorno} readOnly></Input></Table.Cell>
-                                                        </Table.Row>
-                                                    )
-                                                })}
-                                            </TableBody>
-                                        </Table>
-                                        {/* <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar> */}
-                                    </Contenido>
-                                </ContentElemen>
-                                <ContentElemen>
-                                    <Label>Seleccionar Usuario:</Label>
-                                    <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
-                                        <option>Selecciona Tecnico:</option>
-                                        {usuarios.map((objeto, index) => {
-                                            return (<option key={index}>{objeto.correo}</option>)
-                                        })}
-                                    </Select>
-                                </ContentElemen>
-                                <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
-                            </Formulario>
-
-                        </ConfirmaModal>
-                    </Overlay>
-                )}
             </ListarProveedor>
 
             <ListarProveedor>
@@ -376,90 +301,103 @@ const Asignar = () => {
                         })}
                     </Table.Body>
                 </Table>
-                {openModalCli && (
-                    <Overlay>
-                        <ConfirmaModal>
-                            <Titulo>Asignar Ingreso</Titulo>
-                            <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
-                            <Formulario action='' style={{ maxHeight: '600px', overflowY: 'auto' }} >
-                                <ContentElemen>
-                                    <Contenido /* style={{ maxHeight: '400px', overflowY: 'auto' }} */>
-                                        <Table singleLine>
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>Tipo</Table.HeaderCell>
-                                                    <Table.HeaderCell>Marca</Table.HeaderCell>
-                                                    <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                                    <Table.HeaderCell>Serie</Table.HeaderCell>
-                                                    <Table.HeaderCell>Servicio</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-                                            <Table.Body >
-                                                {mostrarDet.map((item, index) => {
-                                                    return (
-                                                        <Table.Row key={index}>
-                                                            <Table.Cell style={{ fontSize: '13px' }}>{item.tipo}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.marca}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.modelo}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.serie}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.servicio}</Table.Cell>
-                                                        </Table.Row>
-                                                    )
-                                                })}
-                                            </Table.Body>
-                                        </Table>
-                                        <Table>
+            </ListarProveedor>
+            {openModalCli && (
+                <Overlay>
+                    <ConfirmaModal>
+                        <Titulo>{tituloModal}</Titulo>
+                        <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
+                        <Formulario action='' style={{ maxHeight: '600px', overflowY: 'auto' }} >
+                            <ContentElemen>
+                                <Contenido /* style={{ maxHeight: '400px', overflowY: 'auto' }} */>
+                                    <Table singleLine>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>Tipo</Table.HeaderCell>
+                                                <Table.HeaderCell>Marca</Table.HeaderCell>
+                                                <Table.HeaderCell>Modelo</Table.HeaderCell>
+                                                <Table.HeaderCell>Serie</Table.HeaderCell>
+                                                <Table.HeaderCell>Servicio</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body >
                                             {mostrarDet.map((item, index) => {
                                                 return (
                                                     <Table.Row key={index}>
-                                                        <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
+                                                        <Table.Cell style={{ fontSize: '13px' }}>{item.tipo}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.marca}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.modelo}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.serie}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.servicio}</Table.Cell>
                                                     </Table.Row>
                                                 )
                                             })}
-                                        </Table>
-                                        <Table>
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>N</Table.HeaderCell>
-                                                    <Table.HeaderCell>Item Test</Table.HeaderCell>
-                                                    <Table.HeaderCell>Si</Table.HeaderCell>
-                                                    <Table.HeaderCell>No</Table.HeaderCell>
+                                        </Table.Body>
+                                    </Table>
+                                    <Table>
+                                        {mostrarDet.map((item, index) => {
+                                            return (
+                                                <Table.Row key={index}>
+                                                    <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
                                                 </Table.Row>
-                                            </Table.Header>
-                                            <TableBody>
-                                                {testIngreso.map((item, index) => {
-                                                    return (
-                                                        <Table.Row key={index}>
-                                                            <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorsi} readOnly></Input></Table.Cell>
-                                                            <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
-                                                                checked={item.valorno} readOnly></Input></Table.Cell>
-                                                        </Table.Row>
-                                                    )
-                                                })}
-                                            </TableBody>
-                                        </Table>
-                                        {/* <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar> */}
-                                    </Contenido>
-                                </ContentElemen>
-                                <ContentElemen>
-                                    <Label>Seleccionar Usuario:</Label>
-                                    <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
-                                        <option>Selecciona Tecnico:</option>
-                                        {usuarios.map((objeto, index) => {
-                                            return (<option key={index}>{objeto.correo}</option>)
+                                            )
                                         })}
-                                    </Select>
-                                </ContentElemen>
-                                <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
-                            </Formulario>
+                                    </Table>
+                                    <Table>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>N</Table.HeaderCell>
+                                                <Table.HeaderCell>Item Test</Table.HeaderCell>
+                                                <Table.HeaderCell>Si</Table.HeaderCell>
+                                                <Table.HeaderCell>No</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <TableBody>
+                                            {testIngreso.map((item, index) => {
+                                                return (
+                                                    <Table.Row key={index}>
+                                                        <Table.Cell style={{ fontSize: '13px' }}>{index + 1}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.item}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
+                                                            checked={item.valorsi} readOnly></Input></Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}><Input type='checkbox'
+                                                            checked={item.valorno} readOnly></Input></Table.Cell>
+                                                    </Table.Row>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                    {/* <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar> */}
+                                </Contenido>
+                            </ContentElemen>
+                            {
+                                mostrarSelec && (
+                                    <ContentElemen>
+                                        <Label>Seleccionar Usuario:</Label>
+                                        <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
+                                            <option>Selecciona Tecnico:</option>
+                                            {usuarios.map((objeto, index) => {
+                                                return (<option key={index}>{objeto.correo}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemen>
+                                )
+                            }
+                            {/* <ContentElemen>
+                                <Label>Seleccionar Usuario:</Label>
+                                <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
+                                    <option>Selecciona Tecnico:</option>
+                                    {usuarios.map((objeto, index) => {
+                                        return (<option key={index}>{objeto.correo}</option>)
+                                    })}
+                                </Select>
+                            </ContentElemen> */}
+                            <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
+                        </Formulario>
 
-                        </ConfirmaModal>
-                    </Overlay>
-                )}
-            </ListarProveedor>
+                    </ConfirmaModal>
+                </Overlay>
+            )}
             <Alertas tipo={alerta.tipo}
                 mensaje={alerta.mensaje}
                 estadoAlerta={estadoAlerta}
