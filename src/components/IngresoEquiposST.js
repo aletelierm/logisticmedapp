@@ -64,8 +64,10 @@ const IngresoEquiposST = () => {
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(false);
     const [btnGuardarDet, setBtnGuardarDet] = useState(true);
+    const [btnValidarTest, setBtnValidarTest] = useState(true);
     const [btnGuardarTest, setBtnGuardarTest] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const [btnGuardarTestColor, setBtnGuardarTestColor] = useState('#43A854');
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
     const [nomTipo, setNomTipo] = useState('');
@@ -642,6 +644,7 @@ const IngresoEquiposST = () => {
             })
             consultarprot(nomFamilia);
             setBtnGuardarDet(true);
+            setBtnValidarTest(false);
             setBtnGuardarTest(false);
             setConfirmarDet(true);
             setShowConfirmationDet(false);
@@ -709,7 +712,7 @@ const IngresoEquiposST = () => {
             return;
         } else {
             setShowConfirmationTest(true);
-            setBtnGuardarTest(true);
+            setBtnValidarTest(true);
         }
     }
     // Boton Guardar => Funcional
@@ -717,109 +720,116 @@ const IngresoEquiposST = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
+        setBtnGuardarTestColor('#8F8B85');
+        if (!btnGuardarTest) {
+            setBtnGuardarTest(true)
 
-        // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
-        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        id.current = existeCab[0].id;
+            // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
+            const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
+            const cabecera = await getDocs(cab);
+            const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            id.current = existeCab[0].id;
 
-        const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
-        const detalle = await getDocs(det);
-        const existeDet = (detalle.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', existeCab[0].id));
+            const detalle = await getDocs(det);
+            const existeDet = (detalle.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-        protocolo.forEach((docs, index) => {
-            checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
-        });
-
-        // Crea una nueva instancia de lote (batch)
-        const batch = writeBatch(db);
-        // Obtiene una referencia a una colección específica en Firestore
-        const bitacoraTestRef = collection(db, 'testingreso');
-        // Itera a través de los nuevos documentos y agrégalos al lote de Checks
-        protocolo.forEach((docs) => {
-            const nuevoDocRef = doc(bitacoraTestRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
-            batch.set(nuevoDocRef, {
-                id_cab_inst: existeCab[0].id,
-                folio: existeCab[0].folio,
-                nombretest: docs.nombre,
-                familia: docs.familia,
-                item: docs.item,
-                item_id: docs.item_id,
-                valorsi: docs.valorsi,
-                valorno: docs.valorno,
-                useradd: user.email,
-                usermod: user.email,
-                fechaadd: new Date(),
-                fechamod: docs.fechamod,
-                emp_id: users.emp_id,
+            protocolo.forEach((docs, index) => {
+                checktest.current = protocolo.filter(ic => ic.valorsi === false && ic.valorno === false)
             });
-        });
-        batch.commit()
-            .then(() => {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Docuemento creado correctamente.'
+
+            // Crea una nueva instancia de lote (batch)
+            const batch = writeBatch(db);
+            // Obtiene una referencia a una colección específica en Firestore
+            const bitacoraTestRef = collection(db, 'testingreso');
+            // Itera a través de los nuevos documentos y agrégalos al lote de Checks
+            protocolo.forEach((docs) => {
+                const nuevoDocRef = doc(bitacoraTestRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                batch.set(nuevoDocRef, {
+                    id_cab_inst: existeCab[0].id,
+                    folio: existeCab[0].folio,
+                    nombretest: docs.nombre,
+                    familia: docs.familia,
+                    item: docs.item,
+                    item_id: docs.item_id,
+                    valorsi: docs.valorsi,
+                    valorno: docs.valorno,
+                    useradd: user.email,
+                    usermod: user.email,
+                    fechaadd: new Date(),
+                    fechamod: docs.fechamod,
+                    emp_id: users.emp_id,
                 });
-            })
-            .catch((error) => {
+            });
+            batch.commit()
+                .then(() => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Docuemento creado correctamente.'
+                    });
+                })
+                .catch((error) => {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al guardar Test de Ingreso:', error
+                    })
+                })
+
+            try {
+                await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
+                    observaciones: obs,
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+            } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
-                    mensaje: 'Error al guardar Test de Ingreso:', error
+                    mensaje: 'Error al actualizar detalle de Ingreso:', error
                 })
-            })
+            }
+            try {
+                await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
+                    confirmado: true,
+                    estado: 'INGRESADO',
+                    usermod: user.email,
+                    fechamod: fechaMod
+                });
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Error al actualizar cabecera de Ingreso:', error
+                })
+            }
 
-
-        try {
-            await updateDoc(doc(db, 'ingresostdet', existeDet[0].id), {
-                observaciones: obs,
-                usermod: user.email,
-                fechamod: fechaMod
-            });
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al actualizar detalle de Ingreso:', error
-            })
+            setFolio('');
+            setRut('');
+            setEntidad('');
+            setDate('');
+            setTelefono('');
+            setDireccion('');
+            setCorreo('');
+            setNomFamilia('');
+            setNomTipo('');
+            setNomMarca('');
+            setNomModelo('');
+            setSerie('');
+            setServicio('');
+            setObs('');
+            consultarprot('');
+            setBtnGuardarCab(false);
+            setBtnNuevo(true);
+            setShowConfirmationTest(false);
+            setMostrarInfoEq(false);
+            setMostrarTest(false);
+            setFlag(!flag)
         }
-        try {
-            await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
-                confirmado: true,
-                estado: 'INGRESADO',
-                usermod: user.email,
-                fechamod: fechaMod
-            });
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Error al actualizar cabecera de Ingreso:', error
-            })
-        }
-
-        setFolio('');
-        setRut('');
-        setEntidad('');
-        setDate('');
-        setTelefono('');
-        setDireccion('');
-        setCorreo('');
-        setNomFamilia('');
-        setNomTipo('');
-        setNomMarca('');
-        setNomModelo('');
-        setSerie('');
-        setServicio('');
-        setObs('');
-        consultarprot('');
-        setBtnGuardarTest(true);
-        setShowConfirmationTest(false);
-        setMostrarInfoEq(false);
-        setMostrarTest(false);
-        setFlag(!flag)
+        setTimeout(() => {
+            setBtnGuardarTest(false);
+        }, 2000);
     }
     // Cancelar Ingreso detalle
     const cancelDeleteTest = () => {
@@ -1066,7 +1076,7 @@ const IngresoEquiposST = () => {
                                 onChange={e => setObs(e.target.value)}
                             />
                         </ContentElemenMov>
-                        <BotonGuardar disabled={btnGuardarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
+                        <BotonGuardar disabled={btnValidarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
                     </Contenedor>
                 )
             }
@@ -1109,6 +1119,7 @@ const IngresoEquiposST = () => {
                                         setConfirmarDet(true);
                                         setBtnGuardarCab(true);
                                         setBtnGuardarDet(false);
+                                        setBtnValidarTest(false);
                                         setBtnGuardarTest(false);
                                         setMostrarInfoEq(true);
                                         setBtnNuevo(false);
@@ -1310,7 +1321,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={guardarTest}>Guardar</Boton2>
+                                <Boton2 disabled={btnGuardarTest} style={{ backgroundColor: btnGuardarTestColor, cursor: btnGuardarDet && 'default' }} onClick={guardarTest}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteTest}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>

@@ -100,13 +100,14 @@ const ProtocolosTest = () => {
         setProtocolo(documen);
     }
     // Ordenar Items Agregados a Protocolo, Alfabetico => Funcional
-    protocolo.sort((a, b) => {
-        const nameA = a.item;
-        const nameB = b.item;
-        if (nameA < nameB) { return -1; }
-        if (nameA > nameB) { return 1; }
-        return 0;
-    });
+    // protocolo.sort((a, b) => {
+    //     const nameA = a.item;
+    //     const nameB = b.item;
+    //     if (nameA < nameB) { return -1; }
+    //     if (nameA > nameB) { return 1; }
+    //     return 0;
+    // });
+    protocolo.sort((a, b) => a.fechamod - b.fechamod)
     // Leer Protocolos detalle
     const leerProt = async (id) => {
         const traer = collection(db, 'protocolostest');
