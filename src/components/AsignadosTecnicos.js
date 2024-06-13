@@ -37,7 +37,6 @@ const AsignadosTecnicos = () => {
         setAlertaOrdenIngreso(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
-    console.log(alertaOrdenIngreso);
     // Leer datos de cabecera Entradas
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');
@@ -90,21 +89,22 @@ const AsignadosTecnicos = () => {
                 mensaje: 'Cierre realizado correctamente'
             })
             setFlag(!flag);
-        } catch (error) {
+            //Envia correo al administrador cuando usuario cierra una orden de ingreso
+            try {
+                alertaOrdenIngreso.forEach((destino) => {
+                EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
+            })
+            } catch (error) {
+                console.log('error', error)
+            }
+             } catch (error) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Error a cerrar mantenimiento:', error
             })
         }       
-        //Envia correo al administrador cuando usuario cierra una orden de ingreso
-        try {
-            alertaOrdenIngreso.forEach((destino) => {
-                EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
-            })
-        } catch (error) {
-            console.log('error', error)
-        }
+        
     }
     // console.log(cerrar)
 
