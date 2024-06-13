@@ -62,7 +62,7 @@ const IngresoEquiposST = () => {
     const [nomRsf, setNomRsf] = useState('');
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
-    const [btnGuardarCab, setBtnGuardarCab] = useState(false);
+    const [btnGuardarCab, setBtnGuardarCab] = useState(true);
     const [btnGuardarDet, setBtnGuardarDet] = useState(true);
     const [btnValidarTest, setBtnValidarTest] = useState(true);
     const [btnGuardarTest, setBtnGuardarTest] = useState(true);
@@ -251,6 +251,7 @@ const IngresoEquiposST = () => {
                 setTelefono(final[0].telefono);
                 setDireccion(final[0].direccion);
                 setCorreo(final[0].correo);
+                setBtnGuardarCab(false);
             }
         }
     }

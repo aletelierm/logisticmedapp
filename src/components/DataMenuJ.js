@@ -36,7 +36,7 @@ export const DataMenuJadmin = [
     ]
   },
   {
-    title: 'Mis Pacientes',
+    title: 'Mis Clientes',
     path: 'clientes',
     icon: <FaIcons.FaUserNurse />,
   },
@@ -49,7 +49,7 @@ export const DataMenuJadmin = [
 
     subNav: [
       {
-        title: 'Ingreso de Equipos',
+        title: 'Orden de Ingreso',
         path: 'serviciotecnico/ingreso',
         icon: <MdIcons.MdInput />
       },
@@ -64,12 +64,12 @@ export const DataMenuJadmin = [
         icon: <IoIcons.IoIosAlbums />
       },
       {
-        title: 'Asignar',
+        title: 'Asignar Ordenes',
         path: 'serviciotecnico/asignar',
         icon: <IoIcons.IoIosAlbums />
       },
       {
-        title: 'Asignados a Tecnico',
+        title: 'Mis Ordenes',
         path: 'serviciotecnico/asignadostecnicos',
         icon: <IoIcons.IoIosAlbums />
       }
