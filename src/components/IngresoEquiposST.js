@@ -425,6 +425,7 @@ const IngresoEquiposST = () => {
             setChecked(false)
             setOpenModalCli(!openModalCli)
             setShowConfirmationCab(false);
+            setBtnGuardarCab(false);
             return;
         } catch (error) {
             cambiarEstadoAlerta(true);
@@ -857,7 +858,7 @@ const IngresoEquiposST = () => {
         consultarprot('');
         setConfirmar(false);
         setConfirmarDet(false);
-        setBtnGuardarCab(false);
+        setBtnGuardarCab(true);
         setBtnGuardarDet(true);
         setBtnGuardarTest(true);
         setBtnNuevo(true);

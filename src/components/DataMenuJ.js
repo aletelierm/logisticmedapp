@@ -51,7 +51,7 @@ export const DataMenuJadmin = [
       {
         title: 'Orden de Ingreso',
         path: 'serviciotecnico/ingreso',
-        icon: <MdIcons.MdInput />
+        icon: <IoIcons.IoIosCreate />
       },
       {
         title: 'Items Servicio Tecnico',
@@ -61,17 +61,17 @@ export const DataMenuJadmin = [
       {
         title: 'Protocolo Test Ingreso',
         path: 'serviciotecnico/protocolotest',
-        icon: <IoIcons.IoIosAlbums />
+        icon: <IoIcons.IoIosApps />
       },
       {
         title: 'Asignar Ordenes',
         path: 'serviciotecnico/asignar',
-        icon: <IoIcons.IoIosAlbums />
+        icon: <IoIcons.IoIosCreate />
       },
       {
         title: 'Mis Ordenes',
         path: 'serviciotecnico/asignadostecnicos',
-        icon: <IoIcons.IoIosAlbums />
+        icon: <IoIcons.IoIosPaper/>
       }
     ]
   },
