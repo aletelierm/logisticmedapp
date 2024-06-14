@@ -72,6 +72,7 @@ const AsignadosTecnicos = () => {
     //Ordenar fechas
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
 
+    console.log('correos',alertaOrdenIngreso)
     // Cerrar Asignación
     const cerrar = async (id, folio) => {
         cambiarEstadoAlerta(false);
@@ -101,7 +102,7 @@ const AsignadosTecnicos = () => {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
-                mensaje: 'Error a cerrar mantenimiento:', error
+                mensaje: 'Error al cerrar mantenimiento:', error
             })
         }       
         
