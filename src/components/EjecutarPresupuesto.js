@@ -157,7 +157,7 @@ const EjecutarPresupuesto = () => {
           correctivo: false,
           fecha_correctivo: '',
           cerrado: false,
-          fecha_cerrado: false,
+          fecha_cerrado: '',
           userAdd: user.email,
           userMod: user.email,
           fechaAdd: fechaAdd,
@@ -186,12 +186,13 @@ const EjecutarPresupuesto = () => {
   const AgregarItem = async (id_item) => {
     cambiarEstadoAlerta(false);
     cambiarAlerta({});
+    console.log('id ingreso cab',id)
     // Consultar si Item se encuentra en Documento
     const item_id = itemrs.filter(it => it.id === id_item);
     // Validar Item en el documento de protocolo que se esta trabajando     
     const existePresupuesto = presupuesto.filter(doc => doc.item_id === item_id[0].id);
     // Buscar id de cabecera presupuesto
-    const cabpre = query(collection(db, 'presupuestos'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+    const cabpre = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
     const cabpresu = await getDocs(cabpre);
     const existecabPresupuesto = (cabpresu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     console.log('Cab presupuesto en agregar items', existecabPresupuesto)
@@ -213,7 +214,6 @@ const EjecutarPresupuesto = () => {
             item: item_id[0].nombre,
             categoria: item_id[0].categoria,
             price: item_id[0].price,
-            estado: 'Presupuesto Realizado',
             userAdd: user.email,
             userMod: user.email,
             fechaAdd: fechaAdd,
@@ -249,17 +249,19 @@ const EjecutarPresupuesto = () => {
   //   cambiarEstadoAlerta(false);
   //   cambiarAlerta({});
   //   // // Filtar por docuemto de Cabecera
-  //   // const cabProtocolo = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia));
-  //   // const cabecera = await getDocs(cabProtocolo);
-  //   // const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //   const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+  //   const cabecera = await getDocs(cab);
+  //   const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-  //   if (protocolo.length === 0) {
+  //   if (presupuesto.length === 0) {
   //     Swal.fire('No hay Datos por confirmar en este documento');
   //   } else {
   //     // Actualizar la cabecera de protocolos
   //     try {
-  //       await updateDoc(doc(db, 'protocolostestcab', existeCabProtocolo[0].id), {
+  //       await updateDoc(doc(db, 'presupustoscab', existeCab[0].id), {
   //         confirmado: true,
+  //         generado: true,
+  //         fecha_generadogenerado: fechaMod,
   //         usermod: user.email,
   //         fechamod: fechaMod
   //       });
@@ -362,12 +364,10 @@ const EjecutarPresupuesto = () => {
         </Table>
       </Contenedor>
 
-
       <BotonGuardar disabled={btnCab} style={{ marginTop: '20px', backgroundColor: btnCab && '#8F8B85', cursor: btnCab && 'default' }} onClick={addCabPresupuesto}>Comenzar Presupuesto</BotonGuardar>
       {/* Listado de item agregados a presupuesto */}
       {mostrarAdd && (
         <>
-
           <Contenedor>
             <ContentElemenAdd>
               <Titulo>Items Agregados a Presupuesto</Titulo>
