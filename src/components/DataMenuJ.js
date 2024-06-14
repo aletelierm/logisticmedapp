@@ -36,7 +36,7 @@ export const DataMenuJadmin = [
     ]
   },
   {
-    title: 'Mis Pacientes',
+    title: 'Mis Clientes',
     path: 'clientes',
     icon: <FaIcons.FaUserNurse />,
   },

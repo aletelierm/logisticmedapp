@@ -1,10 +1,11 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useRef } from 'react';
 import Alertas from './Alertas';
+import PresupuestoCabDB from '../firebase/PresupuestoCabDB';
 import PresupuestoDB from '../firebase/PresupuestoDB';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, addDoc,/* updateDoc,*/ doc, setDoc} from 'firebase/firestore';
+import { getDocs, collection, where, query, /*addDoc, updateDoc, doc, setDoc */ } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import * as FaIcons from 'react-icons/fa';
@@ -99,53 +100,6 @@ const EjecutarPresupuesto = () => {
     return 0;
   });
 
-  //Funcion Guardar los Presupuestos creados
-  const PresupuestoCab = async ({ id_cab_inst, confirmado, estado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
-    try {
-      const documento = await addDoc(collection(db, 'presupuestoscab'), {
-        id_cab_inst: id_cab_inst,
-        confirmado: confirmado,
-        estado: estado,
-        useradd: userAdd,
-        usermod: userMod,
-        fechaadd: fechaAdd,
-        fechamod: fechaMod,
-        emp_id: emp_id
-      });
-      documentoId.current = documento.id;
-    } catch (error) {
-      // Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
-    }
-    const existeservicio = detalle.filter(det => det.servicio === 'PRESUPUESTO')
-    console.log(existeservicio)
-
-    // if (existeservicio) {
-      //Guarda el status incial del Presupuesto 
-      try {
-        //Guarda el status incial del equipo          
-        await setDoc(doc(db, 'statusst', documentoId.current), {
-          id_cab_inst: existeservicio[0].id_cab_inst,
-          folio: existeservicio[0].folio,
-          generado: false,
-          fecha_generado: '',
-          enviado: false,
-          fecha_enviado: '',
-          aceptaado: false,
-          fecha_aceptado: '',
-          rechazado: false,
-          fecha_rechazado: '',
-          correctivo: false,
-          fecha_correctivo: '',
-          cerrado: false,
-          fecha_cerrado: false,
-        });
-        console.log('Se guardo status st')
-      } catch (error) {
-        console.log(error)
-      }
-    // }
-  }
-
   // Cambiar fecha
   const formatearFecha = (fecha) => {
     const dateObj = fecha.toDate();
@@ -171,31 +125,60 @@ const EjecutarPresupuesto = () => {
     cambiarEstadoAlerta(false);
     cambiarAlerta({});
 
-    try {
-      PresupuestoCab({
-        id_cab_inst: id,
-        confirmado: false,
-        estado: 'EVALUACION',
-        userAdd: user.email,
-        userMod: user.email,
-        fechaAdd: fechaAdd,
-        fechaMod: fechaMod,
-        emp_id: users.emp_id,
-      })
+    // Filtar por docuemto de Cabecera Bitacora
+    const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id), where('confirmado', '==', false));
+    const cabecera = await getDocs(cab);
+    const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+    if (existeCab.length > 0) {
       cambiarEstadoAlerta(true);
       cambiarAlerta({
         tipo: 'exito',
         mensaje: 'Proceda a generar presupuesto'
-      })
+      });
+      documentoId.current = existeCab[0].id;
       setMostrarAdd(true);
       setBtnAgregarItem(false);
       setBtnCab(true)
-    } catch (error) {
-      cambiarEstadoAlerta(true);
-      cambiarAlerta({
-        tipo: 'error',
-        mensaje: error
-      })
+    } else {
+      try {
+        PresupuestoCabDB({
+          id_cab_inst: id,
+          confirmado: false,
+          estado: 'PREPARACION',
+          generado: false,
+          fecha_generado: '',
+          enviado: false,
+          fecha_enviado: '',
+          aceptado: false,
+          fecha_aceptado: '',
+          rechazado: false,
+          fecha_rechazado: '',
+          correctivo: false,
+          fecha_correctivo: '',
+          cerrado: false,
+          fecha_cerrado: false,
+          userAdd: user.email,
+          userMod: user.email,
+          fechaAdd: fechaAdd,
+          fechaMod: fechaMod,
+          emp_id: users.emp_id,
+        })
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+          tipo: 'exito',
+          mensaje: 'Proceda a generar presupuesto'
+        })
+        setMostrarAdd(true);
+        setBtnAgregarItem(false);
+        setBtnCab(true)
+      } catch (error) {
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+          tipo: 'error',
+          mensaje: error
+        })
+      }
     }
   }
 
@@ -301,7 +284,6 @@ const EjecutarPresupuesto = () => {
   //   }
   // }
 
-
   useEffect(() => {
     consultarIngresosDet();
     consultarPresupuesto();
@@ -384,106 +366,110 @@ const EjecutarPresupuesto = () => {
       <BotonGuardar disabled={btnCab} style={{ marginTop: '20px', backgroundColor: btnCab && '#8F8B85', cursor: btnCab && 'default' }} onClick={addCabPresupuesto}>Comenzar Presupuesto</BotonGuardar>
       {/* Listado de item agregados a presupuesto */}
       {mostrarAdd && (
-        <Contenedor>
-          <ContentElemenAdd>
-            <Titulo>Items Agregados a Presupuesto</Titulo>
-          </ContentElemenAdd>
-          <ListarEquipos>
-            <Table singleLine>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>N°</Table.HeaderCell>
-                  <Table.HeaderCell>Item</Table.HeaderCell>
-                  <Table.HeaderCell>Categoria</Table.HeaderCell>
-                  <Table.HeaderCell>Precio</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {presupuesto.map((item, index) => {
-                  return (
-                    <Table.Row key={index}>
-                      <Table.Cell>{index + 1}</Table.Cell>
-                      <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                      <Table.Cell>{item.categoria}</Table.Cell>
-                      <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                    </Table.Row>
-                  )
-                })}
-              </Table.Body>
-            </Table>
-          </ListarEquipos>
-          <BotonGuardar /*onClick={() => { actualizarDocs(); }}*/ disabled={btnConfirmar}>Confirmar</BotonGuardar>
-        </Contenedor>
+        <>
+
+          <Contenedor>
+            <ContentElemenAdd>
+              <Titulo>Items Agregados a Presupuesto</Titulo>
+            </ContentElemenAdd>
+            <ListarEquipos>
+              <Table singleLine>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>N°</Table.HeaderCell>
+                    <Table.HeaderCell>Item</Table.HeaderCell>
+                    <Table.HeaderCell>Categoria</Table.HeaderCell>
+                    <Table.HeaderCell>Precio</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {presupuesto.map((item, index) => {
+                    return (
+                      <Table.Row key={index}>
+                        <Table.Cell>{index + 1}</Table.Cell>
+                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                        <Table.Cell>{item.categoria}</Table.Cell>
+                        <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                      </Table.Row>
+                    )
+                  })}
+                </Table.Body>
+              </Table>
+            </ListarEquipos>
+            <BotonGuardar /*onClick={() => { actualizarDocs(); }}*/ disabled={btnConfirmar}>Confirmar</BotonGuardar>
+          </Contenedor>
+
+
+          <ListarProveedor>
+            <ContentElemenAdd>
+              <Titulo>Listado de Items</Titulo>
+            </ContentElemenAdd>
+            <ContentElemenAdd>
+              <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
+              <InputAdd
+                type='text'
+                placeholder='Buscar Item'
+                value={buscador}
+                onChange={onBuscarCambios}
+              />
+              {mostrar ?
+                <Boton onClick={() => {
+                  setIsOpen(true)
+                  setFlag(!flag)
+                  setMostrar(false)
+                }}
+                  style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                  title='Mostrar Listado de Items'
+                >
+                  <TbNotes />
+                </Boton>
+                :
+                <Boton onClick={() => {
+                  setIsOpen(false)
+                  setMostrar(true)
+                }}
+                  style={{ fontSize: '28px', color: '#328AC4' }}
+                  title='No mostrar Listado de Items'
+                >
+                  <TbNotesOff />
+                </Boton>
+              }
+            </ContentElemenAdd>
+            {/* Listo hacia abajo 04-06-2024 15:06 */}
+            {isOpen &&
+              <Table singleLine>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>N°</Table.HeaderCell>
+                    <Table.HeaderCell>Item</Table.HeaderCell>
+                    <Table.HeaderCell>Categoria</Table.HeaderCell>
+                    <Table.HeaderCell>Precio</Table.HeaderCell>
+                    <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {filtroItem().map((item, index) => {
+                    return (
+                      <Table.Row key={index}>
+                        <Table.Cell>{index + 1}</Table.Cell>
+                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                        <Table.Cell >{item.categoria}</Table.Cell>
+                        <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                        <Table.Cell style={{ textAlign: 'center' }}>
+                          <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
+                            <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
+                          </Boton>
+                        </Table.Cell>
+                      </Table.Row>
+                    )
+                  })}
+                </Table.Body>
+              </Table>
+            }
+          </ListarProveedor>
+        </>
       )}
 
-      {/* Listado de Items para agregar a protocolos */}
-      <ListarProveedor>
-        <ContentElemenAdd>
-          <Titulo>Listado de Items</Titulo>
-        </ContentElemenAdd>
-        <ContentElemenAdd>
-          <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
-          <InputAdd
-            type='text'
-            placeholder='Buscar Item'
-            value={buscador}
-            onChange={onBuscarCambios}
-          />
-          {mostrar ?
-            <Boton onClick={() => {
-              setIsOpen(true)
-              setFlag(!flag)
-              setMostrar(false)
-            }}
-              style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
-              title='Mostrar Listado de Items'
-            >
-              <TbNotes />
-            </Boton>
-            :
-            <Boton onClick={() => {
-              setIsOpen(false)
-              setMostrar(true)
-            }}
-              style={{ fontSize: '28px', color: '#328AC4' }}
-              title='No mostrar Listado de Items'
-            >
-              <TbNotesOff />
-            </Boton>
-          }
-        </ContentElemenAdd>
-        {/* Listo hacia abajo 04-06-2024 15:06 */}
-        {isOpen &&
-          <Table singleLine>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>N°</Table.HeaderCell>
-                <Table.HeaderCell>Item</Table.HeaderCell>
-                <Table.HeaderCell>Categoria</Table.HeaderCell>
-                <Table.HeaderCell>Precio</Table.HeaderCell>
-                <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {filtroItem().map((item, index) => {
-                return (
-                  <Table.Row key={index}>
-                    <Table.Cell>{index + 1}</Table.Cell>
-                    <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                    <Table.Cell >{item.categoria}</Table.Cell>
-                    <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                    <Table.Cell style={{ textAlign: 'center' }}>
-                      <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
-                        <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
-                      </Boton>
-                    </Table.Cell>
-                  </Table.Row>
-                )
-              })}
-            </Table.Body>
-          </Table>
-        }
-      </ListarProveedor>
       <Alertas tipo={alerta.tipo}
         mensaje={alerta.mensaje}
         estadoAlerta={estadoAlerta}

@@ -62,7 +62,7 @@ const IngresoEquiposST = () => {
     const [nomRsf, setNomRsf] = useState('');
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
-    const [btnGuardarCab, setBtnGuardarCab] = useState(false);
+    const [btnGuardarCab, setBtnGuardarCab] = useState(true);
     const [btnGuardarDet, setBtnGuardarDet] = useState(true);
     const [btnValidarTest, setBtnValidarTest] = useState(true);
     const [btnGuardarTest, setBtnGuardarTest] = useState(true);
@@ -251,6 +251,7 @@ const IngresoEquiposST = () => {
                 setTelefono(final[0].telefono);
                 setDireccion(final[0].direccion);
                 setCorreo(final[0].correo);
+                setBtnGuardarCab(false);
             }
         }
     }
@@ -424,6 +425,7 @@ const IngresoEquiposST = () => {
             setChecked(false)
             setOpenModalCli(!openModalCli)
             setShowConfirmationCab(false);
+            setBtnGuardarCab(false);
             return;
         } catch (error) {
             cambiarEstadoAlerta(true);
@@ -856,7 +858,7 @@ const IngresoEquiposST = () => {
         consultarprot('');
         setConfirmar(false);
         setConfirmarDet(false);
-        setBtnGuardarCab(false);
+        setBtnGuardarCab(true);
         setBtnGuardarDet(true);
         setBtnGuardarTest(true);
         setBtnNuevo(true);
@@ -961,8 +963,8 @@ const IngresoEquiposST = () => {
                                     <Label>Familia</Label>
                                     <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
                                         <option>Selecciona Opción:</option>
-                                        {familia.map((d) => {
-                                            return (<option key={d.id}>{d.familia}</option>)
+                                        {familia.map((d, index) => {
+                                            return (<option key={index}>{d.familia}</option>)
                                         })}
                                     </Select>
                                 </ContentElemenSelect>
