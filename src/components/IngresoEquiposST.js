@@ -1325,7 +1325,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#43A854'} }onClick={ingresoDet}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteDet}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
