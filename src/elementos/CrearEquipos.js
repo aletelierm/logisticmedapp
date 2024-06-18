@@ -50,6 +50,8 @@ const Input = styled.input`
     border: 2px solid #328AC4;
     border-radius: 10px;
     padding: 5px;
+    // outline: none;
+    // outline-color: yellow;
 `
 
 const TextArea = styled.textarea`
