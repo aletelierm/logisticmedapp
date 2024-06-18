@@ -158,10 +158,10 @@ const AsignadosTecnicos = () => {
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
-                                        <Link disabled to={`/ejecutarpresupuesto/${item.id}`}>
-                                            <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }}/>
-                                            {/* <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id,item.folio)} /> */}
-                                        </Link>
+                                        {/* <Link disabled to={`/ejecutarpresupuesto/${item.id}`}> */}
+                                            {/* <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }}/> */}
+                                            <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id,item.folio)} />
+                                        {/* </Link> */}
                                     </Table.Cell>
                                 </Table.Row>
                             )

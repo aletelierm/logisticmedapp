@@ -186,7 +186,6 @@ const EjecutarPresupuesto = () => {
   const AgregarItem = async (id_item) => {
     cambiarEstadoAlerta(false);
     cambiarAlerta({});
-    console.log('id ingreso cab',id)
     // Consultar si Item se encuentra en Documento
     const item_id = itemrs.filter(it => it.id === id_item);
     // Validar Item en el documento de protocolo que se esta trabajando     
@@ -195,7 +194,6 @@ const EjecutarPresupuesto = () => {
     const cabpre = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
     const cabpresu = await getDocs(cabpre);
     const existecabPresupuesto = (cabpresu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    console.log('Cab presupuesto en agregar items', existecabPresupuesto)
     if (!btnAgregarItem) {
       setBtnAgregarItem(true)
       if (existePresupuesto.length > 0) {
@@ -230,7 +228,6 @@ const EjecutarPresupuesto = () => {
           // setBtnGuardar(true);
           // setBtnNuevo(false);
           setBtnConfirmar(false);
-          return;
         } catch (error) {
           cambiarEstadoAlerta(true);
           cambiarAlerta({
@@ -243,6 +240,7 @@ const EjecutarPresupuesto = () => {
     setTimeout(() => {
       setBtnAgregarItem(false);
     }, 2000);
+    console.log(btnAgregarItem)
   }
   // // Función para actualizar varios documentos por lotes
   // const actualizarDocs = async () => {
