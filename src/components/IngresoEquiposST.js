@@ -76,6 +76,9 @@ const IngresoEquiposST = () => {
     const [servicio, setServicio] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
+    const [cont1,setCont1] = useState('#FF0000');
+    const [cont2,setCont2] = useState(null);
+    const [cont3,setCont3] = useState(null);
     const checktest = useRef([]);
     const id = useRef('');
 
@@ -108,10 +111,15 @@ const IngresoEquiposST = () => {
             setServicio(existeDet[0].servicio);
             setObs(existeDet[0].observaciones);
             consultarprot(existeDet[0].familia);
+            setCont1('#D1D1D1');
+            setCont2('#D1D1D1');
+            setCont3('#FF0000');
             setConfirmarDet(true);
             setBtnGuardarDet(true);
             setMostrarTest(true);
         } else {
+            setCont1('#D1D1D1');
+            setCont2('#FF0000');
             setNomFamilia('');
             setNomTipo('');
             setNomMarca('');
@@ -542,7 +550,8 @@ const IngresoEquiposST = () => {
                     mensaje: 'Datos registrados exitosamente'
                 })
                 setFlag(!flag);
-                return;
+                setCont1('#d1d1d1');
+                setCont2('#FF0000');
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -611,10 +620,14 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
+            setCont2('#D1D1D1');
+            setCont3('#FF0000');
             setShowConfirmationDet(true);
             setBtnGuardarDet(true);
+            
         }
     }
+
     // guardar los campos de ingreso detalle
     const ingresoDet = async (e) => {
         e.preventDefault();
@@ -714,7 +727,7 @@ const IngresoEquiposST = () => {
             return;
         } else {
             setShowConfirmationTest(true);
-            setBtnValidarTest(true);
+            setBtnValidarTest(true);            
         }
     }
     // Boton Guardar => Funcional
@@ -827,6 +840,9 @@ const IngresoEquiposST = () => {
             setShowConfirmationTest(false);
             setMostrarInfoEq(false);
             setMostrarTest(false);
+            setCont1('#FF0000');
+            setCont2('#D1D1D1');
+            setCont3('#D1D1D1');
             setFlag(!flag)
         }
         setTimeout(() => {
@@ -888,7 +904,7 @@ const IngresoEquiposST = () => {
                 <Titulo>Orden de Ingreso de Equipos</Titulo>
             </Contenedor>
             {/* Informacion del Cliente */}
-            <Contenedor>
+            <Contenedor bordercolor={cont1}>
                 <Titulo>Información Cliente</Titulo>
                 <Formulario action=''>
                     <ContentElemenMov>
@@ -955,7 +971,7 @@ const IngresoEquiposST = () => {
             {/* Informacion del Equipo */}
             {
                 mostrarInfoEq && (
-                    <Contenedor >
+                    <Contenedor bordercolor={cont2} >
                         <Titulo>Información Equipo</Titulo>
                         <Formulario action=''>
                             <ContentElemenMov>
@@ -1031,7 +1047,7 @@ const IngresoEquiposST = () => {
             {/* Test de Ingreso */}
             {
                 mostrarTest && (
-                    <Contenedor>
+                    <Contenedor bordercolor={cont3}>
                         <Titulo>Test de Ingreso</Titulo>
                         <Table singleLine>
                             <Table.Header>
@@ -1309,7 +1325,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#43A854'} }onClick={ingresoDet}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteDet}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
