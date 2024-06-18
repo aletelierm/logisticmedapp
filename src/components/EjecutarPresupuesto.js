@@ -1,10 +1,11 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect/*, useRef */} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Alertas from './Alertas';
+import PresupuestoCabDB from '../firebase/PresupuestoCabDB';
 import PresupuestoDB from '../firebase/PresupuestoDB';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query /*, addDoc, updateDoc, doc */ } from 'firebase/firestore';
+import { getDocs, collection, where, query, /*addDoc, updateDoc, doc, setDoc */ } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import * as FaIcons from 'react-icons/fa';
@@ -42,12 +43,13 @@ const EjecutarPresupuesto = () => {
   const [correo, setCorreo] = useState('');
   const [buscador, setBuscardor] = useState('');
   const [flag, setFlag] = useState(false);
-  // const [btnAgregarItem, setBtnAgregarItem] = useState(false);
+  const [btnCab, setBtnCab] = useState(false);
+  const [btnAgregarItem, setBtnAgregarItem] = useState(true);
   const [btnConfirmar, setBtnConfirmar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [mostrar, setMostrar] = useState(true);
-  const [botonDisabled, setBotonDisabled] = useState(false);
-  // const documentoId = useRef();
+  const [mostrarAdd, setMostrarAdd] = useState(false);
+  const documentoId = useRef('');
 
   const volver = () => {
     navigate('/serviciotecnico/asignadostecnicos')
@@ -98,168 +100,78 @@ const EjecutarPresupuesto = () => {
     return 0;
   });
 
-  // //Funcion Guardar los Presupuestos creados
-  // const PresupuestoCab = async ({ id_cab_inst, confirmado, estado, userAdd, userMod, fechaAdd, fechaMod, emp_id }) => {
-  //   try {
-  //     const documento = await addDoc(collection(db, 'presupuestoscab'), {
-  //       id_cab_inst: id_cab_inst,
-  //       confirmado: confirmado,
-  //       estado: estado,
-  //       useradd: userAdd,
-  //       usermod: userMod,
-  //       fechaadd: fechaAdd,
-  //       fechamod: fechaMod,
-  //       emp_id: emp_id
-  //     });
-  //     documentoId.current = documento.id;
-  //   } catch (error) {
-  //     // Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
-  //   }
+  // Cambiar fecha
+  const formatearFecha = (fecha) => {
+    const dateObj = fecha.toDate();
+    const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+    // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+    return formatear;
+  }
+  const filtroItem = () => {
+    const buscar = buscador.toLocaleUpperCase();
+    if (buscar.length === 0)
+      return itemrs.slice();
+    const nuevoFiltro = itemrs.filter(it => it.nombre.includes(buscar));
+    return nuevoFiltro.slice();
+  }
+  const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    setBuscardor(target.value)
+  }
+  // Hasta aqui hacia arriba
 
-  //   // if (existeDet[0].servicio === 'PRESUPUESTO') {
-  //   //   //Guarda el status incial del Presupuesto 
-  //   //   try {
-  //   //     //Guarda el status incial del equipo          
-  //   //     await addDoc(collection(db, 'statusst'), {
-  //   //       id_cab_inst: existeCab[0].id,
-  //   //       folio: existeCab[0].folio,
-  //   //       status: 'EVALUACION',
-  //   //       fecha_realizado: '',
-  //   //       fecha_enviado: '',
-  //   //       fecha_aceptado: '',
-  //   //       fecha_rechazado: ''
-  //   //     });
-  //   //     console.log('Se guardo status st')
-  //   //   } catch (error) {
-  //   //     console.log(error)
-  //   //   }
-  //   // }
-  // }
+  // Agregar Cabecera de Protocolo
+  const addCabPresupuesto = async (ev) => {
+    ev.preventDefault();
+    cambiarEstadoAlerta(false);
+    cambiarAlerta({});
 
-  //   //Guarda el status incial del equipo          
-  //   await setDoc(doc(db, 'status', documentoId.current), {
-  //     emp_id: emp_id,
-  //     familia: familia,
-  //     tipo: tipo,
-  //     marca: marca,
-  //     modelo: modelo,
-  //     status: status,
-  //     serie: serie,
-  //     price: 0,
-  //     tipoinout: '',
-  //     r_origen: '',
-  //     n_origen: '',
-  //     r_destino: empresaRut.current,
-  //     n_destino: nomEntidad,
-  //     r_permanente: '',
-  //     n_permanente: '',
-  //     fecha_permanente: '',
-  //     flag: true,
-  //     useradd: userAdd,
-  //     usermod: userMod,
-  //     fechaadd: fechaAdd,
-  //     fechamod: fechaMod
-  //   });
-  // } catch (error) {
-  //   Swal.fire('Se ha producido un error grave. Llame al Administrador', error);
-  // }
+    // Filtar por docuemto de Cabecera Bitacora
+    const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id), where('confirmado', '==', false));
+    const cabecera = await getDocs(cab);
+    const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-// Cambiar fecha
-const formatearFecha = (fecha) => {
-  const dateObj = fecha.toDate();
-  const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-  // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-  return formatear;
-}
-const filtroItem = () => {
-  const buscar = buscador.toLocaleUpperCase();
-  if (buscar.length === 0)
-    return itemrs.slice();
-  const nuevoFiltro = itemrs.filter(it => it.nombre.includes(buscar));
-  return nuevoFiltro.slice();
-}
-const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-  setBuscardor(target.value)
-}
-// Hasta aqui hacia arriba
-
-// // Agregar Cabecera de Protocolo
-// const addCabPresupuesto = async (ev) => {
-//   ev.preventDefault();
-//   cambiarEstadoAlerta(false);
-//   cambiarAlerta({});
-
-//   try {
-//     PresupuestoCab({
-//       id_cab_inst: id,
-//       confirmado: false,
-//       estado: 'EVALUACION',
-//       userAdd: user.email,
-//       userMod: user.email,
-//       fechaAdd: fechaAdd,
-//       fechaMod: fechaMod,
-//       emp_id: users.emp_id,
-//     })
-//     cambiarEstadoAlerta(true);
-//     cambiarAlerta({
-//       tipo: 'exito',
-//       mensaje: 'Proceda a generar presupuesto'
-//     })
-//     return;
-//   } catch (error) {
-//     cambiarEstadoAlerta(true);
-//     cambiarAlerta({
-//       tipo: 'error',
-//       mensaje: error
-//     })
-//   }
-// }
-
-// Agregar Item a Protocolo => Funcional
-const AgregarItem = async (id_item) => {
-  cambiarEstadoAlerta(false);
-  cambiarAlerta({});
-  // Consultar si Item se encuentra en Documento
-  const item_id = itemrs.filter(it => it.id === id_item);
-  console.log(item_id[0].id)
-  // Validar Item en el documento de protocolo que se esta trabajando     
-  const existePresupuesto = presupuesto.filter(doc => doc.item_id === item_id[0].id);
-
-  if (!botonDisabled) {
-    setBotonDisabled(true)
-    if (existePresupuesto.length > 0) {
+    if (existeCab.length > 0) {
       cambiarEstadoAlerta(true);
       cambiarAlerta({
-        tipo: 'error',
-        mensaje: 'Item ya se encuentra en este documento'
-      })
+        tipo: 'exito',
+        mensaje: 'Proceda a generar presupuesto'
+      });
+      documentoId.current = existeCab[0].id;
+      setMostrarAdd(true);
+      setBtnAgregarItem(false);
+      setBtnCab(true)
     } else {
       try {
-        PresupuestoDB({
+        PresupuestoCabDB({
           id_cab_inst: id,
-          folio: folio,
-          item_id: item_id[0].id,
-          item: item_id[0].nombre,
-          categoria: item_id[0].categoria,
-          price: item_id[0].price,
-          estado: 'Presupuesto Realizado',
+          confirmado: false,
+          estado: 'PREPARACION',
+          generado: false,
+          fecha_generado: '',
+          enviado: false,
+          fecha_enviado: '',
+          aceptado: false,
+          fecha_aceptado: '',
+          rechazado: false,
+          fecha_rechazado: '',
+          correctivo: false,
+          fecha_correctivo: '',
+          cerrado: false,
+          fecha_cerrado: '',
           userAdd: user.email,
           userMod: user.email,
           fechaAdd: fechaAdd,
           fechaMod: fechaMod,
           emp_id: users.emp_id,
-        });
+        })
         cambiarEstadoAlerta(true);
         cambiarAlerta({
           tipo: 'exito',
-          mensaje: 'Item Agregado correctamente'
+          mensaje: 'Proceda a generar presupuesto'
         })
-        setFlag(!flag);
-        // setConfirmar(false);
-        // setBtnGuardar(true);
-        // setBtnNuevo(false);
-        setBtnConfirmar(false);
-        return;
+        setMostrarAdd(true);
+        setBtnAgregarItem(false);
+        setBtnCab(true)
       } catch (error) {
         cambiarEstadoAlerta(true);
         cambiarAlerta({
@@ -269,245 +181,304 @@ const AgregarItem = async (id_item) => {
       }
     }
   }
-  setTimeout(() => {
-    setBotonDisabled(false);
-  }, 1000);
-}
-// // Función para actualizar varios documentos por lotes
-// const actualizarDocs = async () => {
-//   cambiarEstadoAlerta(false);
-//   cambiarAlerta({});
-//   // // Filtar por docuemto de Cabecera
-//   // const cabProtocolo = query(collection(db, 'protocolostestcab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia));
-//   // const cabecera = await getDocs(cabProtocolo);
-//   // const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-//   if (protocolo.length === 0) {
-//     Swal.fire('No hay Datos por confirmar en este documento');
-//   } else {
-//     // Actualizar la cabecera de protocolos
-//     try {
-//       await updateDoc(doc(db, 'protocolostestcab', existeCabProtocolo[0].id), {
-//         confirmado: true,
-//         usermod: user.email,
-//         fechamod: fechaMod
-//       });
-//       cambiarEstadoAlerta(true);
-//       cambiarAlerta({
-//         tipo: 'exito',
-//         mensaje: 'Documento confirmado exitosamente.'
-//       });
-//     } catch (error) {
-//       cambiarEstadoAlerta(true);
-//       cambiarAlerta({
-//         tipo: 'error',
-//         mensaje: 'Error al confirmar Cabecera:', error
-//       })
-//     }
-//     setFlag(!flag)
-//     setNomFamilia('');
-//     setConfirmar(false);
-//     setBtnGuardar(false);
-//     setBtnConfirmar(true);
-//     setBtnNuevo(true);
-//   }
-// }
-
-
-useEffect(() => {
-  consultarIngresosDet();
-  consultarPresupuesto();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [])
-useEffect(() => {
-  getItem();
-  consultarPresupuesto();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [flag, setFlag])
-
-
-return (
-  <ContenedorProveedor style={{ width: '80%' }}>
-    <Contenedor>
-      <Titulo>Crear Presupuesto</Titulo>
-    </Contenedor>
-
-    {/* Informacion Cliente */}
-    <Contenedor>
-      <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
-      <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Folio</Table.HeaderCell>
-            <Table.HeaderCell>Rut</Table.HeaderCell>
-            <Table.HeaderCell>Nombre</Table.HeaderCell>
-            <Table.HeaderCell>Fecha</Table.HeaderCell>
-            <Table.HeaderCell>Telefono</Table.HeaderCell>
-            <Table.HeaderCell>Dirección</Table.HeaderCell>
-            <Table.HeaderCell>Email</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          <Table.Row>
-            <Table.Cell>{folio}</Table.Cell>
-            <Table.Cell>{rut}</Table.Cell>
-            <Table.Cell>{entidad}</Table.Cell>
-            <Table.Cell>{date ? formatearFecha(date) : '00/00/00 00:00'}</Table.Cell>
-            <Table.Cell>{telefono}</Table.Cell>
-            <Table.Cell>{direccion}</Table.Cell>
-            <Table.Cell>{correo}</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
-    </Contenedor>
-
-    {/* Informacion Equipo */}
-    <Contenedor>
-      <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
-      <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Familia</Table.HeaderCell>
-            <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-            <Table.HeaderCell>Marca</Table.HeaderCell>
-            <Table.HeaderCell>Modelo</Table.HeaderCell>
-            <Table.HeaderCell>Serie</Table.HeaderCell>
-            <Table.HeaderCell>Servicio</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {detalle.map((item, index) => {
-            return (
-              <Table.Row key={index}>
-                <Table.Cell >{item.familia}</Table.Cell>
-                <Table.Cell  >{item.tipo}</Table.Cell>
-                <Table.Cell>{item.marca}</Table.Cell>
-                <Table.Cell>{item.modelo}</Table.Cell>
-                <Table.Cell>{item.serie}</Table.Cell>
-                <Table.Cell>{item.servicio}</Table.Cell>
-              </Table.Row>
-            )
-          })}
-        </Table.Body>
-      </Table>
-    </Contenedor>
-
-
-    <BotonGuardar style={{ marginTop: '20px' }} /*onClick={addCabPresupuesto}*/>Comenzar Presupuesto</BotonGuardar>
-
-    {/* Listado de item agregados a presupuesto */}
-    <Contenedor>
-      <ContentElemenAdd>
-        <Titulo>Items Agregados a Presupuesto</Titulo>
-      </ContentElemenAdd>
-      <ListarEquipos>
-        <Table singleLine>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>N°</Table.HeaderCell>
-              <Table.HeaderCell>Item</Table.HeaderCell>
-              <Table.HeaderCell>Categoria</Table.HeaderCell>
-              <Table.HeaderCell>Precio</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {presupuesto.map((item, index) => {
-              return (
-                <Table.Row key={index}>
-                  <Table.Cell>{index + 1}</Table.Cell>
-                  <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                  <Table.Cell>{item.categoria}</Table.Cell>
-                  <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                </Table.Row>
-              )
-            })}
-          </Table.Body>
-        </Table>
-      </ListarEquipos>
-      <BotonGuardar
-          /*</Contenedor>onClick={() => { actualizarDocs(); }}*/ disabled={btnConfirmar}>Confirmar</BotonGuardar>
-    </Contenedor>
-
-
-    {/* Listado de Items para agregar a protocolos */}
-    <ListarProveedor>
-      <ContentElemenAdd>
-        <Titulo>Listado de Items</Titulo>
-      </ContentElemenAdd>
-      <ContentElemenAdd>
-        <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
-        <InputAdd
-          type='text'
-          placeholder='Buscar Item'
-          value={buscador}
-          onChange={onBuscarCambios}
-        />
-        {mostrar ?
-          <Boton onClick={() => {
-            setIsOpen(true)
-            setFlag(!flag)
-            setMostrar(false)
-          }}
-            style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
-            title='Mostrar Listado de Items'
-          >
-            <TbNotes />
-          </Boton>
-          :
-          <Boton onClick={() => {
-            setIsOpen(false)
-            setMostrar(true)
-          }}
-            style={{ fontSize: '28px', color: '#328AC4' }}
-            title='No mostrar Listado de Items'
-          >
-            <TbNotesOff />
-          </Boton>
+  // Agregar Item a Protocolo => Funcional
+  const AgregarItem = async (id_item) => {
+    cambiarEstadoAlerta(false);
+    cambiarAlerta({});
+    // Consultar si Item se encuentra en Documento
+    const item_id = itemrs.filter(it => it.id === id_item);
+    // Validar Item en el documento de protocolo que se esta trabajando     
+    const existePresupuesto = presupuesto.filter(doc => doc.item_id === item_id[0].id);
+    // Buscar id de cabecera presupuesto
+    const cabpre = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+    const cabpresu = await getDocs(cabpre);
+    const existecabPresupuesto = (cabpresu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    if (!btnAgregarItem) {
+      setBtnAgregarItem(true)
+      if (existePresupuesto.length > 0) {
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+          tipo: 'error',
+          mensaje: 'Item ya se encuentra en este documento'
+        })
+      } else {
+        try {
+          PresupuestoDB({
+            id_cab_inst: id,
+            folio: folio,
+            id_cab_pre: existecabPresupuesto[0].id,
+            item_id: item_id[0].id,
+            item: item_id[0].nombre,
+            categoria: item_id[0].categoria,
+            price: item_id[0].price,
+            userAdd: user.email,
+            userMod: user.email,
+            fechaAdd: fechaAdd,
+            fechaMod: fechaMod,
+            emp_id: users.emp_id,
+          });
+          cambiarEstadoAlerta(true);
+          cambiarAlerta({
+            tipo: 'exito',
+            mensaje: 'Item Agregado correctamente'
+          })
+          setFlag(!flag);
+          // setConfirmar(false);
+          // setBtnGuardar(true);
+          // setBtnNuevo(false);
+          setBtnConfirmar(false);
+        } catch (error) {
+          cambiarEstadoAlerta(true);
+          cambiarAlerta({
+            tipo: 'error',
+            mensaje: error
+          })
         }
-      </ContentElemenAdd>
-      {/* Listo hacia abajo 04-06-2024 15:06 */}
-      {isOpen &&
-        <Table singleLine>
+      }
+    }
+    setTimeout(() => {
+      setBtnAgregarItem(false);
+    }, 2000);
+    console.log(btnAgregarItem)
+  }
+  // // Función para actualizar varios documentos por lotes
+  // const actualizarDocs = async () => {
+  //   cambiarEstadoAlerta(false);
+  //   cambiarAlerta({});
+  //   // // Filtar por docuemto de Cabecera
+  //   const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+  //   const cabecera = await getDocs(cab);
+  //   const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+  //   if (presupuesto.length === 0) {
+  //     Swal.fire('No hay Datos por confirmar en este documento');
+  //   } else {
+  //     // Actualizar la cabecera de protocolos
+  //     try {
+  //       await updateDoc(doc(db, 'presupustoscab', existeCab[0].id), {
+  //         confirmado: true,
+  //         generado: true,
+  //         fecha_generadogenerado: fechaMod,
+  //         usermod: user.email,
+  //         fechamod: fechaMod
+  //       });
+  //       cambiarEstadoAlerta(true);
+  //       cambiarAlerta({
+  //         tipo: 'exito',
+  //         mensaje: 'Documento confirmado exitosamente.'
+  //       });
+  //     } catch (error) {
+  //       cambiarEstadoAlerta(true);
+  //       cambiarAlerta({
+  //         tipo: 'error',
+  //         mensaje: 'Error al confirmar Cabecera:', error
+  //       })
+  //     }
+  //     setFlag(!flag)
+  //     setNomFamilia('');
+  //     setConfirmar(false);
+  //     setBtnGuardar(false);
+  //     setBtnConfirmar(true);
+  //     setBtnNuevo(true);
+  //   }
+  // }
+
+  useEffect(() => {
+    consultarIngresosDet();
+    consultarPresupuesto();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useEffect(() => {
+    getItem();
+    consultarPresupuesto();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flag, setFlag])
+
+
+  return (
+    <ContenedorProveedor style={{ width: '80%' }}>
+      <Contenedor>
+        <Titulo>Crear Presupuesto</Titulo>
+      </Contenedor>
+
+      {/* Informacion Cliente */}
+      <Contenedor>
+        <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
+        <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>N°</Table.HeaderCell>
-              <Table.HeaderCell>Item</Table.HeaderCell>
-              <Table.HeaderCell>Categoria</Table.HeaderCell>
-              <Table.HeaderCell>Precio</Table.HeaderCell>
-              <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
+              <Table.HeaderCell>Folio</Table.HeaderCell>
+              <Table.HeaderCell>Rut</Table.HeaderCell>
+              <Table.HeaderCell>Nombre</Table.HeaderCell>
+              <Table.HeaderCell>Fecha</Table.HeaderCell>
+              <Table.HeaderCell>Telefono</Table.HeaderCell>
+              <Table.HeaderCell>Dirección</Table.HeaderCell>
+              <Table.HeaderCell>Email</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {filtroItem().map((item, index) => {
+            <Table.Row>
+              <Table.Cell>{folio}</Table.Cell>
+              <Table.Cell>{rut}</Table.Cell>
+              <Table.Cell>{entidad}</Table.Cell>
+              <Table.Cell>{date ? formatearFecha(date) : '00/00/00 00:00'}</Table.Cell>
+              <Table.Cell>{telefono}</Table.Cell>
+              <Table.Cell>{direccion}</Table.Cell>
+              <Table.Cell>{correo}</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table>
+      </Contenedor>
+
+      {/* Informacion Equipo */}
+      <Contenedor>
+        <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
+        <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Familia</Table.HeaderCell>
+              <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+              <Table.HeaderCell>Marca</Table.HeaderCell>
+              <Table.HeaderCell>Modelo</Table.HeaderCell>
+              <Table.HeaderCell>Serie</Table.HeaderCell>
+              <Table.HeaderCell>Servicio</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {detalle.map((item, index) => {
               return (
                 <Table.Row key={index}>
-                  <Table.Cell>{index + 1}</Table.Cell>
-                  <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                  <Table.Cell >{item.categoria}</Table.Cell>
-                  <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                  <Table.Cell style={{ textAlign: 'center' }}>
-                    <Boton /*disabled={btnAgregarItem}*/ onClick={() => AgregarItem(item.id)}>
-                      <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
-                    </Boton>
-                  </Table.Cell>
+                  <Table.Cell >{item.familia}</Table.Cell>
+                  <Table.Cell  >{item.tipo}</Table.Cell>
+                  <Table.Cell>{item.marca}</Table.Cell>
+                  <Table.Cell>{item.modelo}</Table.Cell>
+                  <Table.Cell>{item.serie}</Table.Cell>
+                  <Table.Cell>{item.servicio}</Table.Cell>
                 </Table.Row>
               )
             })}
           </Table.Body>
         </Table>
-      }
-    </ListarProveedor>
-    <Alertas tipo={alerta.tipo}
-      mensaje={alerta.mensaje}
-      estadoAlerta={estadoAlerta}
-      cambiarEstadoAlerta={cambiarEstadoAlerta}
-    />
+      </Contenedor>
 
-    <div>
-      <BotonGuardar style={{ marginTop: '30px' }} onClick={volver} >Volver</BotonGuardar>
-    </div>
-  </ContenedorProveedor >
-)
+      <BotonGuardar disabled={btnCab} style={{ marginTop: '20px', backgroundColor: btnCab && '#8F8B85', cursor: btnCab && 'default' }} onClick={addCabPresupuesto}>Comenzar Presupuesto</BotonGuardar>
+      {/* Listado de item agregados a presupuesto */}
+      {mostrarAdd && (
+        <>
+          <Contenedor>
+            <ContentElemenAdd>
+              <Titulo>Items Agregados a Presupuesto</Titulo>
+            </ContentElemenAdd>
+            <ListarEquipos>
+              <Table singleLine>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>N°</Table.HeaderCell>
+                    <Table.HeaderCell>Item</Table.HeaderCell>
+                    <Table.HeaderCell>Categoria</Table.HeaderCell>
+                    <Table.HeaderCell>Precio</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {presupuesto.map((item, index) => {
+                    return (
+                      <Table.Row key={index}>
+                        <Table.Cell>{index + 1}</Table.Cell>
+                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                        <Table.Cell>{item.categoria}</Table.Cell>
+                        <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                      </Table.Row>
+                    )
+                  })}
+                </Table.Body>
+              </Table>
+            </ListarEquipos>
+            <BotonGuardar /*onClick={() => { actualizarDocs(); }}*/ disabled={btnConfirmar}>Confirmar</BotonGuardar>
+          </Contenedor>
+
+
+          <ListarProveedor>
+            <ContentElemenAdd>
+              <Titulo>Listado de Items</Titulo>
+            </ContentElemenAdd>
+            <ContentElemenAdd>
+              <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
+              <InputAdd
+                type='text'
+                placeholder='Buscar Item'
+                value={buscador}
+                onChange={onBuscarCambios}
+              />
+              {mostrar ?
+                <Boton onClick={() => {
+                  setIsOpen(true)
+                  setFlag(!flag)
+                  setMostrar(false)
+                }}
+                  style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                  title='Mostrar Listado de Items'
+                >
+                  <TbNotes />
+                </Boton>
+                :
+                <Boton onClick={() => {
+                  setIsOpen(false)
+                  setMostrar(true)
+                }}
+                  style={{ fontSize: '28px', color: '#328AC4' }}
+                  title='No mostrar Listado de Items'
+                >
+                  <TbNotesOff />
+                </Boton>
+              }
+            </ContentElemenAdd>
+            {/* Listo hacia abajo 04-06-2024 15:06 */}
+            {isOpen &&
+              <Table singleLine>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>N°</Table.HeaderCell>
+                    <Table.HeaderCell>Item</Table.HeaderCell>
+                    <Table.HeaderCell>Categoria</Table.HeaderCell>
+                    <Table.HeaderCell>Precio</Table.HeaderCell>
+                    <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {filtroItem().map((item, index) => {
+                    return (
+                      <Table.Row key={index}>
+                        <Table.Cell>{index + 1}</Table.Cell>
+                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                        <Table.Cell >{item.categoria}</Table.Cell>
+                        <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                        <Table.Cell style={{ textAlign: 'center' }}>
+                          <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
+                            <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
+                          </Boton>
+                        </Table.Cell>
+                      </Table.Row>
+                    )
+                  })}
+                </Table.Body>
+              </Table>
+            }
+          </ListarProveedor>
+        </>
+      )}
+
+      <Alertas tipo={alerta.tipo}
+        mensaje={alerta.mensaje}
+        estadoAlerta={estadoAlerta}
+        cambiarEstadoAlerta={cambiarEstadoAlerta}
+      />
+
+      <div>
+        <BotonGuardar style={{ marginTop: '30px' }} onClick={volver} >Volver</BotonGuardar>
+      </div>
+    </ContenedorProveedor >
+  )
 }
 
 export default EjecutarPresupuesto
