@@ -63,6 +63,7 @@ const IngresoEquiposST = () => {
     const [dirRsf, setDirRsf] = useState('');
     const [telRsf, setTelRsf] = useState('');
     const [btnGuardarCab, setBtnGuardarCab] = useState(true);
+    const [btnValidarDet, setBtnValidarDet] = useState(true);
     const [btnGuardarDet, setBtnGuardarDet] = useState(true);
     const [btnValidarTest, setBtnValidarTest] = useState(true);
     const [btnGuardarTest, setBtnGuardarTest] = useState(true);
@@ -89,7 +90,6 @@ const IngresoEquiposST = () => {
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setCabecera(existeCab);
     }
-    console.log(cabecera)
     // Filtar por docuemto de Cabecera
     const consultarIn = async () => {
         const ing = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('estado', '==', 'INGRESADO'));
@@ -548,6 +548,7 @@ const IngresoEquiposST = () => {
                     emp_id: users.emp_id
                 })
                 setBtnGuardarCab(true);
+                setBtnValidarDet(false);
                 setBtnGuardarDet(false);
                 setBtnNuevo(false);
                 setConfirmar(true);
@@ -631,8 +632,7 @@ const IngresoEquiposST = () => {
             setCont2('#D1D1D1');
             setCont3('#FF0000');
             setShowConfirmationDet(true);
-            setBtnGuardarDet(true);
-
+            setBtnGuardarDet(false);
         }
     }
 
@@ -641,45 +641,55 @@ const IngresoEquiposST = () => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
-        // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
-        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
-        const cabecera = await getDocs(cab);
-        const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log(existeCab)
 
-        try {
-            UpdateIngresoStCabDB({
-                id: existeCab[0].id,
-                familia: nomFamilia,
-                tipo: nomTipo,
-                marca: nomMarca,
-                modelo: nomModelo,
-                serie: serie,
-                servicio: servicio,
-                observaciones: '',
-                fechaMod: fechaMod
-            })
-            consultarprot(nomFamilia);
+        setBtnGuardarTestColor('#8F8B85');
+        if (!btnGuardarDet) {
             setBtnGuardarDet(true);
-            setBtnValidarTest(false);
-            setBtnGuardarTest(false);
-            setConfirmarDet(true);
-            setShowConfirmationDet(false);
-            setMostrarTest(true);
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'exito',
-                mensaje: 'Datos registrados exitosamente'
-            })
-            setFlag(!flag);
-            return;
-        } catch (error) {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: error
-            })
+            // Filtar por docuemto de Cabecera de Ingreso para guardar el id de cabecera y Date
+            const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('folio', '==', folio), where('rut', '==', rut));
+            const cabecera = await getDocs(cab);
+            const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            console.log(existeCab)
+
+            try {
+                UpdateIngresoStCabDB({
+                    id: existeCab[0].id,
+                    familia: nomFamilia,
+                    tipo: nomTipo,
+                    marca: nomMarca,
+                    modelo: nomModelo,
+                    serie: serie,
+                    servicio: servicio,
+                    observaciones: '',
+                    fechaMod: fechaMod
+                })
+                consultarprot(nomFamilia);
+                setBtnValidarDet(true);
+                setBtnGuardarDet(true);
+                setBtnValidarTest(false);
+                setBtnGuardarTest(false);
+                setConfirmarDet(true);
+                setShowConfirmationDet(false);
+                setMostrarTest(true);
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Datos registrados exitosamente'
+                })
+                setFlag(!flag);
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
         }
+        setTimeout(() => {
+            setBtnGuardarDet(false);
+            setBtnGuardarTestColor('#43A854');
+        }, 2000);
     }
     // Cancelar Ingreso detalle
     const cancelDeleteDet = () => {
@@ -861,6 +871,7 @@ const IngresoEquiposST = () => {
         setMostrarInfoEq(false);
         setMostrarTest(false);
         setFlag(!flag);
+        setBtnGuardarTestColor('#43A854')
         setCont1('#FF0000');
         setCont2('#D1D1D1');
         setCont3('#D1D1D1');
@@ -1021,7 +1032,7 @@ const IngresoEquiposST = () => {
                                 </ContentElemenSelect>
                             </ContentElemenMov>
                             {/* Guardar datos ingresados de detalle*/}
-                            <BotonGuardar disabled={btnGuardarDet} style={{ backgroundColor: btnGuardarDet && '#8F8B85', cursor: btnGuardarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
+                            <BotonGuardar disabled={btnValidarDet} style={{ backgroundColor: btnValidarDet && '#8F8B85', cursor: btnValidarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
                         </Formulario>
                     </Contenedor>
                 )
@@ -1127,7 +1138,9 @@ const IngresoEquiposST = () => {
                                             setServicio('');
                                             setObs('');
                                             consultarprot('');
+                                            setBtnValidarDet(false)
                                             setConfirmarDet(false);
+                                            setBtnGuardarDet(false);
                                             setMostrarTest(false);
                                         } else {
                                             setNomFamilia(item.familia);
@@ -1142,6 +1155,7 @@ const IngresoEquiposST = () => {
                                             setCont2('#D1D1D1');
                                             setCont3('#FF0000');
                                             setConfirmarDet(true);
+                                            setBtnValidarDet(true)
                                             setBtnGuardarDet(true);
                                             setMostrarTest(true);
                                             setBtnValidarTest(false);
@@ -1152,6 +1166,7 @@ const IngresoEquiposST = () => {
                                         setMostrarInfoEq(true);
                                         setBtnNuevo(false);
                                         setFlag(!flag)
+                                        setBtnGuardarTestColor('#43A854')
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
@@ -1321,7 +1336,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guardar estos datos de cliente?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={guardarCli}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#43A854', }} onClick={guardarCli}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteCab}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
@@ -1335,7 +1350,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 style={{ backgroundColor: '#43A854' }} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 disabled={btnGuardarDet} style={{ backgroundColor: btnGuardarTestColor, cursor: btnGuardarDet && 'default' }} onClick={ingresoDet}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteDet}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
@@ -1349,7 +1364,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 disabled={btnGuardarTest} style={{ backgroundColor: btnGuardarTestColor, cursor: btnGuardarDet && 'default' }} onClick={guardarTest}>Guardar</Boton2>
+                                <Boton2 disabled={btnGuardarTest} style={{ backgroundColor: btnGuardarTestColor, cursor: btnGuardarTest && 'default' }} onClick={guardarTest}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteTest}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
