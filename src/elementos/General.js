@@ -167,15 +167,18 @@ const Boton2 = styled.button`
 	border-radius: 100px;
 	color: #fff;
 	border: none;
-	background: #1766DC;
-	cursor: pointer;
+	background: ${(props) => props.color || '#1766DC'};
+	cursor: ${(props) => props.activo || 'pointer'};
 	font-family: 'Roboto', sans-serif;
 	font-weight: 500;
 	transition: .3s ease all;
 
+    // backgroundColor: btnGuardarTestColor, 
+    // cursor: btnGuardarDet && 'default'
+
 	&:hover {
 		// background-color: red;
-        background-color: #16B9CF
+        background-color: #16B9CF;
 	}
 
 `

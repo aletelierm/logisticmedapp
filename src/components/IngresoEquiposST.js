@@ -1350,7 +1350,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 disabled={btnGuardarDet} style={{ backgroundColor: btnGuardarTestColor, cursor: btnGuardarDet && 'default' }} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 activo={btnGuardarDet}  color={btnGuardarTestColor} onClick={ingresoDet}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteDet}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
@@ -1364,7 +1364,7 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 disabled={btnGuardarTest} style={{ backgroundColor: btnGuardarTestColor, cursor: btnGuardarTest && 'default' }} onClick={guardarTest}>Guardar</Boton2>
+                                <Boton2 activo={btnGuardarTest}  color={btnGuardarTestColor} onClick={guardarTest}>Guardar</Boton2>
                                 <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteTest}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
