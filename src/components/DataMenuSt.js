@@ -44,12 +44,12 @@ export const DataMenuSt= [
 
     subNav: [
       {
-        title: 'Ingreso de Equipos',
+        title: 'Orden de Ingreso',
         path: 'serviciotecnico/ingreso',
         icon: <MdIcons.MdInput />
       },
       {
-        title: 'Asignados a Tecnico',
+        title: 'Mis Ordenes',
         path: 'serviciotecnico/asignadostecnicos',
         icon: <IoIcons.IoIosAlbums />
       }

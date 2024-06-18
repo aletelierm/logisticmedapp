@@ -29,6 +29,7 @@ const IngresoEquiposSTPDF = () => {
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
     const [correo, setCorreo] = useState('');
+    const [usuarioIngreso, setUsuarioIngreso] = useState([]);
     const targetRef = useRef();
 
     const volver = () => {
@@ -43,12 +44,19 @@ const IngresoEquiposSTPDF = () => {
             setDate(ingreso.date);
             setTelefono(ingreso.telefono);
             setDireccion(ingreso.direccion);
-            setCorreo(ingreso.correo);
+            setCorreo(ingreso.correo);                                        
         } else {
             navigate('/serviciotecnico/ingreso')
         }
     }, [ingreso, navigate])
-
+   
+    //Consultar usuario
+    const consultarUsuario = async ()=>{
+        const user = query(collection(db, 'usuarios'), where('emp_id', '==', users.emp_id));
+        const userd = await getDocs(user);
+        const traeuser = (userd.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setUsuarioIngreso(traeuser);
+    }
     // Detalle de Ingreso de equipo
     const consultarIngresosDet = async () => {
         const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
@@ -64,7 +72,9 @@ const IngresoEquiposSTPDF = () => {
         setTest(existeTest);
     }
     test.sort((a, b) => a.fechamod - b.fechamod)
+    const usuario = usuarioIngreso.filter(usuario => usuario.correo === ingreso.useradd);
 
+    console.log('usuario filtrado',usuario)
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -90,9 +100,11 @@ const IngresoEquiposSTPDF = () => {
     useEffect(() => {
         consultarIngresosDet();
         consultarTest();
+        consultarUsuario();            
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+   
     return (
         <>
             <ContenedorProveedor>
@@ -205,8 +217,11 @@ const IngresoEquiposSTPDF = () => {
                         </Table.Body>
                     </Table>
 
-                    <div style={{ fontSize: '12px', lineHeight: '10px' }}>
-                        <h4 style={{margin: '14px 0px'}}>Ingresado por: {users.nombre + ' ' + users.apellido}</h4>
+                    <div style={{ fontSize: '12px', lineHeight: '10px' }}>                       
+                        <h4 style={{margin: '14px 0px'}}>{usuario.map((user)=>{
+                            return ( <h4>Ingresado por: {user.nombre}  {user.apellido}</h4>)
+                        })}</h4>
+
                         <h5 style={{margin: '14px 0px'}}>SERVICIO TÉCNICO</h5>
                         <p>soporte@dormirbien.cl</p>
                         <p>General Parra #674 Oficina H, Providencia</p>

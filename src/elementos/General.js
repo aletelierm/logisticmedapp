@@ -13,10 +13,10 @@ const ContenedorProveedor = styled.div`
 const Contenedor = styled.div`
     margin-top: 20px;
     padding: 20px;
-    border: 2px solid #d1d1d1;
+    border: 3px solid ${(props) => props.bordercolor || '#d1d1d1'};
     border-radius: 20px;
     box-shadow:  10px 10px 35px -7px rgba(0,0,0,0.75);
-
+    
     /* Media query para pantallas aún más pequeñas */
     @media screen and (max-width: 576px) {
         alignItems: center;

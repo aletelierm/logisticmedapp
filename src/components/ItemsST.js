@@ -177,8 +177,8 @@ const ItemsTest = () => {
                             <Label>Categoria</Label>
                             <Select style={{ width: '300px' }} value={categoria} onChange={e => { setCategoria(e.target.value) }}>
                                 <option>Selecciona Opción:</option>
-                                {ItemST.map((d) => {
-                                    return (<option key={d.id}>{d.text}</option>)
+                                {ItemST.map((d,index) => {
+                                    return (<option key={index}>{d.text}</option>)
                                 })}
                             </Select>
                         </ContentElemenSelect>

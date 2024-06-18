@@ -380,19 +380,11 @@ const Asignar = () => {
                                                 return (<option key={index}>{objeto.correo}</option>)
                                             })}
                                         </Select>
+                                        <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
                                     </ContentElemen>
                                 )
-                            }
-                            {/* <ContentElemen>
-                                <Label>Seleccionar Usuario:</Label>
-                                <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
-                                    <option>Selecciona Tecnico:</option>
-                                    {usuarios.map((objeto, index) => {
-                                        return (<option key={index}>{objeto.correo}</option>)
-                                    })}
-                                </Select>
-                            </ContentElemen> */}
-                            <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
+                            }    
+                            
                         </Formulario>
 
                     </ConfirmaModal>
