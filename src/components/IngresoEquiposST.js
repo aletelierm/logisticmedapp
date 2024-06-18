@@ -733,7 +733,7 @@ const IngresoEquiposST = () => {
             return;
         } else {
             setShowConfirmationTest(true);
-            setBtnValidarTest(true);
+            setBtnGuardarTestColor('#43A854');
         }
     }
     // Boton Guardar => Funcional
@@ -825,8 +825,10 @@ const IngresoEquiposST = () => {
             setServicio('');
             setObs('');
             consultarprot('');
-            setBtnGuardarCab(false);
+            setBtnGuardarCab(true);
             setBtnNuevo(true);
+            setConfirmar(false);
+            setConfirmarDet(false);
             setShowConfirmationTest(false);
             setMostrarInfoEq(false);
             setMostrarTest(false);
@@ -837,6 +839,7 @@ const IngresoEquiposST = () => {
         }
         setTimeout(() => {
             setBtnGuardarTest(false);
+            setBtnGuardarTestColor('#43A854');
         }, 2000);
     }
     // Cancelar Ingreso detalle
@@ -1198,7 +1201,7 @@ const IngresoEquiposST = () => {
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.folio}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{item.tipo}</Table.Cell>                                  
+                                    <Table.Cell>{item.tipo}</Table.Cell>
                                     <Table.Cell>{item.modelo}</Table.Cell>
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{item.servicio}</Table.Cell>
@@ -1352,8 +1355,8 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 activo={btnGuardarDet}  color={btnGuardarTestColor} onClick={ingresoDet}>Guardar</Boton2>
-                                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteDet}>Cancelar</Boton2>
+                                <Boton2 activo={btnGuardarDet} color={btnGuardarTestColor} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 color={'#E34747'} onClick={cancelDeleteDet}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
                     </Overlay>
@@ -1366,8 +1369,8 @@ const IngresoEquiposST = () => {
                         <ConfirmaModal className="confirmation-modal">
                             <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
                             <ConfirmaBtn className="confirmation-buttons">
-                                <Boton2 activo={btnGuardarTest}  color={btnGuardarTestColor} onClick={guardarTest}>Guardar</Boton2>
-                                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteTest}>Cancelar</Boton2>
+                                <Boton2 activo={btnGuardarTest} color={btnGuardarTestColor} onClick={guardarTest}>Guardar</Boton2>
+                                <Boton2 color={'#E34747'} onClick={cancelDeleteTest}>Cancelar</Boton2>
                             </ConfirmaBtn>
                         </ConfirmaModal>
                     </Overlay>
