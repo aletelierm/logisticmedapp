@@ -4,10 +4,10 @@ import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Link } from 'react-router-dom';
+/* import { Link } from 'react-router-dom'; */
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
+import { getDocs,collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
 import Modal from './Modal';
 import * as MdIcons from 'react-icons/md';
@@ -44,6 +44,12 @@ const AsignadosTecnicos = () => {
         const data = await getDocs(dato)
         setAsignar(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+     // Leer datos de cabecera Entradas
+     const leerIngresoCab = async (id) => {
+        const docum = asignar.filter(leer => leer.id === id);
+        setMostrarDet(docum);
+    }
+        
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -51,15 +57,7 @@ const AsignadosTecnicos = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
-    }
-
-    //Lee la orden de ingreso indicada por el ID 
-    const leerDetalleIngreso = async (id) => {
-        const traer = collection(db, 'ingresostdet');
-        const doc = query(traer, where('id_cab_inst', '==', id));
-        const documento = await getDocs(doc)
-        setMostrarDet(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    }
+    }    
 
     const leerTestIngreso = async (id) => {
         const traer = collection(db, 'testingreso');
@@ -71,13 +69,12 @@ const AsignadosTecnicos = () => {
 
     //Ordenar fechas
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
-
-    console.log('correos',alertaOrdenIngreso)
+    console.log('asignar',asignarOrd)
+    console.log('mostrar',mostrarDet)
     // Cerrar Asignación
     const cerrar = async (id, folio) => {
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        leerDetalleIngreso(id)
+        cambiarAlerta({});      
         try {
             await updateDoc(doc(db, 'ingresostcab', id), {
                 estado: 'CERRADO',
@@ -127,11 +124,12 @@ const AsignadosTecnicos = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
-                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
-                            <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>N°Orden</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha de Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N°Serie</Table.HeaderCell>
+                            <Table.HeaderCell>Servicio</Table.HeaderCell>
                             {/* <Table.HeaderCell>Presupuesto</Table.HeaderCell> */}
                             <Table.HeaderCell>Ver</Table.HeaderCell>
                             <Table.HeaderCell /*style={{ textAlign: 'center' }}*/ >Ejecutar</Table.HeaderCell>
@@ -143,16 +141,17 @@ const AsignadosTecnicos = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.folio}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell>{item.modelo}</Table.Cell>                                    
+                                    <Table.Cell>{item.serie}</Table.Cell>
+                                    <Table.Cell style={{color:'red'}}>{item.servicio}</Table.Cell>
                                     {/* <Table.Cell>Realizado</Table.Cell> */}
                                     <Table.Cell
                                         style={{ cursor: 'pointer' }}
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
-                                            leerDetalleIngreso(item.id)
+                                            leerIngresoCab(item.id);                                         
                                             leerTestIngreso(item.id)
                                             setEstadoModal(!estadoModal)
                                         }}
@@ -174,22 +173,22 @@ const AsignadosTecnicos = () => {
                             <Table singleLine>
                                 <Table.Header>
                                     <Table.Row>
-                                        <Table.HeaderCell>Tipo</Table.HeaderCell>
-                                        <Table.HeaderCell>Marca</Table.HeaderCell>
-                                        <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                        <Table.HeaderCell>Serie</Table.HeaderCell>
-                                        <Table.HeaderCell>Servicio</Table.HeaderCell>
+                                        <Table.HeaderCell>N°Orden</Table.HeaderCell>
+                                        <Table.HeaderCell>Cliente</Table.HeaderCell>
+                                        <Table.HeaderCell>Telefono</Table.HeaderCell>
+                                        <Table.HeaderCell>Dirección</Table.HeaderCell>
+                                        <Table.HeaderCell>Email</Table.HeaderCell>                                        
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body >
                                     {mostrarDet.map((item, index) => {
                                         return (
                                             <Table.Row key={index}>
-                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.tipo}</Table.Cell>
-                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.marca}</Table.Cell>
-                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.modelo}</Table.Cell>
-                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.serie}</Table.Cell>
-                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.servicio}</Table.Cell>
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.folio}</Table.Cell>
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.entidad}</Table.Cell>
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.telefono}</Table.Cell>
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.direccion}</Table.Cell>
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.correo}</Table.Cell>                                            
                                             </Table.Row>
                                         )
                                     })}

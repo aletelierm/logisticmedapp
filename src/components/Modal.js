@@ -35,7 +35,7 @@ const Overlay = styled.div`
     justify-content: center;
 `
 const ContenedorModal = styled.div`
-    width: 600px;
+    width: 700px;
     min-height: 100px;
     max-height: 600px;
     overflow-y: auto;

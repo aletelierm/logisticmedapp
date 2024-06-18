@@ -1100,7 +1100,7 @@ const IngresoEquiposST = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
+                            <Table.HeaderCell>N°Orden</Table.HeaderCell>
                             <Table.HeaderCell>Rut</Table.HeaderCell>
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Date</Table.HeaderCell>
@@ -1182,11 +1182,12 @@ const IngresoEquiposST = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Nombre</Table.HeaderCell>
-                            <Table.HeaderCell>Date</Table.HeaderCell>
-                            <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>N.Orden</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N°Serie</Table.HeaderCell>
+                            <Table.HeaderCell>Servicio</Table.HeaderCell>
                             <Table.HeaderCell>Ver PDF</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -1196,10 +1197,11 @@ const IngresoEquiposST = () => {
                                 <Table.Row key={item.id}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.folio}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>                                  
+                                    <Table.Cell>{item.modelo}</Table.Cell>
+                                    <Table.Cell>{item.serie}</Table.Cell>
+                                    <Table.Cell>{item.servicio}</Table.Cell>
                                     <Table.Cell >
                                         <Link disabled to={`/ingresopdf/${item.id}`}>
                                             <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
