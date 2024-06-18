@@ -65,14 +65,7 @@ const Asignar = () => {
          console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj) */
         return formatear;
     }
-
-    //Lee la orden de ingreso indicada por el ID 
-    const leerDetalleIngreso = async (id) => {
-        const traer = collection(db, 'ingresostdet');
-        const doc = query(traer, where('id_cab_inst', '==', id));
-        const documento = await getDocs(doc)
-        setMostrarDet(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    }
+ 
 
     const leerTestIngreso = async (id) => {
         const traer = collection(db, 'testingreso');
@@ -187,11 +180,12 @@ const Asignar = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>N°Orden</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
-                            <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>                            
+                            <Table.HeaderCell>N.Serie</Table.HeaderCell>                            
+                            <Table.HeaderCell>Servicio</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -201,14 +195,14 @@ const Asignar = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.folio}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell>{item.modelo}</Table.Cell>                                   
+                                    <Table.Cell>{item.serie}</Table.Cell>                                   
+                                    <Table.Cell style={{color:'red'}}>{item.servicio}</Table.Cell>
                                     <Table.Cell
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
-                                            leerDetalleIngreso(item.id)
                                             setIdCabIngreso(item.id)
                                             leerTestIngreso(item.id)
                                             setOpenModalCli(!openModalCli)
@@ -229,12 +223,13 @@ const Asignar = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>N°Orden</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N°Serie</Table.HeaderCell>
+                            <Table.HeaderCell>Servicio</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Asignación</Table.HeaderCell>
-                            <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
                         </Table.Row>
@@ -245,16 +240,16 @@ const Asignar = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.folio}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                    <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
-                                    <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell>{item.modelo}</Table.Cell>
+                                    <Table.Cell>{item.serie}</Table.Cell>                                    
+                                    <Table.Cell>{item.servicio}</Table.Cell>                                    
+                                    <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>                                   
                                     <Table.Cell>{item.tecnico}</Table.Cell>
                                     <Table.Cell
                                         title='Ver Documento Ingreso'
-                                        onClick={() => {
-                                            leerDetalleIngreso(item.id)
+                                        onClick={() => {                                          
                                             leerTestIngreso(item.id)
                                             setOpenModalCli(!openModalCli)
                                             setTituloModal('Detalle de Ingreso')
@@ -275,12 +270,12 @@ const Asignar = () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>N°</Table.HeaderCell>
-                            <Table.HeaderCell>Folio</Table.HeaderCell>
-                            <Table.HeaderCell>Rut</Table.HeaderCell>
-                            <Table.HeaderCell>Entidad</Table.HeaderCell>
+                            <Table.HeaderCell>N°Orden</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N°Serie</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Cierre</Table.HeaderCell>
-                            <Table.HeaderCell>Estado</Table.HeaderCell>
                             <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -290,11 +285,11 @@ const Asignar = () => {
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
                                     <Table.Cell>{item.folio}</Table.Cell>
-                                    <Table.Cell>{item.rut}</Table.Cell>
-                                    <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell>{item.modelo}</Table.Cell>                                   
+                                    <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_out)}</Table.Cell>
-                                    <Table.Cell>{item.estado}</Table.Cell>
                                     <Table.Cell>{item.tecnico}</Table.Cell>
                                 </Table.Row>
                             )
