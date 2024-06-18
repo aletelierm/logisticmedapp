@@ -20,7 +20,6 @@ const IngresoEquiposSTPDF = () => {
     const { id } = useParams();
     const [ingreso] = useObtenerIngreso(id);
 
-    const [detalle, setDetalle] = useState([]);
     const [test, setTest] = useState([]);
     const [folio, setFolio] = useState('');
     const [rut, setRut] = useState('');
@@ -28,8 +27,16 @@ const IngresoEquiposSTPDF = () => {
     const [date, setDate] = useState('');
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
+    const [familia, setFamilia] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [marca, setMarca] = useState('');
+    const [modelo, setModelo] = useState('');
+    const [serie, setSerie] = useState('');
+    const [servicio, setServicio ] = useState('');
+    const [observaciones, setObservaciones] = useState('');
     const [correo, setCorreo] = useState('');
     const [usuarioIngreso, setUsuarioIngreso] = useState([]);
+    
     const targetRef = useRef();
 
     const volver = () => {
@@ -44,7 +51,14 @@ const IngresoEquiposSTPDF = () => {
             setDate(ingreso.date);
             setTelefono(ingreso.telefono);
             setDireccion(ingreso.direccion);
-            setCorreo(ingreso.correo);                                        
+            setCorreo(ingreso.correo);
+            setFamilia(ingreso.familia);
+            setTipo(ingreso.tipo);
+            setMarca(ingreso.marca);
+            setModelo(ingreso.modelo);
+            setSerie(ingreso.serie);
+            setServicio(ingreso.servicio);
+            setObservaciones(ingreso.observaciones)                                      
         } else {
             navigate('/serviciotecnico/ingreso')
         }
@@ -57,13 +71,7 @@ const IngresoEquiposSTPDF = () => {
         const traeuser = (userd.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setUsuarioIngreso(traeuser);
     }
-    // Detalle de Ingreso de equipo
-    const consultarIngresosDet = async () => {
-        const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
-        const deta = await getDocs(det);
-        const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        setDetalle(existeDet);
-    }
+  
     // Detalle de test de ingreso
     const consultarTest = async () => {
         const test = query(collection(db, 'testingreso'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
@@ -72,9 +80,9 @@ const IngresoEquiposSTPDF = () => {
         setTest(existeTest);
     }
     test.sort((a, b) => a.fechamod - b.fechamod)
+    //Filtro para identificar el nommbre del usuario
     const usuario = usuarioIngreso.filter(usuario => usuario.correo === ingreso.useradd);
-
-    console.log('usuario filtrado',usuario)
+   
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -97,13 +105,13 @@ const IngresoEquiposSTPDF = () => {
         format: 'a4' // Formato del PDF
     };
 
-    useEffect(() => {
-        consultarIngresosDet();
+    useEffect(() => {          
         consultarTest();
         consultarUsuario();            
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    
    
     return (
         <>
@@ -160,18 +168,14 @@ const IngresoEquiposSTPDF = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {detalle.map((item, index) => {
-                                return (
-                                    <Table.Row key={index}>
-                                        <Table.Cell >{item.familia}</Table.Cell>
-                                        <Table.Cell  >{item.tipo}</Table.Cell>
-                                        <Table.Cell>{item.marca}</Table.Cell>
-                                        <Table.Cell>{item.modelo}</Table.Cell>
-                                        <Table.Cell>{item.serie}</Table.Cell>
-                                        <Table.Cell>{item.servicio}</Table.Cell>
+                                    <Table.Row>
+                                        <Table.Cell >{familia}</Table.Cell>
+                                        <Table.Cell  >{tipo}</Table.Cell>
+                                        <Table.Cell>{marca}</Table.Cell>
+                                        <Table.Cell>{modelo}</Table.Cell>
+                                        <Table.Cell>{serie}</Table.Cell>
+                                        <Table.Cell>{servicio}</Table.Cell>
                                     </Table.Row>
-                                )
-                            })}
                         </Table.Body>
                     </Table>
 
@@ -207,13 +211,9 @@ const IngresoEquiposSTPDF = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {detalle.map((item, index) => {
-                                return (
-                                    <Table.Row key={index}>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '16px' }}>{item.observaciones}</Table.Cell>
+                                    <Table.Row>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '16px' }}>{observaciones}</Table.Cell>
                                     </Table.Row>
-                                )
-                            })}
                         </Table.Body>
                     </Table>
 

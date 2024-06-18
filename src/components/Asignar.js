@@ -31,7 +31,7 @@ const Asignar = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [flag, setFlag] = useState(false);
     const [tituloModal, setTituloModal] = useState('');
-    const [mostrarSelec, setMostrarSelec] = useState(false);
+    const [mostrarSelec, setMostrarSelec] = useState(false);  
 
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
@@ -56,6 +56,17 @@ const Asignar = () => {
         const data = await getDocs(dato)
         setCerrados(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
+      // Leer datos de cabecera Entradas
+      const leerIngresoCab = async (id,indice) => {
+        if(indice===1){
+            const docum = asignar.filter(leer => leer.id === id);
+            setMostrarDet(docum);
+        }else{
+            const docum = asignados.filter(leer => leer.id === id);
+            setMostrarDet(docum);
+        }
+        
+    }
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -65,7 +76,6 @@ const Asignar = () => {
          console.log(fechaHoyF + " es menor que ? " + formatear, fechaHoy < dateObj) */
         return formatear;
     }
- 
 
     const leerTestIngreso = async (id) => {
         const traer = collection(db, 'testingreso');
@@ -73,6 +83,7 @@ const Asignar = () => {
         const documento = await getDocs(doc)
         setTestIngreso(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
+
     testIngreso.sort((a, b) => a.fechamod - b.fechamod)
 
     const leerUsuarios = async () => {
@@ -85,7 +96,8 @@ const Asignar = () => {
     //Ordenar x folio
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
     const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
-    const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)
+    const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)  
+    
 
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
@@ -161,7 +173,7 @@ const Asignar = () => {
         getIngresostcab();
         leerUsuarios();
         getAsignadoscab();
-        getCerradoscab();
+        getCerradoscab();       
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -169,8 +181,7 @@ const Asignar = () => {
         getAsignadoscab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-
-    console.log(mostrarSelec)
+   
 
     return (
         <div>
@@ -203,10 +214,11 @@ const Asignar = () => {
                                     <Table.Cell
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
-                                            setIdCabIngreso(item.id)
+                                            setIdCabIngreso(item.id);
+                                            leerIngresoCab(item.id, 1);
                                             leerTestIngreso(item.id)
-                                            setOpenModalCli(!openModalCli)
-                                            setTituloModal('Asignar Ingreso')
+                                            setOpenModalCli(!openModalCli);
+                                            setTituloModal('Asignar Ingreso');
                                             setMostrarSelec(true);
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
@@ -245,12 +257,18 @@ const Asignar = () => {
                                     <Table.Cell>{item.modelo}</Table.Cell>
                                     <Table.Cell>{item.serie}</Table.Cell>                                    
                                     <Table.Cell>{item.servicio}</Table.Cell>                                    
-                                    <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>                                   
-                                    <Table.Cell>{item.tecnico}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
+                                    <Table.Cell>{usuarios.map((user)=>(
+                                            user.correo===item.tecnico&&(
+                                                <h5>{user.nombre} {user.apellido}</h5>
+                                            )
+                                    )
+                                    )}</Table.Cell>
                                     <Table.Cell
                                         title='Ver Documento Ingreso'
                                         onClick={() => {                                          
                                             leerTestIngreso(item.id)
+                                            leerIngresoCab(item.id,2);
                                             setOpenModalCli(!openModalCli)
                                             setTituloModal('Detalle de Ingreso')
                                             setMostrarSelec(false);
@@ -290,7 +308,12 @@ const Asignar = () => {
                                     <Table.Cell>{item.modelo}</Table.Cell>                                   
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_out)}</Table.Cell>
-                                    <Table.Cell>{item.tecnico}</Table.Cell>
+                                    <Table.Cell>{usuarios.map((user)=>(
+                                            user.correo===item.tecnico&&(
+                                                <h5>{user.nombre} {user.apellido}</h5>
+                                            )
+                                    )
+                                    )}</Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -308,22 +331,22 @@ const Asignar = () => {
                                     <Table singleLine>
                                         <Table.Header>
                                             <Table.Row>
-                                                <Table.HeaderCell>Tipo</Table.HeaderCell>
-                                                <Table.HeaderCell>Marca</Table.HeaderCell>
-                                                <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                                <Table.HeaderCell>Serie</Table.HeaderCell>
-                                                <Table.HeaderCell>Servicio</Table.HeaderCell>
+                                                <Table.HeaderCell>N°Orden</Table.HeaderCell>
+                                                <Table.HeaderCell>Cliente</Table.HeaderCell>
+                                                <Table.HeaderCell>Telefono</Table.HeaderCell>
+                                                <Table.HeaderCell>Direccion</Table.HeaderCell>
+                                                <Table.HeaderCell>Email</Table.HeaderCell>
                                             </Table.Row>
                                         </Table.Header>
                                         <Table.Body >
                                             {mostrarDet.map((item, index) => {
                                                 return (
                                                     <Table.Row key={index}>
-                                                        <Table.Cell style={{ fontSize: '13px' }}>{item.tipo}</Table.Cell>
-                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.marca}</Table.Cell>
-                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.modelo}</Table.Cell>
-                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.serie}</Table.Cell>
-                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.servicio}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.folio}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.entidad}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.telefono}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.direccion}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.correo}</Table.Cell>
                                                     </Table.Row>
                                                 )
                                             })}
