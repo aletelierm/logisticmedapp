@@ -4,10 +4,10 @@ import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-/* import { Link } from 'react-router-dom'; */
+import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs,collection, where, query, updateDoc, doc } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
 import Modal from './Modal';
 import * as MdIcons from 'react-icons/md';
@@ -32,7 +32,7 @@ const AsignadosTecnicos = () => {
     //Lectura de usuario para alertas de ST-Asignados
     const getAlertasOrdenIngreso = async () => {
         const traerAlertas = collection(db, 'usuariosalertas');
-        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id),where('tecnico','==',true));
+        const dato = query(traerAlertas, where('emp_id', '==', users.emp_id), where('tecnico', '==', true));
         const data = await getDocs(dato);
         setAlertaOrdenIngreso(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
@@ -44,12 +44,12 @@ const AsignadosTecnicos = () => {
         const data = await getDocs(dato)
         setAsignar(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-     // Leer datos de cabecera Entradas
-     const leerIngresoCab = async (id) => {
+    // Leer datos de cabecera Entradas
+    const leerIngresoCab = async (id) => {
         const docum = asignar.filter(leer => leer.id === id);
         setMostrarDet(docum);
     }
-        
+
 
     // Cambiar fecha
     const formatearFecha = (fecha) => {
@@ -57,7 +57,7 @@ const AsignadosTecnicos = () => {
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
         // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
-    }    
+    }
 
     const leerTestIngreso = async (id) => {
         const traer = collection(db, 'testingreso');
@@ -69,12 +69,12 @@ const AsignadosTecnicos = () => {
 
     //Ordenar fechas
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
-    console.log('asignar',asignarOrd)
-    console.log('mostrar',mostrarDet)
+    console.log('asignar', asignarOrd)
+    console.log('mostrar', mostrarDet)
     // Cerrar Asignación
     const cerrar = async (id, folio) => {
         cambiarEstadoAlerta(false);
-        cambiarAlerta({});      
+        cambiarAlerta({});
         try {
             await updateDoc(doc(db, 'ingresostcab', id), {
                 estado: 'CERRADO',
@@ -90,19 +90,19 @@ const AsignadosTecnicos = () => {
             //Envia correo al administrador cuando usuario cierra una orden de ingreso
             try {
                 alertaOrdenIngreso.forEach((destino) => {
-                EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
-            })
+                    EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
+                })
             } catch (error) {
                 console.log('error', error)
             }
-             } catch (error) {
+        } catch (error) {
             cambiarEstadoAlerta(true);
             cambiarAlerta({
                 tipo: 'error',
                 mensaje: 'Error al cerrar mantenimiento:', error
             })
-        }       
-        
+        }
+
     }
     // console.log(cerrar)
 
@@ -130,9 +130,8 @@ const AsignadosTecnicos = () => {
                             <Table.HeaderCell>Modelo</Table.HeaderCell>
                             <Table.HeaderCell>N°Serie</Table.HeaderCell>
                             <Table.HeaderCell>Servicio</Table.HeaderCell>
-                            {/* <Table.HeaderCell>Presupuesto</Table.HeaderCell> */}
                             <Table.HeaderCell>Ver</Table.HeaderCell>
-                            <Table.HeaderCell /*style={{ textAlign: 'center' }}*/ >Ejecutar</Table.HeaderCell>
+                            <Table.HeaderCell>Ejecutar</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -143,23 +142,22 @@ const AsignadosTecnicos = () => {
                                     <Table.Cell>{item.folio}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.tipo}</Table.Cell>
-                                    <Table.Cell>{item.modelo}</Table.Cell>                                    
+                                    <Table.Cell>{item.modelo}</Table.Cell>
                                     <Table.Cell>{item.serie}</Table.Cell>
-                                    <Table.Cell style={{color:'red'}}>{item.servicio}</Table.Cell>
-                                    {/* <Table.Cell>Realizado</Table.Cell> */}
+                                    <Table.Cell style={{ color: 'red' }}>{item.servicio}</Table.Cell>
                                     <Table.Cell
                                         style={{ cursor: 'pointer' }}
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
-                                            leerIngresoCab(item.id);                                         
+                                            leerIngresoCab(item.id);
                                             leerTestIngreso(item.id)
                                             setEstadoModal(!estadoModal)
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
                                         {/* <Link disabled to={`/ejecutarpresupuesto/${item.id}`}> */}
-                                            {/* <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }}/> */}
-                                            <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id,item.folio)} />
+                                        {/* <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }}/> */}
+                                        <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
                                         {/* </Link> */}
                                     </Table.Cell>
                                 </Table.Row>
@@ -177,7 +175,7 @@ const AsignadosTecnicos = () => {
                                         <Table.HeaderCell>Cliente</Table.HeaderCell>
                                         <Table.HeaderCell>Telefono</Table.HeaderCell>
                                         <Table.HeaderCell>Dirección</Table.HeaderCell>
-                                        <Table.HeaderCell>Email</Table.HeaderCell>                                        
+                                        <Table.HeaderCell>Email</Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body >
@@ -188,7 +186,7 @@ const AsignadosTecnicos = () => {
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.entidad}</Table.Cell>
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.telefono}</Table.Cell>
                                                 <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.direccion}</Table.Cell>
-                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.correo}</Table.Cell>                                            
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.correo}</Table.Cell>
                                             </Table.Row>
                                         )
                                     })}
@@ -199,7 +197,6 @@ const AsignadosTecnicos = () => {
                                     return (
                                         <Table.Row key={index}>
                                             <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
-
                                         </Table.Row>
                                     )
                                 })}

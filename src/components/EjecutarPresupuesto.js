@@ -5,7 +5,7 @@ import PresupuestoCabDB from '../firebase/PresupuestoCabDB';
 import PresupuestoDB from '../firebase/PresupuestoDB';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, /*addDoc, updateDoc, doc, setDoc */ } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc/*addDoc, setDoc */ } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import * as FaIcons from 'react-icons/fa';
@@ -18,6 +18,7 @@ import { ListarEquipos/*, Select, Formulario, Label, Contenido */ } from '../ele
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 
 const EjecutarPresupuesto = () => {
   //fecha hoy
@@ -31,7 +32,7 @@ const EjecutarPresupuesto = () => {
 
   const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
   const [alerta, cambiarAlerta] = useState({});
-  const [detalle, setDetalle] = useState([]);
+  // const [detalle, setDetalle] = useState([]);
   const [presupuesto, setPresupuesto] = useState([]);
   const [item, setItem] = useState([]);
   const [folio, setFolio] = useState('');
@@ -41,6 +42,12 @@ const EjecutarPresupuesto = () => {
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
   const [correo, setCorreo] = useState('');
+  const [familia, setFamilia] = useState('');
+  const [tipo, setTipo] = useState('');
+  const [marca, setMarca] = useState('');
+  const [modelo, setModelo] = useState('');
+  const [serie, setSerie] = useState('');
+  const [servicio, setServicio] = useState('');
   const [buscador, setBuscardor] = useState('');
   const [flag, setFlag] = useState(false);
   const [btnCab, setBtnCab] = useState(false);
@@ -64,18 +71,24 @@ const EjecutarPresupuesto = () => {
       setTelefono(ingreso.telefono);
       setDireccion(ingreso.direccion);
       setCorreo(ingreso.correo);
+      setFamilia(ingreso.familia);
+      setTipo(ingreso.tipo);
+      setMarca(ingreso.marca);
+      setModelo(ingreso.modelo);
+      setSerie(ingreso.serie);
+      setServicio(ingreso.servicio);
     } else {
       navigate('/serviciotecnico/asignadostecnicos')
     }
   }, [ingreso, navigate])
 
-  // Detalle de Ingreso de equipo
-  const consultarIngresosDet = async () => {
-    const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
-    const deta = await getDocs(det);
-    const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    setDetalle(existeDet);
-  }
+  // // Detalle de Ingreso de equipo
+  // const consultarIngresosDet = async () => {
+  //   const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+  //   const deta = await getDocs(det);
+  //   const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //   setDetalle(existeDet);
+  // }
   // Detalle de Ingreso de equipo => No funcional
   const consultarPresupuesto = async () => {
     const pre = query(collection(db, 'presupuestos'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
@@ -242,50 +255,48 @@ const EjecutarPresupuesto = () => {
     }, 2000);
     console.log(btnAgregarItem)
   }
-  // // Función para actualizar varios documentos por lotes
-  // const actualizarDocs = async () => {
-  //   cambiarEstadoAlerta(false);
-  //   cambiarAlerta({});
-  //   // // Filtar por docuemto de Cabecera
-  //   const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
-  //   const cabecera = await getDocs(cab);
-  //   const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  // Función para actualizar varios documentos por lotes
+  const actualizarDocs = async () => {
+    cambiarEstadoAlerta(false);
+    cambiarAlerta({});
+    // // Filtar por docuemto de Cabecera
+    const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+    const cabecera = await getDocs(cab);
+    const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-  //   if (presupuesto.length === 0) {
-  //     Swal.fire('No hay Datos por confirmar en este documento');
-  //   } else {
-  //     // Actualizar la cabecera de protocolos
-  //     try {
-  //       await updateDoc(doc(db, 'presupustoscab', existeCab[0].id), {
-  //         confirmado: true,
-  //         generado: true,
-  //         fecha_generadogenerado: fechaMod,
-  //         usermod: user.email,
-  //         fechamod: fechaMod
-  //       });
-  //       cambiarEstadoAlerta(true);
-  //       cambiarAlerta({
-  //         tipo: 'exito',
-  //         mensaje: 'Documento confirmado exitosamente.'
-  //       });
-  //     } catch (error) {
-  //       cambiarEstadoAlerta(true);
-  //       cambiarAlerta({
-  //         tipo: 'error',
-  //         mensaje: 'Error al confirmar Cabecera:', error
-  //       })
-  //     }
-  //     setFlag(!flag)
-  //     setNomFamilia('');
-  //     setConfirmar(false);
-  //     setBtnGuardar(false);
-  //     setBtnConfirmar(true);
-  //     setBtnNuevo(true);
-  //   }
-  // }
+    if (presupuesto.length === 0) {
+      Swal.fire('No hay Datos por confirmar en este documento');
+    } else {
+      // Actualizar la cabecera de protocolos
+      try {
+        await updateDoc(doc(db, 'presupustoscab', existeCab[0].id), {
+          confirmado: true,
+          generado: true,
+          fecha_generadogenerado: fechaMod,
+          usermod: user.email,
+          fechamod: fechaMod
+        });
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+          tipo: 'exito',
+          mensaje: 'Documento confirmado exitosamente.'
+        });
+      } catch (error) {
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+          tipo: 'error',
+          mensaje: 'Error al confirmar Presupuesto:', error
+        })
+      }
+      setFlag(!flag)
+      setBtnCab(false)
+      setMostrarAdd(false);
+      setBtnAgregarItem(true);
+    }
+  }
 
   useEffect(() => {
-    consultarIngresosDet();
+    // consultarIngresosDet();
     consultarPresupuesto();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -346,18 +357,14 @@ const EjecutarPresupuesto = () => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {detalle.map((item, index) => {
-              return (
-                <Table.Row key={index}>
-                  <Table.Cell >{item.familia}</Table.Cell>
-                  <Table.Cell  >{item.tipo}</Table.Cell>
-                  <Table.Cell>{item.marca}</Table.Cell>
-                  <Table.Cell>{item.modelo}</Table.Cell>
-                  <Table.Cell>{item.serie}</Table.Cell>
-                  <Table.Cell>{item.servicio}</Table.Cell>
-                </Table.Row>
-              )
-            })}
+            <Table.Row >
+              <Table.Cell>{familia}</Table.Cell>
+              <Table.Cell>{tipo}</Table.Cell>
+              <Table.Cell>{marca}</Table.Cell>
+              <Table.Cell>{modelo}</Table.Cell>
+              <Table.Cell>{serie}</Table.Cell>
+              <Table.Cell>{servicio}</Table.Cell>
+            </Table.Row>
           </Table.Body>
         </Table>
       </Contenedor>
@@ -394,9 +401,8 @@ const EjecutarPresupuesto = () => {
                 </Table.Body>
               </Table>
             </ListarEquipos>
-            <BotonGuardar /*onClick={() => { actualizarDocs(); }}*/ disabled={btnConfirmar}>Confirmar</BotonGuardar>
+            <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
           </Contenedor>
-
 
           <ListarProveedor>
             <ContentElemenAdd>
