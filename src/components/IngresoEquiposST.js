@@ -724,16 +724,19 @@ const IngresoEquiposST = () => {
                 //     <li>{i.item}</li>
                 // )
             })} deben estar seleccionados.`);
-        } else if (obs === '') {
-            cambiarEstadoAlerta(true);
-            cambiarAlerta({
-                tipo: 'error',
-                mensaje: 'Campo Observaciones no puede estar vacio'
-            })
-            return;
+        // } else if (obs === '') {
+        //     cambiarEstadoAlerta(true);
+        //     cambiarAlerta({
+        //         tipo: 'error',
+        //         mensaje: 'Campo Observaciones no puede estar vacio'
+        //     })
+        //     return;
         } else {
             setShowConfirmationTest(true);
             setBtnGuardarTestColor('#43A854');
+            if (obs === '' ) {
+                setObs('Sin Observaciones')
+            }
         }
     }
     // Boton Guardar => Funcional
@@ -793,7 +796,7 @@ const IngresoEquiposST = () => {
                         mensaje: 'Error al guardar Test de Ingreso:', error
                     })
                 })
-
+            
             try {
                 await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
                     confirmado: true,
