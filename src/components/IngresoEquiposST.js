@@ -15,11 +15,13 @@ import { Regiones } from './comunas';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
 import { FaRegFilePdf } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp } from "react-icons/io";
 import { Servicio } from './TipDoc';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Swal from 'sweetalert2';
-import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay, ConfirmaBtn, Boton2 } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay, ConfirmaBtn, Boton2, Boton } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
 import correlativos from '../funciones/correlativosMultiEmpresa';
 
@@ -68,6 +70,10 @@ const IngresoEquiposST = () => {
     const [btnValidarTest, setBtnValidarTest] = useState(true);
     const [btnGuardarTest, setBtnGuardarTest] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
+    const [mostrarCli, setMostrarCli] = useState(false);
+    const [isOpenCli, setIsOpenCli] = useState(true);
+    const [mostrarEq, setMostrarEq] = useState(false);
+    const [isOpenEq, setIsOpenEq] = useState(true);
     const [btnGuardarTestColor, setBtnGuardarTestColor] = useState('#43A854');
     const [serie, setSerie] = useState('');
     const [nomFamilia, setNomFamilia] = useState('');
@@ -553,6 +559,10 @@ const IngresoEquiposST = () => {
                 setBtnNuevo(false);
                 setConfirmar(true);
                 setMostrarInfoEq(true);
+                setMostrarCli(true);
+                setIsOpenCli(false);
+                setMostrarEq(false);
+                setIsOpenEq(true)
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -671,6 +681,8 @@ const IngresoEquiposST = () => {
                 setConfirmarDet(true);
                 setShowConfirmationDet(false);
                 setMostrarTest(true);
+                setMostrarEq(true);
+                setIsOpenEq(false);
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'exito',
@@ -724,17 +736,17 @@ const IngresoEquiposST = () => {
                 //     <li>{i.item}</li>
                 // )
             })} deben estar seleccionados.`);
-        // } else if (obs === '') {
-        //     cambiarEstadoAlerta(true);
-        //     cambiarAlerta({
-        //         tipo: 'error',
-        //         mensaje: 'Campo Observaciones no puede estar vacio'
-        //     })
-        //     return;
+            // } else if (obs === '') {
+            //     cambiarEstadoAlerta(true);
+            //     cambiarAlerta({
+            //         tipo: 'error',
+            //         mensaje: 'Campo Observaciones no puede estar vacio'
+            //     })
+            //     return;
         } else {
             setShowConfirmationTest(true);
             setBtnGuardarTestColor('#43A854');
-            if (obs === '' ) {
+            if (obs === '') {
                 setObs('Sin Observaciones')
             }
         }
@@ -796,7 +808,7 @@ const IngresoEquiposST = () => {
                         mensaje: 'Error al guardar Test de Ingreso:', error
                     })
                 })
-            
+
             try {
                 await updateDoc(doc(db, 'ingresostcab', existeCab[0].id), {
                     confirmado: true,
@@ -812,7 +824,6 @@ const IngresoEquiposST = () => {
                     mensaje: 'Error al actualizar cabecera de Ingreso:', error
                 })
             }
-
             setFolio('');
             setRut('');
             setEntidad('');
@@ -835,6 +846,8 @@ const IngresoEquiposST = () => {
             setShowConfirmationTest(false);
             setMostrarInfoEq(false);
             setMostrarTest(false);
+            setMostrarCli(false);
+            setIsOpenCli(true);
             setCont1('#FF0000');
             setCont2('#D1D1D1');
             setCont3('#D1D1D1');
@@ -905,141 +918,194 @@ const IngresoEquiposST = () => {
             </Contenedor>
             {/* Informacion del Cliente */}
             <Contenedor bordercolor={cont1}>
-                <Titulo>Información Cliente</Titulo>
-                <Formulario action=''>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Folio</Label>
-                            <Input
-                                disabled
-                                type='numero'
-                                placeholder='Folio'
-                                name='folio'
-                                value={folio}
-                            /* onChange={ev => setFolio(ev.target.value)} */
-                            />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Rut</Label>
-                            <Input
-                                disabled={confirmar}
-                                type='numero'
-                                placeholder='Ingrese Rut sin puntos'
-                                name='rut'
-                                value={rut}
-                                onChange={ev => setRut(ev.target.value)}
-                                onKeyDown={detectarCli}
-                            />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Nombre</Label>
-                            <Input value={entidad} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Fecha de Ingreso</Label>
-                            <Input
-                                disabled={confirmar}
-                                type='datetime-local'
-                                placeholder='Seleccione Fecha'
-                                name='date'
-                                value={date}
-                                onChange={ev => setDate(ev.target.value)}
-                            />
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
-                    <ContentElemenMov>
-                        <ContentElemenSelect>
-                            <Label>Telefono</Label>
-                            <Input value={telefono} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Dirección</Label>
-                            <Input value={direccion} disabled />
-                        </ContentElemenSelect>
-                        <ContentElemenSelect>
-                            <Label>Email</Label>
-                            <Input value={correo} disabled />
-                        </ContentElemenSelect>
-                    </ContentElemenMov>
-                    {/* Guardar datos ingresados */}
-                    <BotonGuardar disabled={btnGuardarCab} style={{ backgroundColor: btnGuardarCab && '#8F8B85', cursor: btnGuardarCab && 'default' }} onClick={ingresoCab}>Siguente</BotonGuardar>
-                    {/* Pendiente Boton Nuevo */}
-                    <BotonGuardar disabled={btnNuevo} style={{ backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }} onClick={nuevo}>Nuevo</BotonGuardar>
-                </Formulario>
+                <Titulo style={{ width: '95%', display: 'inline-block' }}>Información Cliente</Titulo>
+                {/* Boton de mostrat o no mostrar Datos de cliente */}
+                {mostrarCli ?
+                    <Boton onClick={() => {
+                        setMostrarCli(false)
+                        setIsOpenCli(true)
+                        setFlag(!flag)
+                    }}
+                        style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
+                        title='Mostrar Datos de Cliente'
+                    >
+                        <IoIosArrowDown />
+                    </Boton>
+                    :
+                    <Boton onClick={() => {
+                        setMostrarCli(true)
+                        setIsOpenCli(false)
+                    }}
+                        style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
+                        title='No Mostrar Datos de Cliente'
+                    >
+                        <IoIosArrowUp />
+                    </Boton>
+                }
+                <hr style={{ margin: '10px 0px' }} />
+                {/* Minimizar Datos del Cliente */}
+                {isOpenCli &&
+                    <Formulario action=''>
+                        <ContentElemenMov>
+                            <ContentElemenSelect>
+                                <Label>Folio</Label>
+                                <Input
+                                    disabled
+                                    type='numero'
+                                    placeholder='Folio'
+                                    name='folio'
+                                    value={folio}
+                                /* onChange={ev => setFolio(ev.target.value)} */
+                                />
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label>Rut</Label>
+                                <Input
+                                    disabled={confirmar}
+                                    type='numero'
+                                    placeholder='Ingrese Rut sin puntos'
+                                    name='rut'
+                                    value={rut}
+                                    onChange={ev => setRut(ev.target.value)}
+                                    onKeyDown={detectarCli}
+                                />
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label>Nombre</Label>
+                                <Input value={entidad} disabled />
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label>Fecha de Ingreso</Label>
+                                <Input
+                                    disabled={confirmar}
+                                    type='datetime-local'
+                                    placeholder='Seleccione Fecha'
+                                    name='date'
+                                    value={date}
+                                    onChange={ev => setDate(ev.target.value)}
+                                />
+                            </ContentElemenSelect>
+                        </ContentElemenMov>
+                        <ContentElemenMov>
+                            <ContentElemenSelect>
+                                <Label>Telefono</Label>
+                                <Input value={telefono} disabled />
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label>Dirección</Label>
+                                <Input value={direccion} disabled />
+                            </ContentElemenSelect>
+                            <ContentElemenSelect>
+                                <Label>Email</Label>
+                                <Input value={correo} disabled />
+                            </ContentElemenSelect>
+                        </ContentElemenMov>
+                        {/* Guardar datos ingresados */}
+                        <BotonGuardar disabled={btnGuardarCab} style={{ backgroundColor: btnGuardarCab && '#8F8B85', cursor: btnGuardarCab && 'default' }} onClick={ingresoCab}>Siguente</BotonGuardar>
+                        {/* Pendiente Boton Nuevo */}
+                        <BotonGuardar disabled={btnNuevo} style={{ backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }} onClick={nuevo}>Nuevo</BotonGuardar>
+                    </Formulario>
+                }
             </Contenedor>
 
             {/* Informacion del Equipo */}
             {
                 mostrarInfoEq && (
                     <Contenedor bordercolor={cont2} >
-                        <Titulo>Información Equipo</Titulo>
-                        <Formulario action=''>
-                            <ContentElemenMov>
-                                <ContentElemenSelect>
-                                    <Label>Familia</Label>
-                                    <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
-                                        <option>Selecciona Opción:</option>
-                                        {familia.map((d, index) => {
-                                            return (<option key={index}>{d.familia}</option>)
-                                        })}
-                                    </Select>
-                                </ContentElemenSelect>
-                                <ContentElemenSelect>
-                                    <Label>Tipo Equipamiento</Label>
-                                    <Select disabled={confirmarDet} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
-                                        <option>Selecciona Opción:</option>
-                                        {tipo.map((d) => {
-                                            return (<option key={d.id}>{d.tipo}</option>)
-                                        })}
-                                    </Select>
-                                </ContentElemenSelect>
-                                <ContentElemenSelect>
-                                    <Label>Marca</Label>
-                                    <Select disabled={confirmarDet} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
-                                        <option>Selecciona Opción:</option>
-                                        {marca.map((d) => {
-                                            return (<option key={d.id}>{d.marca}</option>)
-                                        })}
-                                    </Select>
-                                </ContentElemenSelect>
-                            </ContentElemenMov>
-                            <ContentElemenMov>
-                                <ContentElemenSelect>
-                                    <Label>Modelo</Label>
-                                    <Select disabled={confirmarDet} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
-                                        <option>Selecciona Opción:</option>
-                                        {modelo.map((d) => {
-                                            return (<option key={d.id}>{d.modelo}</option>)
-                                        })}
-                                    </Select>
-                                </ContentElemenSelect>
-                                <ContentElemenSelect>
-                                    <Label>N° Serie</Label>
-                                    <Input
-                                        disabled={confirmarDet}
-                                        type='text'
-                                        placeholder='Ingrese N° Serie'
-                                        name='serie'
-                                        value={serie}
-                                        onChange={e => { setSerie(e.target.value) }}
-                                    />
-                                </ContentElemenSelect>
-                                <ContentElemenSelect>
-                                    <Label>Tipo de Servicio</Label>
-                                    <Select
-                                        disabled={confirmarDet}
-                                        value={servicio}
-                                        onChange={e => { setServicio(e.target.value) }}>
-                                        <option>Selecciona Opción:</option>
-                                        {Servicio.map((d) => {
-                                            return (<option key={d.key}>{d.text}</option>)
-                                        })}
-                                    </Select>
-                                </ContentElemenSelect>
-                            </ContentElemenMov>
-                            {/* Guardar datos ingresados de detalle*/}
-                            <BotonGuardar disabled={btnValidarDet} style={{ backgroundColor: btnValidarDet && '#8F8B85', cursor: btnValidarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
-                        </Formulario>
+                        <Titulo style={{ width: '95%', display: 'inline-block' }}>Información Equipo</Titulo>
+                        {/* Boton de mostrat o no mostrar Datos de cliente */}
+                        {mostrarEq ?
+                            <Boton onClick={() => {
+                                setMostrarEq(false)
+                                setIsOpenEq(true)
+                                setFlag(!flag)
+                            }}
+                                style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
+                                title='Mostrar Datos de Cliente'
+                            >
+                                <IoIosArrowDown />
+                            </Boton>
+                            :
+                            <Boton onClick={() => {
+                                setMostrarEq(true)
+                                setIsOpenEq(false)
+                            }}
+                                style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
+                                title='No Mostrar Datos de Cliente'
+                            >
+                                <IoIosArrowUp />
+                            </Boton>
+                        }
+                        <hr style={{ margin: '10px 0px' }} />
+                        {isOpenEq &&
+                            <Formulario action=''>
+                                <ContentElemenMov>
+                                    <ContentElemenSelect>
+                                        <Label>Familia</Label>
+                                        <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {familia.map((d, index) => {
+                                                return (<option key={index}>{d.familia}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>Tipo Equipamiento</Label>
+                                        <Select disabled={confirmarDet} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {tipo.map((d) => {
+                                                return (<option key={d.id}>{d.tipo}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>Marca</Label>
+                                        <Select disabled={confirmarDet} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {marca.map((d) => {
+                                                return (<option key={d.id}>{d.marca}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                </ContentElemenMov>
+                                <ContentElemenMov>
+                                    <ContentElemenSelect>
+                                        <Label>Modelo</Label>
+                                        <Select disabled={confirmarDet} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {modelo.map((d) => {
+                                                return (<option key={d.id}>{d.modelo}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>N° Serie</Label>
+                                        <Input
+                                            disabled={confirmarDet}
+                                            type='text'
+                                            placeholder='Ingrese N° Serie'
+                                            name='serie'
+                                            value={serie}
+                                            onChange={e => { setSerie(e.target.value) }}
+                                        />
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>Tipo de Servicio</Label>
+                                        <Select
+                                            disabled={confirmarDet}
+                                            value={servicio}
+                                            onChange={e => { setServicio(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {Servicio.map((d) => {
+                                                return (<option key={d.key}>{d.text}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                </ContentElemenMov>
+                                {/* Guardar datos ingresados de detalle*/}
+                                <BotonGuardar disabled={btnValidarDet} style={{ backgroundColor: btnValidarDet && '#8F8B85', cursor: btnValidarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
+                            </Formulario>
+                        }
                     </Contenedor>
                 )
             }
@@ -1133,6 +1199,9 @@ const IngresoEquiposST = () => {
                                         setTelefono(item.telefono);
                                         setDireccion(item.direccion);
                                         setCorreo(item.correo);
+                                        setMostrarCli(true);
+                                        setIsOpenCli(false);
+                                        setMostrarInfoEq(true);
                                         if (item.familia === '') {
                                             setCont1('#D1D1D1');
                                             setCont2('#FF0000');
@@ -1148,6 +1217,10 @@ const IngresoEquiposST = () => {
                                             setConfirmarDet(false);
                                             setBtnGuardarDet(false);
                                             setMostrarTest(false);
+                                            console.log(mostrarEq);
+                                            console.log(isOpenEq);
+                                            setMostrarEq(false);
+                                            setIsOpenEq(true);
                                         } else {
                                             setNomFamilia(item.familia);
                                             setNomTipo(item.tipo);
@@ -1166,10 +1239,12 @@ const IngresoEquiposST = () => {
                                             setMostrarTest(true);
                                             setBtnValidarTest(false);
                                             setBtnGuardarTest(false);
+                                            setMostrarEq(true);
+                                            setIsOpenEq(false);
                                         }
                                         setConfirmar(true);
                                         setBtnGuardarCab(true);
-                                        setMostrarInfoEq(true);
+                                        
                                         setBtnNuevo(false);
                                         setFlag(!flag)
                                         setBtnGuardarTestColor('#43A854')
