@@ -4,7 +4,7 @@ import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
