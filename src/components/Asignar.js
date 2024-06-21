@@ -61,8 +61,11 @@ const Asignar = () => {
         if(indice===1){
             const docum = asignar.filter(leer => leer.id === id);
             setMostrarDet(docum);
-        }else{
+        }else if(indice===2){
             const docum = asignados.filter(leer => leer.id === id);
+            setMostrarDet(docum);
+        }else{
+            const docum = cerrados.filter(leer => leer.id === id);
             setMostrarDet(docum);
         }
         
@@ -295,6 +298,7 @@ const Asignar = () => {
                             <Table.HeaderCell>N°Serie</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Cierre</Table.HeaderCell>
                             <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>
+                            <Table.HeaderCell>Ver</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -314,6 +318,17 @@ const Asignar = () => {
                                             )
                                     )
                                     )}</Table.Cell>
+                                     <Table.Cell
+                                        title='Ver Documento Ingreso'
+                                        onClick={() => {                                          
+                                            leerTestIngreso(item.id)
+                                            leerIngresoCab(item.id,3);
+                                            setOpenModalCli(!openModalCli)
+                                            setTituloModal('Detalle de Ingreso')
+                                            setMostrarSelec(false);
+                                        }}
+                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}
@@ -351,16 +366,7 @@ const Asignar = () => {
                                                 )
                                             })}
                                         </Table.Body>
-                                    </Table>
-                                    <Table>
-                                        {mostrarDet.map((item, index) => {
-                                            return (
-                                                <Table.Row key={index}>
-                                                    <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
-                                                </Table.Row>
-                                            )
-                                        })}
-                                    </Table>
+                                    </Table>                                    
                                     <Table>
                                         <Table.Header>
                                             <Table.Row>
@@ -384,6 +390,15 @@ const Asignar = () => {
                                                 )
                                             })}
                                         </TableBody>
+                                    </Table>
+                                    <Table>
+                                        {mostrarDet.map((item, index) => {
+                                            return (
+                                                <Table.Row key={index}>
+                                                    <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
+                                                </Table.Row>
+                                            )
+                                        })}
                                     </Table>
                                     {/* <BotonGuardar onClick={() => setEstadoModal(!estadoModal)}>Aceptar</BotonGuardar> */}
                                 </Contenido>

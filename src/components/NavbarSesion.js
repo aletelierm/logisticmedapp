@@ -20,7 +20,7 @@ const NavbarSesion = () => {
     }
 
     return (
-        <>
+        <>       
             <NavSesion>
                 <ContenedorImagenSesion>
                     {/* <img src='../../LogoLogisticMed.png' alt='LogoLogisticMed' style={{ height: '240px' }} /> */}
@@ -55,7 +55,7 @@ const NavbarSesion = () => {
                         <BiExit style={{fontSize: '64px', marginRight: '0px'}} title="Cerrar Sesióncl" />
                     </BotonSesion>
                 </UserSesion>
-            </NavSesion>
+            </NavSesion>          
         </>
     )
 }

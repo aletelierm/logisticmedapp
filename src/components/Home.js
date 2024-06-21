@@ -55,7 +55,7 @@ import EjecutarPresupuesto from './EjecutarPresupuesto';
 
 export const Home = () => {
   return (
-    <div> 
+    <div>    
     <NavbarSesion />
     <SideBar>     
     <Routes>
@@ -113,7 +113,7 @@ export const Home = () => {
             <Route path="confirmados" element={<Confirmados/>}/>
             <Route path="/" element={<Navigate to="/login"/>}/>
     </Routes>    
-    </SideBar>    
+    </SideBar>   
     {/* <Footer/> */}
     </div>
   )

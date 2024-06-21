@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay, ConfirmaBtn, Boton2 } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
 import correlativos from '../funciones/correlativosMultiEmpresa';
+/* import BuscadorInput from './BuscadorInput'; */
 
 const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -40,13 +41,14 @@ const IngresoEquiposST = () => {
     const [tipo, setTipo] = useState([]);
     const [marca, setMarca] = useState([]);
     const [modelo, setModelo] = useState([]);
+    const [clientes, setClientes] = useState([]);
     const [folio, setFolio] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
     const [nombre, setNombre] = useState('');
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
-    const [correo, setCorreo] = useState('');
+    const [correo, setCorreo] = useState('');    
     const [date, setDate] = useState('');
     const [confirmar, setConfirmar] = useState(false);
     const [confirmarDet, setConfirmarDet] = useState(false);
@@ -96,6 +98,13 @@ const IngresoEquiposST = () => {
         const ingreso = await getDocs(ing);
         const existeIn = (ingreso.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setIngresado(existeIn.sort((a, b) => a.folio - b.folio));
+    }
+    //Traer clientes
+    const consultarClientes = async () => {
+        const sqlCte = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id));
+        const Ctes = await getDocs(sqlCte);
+        const existeCtes = (Ctes.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
+        setClientes(existeCtes);
     }
     // // Filtar por docuemto de Cabecera
     // const consultarDet = async (item) => {
@@ -887,6 +896,7 @@ const IngresoEquiposST = () => {
         getModelo();
         consultarCab();
         consultarIn();
+        consultarClientes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -918,6 +928,7 @@ const IngresoEquiposST = () => {
                         </ContentElemenSelect>
                         <ContentElemenSelect>
                             <Label>Rut</Label>
+                          {/*   <BuscadorInput items={clientes}/> */}
                             <Input
                                 disabled={confirmar}
                                 type='numero'
