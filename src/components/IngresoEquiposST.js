@@ -44,7 +44,6 @@ const IngresoEquiposST = () => {
     const [marca, setMarca] = useState([]);
     const [modelo, setModelo] = useState([]);
     const [clientes, setClientes] = useState([]);
-    /* const [selectedItem, setSelectedItem] = useState(null);    */
     const [folio, setFolio] = useState('');
     const [rut, setRut] = useState('');
     const [entidad, setEntidad] = useState('');
@@ -221,12 +220,10 @@ const IngresoEquiposST = () => {
         }
         return 0;
     });
-
+    //Seleccionar valores del cliente traidos del componente buscadorInput
     const handleSelectItem = (item) => {                
-        console.log('item 1',item.nombre)
-        const isObject= item!==null && typeof item==='object';
+         const isObject= item!==null && typeof item==='object';//Valida si dato es un objeto o un valor normal
          if(isObject){
-             console.log('es objeto')
                 setRut(item.rut);
                 setEntidad(item.nombre);
                 setTelefono(item.telefono);
@@ -234,14 +231,12 @@ const IngresoEquiposST = () => {
                 setCorreo(item.correo);            
                 setBtnGuardarCab(false);
             }else{
-                console.log('es un valor',item)
-                 //Patron para valiar rut
+                 //Patron para validar rut
                 const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
                 const temp = item.split('-');
                 let digito = temp[1];
                 if (digito === 'k' || digito === 'K') digito = -1;
                 const validaR = validarRut(item);
-
                 if(item===''){
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
@@ -265,13 +260,10 @@ const IngresoEquiposST = () => {
                     return;
 
             }else{
-                console.log('mostrar ingreso cliente nuevo')
+                //Asigna valor de rut validado pero que no existe en DB y activa mostrar model cliente nuevo.
                 setRut(item)
                 setOpenModalCli(true)
-            }
-            /* setSelectedItem(item);
-       */
-         /* setIsModalOpen(true); // Abrir el modal cuando se selecciona un item */
+            }     
       };
     }
     //Limpia formulario Clientes
@@ -293,6 +285,7 @@ const IngresoEquiposST = () => {
     }
     // protocolo.sort((a, b) => a.fechamod - b.fechamod)
 
+    //esta parte ya no sirve---
     // Validar rut
   /*   const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
