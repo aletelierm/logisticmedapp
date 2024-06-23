@@ -1,8 +1,9 @@
 // src/components/SearchBar.js
 import React, { useState } from 'react';
 import { Input } from '../elementos/CrearEquipos';
+import styled from 'styled-components';
 
-const SearchBar = ({ items }) => {
+const SearchBar = ({ items,onSelectItem,limpiaFormCte}) => {
   const [queryText, setQueryText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
 
@@ -18,13 +19,30 @@ const SearchBar = ({ items }) => {
       setFilteredItems(filtered);
     } else {
       setFilteredItems([]);
+      limpiaFormCte();
     }
   };
 
   const handleSelectItem = (item) => {
     setQueryText(item.rut);
     setFilteredItems([]);
+    onSelectItem(item);    
   };
+
+  const detectarKey =(e)=>{
+    if((e.key ==='Enter' || e.key==='Tab')&& filteredItems.length ===0){
+      /* e.preventDefault();
+      if(filteredItems.length > 0){
+        handleSelectItem(filteredItems[0]);
+      }else{
+        handleSelectItem(e.target.value);
+        console.log('no existe coincidencias')
+      } */
+        handleSelectItem(e.target.value);
+    }else if((e.key ==='Enter' || e.key==='Tab')&& filteredItems.length ===1){
+        handleSelectItem(filteredItems[0]);
+    }
+  }
 
   return (
     <>
@@ -33,18 +51,41 @@ const SearchBar = ({ items }) => {
         value={queryText}
         onChange={handleInputChange}
         placeholder="Buscar..."
+        onKeyDown={detectarKey}
       />
       {filteredItems.length > 0 && (
-        <ul>
+        <Lista>
           {filteredItems.map((item, index) => (
-            <li key={index} onClick={() => handleSelectItem(item)}>
+            <Li key={index} onClick={() => handleSelectItem(item)}>
               {item.rut} {item.nombre}
-            </li>
+            </Li>
           ))}
-        </ul>
+        </Lista>
       )}
     </>
   );
 };
 
 export default SearchBar;
+
+const  Lista = styled.ul`
+    border-radius:0.625rem;
+    background-color: #ffff;
+    position: absolute;
+   /*  top:1.62rem; */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    width: 300px;
+    max-height: 150px;
+    overflow-y: auto;
+`
+const Li = styled.li`
+      padding: 8px;
+      cursor: pointer;
+      &hover {
+        background-color: #8CF7F7;
+      }
+`
+
