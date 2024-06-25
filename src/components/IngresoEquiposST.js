@@ -24,7 +24,7 @@ import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay, ConfirmaBtn, Boton2, Boton } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
 import correlativos from '../funciones/correlativosMultiEmpresa';
-import BuscadorInput from './BuscadorInput';
+/* import BuscadorInput from './BuscadorInput'; */
 
 const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -220,61 +220,6 @@ const IngresoEquiposST = () => {
         }
         return 0;
     });
-    //Seleccionar valores del cliente traidos del componente buscadorInput
-    const handleSelectItem = (item) => {                
-         const isObject= item!==null && typeof item==='object';//Valida si dato es un objeto o un valor normal
-         if(isObject){
-                setRut(item.rut);
-                setEntidad(item.nombre);
-                setTelefono(item.telefono);
-                setDireccion(item.direccion);
-                setCorreo(item.correo);            
-                setBtnGuardarCab(false);
-            }else{
-                 //Patron para validar rut
-                const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-                const temp = item.split('-');
-                let digito = temp[1];
-                if (digito === 'k' || digito === 'K') digito = -1;
-                const validaR = validarRut(item);
-                if(item===''){
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Favor ingresa un rut'
-                    })
-                    return;
-                }else if (!expresionRegularRut.test(item)) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Formato incorrecto de rut'
-                    })
-                    return;
-                } else if (validaR !== parseInt(digito)) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Rut no válido'
-                    })
-                    return;
-
-            }else{
-                //Asigna valor de rut validado pero que no existe en DB y activa mostrar model cliente nuevo.
-                setRut(item)
-                setOpenModalCli(true)
-            }     
-      };
-    }
-    //Limpia formulario Clientes
-    const limpiaFormCte =()=>{
-        setRut('');
-        setEntidad('');
-        setTelefono('');
-        setDireccion('');
-        setCorreo('');
-        setBtnGuardarCab(true) 
-    }
 
     // Filtar por docuemto de protoolo no confirmado => Funcional
     const consultarprot = async (fam) => {
@@ -285,9 +230,8 @@ const IngresoEquiposST = () => {
     }
     // protocolo.sort((a, b) => a.fechamod - b.fechamod)
 
-    //esta parte ya no sirve---
     // Validar rut
-  /*   const detectarCli = async (e) => {
+    const detectarCli = async (e) => {
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         if (e.key === 'Enter' || e.key === 'Tab') {
@@ -334,7 +278,7 @@ const IngresoEquiposST = () => {
                 setBtnGuardarCab(false);
             }
         }
-    } */
+    }
     const handleChek = (e) => {
         setChecked(e.target.checked)
     }
@@ -369,14 +313,14 @@ const IngresoEquiposST = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
-    // valida un Cliente nuevo en formulario modal
+    // Guardar Cliente nuevo
     const validarCli = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Patron para Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-        //Patron para validar rut
+        //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
@@ -1026,15 +970,7 @@ const IngresoEquiposST = () => {
                             </ContentElemenSelect>
                             <ContentElemenSelect>
                                 <Label>Rut</Label>
-                                <BuscadorInput items={clientes} onSelectItem={handleSelectItem} limpiaFormCte={limpiaFormCte}/>
-                               {/*  {selectedItem && (
-                                    <ItemModal
-                                    isOpen={isModalOpen}
-                                    onRequestClose={closeModal}
-                                     //item={selectedItem}
-                                    />
-                                    )} */}
-                                {/* <Input
+                                <Input
                                     disabled={confirmar}
                                     type='numero'
                                     placeholder='Ingrese Rut sin puntos'
@@ -1042,7 +978,7 @@ const IngresoEquiposST = () => {
                                     value={rut}
                                     onChange={ev => setRut(ev.target.value)}
                                     onKeyDown={detectarCli}
-                                /> */}
+                                />
                             </ContentElemenSelect>
                             <ContentElemenSelect>
                                 <Label>Nombre</Label>

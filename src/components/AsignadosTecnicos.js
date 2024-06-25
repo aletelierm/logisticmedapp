@@ -36,7 +36,6 @@ const AsignadosTecnicos = () => {
         const data = await getDocs(dato);
         setAlertaOrdenIngreso(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
-
     // Leer datos de cabecera Entradas
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');
@@ -49,8 +48,6 @@ const AsignadosTecnicos = () => {
         const docum = asignar.filter(leer => leer.id === id);
         setMostrarDet(docum);
     }
-
-
     // Cambiar fecha
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -58,7 +55,6 @@ const AsignadosTecnicos = () => {
         // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-
     const leerTestIngreso = async (id) => {
         const traer = collection(db, 'testingreso');
         const doc = query(traer, where('id_cab_inst', '==', id));
@@ -69,8 +65,8 @@ const AsignadosTecnicos = () => {
 
     //Ordenar fechas
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
-    console.log('asignar', asignarOrd)
-    console.log('mostrar', mostrarDet)
+    // console.log('asignar', asignarOrd)
+    // console.log('mostrar', mostrarDet)
     // Cerrar Asignación
     const cerrar = async (id, folio) => {
         cambiarEstadoAlerta(false);
@@ -102,7 +98,6 @@ const AsignadosTecnicos = () => {
                 mensaje: 'Error al cerrar mantenimiento:', error
             })
         }
-
     }
     // console.log(cerrar)
 
@@ -156,8 +151,8 @@ const AsignadosTecnicos = () => {
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
                                         {/* <Link disabled to={`/ejecutarpresupuesto/${item.id}`}> */}
-                                        {/* <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }}/> */}
-                                        <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
+                                            {/* <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} /> */}
+                                            <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
                                         {/* </Link> */}
                                     </Table.Cell>
                                 </Table.Row>

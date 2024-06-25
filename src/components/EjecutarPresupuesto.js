@@ -5,7 +5,7 @@ import PresupuestoCabDB from '../firebase/PresupuestoCabDB';
 import PresupuestoDB from '../firebase/PresupuestoDB';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc/*addDoc, setDoc */ } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, deleteDoc/*addDoc, setDoc */ } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import * as FaIcons from 'react-icons/fa';
@@ -13,7 +13,8 @@ import * as FaIcons from 'react-icons/fa';
 import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Subtitulo } from '../elementos/General'
+import { MdDeleteForever } from "react-icons/md";
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Subtitulo, Overlay, ConfirmaModal, ConfirmaBtn, Boton2 } from '../elementos/General'
 import { ListarEquipos/*, Select, Formulario, Label, Contenido */ } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -32,9 +33,10 @@ const EjecutarPresupuesto = () => {
 
   const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
   const [alerta, cambiarAlerta] = useState({});
-  // const [detalle, setDetalle] = useState([]);
+  const [presupuestoCab, setPresupuestoCab] = useState([]);
   const [presupuesto, setPresupuesto] = useState([]);
   const [item, setItem] = useState([]);
+  // const [preCabConf, setpreCabConf] = useState('');
   const [folio, setFolio] = useState('');
   const [rut, setRut] = useState('');
   const [entidad, setEntidad] = useState('');
@@ -56,6 +58,8 @@ const EjecutarPresupuesto = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mostrar, setMostrar] = useState(true);
   const [mostrarAdd, setMostrarAdd] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [itemDelete, setItemdelete] = useState(false);
   const documentoId = useRef('');
 
   const volver = () => {
@@ -82,14 +86,14 @@ const EjecutarPresupuesto = () => {
     }
   }, [ingreso, navigate])
 
-  // // Detalle de Ingreso de equipo
-  // const consultarIngresosDet = async () => {
-  //   const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
-  //   const deta = await getDocs(det);
-  //   const existeDet = (deta.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  //   setDetalle(existeDet);
-  // }
-  // Detalle de Ingreso de equipo => No funcional
+  // Detalle de Ingreso de equipo => Funcional
+  const consultarPresupuestoCab = async () => {
+    const pre = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id), where('confirmado', '==', true));
+    const presu = await getDocs(pre);
+    const existePresupuesto = (presu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    setPresupuestoCab(existePresupuesto);
+  }
+  // Detalle de Ingreso de equipo => Funcional
   const consultarPresupuesto = async () => {
     const pre = query(collection(db, 'presupuestos'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
     const presu = await getDocs(pre);
@@ -130,7 +134,6 @@ const EjecutarPresupuesto = () => {
   const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
     setBuscardor(target.value)
   }
-  // Hasta aqui hacia arriba
 
   // Agregar Cabecera de Protocolo
   const addCabPresupuesto = async (ev) => {
@@ -194,7 +197,6 @@ const EjecutarPresupuesto = () => {
       }
     }
   }
-
   // Agregar Item a Protocolo => Funcional
   const AgregarItem = async (id_item) => {
     cambiarEstadoAlerta(false);
@@ -255,6 +257,30 @@ const EjecutarPresupuesto = () => {
     }, 2000);
     console.log(btnAgregarItem)
   }
+  // Borrar Items del presupuesto en proceso
+  const handleDelete = (itemId) => {
+    setItemdelete(itemId);
+    setShowConfirmation(true);
+  }
+  const cancelDelete = () => {
+    setShowConfirmation(false);
+  }
+  const borrarItem = async () => {
+    if (itemDelete) {
+      try {
+        await deleteDoc(doc(db, "presupuestos", itemDelete));
+        setFlag(!flag);
+        cambiarEstadoAlerta(true);
+        cambiarAlerta({
+          tipo: 'exito',
+          mensaje: 'Item eliminado exitosamente.'
+        });
+      } catch (error) {
+        console.log('Error al eliminar items');
+      }
+    }
+    setShowConfirmation(false);
+  }
   // Función para actualizar varios documentos por lotes
   const actualizarDocs = async () => {
     cambiarEstadoAlerta(false);
@@ -269,10 +295,11 @@ const EjecutarPresupuesto = () => {
     } else {
       // Actualizar la cabecera de protocolos
       try {
-        await updateDoc(doc(db, 'presupustoscab', existeCab[0].id), {
+        await updateDoc(doc(db, 'presupuestoscab', existeCab[0].id), {
           confirmado: true,
+          estado: 'GENERADO',
           generado: true,
-          fecha_generadogenerado: fechaMod,
+          fecha_generado: fechaMod,
           usermod: user.email,
           fechamod: fechaMod
         });
@@ -294,10 +321,11 @@ const EjecutarPresupuesto = () => {
       setBtnAgregarItem(true);
     }
   }
+  
 
   useEffect(() => {
-    // consultarIngresosDet();
     consultarPresupuesto();
+    consultarPresupuestoCab();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   useEffect(() => {
@@ -340,10 +368,10 @@ const EjecutarPresupuesto = () => {
             </Table.Row>
           </Table.Body>
         </Table>
-      </Contenedor>
+        {/* </Contenedor> */}
 
-      {/* Informacion Equipo */}
-      <Contenedor>
+        {/* Informacion Equipo */}
+        {/* <Contenedor> */}
         <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
         <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
           <Table.Header>
@@ -369,6 +397,8 @@ const EjecutarPresupuesto = () => {
         </Table>
       </Contenedor>
 
+      {/* Condicion para mostrar botones de comezar presupuesto, enviar, mantencion, etc */}
+
       <BotonGuardar disabled={btnCab} style={{ marginTop: '20px', backgroundColor: btnCab && '#8F8B85', cursor: btnCab && 'default' }} onClick={addCabPresupuesto}>Comenzar Presupuesto</BotonGuardar>
       {/* Listado de item agregados a presupuesto */}
       {mostrarAdd && (
@@ -385,6 +415,7 @@ const EjecutarPresupuesto = () => {
                     <Table.HeaderCell>Item</Table.HeaderCell>
                     <Table.HeaderCell>Categoria</Table.HeaderCell>
                     <Table.HeaderCell>Precio</Table.HeaderCell>
+                    <Table.HeaderCell>Eliminar</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -395,6 +426,13 @@ const EjecutarPresupuesto = () => {
                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
                         <Table.Cell>{item.categoria}</Table.Cell>
                         <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                        <Table.Cell>
+                          <MdDeleteForever
+                            style={{ fontSize: '22px', color: '#69080A', marginLeft: '20px' }}
+                            onClick={() => handleDelete(item.id)}
+                            title='Eliminar Item'
+                          />
+                        </Table.Cell>
                       </Table.Row>
                     )
                   })}
@@ -439,7 +477,6 @@ const EjecutarPresupuesto = () => {
                 </Boton>
               }
             </ContentElemenAdd>
-            {/* Listo hacia abajo 04-06-2024 15:06 */}
             {isOpen &&
               <Table singleLine>
                 <Table.Header>
@@ -473,6 +510,22 @@ const EjecutarPresupuesto = () => {
           </ListarProveedor>
         </>
       )}
+
+
+      {/* Modal para confirmar eliminacion de item en la lista de presupuesto en proceso */}
+      {
+        showConfirmation && (
+          <Overlay>
+            <ConfirmaModal className="confirmation-modal">
+              <h2>¿Estás seguro de que deseas eliminar este elemento?</h2>
+              <ConfirmaBtn className="confirmation-buttons">
+                <Boton2 color={'#940000'} hover={'#FF0000'} onClick={borrarItem}>Aceptar</Boton2>
+                <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+              </ConfirmaBtn>
+            </ConfirmaModal>
+          </Overlay>
+        )
+      }
 
       <Alertas tipo={alerta.tipo}
         mensaje={alerta.mensaje}
