@@ -336,6 +336,7 @@ const EjecutarPresupuesto = () => {
 
 
   return (
+    
     <ContenedorProveedor style={{ width: '80%' }}>
       <Contenedor>
         <Titulo>Crear Presupuesto</Titulo>

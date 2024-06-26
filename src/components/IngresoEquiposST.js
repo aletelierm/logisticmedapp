@@ -807,7 +807,7 @@ const IngresoEquiposST = () => {
                     cambiarEstadoAlerta(true);
                     cambiarAlerta({
                         tipo: 'exito',
-                        mensaje: 'Docuemento creado correctamente.'
+                        mensaje: 'Documento creado correctamente.'
                     });
                 })
                 .catch((error) => {
