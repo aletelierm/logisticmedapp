@@ -50,7 +50,7 @@ const SearchBar = ({ items,onSelectItem,limpiaFormCte}) => {
         type="text"
         value={queryText}
         onChange={handleInputChange}
-        placeholder="Buscar..."
+        placeholder="Ingrese Rut o Nombre"
         onKeyDown={detectarKey}
       />
       {filteredItems.length > 0 && (
