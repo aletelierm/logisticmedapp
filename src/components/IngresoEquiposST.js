@@ -24,7 +24,7 @@ import Swal from 'sweetalert2';
 import { ContenedorProveedor, Contenedor, ListarProveedor, Titulo, BotonGuardar, ConfirmaModal, Overlay, ConfirmaBtn, Boton2, Boton } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, ContentElemen, Formulario, Input, Label, TextArea, Select } from '../elementos/CrearEquipos';
 import correlativos from '../funciones/correlativosMultiEmpresa';
-/* import BuscadorInput from './BuscadorInput'; */
+import BuscadorInput from './BuscadorInput';
 
 const IngresoEquiposST = () => {
     //lee usuario de autenticado y obtiene fecha actual
@@ -221,31 +221,31 @@ const IngresoEquiposST = () => {
         return 0;
     });
 
-    // Filtar por docuemto de protoolo no confirmado => Funcional
-    const consultarprot = async (fam) => {
-        const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
-        const guardaprot = await getDocs(prot);
-        const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, /*id2: index + 1,*/ valorsi: false, valorno: false })))
-        setProtocolo(existeprot.sort((a, b) => a.fechamod - b.fechamod))
-    }
-    // protocolo.sort((a, b) => a.fechamod - b.fechamod)
-
-    // Validar rut
-    const detectarCli = async (e) => {
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        if (e.key === 'Enter' || e.key === 'Tab') {
-            const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-            const rutCli = await getDocs(cli)
-            const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            //Patron para valiar rut
+    //Seleccionar valores del cliente traidos del componente buscadorInput
+    const handleSelectItem = (item) => {
+        const isObject = item !== null && typeof item === 'object';//Valida si dato es un objeto o un valor normal
+        if (isObject) {
+            setRut(item.rut);
+            setEntidad(item.nombre);
+            setTelefono(item.telefono);
+            setDireccion(item.direccion);
+            setCorreo(item.correo);
+            setBtnGuardarCab(false);
+        } else {
+            //Patron para validar rut
             const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-            const temp = rut.split('-');
+            const temp = item.split('-');
             let digito = temp[1];
             if (digito === 'k' || digito === 'K') digito = -1;
-            const validaR = validarRut(rut);
-
-            if (!expresionRegularRut.test(rut)) {
+            const validaR = validarRut(item);
+            if (item === '') {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Favor ingresa un rut'
+                })
+                return;
+            } else if (!expresionRegularRut.test(item)) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -259,26 +259,79 @@ const IngresoEquiposST = () => {
                     mensaje: 'Rut no válido'
                 })
                 return;
-            } else if (rutCli.docs.length === 0) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'No existe rut de Cliente'
-                })
-                setOpenModalCli(!openModalCli)
-                setEntidad('');
-                setTelefono('');
-                setDireccion('');
-                setCorreo('');
             } else {
-                setEntidad(final[0].nombre);
-                setTelefono(final[0].telefono);
-                setDireccion(final[0].direccion);
-                setCorreo(final[0].correo);
-                setBtnGuardarCab(false);
+                //Asigna valor de rut validado pero que no existe en DB y activa mostrar model cliente nuevo.
+                setRut(item)
+                setOpenModalCli(true)
             }
-        }
+        };
     }
+    //Limpia formulario Clientes
+    const limpiaFormCte = () => {
+        setRut('');
+        setEntidad('');
+        setTelefono('');
+        setDireccion('');
+        setCorreo('');
+        setBtnGuardarCab(true)
+    }
+    // Filtar por docuemto de protoolo no confirmado => Funcional
+    const consultarprot = async (fam) => {
+        const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
+        const guardaprot = await getDocs(prot);
+        const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, /*id2: index + 1,*/ valorsi: false, valorno: false })))
+        setProtocolo(existeprot.sort((a, b) => a.fechamod - b.fechamod))
+    }
+
+    // // Validar rut
+    // const detectarCli = async (e) => {
+    //     cambiarEstadoAlerta(false);
+    //     cambiarAlerta({});
+    //     if (e.key === 'Enter' || e.key === 'Tab') {
+    //         const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+    //         const rutCli = await getDocs(cli)
+    //         const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    //         //Patron para valiar rut
+    //         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+    //         const temp = rut.split('-');
+    //         let digito = temp[1];
+    //         if (digito === 'k' || digito === 'K') digito = -1;
+    //         const validaR = validarRut(rut);
+
+    //         if (!expresionRegularRut.test(rut)) {
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'error',
+    //                 mensaje: 'Formato incorrecto de rut'
+    //             })
+    //             return;
+    //         } else if (validaR !== parseInt(digito)) {
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'error',
+    //                 mensaje: 'Rut no válido'
+    //             })
+    //             return;
+    //         } else if (rutCli.docs.length === 0) {
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'error',
+    //                 mensaje: 'No existe rut de Cliente'
+    //             })
+    //             setOpenModalCli(!openModalCli)
+    //             setEntidad('');
+    //             setTelefono('');
+    //             setDireccion('');
+    //             setCorreo('');
+    //         } else {
+    //             setEntidad(final[0].nombre);
+    //             setTelefono(final[0].telefono);
+    //             setDireccion(final[0].direccion);
+    //             setCorreo(final[0].correo);
+    //             setBtnGuardarCab(false);
+    //         }
+    //     }
+    // }
     const handleChek = (e) => {
         setChecked(e.target.checked)
     }
@@ -977,8 +1030,8 @@ const IngresoEquiposST = () => {
                                     onRequestClose={closeModal}
                                      //item={selectedItem}
                                     />
-                                    )} */}
-                                {/* <Input
+                                    )} 
+                                <Input
                                     disabled={confirmar}
                                     type='numero'
                                     placeholder='Ingrese Rut sin puntos'
@@ -986,7 +1039,7 @@ const IngresoEquiposST = () => {
                                     value={rut}
                                     onChange={ev => setRut(ev.target.value)}
                                     onKeyDown={detectarCli}
-                                />
+                                /> */}
                             </ContentElemenSelect>
                             <ContentElemenSelect>
                                 <Label>Nombre</Label>
@@ -995,7 +1048,7 @@ const IngresoEquiposST = () => {
                             <ContentElemenSelect>
                                 <Label>Fecha de Ingreso</Label>
                                 <Input
-                                    style={{outlineColor:'#F0A70A'}}  
+                                    style={{ outlineColor: '#F0A70A' }}
                                     disabled={confirmar}
                                     type='datetime-local'
                                     placeholder='Seleccione Fecha'
@@ -1020,468 +1073,466 @@ const IngresoEquiposST = () => {
                             </ContentElemenSelect>
                         </ContentElemenMov>
                         {/* Guardar datos ingresados */}
-                        </ContentElemenSelect>
-                        </ContentElemenMov>
-                                <BotonGuardar disabled={btnGuardarCab} style={{ backgroundColor: btnGuardarCab && '#8F8B85', cursor: btnGuardarCab && 'default' }} onClick={ingresoCab}>Siguente</BotonGuardar>
-                                {/* Pendiente Boton Nuevo */}
-                                <BotonGuardar disabled={btnNuevo} style={{ backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }} onClick={nuevo}>Nuevo</BotonGuardar>
-                            </Formulario>
+                        <BotonGuardar disabled={btnGuardarCab} style={{ backgroundColor: btnGuardarCab && '#8F8B85', cursor: btnGuardarCab && 'default' }} onClick={ingresoCab}>Siguente</BotonGuardar>
+                        {/* Pendiente Boton Nuevo */}
+                        <BotonGuardar disabled={btnNuevo} style={{ backgroundColor: btnNuevo && '#8F8B85', cursor: btnNuevo && 'default' }} onClick={nuevo}>Nuevo</BotonGuardar>
+                    </Formulario>
                 }
-                        </Contenedor>
+            </Contenedor>
 
-                        {/* Informacion del Equipo */}
-                        {
-                            mostrarInfoEq && (
-                                <Contenedor bordercolor={cont2} >
-                                    <Titulo style={{ width: '95%', display: 'inline-block' }}>Información Equipo</Titulo>
-                                    {/* Boton de mostrat o no mostrar Datos de cliente */}
-                                    {mostrarEq ?
-                                        <Boton onClick={() => {
-                                            setMostrarEq(false)
-                                            setIsOpenEq(true)
-                                            setFlag(!flag)
-                                        }}
-                                            style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
-                                            title='Mostrar Datos de Cliente'
-                                        >
-                                            <IoIosArrowDown />
-                                        </Boton>
-                                        :
-                                        <Boton onClick={() => {
-                                            setMostrarEq(true)
-                                            setIsOpenEq(false)
-                                        }}
-                                            style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
-                                            title='No Mostrar Datos de Cliente'
-                                        >
-                                            <IoIosArrowUp />
-                                        </Boton>
-                                    }
-                                    <hr style={{ margin: '10px 0px' }} />
-                                    {isOpenEq &&
-                                        <Formulario action=''>
-                                            <ContentElemenMov>
-                                                <ContentElemenSelect>
-                                                    <Label>Familia</Label>
-                                                    <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
-                                                        <option>Selecciona Opción:</option>
-                                                        {familia.map((d, index) => {
-                                                            return (<option key={index}>{d.familia}</option>)
-                                                        })}
-                                                    </Select>
-                                                </ContentElemenSelect>
-                                                <ContentElemenSelect>
-                                                    <Label>Tipo Equipamiento</Label>
-                                                    <Select disabled={confirmarDet} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
-                                                        <option>Selecciona Opción:</option>
-                                                        {tipo.map((d) => {
-                                                            return (<option key={d.id}>{d.tipo}</option>)
-                                                        })}
-                                                    </Select>
-                                                </ContentElemenSelect>
-                                                <ContentElemenSelect>
-                                                    <Label>Marca</Label>
-                                                    <Select disabled={confirmarDet} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
-                                                        <option>Selecciona Opción:</option>
-                                                        {marca.map((d) => {
-                                                            return (<option key={d.id}>{d.marca}</option>)
-                                                        })}
-                                                    </Select>
-                                                </ContentElemenSelect>
-                                            </ContentElemenMov>
-                                            <ContentElemenMov>
-                                                <ContentElemenSelect>
-                                                    <Label>Modelo</Label>
-                                                    <Select disabled={confirmarDet} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
-                                                        <option>Selecciona Opción:</option>
-                                                        {modelo.map((d) => {
-                                                            return (<option key={d.id}>{d.modelo}</option>)
-                                                        })}
-                                                    </Select>
-                                                </ContentElemenSelect>
-                                                <ContentElemenSelect>
-                                                    <Label>N° Serie</Label>
-                                                    <Input
-                                                        disabled={confirmarDet}
-                                                        type='text'
-                                                        placeholder='Ingrese N° Serie'
-                                                        name='serie'
-                                                        value={serie}
-                                                        onChange={e => { setSerie(e.target.value) }}
-                                                    />
-                                                </ContentElemenSelect>
-                                                <ContentElemenSelect>
-                                                    <Label>Tipo de Servicio</Label>
-                                                    <Select
-                                                        disabled={confirmarDet}
-                                                        value={servicio}
-                                                        onChange={e => { setServicio(e.target.value) }}>
-                                                        <option>Selecciona Opción:</option>
-                                                        {Servicio.map((d) => {
-                                                            return (<option key={d.key}>{d.text}</option>)
-                                                        })}
-                                                    </Select>
-                                                </ContentElemenSelect>
-                                            </ContentElemenMov>
-                                            {/* Guardar datos ingresados de detalle*/}
-                                            <BotonGuardar disabled={btnValidarDet} style={{ backgroundColor: btnValidarDet && '#8F8B85', cursor: btnValidarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
-                                        </Formulario>
-                                    }
-                                </Contenedor>
-                            )
+            {/* Informacion del Equipo */}
+            {
+                mostrarInfoEq && (
+                    <Contenedor bordercolor={cont2} >
+                        <Titulo style={{ width: '95%', display: 'inline-block' }}>Información Equipo</Titulo>
+                        {/* Boton de mostrat o no mostrar Datos de cliente */}
+                        {mostrarEq ?
+                            <Boton onClick={() => {
+                                setMostrarEq(false)
+                                setIsOpenEq(true)
+                                setFlag(!flag)
+                            }}
+                                style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
+                                title='Mostrar Datos de Cliente'
+                            >
+                                <IoIosArrowDown />
+                            </Boton>
+                            :
+                            <Boton onClick={() => {
+                                setMostrarEq(true)
+                                setIsOpenEq(false)
+                            }}
+                                style={{ width: '5%', fontSize: '28px', padding: '0', margin: '0', color: '#328AC4' }}
+                                title='No Mostrar Datos de Cliente'
+                            >
+                                <IoIosArrowUp />
+                            </Boton>
                         }
-
-                        {/* Test de Ingreso */}
-                        {
-                            mostrarTest && (
-                                <Contenedor bordercolor={cont3}>
-                                    <Titulo>Test de Ingreso</Titulo>
-                                    <Table singleLine>
-                                        <Table.Header>
-                                            <Table.Row>
-                                                <Table.HeaderCell>N°</Table.HeaderCell>
-                                                <Table.HeaderCell>Item</Table.HeaderCell>
-                                                <Table.HeaderCell>Si</Table.HeaderCell>
-                                                <Table.HeaderCell>No</Table.HeaderCell>
-                                            </Table.Row>
-                                        </Table.Header>
-                                        <Table.Body>
-                                            {protocolo.map((item, index) => {
-                                                return (
-                                                    <Table.Row key={item.id}>
-                                                        <Table.Cell >{index + 1}</Table.Cell>
-                                                        <Table.Cell>{item.item}</Table.Cell>
-                                                        <Table.Cell>
-                                                            <Input
-                                                                type='checkbox'
-                                                                checked={item.valorsi}
-                                                                onChange={() => handleButtonClick(item.id, 'opcion1')}
-                                                            />
-                                                        </Table.Cell>
-                                                        <Table.Cell>
-                                                            <Input
-                                                                type='checkbox'
-                                                                checked={item.valorno}
-                                                                onChange={() => handleButtonClick(item.id, 'opcion2')}
-                                                            />
-                                                        </Table.Cell>
-                                                    </Table.Row>
-                                                )
+                        <hr style={{ margin: '10px 0px' }} />
+                        {isOpenEq &&
+                            <Formulario action=''>
+                                <ContentElemenMov>
+                                    <ContentElemenSelect>
+                                        <Label>Familia</Label>
+                                        <Select disabled={confirmarDet} value={nomFamilia} onChange={e => { setNomFamilia(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {familia.map((d, index) => {
+                                                return (<option key={index}>{d.familia}</option>)
                                             })}
-                                        </Table.Body>
-                                    </Table>
-                                    <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
-                                        <Label>Observaciones</Label>
-                                        <TextArea
-                                            style={{ width: '80%', height: '60px' }}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>Tipo Equipamiento</Label>
+                                        <Select disabled={confirmarDet} value={nomTipo} onChange={e => { setNomTipo(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {tipo.map((d) => {
+                                                return (<option key={d.id}>{d.tipo}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>Marca</Label>
+                                        <Select disabled={confirmarDet} value={nomMarca} onChange={e => { setNomMarca(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {marca.map((d) => {
+                                                return (<option key={d.id}>{d.marca}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                </ContentElemenMov>
+                                <ContentElemenMov>
+                                    <ContentElemenSelect>
+                                        <Label>Modelo</Label>
+                                        <Select disabled={confirmarDet} value={nomModelo} onChange={e => { setNomModelo(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {modelo.map((d) => {
+                                                return (<option key={d.id}>{d.modelo}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>N° Serie</Label>
+                                        <Input
+                                            disabled={confirmarDet}
                                             type='text'
-                                            name='descripcion'
-                                            placeholder='Ingrese observacion o detalles adicionales'
-                                            value={obs}
-                                            onChange={e => setObs(e.target.value)}
+                                            placeholder='Ingrese N° Serie'
+                                            name='serie'
+                                            value={serie}
+                                            onChange={e => { setSerie(e.target.value) }}
                                         />
-                                    </ContentElemenMov>
-                                    <BotonGuardar disabled={btnValidarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
-                                </Contenedor>
-                            )
+                                    </ContentElemenSelect>
+                                    <ContentElemenSelect>
+                                        <Label>Tipo de Servicio</Label>
+                                        <Select
+                                            disabled={confirmarDet}
+                                            value={servicio}
+                                            onChange={e => { setServicio(e.target.value) }}>
+                                            <option>Selecciona Opción:</option>
+                                            {Servicio.map((d) => {
+                                                return (<option key={d.key}>{d.text}</option>)
+                                            })}
+                                        </Select>
+                                    </ContentElemenSelect>
+                                </ContentElemenMov>
+                                {/* Guardar datos ingresados de detalle*/}
+                                <BotonGuardar disabled={btnValidarDet} style={{ backgroundColor: btnValidarDet && '#8F8B85', cursor: btnValidarDet && 'default' }} onClick={validarDet}>Siguente</BotonGuardar>
+                            </Formulario>
                         }
+                    </Contenedor>
+                )
+            }
 
-                        {/* Lista de Documetos por confirmar */}
-                        <ListarProveedor>
-                            <Titulo>Listado de Documentos por Confirmar</Titulo>
-                            <Table singleLine style={{ textAlign: 'center' }}>
-                                <Table.Header>
-                                    <Table.Row>
-                                        <Table.HeaderCell>N°</Table.HeaderCell>
-                                        <Table.HeaderCell>N°Orden</Table.HeaderCell>
-                                        <Table.HeaderCell>Rut</Table.HeaderCell>
-                                        <Table.HeaderCell>Nombre</Table.HeaderCell>
-                                        <Table.HeaderCell>Date</Table.HeaderCell>
-                                        <Table.HeaderCell>Estado</Table.HeaderCell>
-                                        <Table.HeaderCell>Confirmar</Table.HeaderCell>
-                                    </Table.Row>
-                                </Table.Header>
-                                <Table.Body>
-                                    {cabecera.map((item, index) => {
-                                        return (
-                                            <Table.Row key={item.id}>
-                                                <Table.Cell >{index + 1}</Table.Cell>
-                                                <Table.Cell>{item.folio}</Table.Cell>
-                                                <Table.Cell>{item.rut}</Table.Cell>
-                                                <Table.Cell>{item.entidad}</Table.Cell>
-                                                <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                                <Table.Cell>{item.estado}</Table.Cell>
-                                                <Table.Cell style={{ cursor: 'pointer' }} onClick={() => {
-                                                    // consultarDet(item);
-                                                    setFolio(item.folio);
-                                                    setRut(item.rut);
-                                                    fechaDate(item.date)
-                                                    setEntidad(item.entidad);
-                                                    setTelefono(item.telefono);
-                                                    setDireccion(item.direccion);
-                                                    setCorreo(item.correo);
-                                                    setMostrarCli(true);
-                                                    setIsOpenCli(false);
-                                                    setMostrarInfoEq(true);
-                                                    if (item.familia === '') {
-                                                        setCont1('#D1D1D1');
-                                                        setCont2('#FF0000');
-                                                        setNomFamilia('');
-                                                        setNomTipo('');
-                                                        setNomMarca('');
-                                                        setNomModelo('');
-                                                        setSerie('');
-                                                        setServicio('');
-                                                        setObs('');
-                                                        consultarprot('');
-                                                        setBtnValidarDet(false)
-                                                        setConfirmarDet(false);
-                                                        setBtnGuardarDet(false);
-                                                        setMostrarTest(false);
-                                                        console.log(mostrarEq);
-                                                        console.log(isOpenEq);
-                                                        setMostrarEq(false);
-                                                        setIsOpenEq(true);
-                                                    } else {
-                                                        setNomFamilia(item.familia);
-                                                        setNomTipo(item.tipo);
-                                                        setNomMarca(item.marca);
-                                                        setNomModelo(item.modelo);
-                                                        setSerie(item.serie);
-                                                        setServicio(item.servicio);
-                                                        setObs(item.observaciones);
-                                                        consultarprot(item.familia);
-                                                        setCont1('#D1D1D1');
-                                                        setCont2('#D1D1D1');
-                                                        setCont3('#FF0000');
-                                                        setConfirmarDet(true);
-                                                        setBtnValidarDet(true)
-                                                        setBtnGuardarDet(true);
-                                                        setMostrarTest(true);
-                                                        setBtnValidarTest(false);
-                                                        setBtnGuardarTest(false);
-                                                        setMostrarEq(true);
-                                                        setIsOpenEq(false);
-                                                    }
-                                                    setConfirmar(true);
-                                                    setBtnGuardarCab(true);
+            {/* Test de Ingreso */}
+            {
+                mostrarTest && (
+                    <Contenedor bordercolor={cont3}>
+                        <Titulo>Test de Ingreso</Titulo>
+                        <Table singleLine>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>N°</Table.HeaderCell>
+                                    <Table.HeaderCell>Item</Table.HeaderCell>
+                                    <Table.HeaderCell>Si</Table.HeaderCell>
+                                    <Table.HeaderCell>No</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {protocolo.map((item, index) => {
+                                    return (
+                                        <Table.Row key={item.id}>
+                                            <Table.Cell >{index + 1}</Table.Cell>
+                                            <Table.Cell>{item.item}</Table.Cell>
+                                            <Table.Cell>
+                                                <Input
+                                                    type='checkbox'
+                                                    checked={item.valorsi}
+                                                    onChange={() => handleButtonClick(item.id, 'opcion1')}
+                                                />
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                <Input
+                                                    type='checkbox'
+                                                    checked={item.valorno}
+                                                    onChange={() => handleButtonClick(item.id, 'opcion2')}
+                                                />
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    )
+                                })}
+                            </Table.Body>
+                        </Table>
+                        <ContentElemenMov style={{ marginTop: '20px', marginBottom: '20px' }}>
+                            <Label>Observaciones</Label>
+                            <TextArea
+                                style={{ width: '80%', height: '60px' }}
+                                type='text'
+                                name='descripcion'
+                                placeholder='Ingrese observacion o detalles adicionales'
+                                value={obs}
+                                onChange={e => setObs(e.target.value)}
+                            />
+                        </ContentElemenMov>
+                        <BotonGuardar disabled={btnValidarTest} onClick={validarTest}>Guardar y Confirmar</BotonGuardar>
+                    </Contenedor>
+                )
+            }
 
-                                                    setBtnNuevo(false);
-                                                    setFlag(!flag)
-                                                    setBtnGuardarTestColor('#43A854')
-                                                }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                                            </Table.Row>
-                                        )
-                                    })}
-                                </Table.Body>
-                            </Table>
-                        </ListarProveedor>
+            {/* Lista de Documetos por confirmar */}
+            <ListarProveedor>
+                <Titulo>Listado de Documentos por Confirmar</Titulo>
+                <Table singleLine style={{ textAlign: 'center' }}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>N°Orden</Table.HeaderCell>
+                            <Table.HeaderCell>Rut</Table.HeaderCell>
+                            <Table.HeaderCell>Nombre</Table.HeaderCell>
+                            <Table.HeaderCell>Date</Table.HeaderCell>
+                            <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>Confirmar</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {cabecera.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.folio}</Table.Cell>
+                                    <Table.Cell>{item.rut}</Table.Cell>
+                                    <Table.Cell>{item.entidad}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell style={{ cursor: 'pointer' }} onClick={() => {
+                                        // consultarDet(item);
+                                        setFolio(item.folio);
+                                        setRut(item.rut);
+                                        fechaDate(item.date)
+                                        setEntidad(item.entidad);
+                                        setTelefono(item.telefono);
+                                        setDireccion(item.direccion);
+                                        setCorreo(item.correo);
+                                        setMostrarCli(true);
+                                        setIsOpenCli(false);
+                                        setMostrarInfoEq(true);
+                                        if (item.familia === '') {
+                                            setCont1('#D1D1D1');
+                                            setCont2('#FF0000');
+                                            setNomFamilia('');
+                                            setNomTipo('');
+                                            setNomMarca('');
+                                            setNomModelo('');
+                                            setSerie('');
+                                            setServicio('');
+                                            setObs('');
+                                            consultarprot('');
+                                            setBtnValidarDet(false)
+                                            setConfirmarDet(false);
+                                            setBtnGuardarDet(false);
+                                            setMostrarTest(false);
+                                            console.log(mostrarEq);
+                                            console.log(isOpenEq);
+                                            setMostrarEq(false);
+                                            setIsOpenEq(true);
+                                        } else {
+                                            setNomFamilia(item.familia);
+                                            setNomTipo(item.tipo);
+                                            setNomMarca(item.marca);
+                                            setNomModelo(item.modelo);
+                                            setSerie(item.serie);
+                                            setServicio(item.servicio);
+                                            setObs(item.observaciones);
+                                            consultarprot(item.familia);
+                                            setCont1('#D1D1D1');
+                                            setCont2('#D1D1D1');
+                                            setCont3('#FF0000');
+                                            setConfirmarDet(true);
+                                            setBtnValidarDet(true)
+                                            setBtnGuardarDet(true);
+                                            setMostrarTest(true);
+                                            setBtnValidarTest(false);
+                                            setBtnGuardarTest(false);
+                                            setMostrarEq(true);
+                                            setIsOpenEq(false);
+                                        }
+                                        setConfirmar(true);
+                                        setBtnGuardarCab(true);
 
-                        {/* Lista de Documetos Ingresados */}
-                        <ListarProveedor>
-                            <Titulo>Listado de Documentos Ingresados</Titulo>
-                            <Table singleLine style={{ textAlign: 'center' }}>
-                                <Table.Header>
-                                    <Table.Row>
-                                        <Table.HeaderCell>N°</Table.HeaderCell>
-                                        <Table.HeaderCell>N.Orden</Table.HeaderCell>
-                                        <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
-                                        <Table.HeaderCell>Equipo</Table.HeaderCell>
-                                        <Table.HeaderCell>Modelo</Table.HeaderCell>
-                                        <Table.HeaderCell>N°Serie</Table.HeaderCell>
-                                        <Table.HeaderCell>Servicio</Table.HeaderCell>
-                                        <Table.HeaderCell>Ver PDF</Table.HeaderCell>
-                                    </Table.Row>
-                                </Table.Header>
-                                <Table.Body>
-                                    {ingresado.map((item, index) => {
-                                        return (
-                                            <Table.Row key={item.id}>
-                                                <Table.Cell >{index + 1}</Table.Cell>
-                                                <Table.Cell>{item.folio}</Table.Cell>
-                                                <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-                                                <Table.Cell>{item.tipo}</Table.Cell>
-                                                <Table.Cell>{item.modelo}</Table.Cell>
-                                                <Table.Cell>{item.serie}</Table.Cell>
-                                                <Table.Cell>{item.servicio}</Table.Cell>
-                                                <Table.Cell >
-                                                    <Link disabled to={`/ingresopdf/${item.id}`}>
-                                                        <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
-                                                    </Link>
-                                                </Table.Cell>
-                                            </Table.Row>
-                                        )
-                                    })}
-                                </Table.Body>
-                            </Table>
-                        </ListarProveedor>
-
-                        <Alertas tipo={alerta.tipo}
-                            mensaje={alerta.mensaje}
-                            estadoAlerta={estadoAlerta}
-                            cambiarEstadoAlerta={cambiarEstadoAlerta}
-                        />
-                        {/* Modal para crear Cliente */}
-                        {
-                            openModalCli && (
-                                <Overlay>
-                                    <ConfirmaModal>
-                                        <Titulo>Crear Cliente</Titulo>
-                                        <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
-                                        <Formulario action='' >
-                                            <ContentElemen>
-                                                <Label>Rut</Label>
-                                                <Input
-                                                    maxLength='10'
-                                                    type='text'
-                                                    name='rut'
-                                                    placeholder='Ingrese Rut sin puntos'
-                                                    value={rut}
-                                                    onChange={ev => setRut(ev.target.value)}
-                                                />
-                                                <Label>Nombre</Label>
-                                                <Input
-                                                    type='text'
-                                                    name='nombre'
-                                                    placeholder='Ingrese Nombre'
-                                                    value={nombre}
-                                                    onChange={ev => setNombre(ev.target.value)}
-                                                />
-                                                <Label >Dirección</Label>
-                                                <Input
-                                                    type='text'
-                                                    name='direccion'
-                                                    placeholder='Ingrese Dirección'
-                                                    value={direccion}
-                                                    onChange={ev => setDireccion(ev.target.value)}
-                                                />
-                                            </ContentElemen>
-                                            <ContentElemen>
-                                                <Label>Region</Label>
-                                                <Select value={region} onChange={e => setRegion(e.target.value)} >
-                                                    {Regiones.map((r, index) => {
-                                                        return (
-                                                            <option key={index} >{r.region}</option>
-                                                        )
-                                                    })}
-                                                </Select>
-                                                <Label>Comuna</Label>
-                                                <Select value={comuna} onChange={e => setComuna(e.target.value)} >
-                                                    {comunasxRegion.map((objeto, index) => {
-                                                        return (<option key={index}>{objeto.name}</option>)
-                                                    })}
-                                                </Select>
-                                            </ContentElemen>
-                                            <ContentElemen>
-                                                <Label >Telefono</Label>
-                                                <Input
-                                                    type='number'
-                                                    name='telefono'
-                                                    placeholder='Ingrese Telefono'
-                                                    value={telefono}
-                                                    onChange={ev => setTelefono(ev.target.value)}
-                                                />
-                                                <Label>Email</Label>
-                                                <Input
-                                                    type='email'
-                                                    name='correo'
-                                                    placeholder='Ingrese Correo'
-                                                    value={correo}
-                                                    onChange={ev => setCorreo(ev.target.value)}
-                                                />
-                                                <Label>Responsable financiero?</Label>
-                                                <Input
-                                                    style={{ width: "3%", color: "#328AC4" }}
-                                                    type="checkbox"
-                                                    checked={checked}
-                                                    onChange={handleChek}
-                                                />
-                                            </ContentElemen>
-
-                                            {checked ?
-                                                <ContentElemen>
-                                                    <Label>Nombre</Label>
-                                                    <Input
-                                                        name="nombrersf"
-                                                        type="text"
-                                                        placeholder='Responsable financiero'
-                                                        value={nomRsf}
-                                                        onChange={ev => setNomRsf(ev.target.value)}
-                                                    />
-                                                    <Label>Dirección</Label>
-                                                    <Input
-                                                        name="direccionrsf"
-                                                        type="text"
-                                                        placeholder='Ingres dirección'
-                                                        value={dirRsf}
-                                                        onChange={ev => setDirRsf(ev.target.value)}
-                                                    />
-                                                    <Label>Telefono</Label>
-                                                    <Input
-                                                        name="telefonorsf"
-                                                        type="number"
-                                                        placeholder='Ingrese telefono'
-                                                        value={telRsf}
-                                                        onChange={ev => setTelRsf(ev.target.value)}
-                                                    />
-                                                </ContentElemen>
-                                                : ''
-                                            }
-                                        </Formulario>
-                                        <BotonGuardar onClick={validarCli} >Guardar</BotonGuardar>
-                                    </ConfirmaModal>
-                                </Overlay>
+                                        setBtnNuevo(false);
+                                        setFlag(!flag)
+                                        setBtnGuardarTestColor('#43A854')
+                                    }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
+                                </Table.Row>
                             )
-                        }
-                        {/* Modal de confirmacion de informacion de Cliente */}
-                        {
-                            showConfirmationCab && (
-                                <Overlay>
-                                    <ConfirmaModal className="confirmation-modal">
-                                        <h2>¿Estás seguro de que deseas guardar estos datos de cliente?</h2>
-                                        <ConfirmaBtn className="confirmation-buttons">
-                                            <Boton2 style={{ backgroundColor: '#43A854', }} onClick={guardarCli}>Guardar</Boton2>
-                                            <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteCab}>Cancelar</Boton2>
-                                        </ConfirmaBtn>
-                                    </ConfirmaModal>
-                                </Overlay>
+                        })}
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
+
+            {/* Lista de Documetos Ingresados */}
+            <ListarProveedor>
+                <Titulo>Listado de Documentos Ingresados</Titulo>
+                <Table singleLine style={{ textAlign: 'center' }}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>N°</Table.HeaderCell>
+                            <Table.HeaderCell>N.Orden</Table.HeaderCell>
+                            <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
+                            <Table.HeaderCell>Equipo</Table.HeaderCell>
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N°Serie</Table.HeaderCell>
+                            <Table.HeaderCell>Servicio</Table.HeaderCell>
+                            <Table.HeaderCell>Ver PDF</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {ingresado.map((item, index) => {
+                            return (
+                                <Table.Row key={item.id}>
+                                    <Table.Cell >{index + 1}</Table.Cell>
+                                    <Table.Cell>{item.folio}</Table.Cell>
+                                    <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+                                    <Table.Cell>{item.tipo}</Table.Cell>
+                                    <Table.Cell>{item.modelo}</Table.Cell>
+                                    <Table.Cell>{item.serie}</Table.Cell>
+                                    <Table.Cell>{item.servicio}</Table.Cell>
+                                    <Table.Cell >
+                                        <Link disabled to={`/ingresopdf/${item.id}`}>
+                                            <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
+                                        </Link>
+                                    </Table.Cell>
+                                </Table.Row>
                             )
-                        }
-                        {/* Modal de confirmacion de informacion de equipos */}
-                        {
-                            showConfirmationDet && (
-                                <Overlay>
-                                    <ConfirmaModal className="confirmation-modal">
-                                        <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
-                                        <ConfirmaBtn className="confirmation-buttons">
-                                            <Boton2 activo={btnGuardarDet} color={btnGuardarTestColor} onClick={ingresoDet}>Guardar</Boton2>
-                                            <Boton2 color={'#E34747'} onClick={cancelDeleteDet}>Cancelar</Boton2>
-                                        </ConfirmaBtn>
-                                    </ConfirmaModal>
-                                </Overlay>
-                            )
-                        }
-                        {/* Modal de confirmacion de Test de Ingreso */}
-                        {
-                            showConfirmationTest && (
-                                <Overlay>
-                                    <ConfirmaModal className="confirmation-modal">
-                                        <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
-                                        <ConfirmaBtn className="confirmation-buttons">
-                                            <Boton2 activo={btnGuardarTest} color={btnGuardarTestColor} onClick={guardarTest}>Guardar</Boton2>
-                                            <Boton2 color={'#E34747'} onClick={cancelDeleteTest}>Cancelar</Boton2>
-                                        </ConfirmaBtn>
-                                    </ConfirmaModal>
-                                </Overlay>
-                            )
-                        }
-                    </ContenedorProveedor >
+                        })}
+                    </Table.Body>
+                </Table>
+            </ListarProveedor>
+
+            <Alertas tipo={alerta.tipo}
+                mensaje={alerta.mensaje}
+                estadoAlerta={estadoAlerta}
+                cambiarEstadoAlerta={cambiarEstadoAlerta}
+            />
+            {/* Modal para crear Cliente */}
+            {
+                openModalCli && (
+                    <Overlay>
+                        <ConfirmaModal>
+                            <Titulo>Crear Cliente</Titulo>
+                            <BotonCerrar onClick={() => setOpenModalCli(!openModalCli)}><IoIcons.IoMdClose /></BotonCerrar>
+                            <Formulario action='' >
+                                <ContentElemen>
+                                    <Label>Rut</Label>
+                                    <Input
+                                        maxLength='10'
+                                        type='text'
+                                        name='rut'
+                                        placeholder='Ingrese Rut sin puntos'
+                                        value={rut}
+                                        onChange={ev => setRut(ev.target.value)}
+                                    />
+                                    <Label>Nombre</Label>
+                                    <Input
+                                        type='text'
+                                        name='nombre'
+                                        placeholder='Ingrese Nombre'
+                                        value={nombre}
+                                        onChange={ev => setNombre(ev.target.value)}
+                                    />
+                                    <Label >Dirección</Label>
+                                    <Input
+                                        type='text'
+                                        name='direccion'
+                                        placeholder='Ingrese Dirección'
+                                        value={direccion}
+                                        onChange={ev => setDireccion(ev.target.value)}
+                                    />
+                                </ContentElemen>
+                                <ContentElemen>
+                                    <Label>Region</Label>
+                                    <Select value={region} onChange={e => setRegion(e.target.value)} >
+                                        {Regiones.map((r, index) => {
+                                            return (
+                                                <option key={index} >{r.region}</option>
+                                            )
+                                        })}
+                                    </Select>
+                                    <Label>Comuna</Label>
+                                    <Select value={comuna} onChange={e => setComuna(e.target.value)} >
+                                        {comunasxRegion.map((objeto, index) => {
+                                            return (<option key={index}>{objeto.name}</option>)
+                                        })}
+                                    </Select>
+                                </ContentElemen>
+                                <ContentElemen>
+                                    <Label >Telefono</Label>
+                                    <Input
+                                        type='number'
+                                        name='telefono'
+                                        placeholder='Ingrese Telefono'
+                                        value={telefono}
+                                        onChange={ev => setTelefono(ev.target.value)}
+                                    />
+                                    <Label>Email</Label>
+                                    <Input
+                                        type='email'
+                                        name='correo'
+                                        placeholder='Ingrese Correo'
+                                        value={correo}
+                                        onChange={ev => setCorreo(ev.target.value)}
+                                    />
+                                    <Label>Responsable financiero?</Label>
+                                    <Input
+                                        style={{ width: "3%", color: "#328AC4" }}
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={handleChek}
+                                    />
+                                </ContentElemen>
+
+                                {checked ?
+                                    <ContentElemen>
+                                        <Label>Nombre</Label>
+                                        <Input
+                                            name="nombrersf"
+                                            type="text"
+                                            placeholder='Responsable financiero'
+                                            value={nomRsf}
+                                            onChange={ev => setNomRsf(ev.target.value)}
+                                        />
+                                        <Label>Dirección</Label>
+                                        <Input
+                                            name="direccionrsf"
+                                            type="text"
+                                            placeholder='Ingres dirección'
+                                            value={dirRsf}
+                                            onChange={ev => setDirRsf(ev.target.value)}
+                                        />
+                                        <Label>Telefono</Label>
+                                        <Input
+                                            name="telefonorsf"
+                                            type="number"
+                                            placeholder='Ingrese telefono'
+                                            value={telRsf}
+                                            onChange={ev => setTelRsf(ev.target.value)}
+                                        />
+                                    </ContentElemen>
+                                    : ''
+                                }
+                            </Formulario>
+                            <BotonGuardar onClick={validarCli} >Guardar</BotonGuardar>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+            {/* Modal de confirmacion de informacion de Cliente */}
+            {
+                showConfirmationCab && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas guardar estos datos de cliente?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 style={{ backgroundColor: '#43A854', }} onClick={guardarCli}>Guardar</Boton2>
+                                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelDeleteCab}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+            {/* Modal de confirmacion de informacion de equipos */}
+            {
+                showConfirmationDet && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 activo={btnGuardarDet} color={btnGuardarTestColor} onClick={ingresoDet}>Guardar</Boton2>
+                                <Boton2 color={'#E34747'} onClick={cancelDeleteDet}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+            {/* Modal de confirmacion de Test de Ingreso */}
+            {
+                showConfirmationTest && (
+                    <Overlay>
+                        <ConfirmaModal className="confirmation-modal">
+                            <h2>¿Estás seguro de que deseas guarda estos elementos?</h2>
+                            <ConfirmaBtn className="confirmation-buttons">
+                                <Boton2 activo={btnGuardarTest} color={btnGuardarTestColor} onClick={guardarTest}>Guardar</Boton2>
+                                <Boton2 color={'#E34747'} onClick={cancelDeleteTest}>Cancelar</Boton2>
+                            </ConfirmaBtn>
+                        </ConfirmaModal>
+                    </Overlay>
+                )
+            }
+        </ContenedorProveedor >
     )
 }
 
-                export default IngresoEquiposST;
+export default IngresoEquiposST;
 
-                const BotonCerrar = styled.button`
+const BotonCerrar = styled.button`
                 position: absolute;
                 top:20px;
                 right: 20px;
