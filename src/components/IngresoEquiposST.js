@@ -283,6 +283,7 @@ const IngresoEquiposST = () => {
         setProtocolo(existeprot.sort((a, b) => a.fechamod - b.fechamod))
     }
 
+        //esta parte ya no sirve---
     // // Validar rut
     // const detectarCli = async (e) => {
     //     cambiarEstadoAlerta(false);
