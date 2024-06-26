@@ -1025,7 +1025,7 @@ const IngresoEquiposST = () => {
                                 />
                             </ContentElemenSelect>
                             <ContentElemenSelect>
-                                <Label>Rut</Label>
+                                <Label>Cliente</Label>
                                 <BuscadorInput items={clientes} onSelectItem={handleSelectItem} limpiaFormCte={limpiaFormCte}/>
                                {/*  {selectedItem && (
                                     <ItemModal
