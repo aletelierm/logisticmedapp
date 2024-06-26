@@ -1018,7 +1018,7 @@ const IngresoEquiposST = () => {
                                 <Input
                                     disabled
                                     type='numero'
-                                    placeholder='Folio'
+                                    /* placeholder='Folio' */
                                     name='folio'
                                     value={folio}
                                 /* onChange={ev => setFolio(ev.target.value)} */
@@ -1051,6 +1051,7 @@ const IngresoEquiposST = () => {
                             <ContentElemenSelect>
                                 <Label>Fecha de Ingreso</Label>
                                 <Input
+                                    style={{outlineColor:'#F0A70A'}}  
                                     disabled={confirmar}
                                     type='datetime-local'
                                     placeholder='Seleccione Fecha'

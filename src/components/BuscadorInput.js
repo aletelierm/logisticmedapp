@@ -47,6 +47,7 @@ const SearchBar = ({ items,onSelectItem,limpiaFormCte}) => {
   return (
     <>
       <Input
+        style={{outlineColor:'#F0A70A'}}       
         type="text"
         value={queryText}
         onChange={handleInputChange}
