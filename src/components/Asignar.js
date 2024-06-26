@@ -347,6 +347,7 @@ const Asignar = () => {
                                         <Table.Header>
                                             <Table.Row>
                                                 <Table.HeaderCell>N°Orden</Table.HeaderCell>
+                                                <Table.HeaderCell>Rut</Table.HeaderCell>
                                                 <Table.HeaderCell>Cliente</Table.HeaderCell>
                                                 <Table.HeaderCell>Telefono</Table.HeaderCell>
                                                 <Table.HeaderCell>Direccion</Table.HeaderCell>
@@ -358,6 +359,7 @@ const Asignar = () => {
                                                 return (
                                                     <Table.Row key={index}>
                                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.folio}</Table.Cell>
+                                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.rut}</Table.Cell>
                                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.entidad}</Table.Cell>
                                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.telefono}</Table.Cell>
                                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word', fontSize: '13px' }}>{item.direccion}</Table.Cell>

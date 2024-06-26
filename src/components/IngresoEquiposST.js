@@ -93,7 +93,7 @@ const IngresoEquiposST = () => {
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
-        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false));
+        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false),where('useradd','==',users.correo));
         const guardaCab = await getDocs(cab);
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setCabecera(existeCab);
