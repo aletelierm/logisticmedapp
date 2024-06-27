@@ -261,9 +261,9 @@ const Asignar = () => {
                                     <Table.Cell>{item.serie}</Table.Cell>                                    
                                     <Table.Cell>{item.servicio}</Table.Cell>                                    
                                     <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
-                                    <Table.Cell>{usuarios.map((user)=>(
+                                    <Table.Cell>{usuarios.map((user, index)=>(
                                             user.correo===item.tecnico&&(
-                                                <h5>{user.nombre} {user.apellido}</h5>
+                                                <h5 key={index}>{user.nombre} {user.apellido}</h5>
                                             )
                                     )
                                     )}</Table.Cell>

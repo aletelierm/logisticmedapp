@@ -9,12 +9,11 @@ import { getDocs, collection, where, query, updateDoc, doc, deleteDoc/*addDoc, s
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import * as FaIcons from 'react-icons/fa';
-import * as MdIcons from 'react-icons/md';
+// import * as MdIcons from 'react-icons/md';
 import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
-import { FaRegFilePdf } from "react-icons/fa";
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Subtitulo, Overlay, ConfirmaModal, ConfirmaBtn, Boton2 } from '../elementos/General'
 import { ListarEquipos } from '../elementos/CrearEquipos';
 import { useContext } from 'react';

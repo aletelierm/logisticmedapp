@@ -15,7 +15,6 @@ import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import * as MdIcons from 'react-icons/md';
-import { FaRegFilePdf } from "react-icons/fa";
 import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Subtitulo, Overlay, ConfirmaModal, ConfirmaBtn, Boton2 } from '../elementos/General'
 import { ListarEquipos/*, Select, Formulario, Label, Contenido */ } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
@@ -421,7 +420,7 @@ const EjecutarPresupuesto = () => {
                     <Table.Cell><BotonGuardar>Aceptar</BotonGuardar></Table.Cell>
                     <Table.Cell><BotonGuardar>Rechazar</BotonGuardar></Table.Cell>
                     <Table.Cell><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
-                    <Table.Cell><FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' /></Table.Cell>
+                    <Table.Cell><FaIcons.FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' /></Table.Cell>
                   </Table.Row>
                 )
               })}

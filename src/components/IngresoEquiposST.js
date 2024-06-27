@@ -1250,6 +1250,7 @@ const IngresoEquiposST = () => {
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Date</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>Ingresado por</Table.HeaderCell>
                             <Table.HeaderCell>Confirmar</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -1263,6 +1264,7 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell>{item.useradd}</Table.Cell>
                                     <Table.Cell style={{ cursor: 'pointer' }} onClick={() => {
                                         // consultarDet(item);
                                         setFolio(item.folio);
