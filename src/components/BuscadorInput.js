@@ -1,11 +1,18 @@
 // src/components/SearchBar.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '../elementos/CrearEquipos';
 import styled from 'styled-components';
 
-const SearchBar = ({ items,onSelectItem,limpiaFormCte}) => {
-  const [queryText, setQueryText] = useState('');
+const SearchBar = ({ items,onSelectItem,limpiaFormCte,confirmar,rut = ''}) => {
+  const [queryText, setQueryText] = useState(rut);
   const [filteredItems, setFilteredItems] = useState([]);
+
+  console.log('el valor de rut incial:',rut)
+  console.log('el valor de querytext',queryText)
+  useEffect(()=>{    
+      setQueryText(rut)    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[rut])
 
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -53,12 +60,13 @@ const SearchBar = ({ items,onSelectItem,limpiaFormCte}) => {
         onChange={handleInputChange}
         placeholder="Ingrese Rut o Nombre"
         onKeyDown={detectarKey}
+        disabled={confirmar}
       />
       {filteredItems.length > 0 && (
         <Lista>
           {filteredItems.map((item, index) => (
             <Li key={index} onClick={() => handleSelectItem(item)}>
-              {item.rut} {item.nombre}
+              {item.rut}  {item.nombre}
             </Li>
           ))}
         </Lista>
@@ -83,6 +91,7 @@ const  Lista = styled.ul`
     overflow-y: auto;
 `
 const Li = styled.li`
+      text-align: left;
       padding: 8px;
       cursor: pointer;
       &hover {

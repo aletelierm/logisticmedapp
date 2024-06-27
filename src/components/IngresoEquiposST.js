@@ -1024,8 +1024,8 @@ const IngresoEquiposST = () => {
                             </ContentElemenSelect>
                             <ContentElemenSelect>
                                 <Label>Cliente</Label>
-                                <BuscadorInput items={clientes} onSelectItem={handleSelectItem} limpiaFormCte={limpiaFormCte} />
-                                {/*  {selectedItem && (
+                                <BuscadorInput items={clientes} onSelectItem={handleSelectItem} limpiaFormCte={limpiaFormCte} confirmar={confirmar} rut={rut}/>
+                               {/*  {selectedItem && (
                                     <ItemModal
                                     isOpen={isModalOpen}
                                     onRequestClose={closeModal}
@@ -1291,9 +1291,7 @@ const IngresoEquiposST = () => {
                                             setBtnValidarDet(false)
                                             setConfirmarDet(false);
                                             setBtnGuardarDet(false);
-                                            setMostrarTest(false);
-                                            console.log(mostrarEq);
-                                            console.log(isOpenEq);
+                                            setMostrarTest(false);                                           
                                             setMostrarEq(false);
                                             setIsOpenEq(true);
                                         } else {
@@ -1318,8 +1316,7 @@ const IngresoEquiposST = () => {
                                             setIsOpenEq(false);
                                         }
                                         setConfirmar(true);
-                                        setBtnGuardarCab(true);
-
+                                        setBtnGuardarCab(true);                                        
                                         setBtnNuevo(false);
                                         setFlag(!flag)
                                         setBtnGuardarTestColor('#43A854')
