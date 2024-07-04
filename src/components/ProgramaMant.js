@@ -1,6 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useRef } from 'react';
-import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
+// import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
 import Alertas from './Alertas';
 // import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
@@ -36,8 +36,6 @@ const ProgramaMant = () => {
     const [btnNuevo, setBtnNuevo] = useState(true);
     const dias = useRef('');
     const documentoId = useRef('');
-    const documentofecha = useRef('');
-
 
     //Leer los datos de Familia
     const getFamilia = async () => {
