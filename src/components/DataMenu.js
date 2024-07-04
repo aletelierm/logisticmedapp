@@ -135,6 +135,27 @@ export const DataMenu = [
     ]
   },
   {
+    title: 'Mantención Alert',
+    path: 'alertamantencion',
+    icon: <FaIcons.FaBell />,
+    
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: 'Programa Mant.',
+        path: 'serviciotecnico/programa',
+        icon: <FaIcons.FaRegClock />,
+      },
+      {
+        title: 'Listado Mant.',
+        path: 'serviciotecnico/mantencionalert',
+        icon: <FaIcons.FaList />,
+      }
+    ]
+  },
+  {
     title: 'Mantenciones',
     path: 'serviciotecnico',
     icon: <MdIcons.MdMedicalServices />,
