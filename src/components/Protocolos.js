@@ -374,7 +374,7 @@ const Protocolos = () => {
                         });
                     })
                     .catch((error) => {
-                        Swal.fire('Se ha producido un error al crear docuemento de entrada retirado');
+                        Swal.fire('Se ha producido un error al agregar equipos al Protocolo de mantención');
                     });
 
                 // Actualizar la cabecera de protocolos
