@@ -138,19 +138,18 @@ export const DataMenu = [
     title: 'Mantención Alert',
     path: 'alertamantencion',
     icon: <FaIcons.FaBell />,
-    
     iconClosed: <RiIcons.RiArrowDownSFill />,
     iconOpened: <RiIcons.RiArrowUpSFill />,
 
     subNav: [
       {
         title: 'Programa Mant.',
-        path: 'serviciotecnico/programa',
+        path: 'alertamantencion/programa',
         icon: <FaIcons.FaRegClock />,
       },
       {
         title: 'Listado Mant.',
-        path: 'serviciotecnico/mantencionalert',
+        path: 'alertamantencion/listadomant',
         icon: <FaIcons.FaList />,
       }
     ]

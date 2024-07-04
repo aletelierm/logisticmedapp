@@ -51,6 +51,7 @@ import IngresoEquiposSTPDF from './IngresoEquiposSTPDF';
 import Asignar from './Asignar';
 import AsignadosTecnicos from './AsignadosTecnicos';
 import EjecutarPresupuesto from './EjecutarPresupuesto';
+import ProgramaMant from './ProgramaMant';
 // import ItemsRepuestosServicios from './ItemsRepuestosServicios';
 
 export const Home = () => {
@@ -83,6 +84,7 @@ export const Home = () => {
             <Route path="reportes/reporte5" element={<ReporteInvCliente/>}/>
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>
             <Route path="serviciotecnico/items" element={<AgregarItems/>}/>            
+            <Route path="alertamantencion/programa" element={<ProgramaMant/>}/>            
             <Route path="serviciotecnico/protocolos" element={<Protocolos/>}/>            
             {/* <Route path="serviciotecnico/programas" element={<Programas/>}/> */}
             {/* <Route path="serviciotecnico/certificados" element={<Certificados/>}/> */}
