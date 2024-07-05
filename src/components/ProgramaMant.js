@@ -33,7 +33,7 @@ const ProgramaMant = () => {
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
-    const [btnNuevo, setBtnNuevo] = useState(true);
+    // const [btnNuevo, setBtnNuevo] = useState(true);
     const dias = useRef('');
     const documentoId = useRef('');
 
@@ -77,7 +77,7 @@ const ProgramaMant = () => {
     });
     // Filtar por Cabecera de Protocolo Cconfirmado
     const consultarCabProtConf = async () => {
-        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true));
+        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id)/*, where('confirmado', '==', true)*/);
         const docu = await getDocs(doc);
         const documento = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolCabConf(documento);
@@ -210,7 +210,7 @@ const ProgramaMant = () => {
             }
             try {
                 ProtocoloCabDB({
-                    nombre: 'PAUTA DE MANTENCIÓN ' + programa,
+                    nombre: 'PROGRAMA DE MANTENCIÓN ' + programa,
                     familia: nomFamilia,
                     tipo: nomTipo,
                     programa: programa,
@@ -220,7 +220,7 @@ const ProgramaMant = () => {
                     fechaAdd: fechaAdd,
                     fechaMod: fechaMod,
                     emp_id: users.emp_id,
-                    confirmado: true
+                    confirmado: false
                 })
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -233,7 +233,7 @@ const ProgramaMant = () => {
                 setFlag(!flag);
                 setConfirmar(false);
                 setBtnGuardar(false);
-                setBtnNuevo(false);
+                // setBtnNuevo(false);
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -272,7 +272,7 @@ const ProgramaMant = () => {
     return (
         <ContenedorProveedor>
             <Contenedor>
-                <Titulo>Propgama de Mantenciones</Titulo>
+                <Titulo>Programa de Mantenciones</Titulo>
             </Contenedor>
             <Contenedor>
                 <Formulario action=''>
@@ -321,13 +321,13 @@ const ProgramaMant = () => {
                         onChange={handleCheckboxChange}
                         disabled={btnGuardar}
                     >Guardar</BotonGuardar>
-                    <BotonGuardar
+                    {/* <BotonGuardar
                         style={{ margin: '10px 0' }}
-                        // onClick={nuevo}
+                        onClick={nuevo}
                         checked={confirmar}
                         onChange={handleCheckboxChange}
                         disabled={btnNuevo}
-                    >Nuevo</BotonGuardar>
+                    >Nuevo</BotonGuardar> */}
                 </Formulario>
             </Contenedor>
 
