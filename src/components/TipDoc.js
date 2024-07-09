@@ -78,4 +78,5 @@ export const ItemST= [
     { key: '1', value: '1', text: 'TEST INGRESO' },
     { key: '2', value: '2', text: 'REPUESTO' },
     { key: '3', value: '3', text: 'SERVICIO' },
+    { key: '4', value: '4', text: 'FALLA' },
 ];
