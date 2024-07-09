@@ -412,7 +412,7 @@ const Asignar = () => {
                                         <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
                                             <option>Selecciona Tecnico:</option>
                                             {usuarios.map((objeto, index) => {
-                                                return (<option key={index}>{objeto.correo}</option>)
+                                                return (<option key={index}>{objeto.nombre} {objeto.apellido}</option>)
                                             })}
                                         </Select>
                                         <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>

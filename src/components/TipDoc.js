@@ -71,7 +71,8 @@ export const Traspaso= [
 export const Servicio= [
     { key: '1', value: '1', text: 'MANTENCION PREVENTIVA' },
     { key: '2', value: '2', text: 'PRESUPUESTO' },
-    { key: '3', value: '3', text: 'GARANTIA' },
+    // { key: '3', value: '3', text: 'GARANTIA' },
+    { key: '3', value: '3', text: 'EVALUACION Y DIAGNOSTICO' },
 ];
 
 export const ItemST= [
