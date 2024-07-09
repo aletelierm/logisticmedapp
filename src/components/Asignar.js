@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal } from '../elementos/General';
+import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal, Subtitulo } from '../elementos/General';
 import { Contenido, Input, ContentElemen, Formulario, Select, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -14,6 +14,8 @@ import { FaRegFilePdf } from "react-icons/fa";
 import moment from 'moment';
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
+// import TablaInfo from './TablaInfo';
+import ReactDOMServer from 'react-dom/server';
 
 const Asignar = () => {
     //fecha hoy
@@ -131,6 +133,8 @@ const Asignar = () => {
                 //Envío de correo cuando se asigna un tecnico
                 try {
                     EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso', `Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`)
+                    // const mensaje = cuerpoCorreo(asignar);
+                    // EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso', `Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`, mensaje)
                 } catch (error) {
                     console.log('error', error)
                 }
@@ -147,29 +151,87 @@ const Asignar = () => {
         }
     }
 
+    // const cuerpoCorreo = (asignar) => {
+    //     console.log(asignar)
+    //     return ReactDOMServer.renderToString(
+    //         <div style={{ backgroundColor: '#EEF2EF' }}>
+    //             <TablaInfo  ingreso={asignar}/>
+    //         </div>
+    //     )
+    // }
+
     // const cuerpoCorreo = (data) => {
     //     return ReactDOMServer.renderToString(
     //         <div style={{ backgroundColor: '#EEF2EF' }}>
-    //             <h2>Salida de Bodega</h2>
-    //             <div style={{ backgroundColor: '#EEF2EF' }}>
-    //                 <p>Tipo de Salida :{data[0].tipoinout}</p>
-    //                 <p>Numero Documento :{data[0].numdoc} </p>
-    //                 <p>Tipo de Documento:{data[0].tipdoc} </p>
-    //                 <p>Nombre :{data[0].entidad} </p>
-    //                 <p>Rut :{data[0].rut} </p>
-    //             </div>
-    //             <br />
-    //             <h3>Listado de equipos</h3>
-    //             <p>Los siguientes equipos se encuentran en transito</p>
-    //             <ul style={{ listStyle: 'none' }}>
-    //                 {data.map((item, index) => (
-    //                     <li key={index}>
-    //                         <h5>{index + 1 + ".-" + item.tipo + " " + item.marca + " " + item.modelo + "    S/N : " + item.serie}</h5>
-    //                     </li>
-    //                 ))}
-    //             </ul>
-    //             <br />
-    //             <h4>En espera de ser confirmados por el destinatario</h4>
+    //             {/* Informacion Cliente */}
+    //             <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
+    //             <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
+    //                 <Table.Header>
+    //                     <Table.Row>
+    //                         <Table.HeaderCell>Folio</Table.HeaderCell>
+    //                         <Table.HeaderCell>Rut</Table.HeaderCell>
+    //                         <Table.HeaderCell>Nombre</Table.HeaderCell>
+    //                         <Table.HeaderCell>Fecha</Table.HeaderCell>
+    //                         <Table.HeaderCell>Telefono</Table.HeaderCell>
+    //                         <Table.HeaderCell>Dirección</Table.HeaderCell>
+    //                         <Table.HeaderCell>Email</Table.HeaderCell>
+    //                     </Table.Row>
+    //                 </Table.Header>
+    //                 <Table.Body>
+    //                     {data.map((item, index) => {
+    //                         return (
+    //                             <Table.Row key={index}>
+    //                                 <Table.Cell>{item.folio}</Table.Cell>
+    //                                 <Table.Cell>{item.rut}</Table.Cell>
+    //                                 <Table.Cell>{item.nombre}</Table.Cell>
+    //                                 <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
+    //                                 <Table.Cell>{item.telefono}</Table.Cell>
+    //                                 <Table.Cell>{item.direccion}</Table.Cell>
+    //                                 <Table.Cell>{item.correo}</Table.Cell>
+    //                             </Table.Row>
+    //                         )
+    //                     })}
+    //                 </Table.Body>
+    //             </Table>
+
+    //             {/* Informacion Equipo */}
+    //             <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
+    //             <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
+    //                 <Table.Header>
+    //                     <Table.Row>
+    //                         <Table.HeaderCell>Familia</Table.HeaderCell>
+    //                         <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+    //                         <Table.HeaderCell>Marca</Table.HeaderCell>
+    //                         <Table.HeaderCell>Modelo</Table.HeaderCell>
+    //                         <Table.HeaderCell>Serie</Table.HeaderCell>
+    //                         <Table.HeaderCell>Servicio</Table.HeaderCell>
+    //                     </Table.Row>
+    //                 </Table.Header>
+    //                 <Table.Body>
+    //                     {data.map((item, index) => {
+    //                         return (
+    //                             <Table.Row key={index}>
+    //                                 <Table.Cell>{item.familia}</Table.Cell>
+    //                                 <Table.Cell>{item.tipo}</Table.Cell>
+    //                                 <Table.Cell>{item.marca}</Table.Cell>
+    //                                 <Table.Cell>{item.modelo}</Table.Cell>
+    //                                 <Table.Cell>{item.serie}</Table.Cell>
+    //                                 <Table.Cell>{item.servicio}</Table.Cell>
+    //                             </Table.Row>
+    //                         )
+    //                     })}
+    //                 </Table.Body>
+    //             </Table>
+    //             {/* Observaciones */}
+    //             <Table>
+    //                 {data.map((item, index) => {
+    //                     return (
+    //                         <Table.Row key={index}>
+    //                             <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
+    //                         </Table.Row>
+    //                     )
+    //                 })}
+    //             </Table>
     //         </div>
     //     )
     // }
@@ -188,7 +250,7 @@ const Asignar = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-console.log(asignadosOrd)
+    console.log(asignadosOrd)
     return (
         <div>
             <ListarProveedor>
@@ -423,15 +485,14 @@ console.log(asignadosOrd)
                                             <option>Selecciona Tecnico:</option>
                                             {usuarios.map((objeto, index) => {
                                                 return (<option key={index}>{objeto.nombre} {objeto.apellido}</option>)
+                                                // return (<option key={index}>{objeto.correo}</option>)
                                             })}
                                         </Select>
                                         <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
                                     </ContentElemen>
                                 )
                             }
-
                         </Formulario>
-
                     </ConfirmaModal>
                 </Overlay>
             )}
