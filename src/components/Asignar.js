@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import Alertas from './Alertas';
 import EnviarCorreo from '../funciones/EnviarCorreo';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import { FaRegFilePdf } from "react-icons/fa";
 import moment from 'moment';
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
@@ -31,7 +33,7 @@ const Asignar = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [flag, setFlag] = useState(false);
     const [tituloModal, setTituloModal] = useState('');
-    const [mostrarSelec, setMostrarSelec] = useState(false);  
+    const [mostrarSelec, setMostrarSelec] = useState(false);
 
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
@@ -56,19 +58,19 @@ const Asignar = () => {
         const data = await getDocs(dato)
         setCerrados(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
-      // Leer datos de cabecera Entradas
-      const leerIngresoCab = async (id,indice) => {
-        if(indice===1){
+    // Leer datos de cabecera Entradas
+    const leerIngresoCab = async (id, indice) => {
+        if (indice === 1) {
             const docum = asignar.filter(leer => leer.id === id);
             setMostrarDet(docum);
-        }else if(indice===2){
+        } else if (indice === 2) {
             const docum = asignados.filter(leer => leer.id === id);
             setMostrarDet(docum);
-        }else{
+        } else {
             const docum = cerrados.filter(leer => leer.id === id);
             setMostrarDet(docum);
         }
-        
+
     }
 
     // Cambiar fecha
@@ -99,8 +101,8 @@ const Asignar = () => {
     //Ordenar x folio
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
     const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
-    const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)  
-    
+    const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)
+
 
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
@@ -176,7 +178,8 @@ const Asignar = () => {
         getIngresostcab();
         leerUsuarios();
         getAsignadoscab();
-        getCerradoscab();       
+        getCerradoscab();
+        getAsignadoscab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     useEffect(() => {
@@ -184,8 +187,8 @@ const Asignar = () => {
         getAsignadoscab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
-   
 
+console.log(asignadosOrd)
     return (
         <div>
             <ListarProveedor>
@@ -197,8 +200,8 @@ const Asignar = () => {
                             <Table.HeaderCell>N°Orden</Table.HeaderCell>
                             <Table.HeaderCell>Fecha Ingreso</Table.HeaderCell>
                             <Table.HeaderCell>Equipo</Table.HeaderCell>
-                            <Table.HeaderCell>Modelo</Table.HeaderCell>                            
-                            <Table.HeaderCell>N.Serie</Table.HeaderCell>                            
+                            <Table.HeaderCell>Modelo</Table.HeaderCell>
+                            <Table.HeaderCell>N.Serie</Table.HeaderCell>
                             <Table.HeaderCell>Servicio</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
                         </Table.Row>
@@ -211,9 +214,9 @@ const Asignar = () => {
                                     <Table.Cell>{item.folio}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.tipo}</Table.Cell>
-                                    <Table.Cell>{item.modelo}</Table.Cell>                                   
-                                    <Table.Cell>{item.serie}</Table.Cell>                                   
-                                    <Table.Cell style={{color:'red'}}>{item.servicio}</Table.Cell>
+                                    <Table.Cell>{item.modelo}</Table.Cell>
+                                    <Table.Cell>{item.serie}</Table.Cell>
+                                    <Table.Cell style={{ color: 'red' }}>{item.servicio}</Table.Cell>
                                     <Table.Cell
                                         title='Ver Documento Ingreso'
                                         onClick={() => {
@@ -247,6 +250,7 @@ const Asignar = () => {
                             <Table.HeaderCell>Fecha Asignación</Table.HeaderCell>
                             <Table.HeaderCell>Tecnico Asignado</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
+                            <Table.HeaderCell>Ver PDF</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -258,25 +262,31 @@ const Asignar = () => {
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.tipo}</Table.Cell>
                                     <Table.Cell>{item.modelo}</Table.Cell>
-                                    <Table.Cell>{item.serie}</Table.Cell>                                    
-                                    <Table.Cell>{item.servicio}</Table.Cell>                                    
+                                    <Table.Cell>{item.serie}</Table.Cell>
+                                    <Table.Cell>{item.servicio}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fechamod)}</Table.Cell>
-                                    <Table.Cell>{usuarios.map((user, index)=>(
-                                            user.correo===item.tecnico&&(
-                                                <h5 key={index}>{user.nombre} {user.apellido}</h5>
-                                            )
+                                    <Table.Cell>{usuarios.map((user, index) => (
+                                        user.correo === item.tecnico && (
+                                            <h5 key={index}>{user.nombre} {user.apellido}</h5>
+                                        )
                                     )
                                     )}</Table.Cell>
                                     <Table.Cell
                                         title='Ver Documento Ingreso'
-                                        onClick={() => {                                          
+                                        onClick={() => {
                                             leerTestIngreso(item.id)
-                                            leerIngresoCab(item.id,2);
+                                            leerIngresoCab(item.id, 2);
                                             setOpenModalCli(!openModalCli)
                                             setTituloModal('Detalle de Ingreso')
                                             setMostrarSelec(false);
                                         }}
-                                    ><MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    >
+                                        <MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
+                                    </Table.Cell>
+                                    <Table.Cell >
+                                        <Link disabled to={`/ingresopdf/${item.id}`}>
+                                            <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
+                                        </Link>
                                     </Table.Cell>
                                 </Table.Row>
                             )
@@ -309,20 +319,20 @@ const Asignar = () => {
                                     <Table.Cell>{item.folio}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.tipo}</Table.Cell>
-                                    <Table.Cell>{item.modelo}</Table.Cell>                                   
+                                    <Table.Cell>{item.modelo}</Table.Cell>
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_out)}</Table.Cell>
-                                    <Table.Cell>{usuarios.map((user)=>(
-                                            user.correo===item.tecnico&&(
-                                                <h5>{user.nombre} {user.apellido}</h5>
-                                            )
+                                    <Table.Cell>{usuarios.map((user) => (
+                                        user.correo === item.tecnico && (
+                                            <h5>{user.nombre} {user.apellido}</h5>
+                                        )
                                     )
                                     )}</Table.Cell>
-                                     <Table.Cell
+                                    <Table.Cell
                                         title='Ver Documento Ingreso'
-                                        onClick={() => {                                          
+                                        onClick={() => {
                                             leerTestIngreso(item.id)
-                                            leerIngresoCab(item.id,3);
+                                            leerIngresoCab(item.id, 3);
                                             setOpenModalCli(!openModalCli)
                                             setTituloModal('Detalle de Ingreso')
                                             setMostrarSelec(false);
@@ -368,7 +378,7 @@ const Asignar = () => {
                                                 )
                                             })}
                                         </Table.Body>
-                                    </Table>                                    
+                                    </Table>
                                     <Table>
                                         <Table.Header>
                                             <Table.Row>
@@ -418,8 +428,8 @@ const Asignar = () => {
                                         <BotonGuardar onClick={asignarUsuario} >Asignar</BotonGuardar>
                                     </ContentElemen>
                                 )
-                            }    
-                            
+                            }
+
                         </Formulario>
 
                     </ConfirmaModal>
