@@ -4,7 +4,7 @@ import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react';
-import { ContenedorProveedor, Titulo, Subtitulo, BotonGuardar } from '../elementos/General';
+import { ContenedorProveedor, Subtitulo } from '../elementos/General';
 import moment from 'moment';
 
 const TablaInfo = ({ ingreso, presupuesto, presupuestoCab }) => {

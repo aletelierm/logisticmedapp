@@ -15,11 +15,11 @@ import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Subtitulo, Overlay, ConfirmaModal, ConfirmaBtn, Boton2 } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Overlay, ConfirmaModal, ConfirmaBtn, Boton2 } from '../elementos/General'
 import { ListarEquipos } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import moment from 'moment';
+// import moment from 'moment';
 import Swal from 'sweetalert2';
 import TablaInfo from './TablaInfo';
 
@@ -40,18 +40,18 @@ const EjecutarPresupuesto = () => {
   const [item, setItem] = useState([]);
   // const [preCabConf, setpreCabConf] = useState('');
   const [folio, setFolio] = useState('');
-  const [rut, setRut] = useState('');
-  const [entidad, setEntidad] = useState('');
-  const [date, setDate] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [direccion, setDireccion] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [familia, setFamilia] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [marca, setMarca] = useState('');
-  const [modelo, setModelo] = useState('');
-  const [serie, setSerie] = useState('');
-  const [servicio, setServicio] = useState('');
+  // const [rut, setRut] = useState('');
+  // const [entidad, setEntidad] = useState('');
+  // const [date, setDate] = useState('');
+  // const [telefono, setTelefono] = useState('');
+  // const [direccion, setDireccion] = useState('');
+  // const [correo, setCorreo] = useState('');
+  // const [familia, setFamilia] = useState('');
+  // const [tipo, setTipo] = useState('');
+  // const [marca, setMarca] = useState('');
+  // const [modelo, setModelo] = useState('');
+  // const [serie, setSerie] = useState('');
+  // const [servicio, setServicio] = useState('');
   const [buscador, setBuscardor] = useState('');
   const [flag, setFlag] = useState(false);
   const [btnCab, setBtnCab] = useState(false);
@@ -72,18 +72,18 @@ const EjecutarPresupuesto = () => {
   useEffect(() => {
     if (ingreso) {
       setFolio(ingreso.folio);
-      setRut(ingreso.rut);
-      setEntidad(ingreso.entidad);
-      setDate(ingreso.date);
-      setTelefono(ingreso.telefono);
-      setDireccion(ingreso.direccion);
-      setCorreo(ingreso.correo);
-      setFamilia(ingreso.familia);
-      setTipo(ingreso.tipo);
-      setMarca(ingreso.marca);
-      setModelo(ingreso.modelo);
-      setSerie(ingreso.serie);
-      setServicio(ingreso.servicio);
+      // setRut(ingreso.rut);
+      // setEntidad(ingreso.entidad);
+      // setDate(ingreso.date);
+      // setTelefono(ingreso.telefono);
+      // setDireccion(ingreso.direccion);
+      // setCorreo(ingreso.correo);
+      // setFamilia(ingreso.familia);
+      // setTipo(ingreso.tipo);
+      // setMarca(ingreso.marca);
+      // setModelo(ingreso.modelo);
+      // setSerie(ingreso.serie);
+      // setServicio(ingreso.servicio);
     } else {
       navigate('/serviciotecnico/asignadostecnicos')
     }
@@ -119,13 +119,13 @@ const EjecutarPresupuesto = () => {
     if (nameA > nameB) { return 1; }
     return 0;
   });
-  // Cambiar fecha
-  const formatearFecha = (fecha) => {
-    const dateObj = fecha.toDate();
-    const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-    // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-    return formatear;
-  }
+  // // Cambiar fecha
+  // const formatearFecha = (fecha) => {
+  //   const dateObj = fecha.toDate();
+  //   const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+  //   // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+  //   return formatear;
+  // }
   const filtroItem = () => {
     const buscar = buscador.toLocaleUpperCase();
     if (buscar.length === 0)
