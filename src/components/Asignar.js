@@ -75,7 +75,7 @@ const Asignar = () => {
         
     }
 
-    // Cambiar fecha
+    // Cambiar fecha timestap format date
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
         const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
@@ -104,15 +104,15 @@ const Asignar = () => {
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
     const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
     const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)  
-    console.log(cerradosOrd)
+    
 
- // Filtrar los datos basado en el valor de búsqueda
-  const filteredData = cerradosOrd.filter(item =>
+    // Filtrar los datos basado en el valor de búsqueda
+    const filteredData = cerradosOrd.filter(item =>
     Object.keys(item).some(key =>{
       const value = ['date','fecha_out'].includes(key) ? formatearFecha(item[key]): String(item[key]).toLowerCase();
       return value.includes(buscador.toLocaleLowerCase());
         })
-  );
+     );
 
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
