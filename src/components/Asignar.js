@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal } from '../elementos/General';
+import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal,ContentElemenAdd } from '../elementos/General';
 import { Contenido, Input, ContentElemen, Formulario, Select, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -12,6 +12,8 @@ import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/fire
 import moment from 'moment';
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
+import * as FaIcons from 'react-icons/fa';
+
 
 const Asignar = () => {
     //fecha hoy
@@ -32,6 +34,8 @@ const Asignar = () => {
     const [flag, setFlag] = useState(false);
     const [tituloModal, setTituloModal] = useState('');
     const [mostrarSelec, setMostrarSelec] = useState(false);  
+    const [buscador, setBuscador] = useState('');      
+   
 
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
@@ -100,7 +104,15 @@ const Asignar = () => {
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio)
     const asignadosOrd = asignados.sort((a, b) => a.folio - b.folio)
     const cerradosOrd = cerrados.sort((a, b) => a.folio - b.folio)  
-    
+    console.log(cerradosOrd)
+
+ // Filtrar los datos basado en el valor de búsqueda
+  const filteredData = cerradosOrd.filter(item =>
+    Object.keys(item).some(key =>{
+      const value = ['date','fecha_out'].includes(key) ? formatearFecha(item[key]): String(item[key]).toLowerCase();
+      return value.includes(buscador.toLocaleLowerCase());
+        })
+  );
 
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
@@ -283,10 +295,19 @@ const Asignar = () => {
                         })}
                     </Table.Body>
                 </Table>
-            </ListarProveedor>
-
+            </ListarProveedor>           
             <ListarProveedor>
                 <Titulo>Cerrados</Titulo>
+                <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
+                    <Input style={{ width: '100%', outlineColor:'#F0A70A' }}
+                        type='text'
+                        placeholder='Buscar ordenes'
+                        value={buscador}
+                        onChange={e => setBuscador(e.target.value)}
+                    />
+                   {/*  <FaIcons.FaFileExcel  onClick={ExportarXls}  style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', cursor:'pointer' }} title='Exportar Equipos a Excel' /> */}
+                </ContentElemenAdd>
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -302,7 +323,7 @@ const Asignar = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {cerradosOrd.map((item, index) => {
+                        {filteredData.map((item, index) => {
                             return (
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
