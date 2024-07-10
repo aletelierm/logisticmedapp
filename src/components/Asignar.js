@@ -218,7 +218,7 @@ const Asignar = () => {
                                         <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.marca}</td>
                                         <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.modelo}</td>
                                         <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.serie}</td>
-                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.servicio}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5', color: 'red' }}>{item.servicio}</td>
                                     </tr>
                                 ))}
                             </tbody>
