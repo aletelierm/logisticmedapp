@@ -30,6 +30,7 @@ const Asignar = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [idCabIngreso, setIdCabIngreso] = useState(null)
     const [buscador, setBuscador] = useState('')
+    const [buscador2, setBuscador2] = useState('')
     const [openModalCli, setOpenModalCli] = useState(false);
     const [tecnico, setTecnico] = useState('')
     const [alerta, cambiarAlerta] = useState({});
@@ -37,7 +38,7 @@ const Asignar = () => {
     const [flag, setFlag] = useState(false);
     const [tituloModal, setTituloModal] = useState('');
     const [mostrarSelec, setMostrarSelec] = useState(false);
-
+   
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');
@@ -112,6 +113,14 @@ const Asignar = () => {
         Object.keys(item).some(key => {
             const value = ['date', 'fecha_out'].includes(key) ? formatearFecha(item[key]) : String(item[key]).toLowerCase();
             return value.includes(buscador.toLocaleLowerCase());
+        })
+    );
+
+    //Filtrar los datos para asignados
+    const filteredData2 = asignadosOrd.filter(item =>
+        Object.keys(item).some(key => {
+            const value = ['date', 'fechamod'].includes(key) ? formatearFecha(item[key]) : String(item[key]).toLowerCase();
+            return value.includes(buscador2.toLocaleLowerCase());
         })
     );
 
@@ -233,7 +242,7 @@ const Asignar = () => {
             </div>
         )
     }
-
+  
     useEffect(() => {
         getIngresostcab();
         leerUsuarios();
@@ -296,6 +305,16 @@ const Asignar = () => {
             </ListarProveedor>
             <ListarProveedor>
                 <Titulo>Asignados</Titulo>
+                <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
+                    <Input style={{ width: '100%', outlineColor: '#F0A70A' }}
+                        type='text'
+                        placeholder='Buscar ordenes Asignadas'
+                        value={buscador2}
+                        onChange={e => setBuscador2(e.target.value)}
+                    />
+                    {/*  <FaIcons.FaFileExcel  onClick={ExportarXls}  style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', cursor:'pointer' }} title='Exportar Equipos a Excel' /> */}
+                </ContentElemenAdd>
                 <Table singleLine>
                     <Table.Header>
                         <Table.Row>
@@ -313,7 +332,7 @@ const Asignar = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {asignadosOrd.map((item, index) => {
+                        {filteredData2.map((item, index) => {
                             return (
                                 <Table.Row key={index}>
                                     <Table.Cell >{index + 1}</Table.Cell>
@@ -359,7 +378,7 @@ const Asignar = () => {
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
                     <Input style={{ width: '100%', outlineColor: '#F0A70A' }}
                         type='text'
-                        placeholder='Buscar ordenes'
+                        placeholder='Buscar ordenes cerradas'
                         value={buscador}
                         onChange={e => setBuscador(e.target.value)}
                     />
@@ -490,7 +509,7 @@ const Asignar = () => {
                                         <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
                                             <option>Selecciona Tecnico:</option>
                                             {usuarios.map((objeto, index) => {
-                                                return (<option key={index}>{objeto.correo} {objeto.nombre} {objeto.apellido}</option>)
+                                                return (<option key={index}>{objeto.correo}</option>)
                                                 // return (<option key={index}>{objeto.correo}</option>)
                                             })}
                                         </Select>

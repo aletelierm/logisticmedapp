@@ -6,9 +6,7 @@ import styled from 'styled-components';
 const SearchBar = ({ items,onSelectItem,limpiaFormCte,confirmar,rut = ''}) => {
   const [queryText, setQueryText] = useState(rut);
   const [filteredItems, setFilteredItems] = useState([]);
-
-  console.log('el valor de rut incial:',rut)
-  console.log('el valor de querytext',queryText)
+ 
   useEffect(()=>{    
       setQueryText(rut)    
   // eslint-disable-next-line react-hooks/exhaustive-deps
