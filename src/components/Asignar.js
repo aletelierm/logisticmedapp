@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal,ContentElemenAdd } from '../elementos/General';
+import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal, ContentElemenAdd } from '../elementos/General';
 import { Contenido, Input, ContentElemen, Formulario, Select, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Table, TableBody } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react'
 import { db } from '../firebase/firebaseConfig';
 import styled from 'styled-components';
 import Alertas from './Alertas';
@@ -15,9 +15,7 @@ import moment from 'moment';
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
 import * as FaIcons from 'react-icons/fa';
-
-// import TablaInfo from './TablaInfo';
-// import ReactDOMServer from 'react-dom/server';
+import ReactDOMServer from 'react-dom/server';
 
 const Asignar = () => {
     //fecha hoy
@@ -31,13 +29,14 @@ const Asignar = () => {
     const [testIngreso, setTestIngreso] = useState([]);
     const [usuarios, setUsuarios] = useState([]);
     const [idCabIngreso, setIdCabIngreso] = useState(null)
+    const [buscador, setBuscador] = useState('')
     const [openModalCli, setOpenModalCli] = useState(false);
     const [tecnico, setTecnico] = useState('')
     const [alerta, cambiarAlerta] = useState({});
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [flag, setFlag] = useState(false);
     const [tituloModal, setTituloModal] = useState('');
-    const [mostrarSelec, setMostrarSelec] = useState(false);  
+    const [mostrarSelec, setMostrarSelec] = useState(false);
 
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
@@ -110,11 +109,11 @@ const Asignar = () => {
 
     // Filtrar los datos basado en el valor de búsqueda
     const filteredData = cerradosOrd.filter(item =>
-    Object.keys(item).some(key =>{
-      const value = ['date','fecha_out'].includes(key) ? formatearFecha(item[key]): String(item[key]).toLowerCase();
-      return value.includes(buscador.toLocaleLowerCase());
+        Object.keys(item).some(key => {
+            const value = ['date', 'fecha_out'].includes(key) ? formatearFecha(item[key]) : String(item[key]).toLowerCase();
+            return value.includes(buscador.toLocaleLowerCase());
         })
-     );
+    );
 
     //Funcion handlesubmit para validar y asignar
     const asignarUsuario = async (e) => {
@@ -142,9 +141,9 @@ const Asignar = () => {
                 })
                 //Envío de correo cuando se asigna un tecnico
                 try {
-                    EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso', `Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`)
-                    // const mensaje = cuerpoCorreo(asignar);
-                    // EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso', `Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`, mensaje)
+                    // EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso', `Se le ha asignado la orden de ingreso N. ${mostrarDet[0].folio}`)
+                    const mensaje = cuerpoCorreo(mostrarDet);
+                    EnviarCorreo(tecnico, 'Asignación de Orden de Ingreso', mensaje)
                 } catch (error) {
                     console.log('error', error)
                 }
@@ -157,94 +156,83 @@ const Asignar = () => {
                     mensaje: 'Error al actualizar el usuario tecnico:', error
                 })
             }
-
         }
     }
 
-    // const cuerpoCorreo = (asignar) => {
-    //     console.log(asignar)
-    //     return ReactDOMServer.renderToString(
-    //         <div style={{ backgroundColor: '#EEF2EF' }}>
-    //             <TablaInfo  ingreso={asignar}/>
-    //         </div>
-    //     )
-    // }
-
-    // const cuerpoCorreo = (data) => {
-    //     return ReactDOMServer.renderToString(
-    //         <div style={{ backgroundColor: '#EEF2EF' }}>
-    //             {/* Informacion Cliente */}
-    //             <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
-    //             <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
-    //                 <Table.Header>
-    //                     <Table.Row>
-    //                         <Table.HeaderCell>Folio</Table.HeaderCell>
-    //                         <Table.HeaderCell>Rut</Table.HeaderCell>
-    //                         <Table.HeaderCell>Nombre</Table.HeaderCell>
-    //                         <Table.HeaderCell>Fecha</Table.HeaderCell>
-    //                         <Table.HeaderCell>Telefono</Table.HeaderCell>
-    //                         <Table.HeaderCell>Dirección</Table.HeaderCell>
-    //                         <Table.HeaderCell>Email</Table.HeaderCell>
-    //                     </Table.Row>
-    //                 </Table.Header>
-    //                 <Table.Body>
-    //                     {data.map((item, index) => {
-    //                         return (
-    //                             <Table.Row key={index}>
-    //                                 <Table.Cell>{item.folio}</Table.Cell>
-    //                                 <Table.Cell>{item.rut}</Table.Cell>
-    //                                 <Table.Cell>{item.nombre}</Table.Cell>
-    //                                 <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
-    //                                 <Table.Cell>{item.telefono}</Table.Cell>
-    //                                 <Table.Cell>{item.direccion}</Table.Cell>
-    //                                 <Table.Cell>{item.correo}</Table.Cell>
-    //                             </Table.Row>
-    //                         )
-    //                     })}
-    //                 </Table.Body>
-    //             </Table>
-
-    //             {/* Informacion Equipo */}
-    //             <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
-    //             <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
-    //                 <Table.Header>
-    //                     <Table.Row>
-    //                         <Table.HeaderCell>Familia</Table.HeaderCell>
-    //                         <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-    //                         <Table.HeaderCell>Marca</Table.HeaderCell>
-    //                         <Table.HeaderCell>Modelo</Table.HeaderCell>
-    //                         <Table.HeaderCell>Serie</Table.HeaderCell>
-    //                         <Table.HeaderCell>Servicio</Table.HeaderCell>
-    //                     </Table.Row>
-    //                 </Table.Header>
-    //                 <Table.Body>
-    //                     {data.map((item, index) => {
-    //                         return (
-    //                             <Table.Row key={index}>
-    //                                 <Table.Cell>{item.familia}</Table.Cell>
-    //                                 <Table.Cell>{item.tipo}</Table.Cell>
-    //                                 <Table.Cell>{item.marca}</Table.Cell>
-    //                                 <Table.Cell>{item.modelo}</Table.Cell>
-    //                                 <Table.Cell>{item.serie}</Table.Cell>
-    //                                 <Table.Cell>{item.servicio}</Table.Cell>
-    //                             </Table.Row>
-    //                         )
-    //                     })}
-    //                 </Table.Body>
-    //             </Table>
-    //             {/* Observaciones */}
-    //             <Table>
-    //                 {data.map((item, index) => {
-    //                     return (
-    //                         <Table.Row key={index}>
-    //                             <Table.Cell style={{ fontSize: '13px' }}>Observaciones : {item.observaciones}</Table.Cell>
-    //                         </Table.Row>
-    //                     )
-    //                 })}
-    //             </Table>
-    //         </div>
-    //     )
-    // }
+    const cuerpoCorreo = (data) => {
+        return ReactDOMServer.renderToString(
+            <div style={{ backgroundColor: '#EEF2EF', textAlign: 'center', padding: '40px' }}>
+                <div style={{ backgroundColor: '#3A9A9D', fontSize: '20px' }}>
+                    <h2 style={{ color: '#ffffff' }}>Se le ha asignado la Orden de Ingreso N° {data[0].folio}</h2>
+                </div>
+                <br />
+                <div style={{backgroundColor: '#EAF1FB'}}>
+                    {/* Informacion Cliente */}
+                    <div style={{ fontSize: '14px', textAlign: 'center' }}>
+                        <table style={{ borderCollapse: 'collapse', border: '4px solid #C8C8C8', letterSpacing: '1px', fontSize: '0.8rem', display: 'inline' }}>
+                            <caption style={{ padding: '10px', fontSize: '22px' }}>Informacion Cliente</caption>
+                            <thead>
+                                <tr>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Rut</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Nombre</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Fecha</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Telefono</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Direccion</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Correo</th>
+                                </tr>
+                            </thead>
+                            <tbody style={{ fontSize: '90%' }}>
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.rut}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.entidad}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{formatearFecha(item.date)}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.telefono}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.direccion}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.correo}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    {/* Informacion Equipo */}
+                    <div style={{ fontSize: '14px', textAlign: 'center' }}>
+                        <table style={{ borderCollapse: 'collapse', border: '4px solid #C8C8C8', letterSpacing: '1px', fontSize: '0.8rem', display: 'inline' }}>
+                            <caption style={{ padding: '10px', fontSize: '22px' }}>Informacion Equipo</caption>
+                            <thead>
+                                <tr>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Familia</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Tipo Equipamiento</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Marca</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Modelo</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Serie</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Servicio</th>
+                                </tr>
+                            </thead>
+                            <tbody style={{ fontSize: '90%' }}>
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.familia}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.tipo}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.marca}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.modelo}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.serie}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.servicio}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    {/* Observaciones */}
+                    <div style={{ fontSize: '14px', textAlign: 'center' }}>
+                        <p>Observaciones : {data[0].observaciones}</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     useEffect(() => {
         getIngresostcab();
@@ -364,18 +352,18 @@ const Asignar = () => {
                         })}
                     </Table.Body>
                 </Table>
-            </ListarProveedor>           
+            </ListarProveedor>
             <ListarProveedor>
                 <Titulo>Cerrados</Titulo>
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
-                    <Input style={{ width: '100%', outlineColor:'#F0A70A' }}
+                    <Input style={{ width: '100%', outlineColor: '#F0A70A' }}
                         type='text'
                         placeholder='Buscar ordenes'
                         value={buscador}
                         onChange={e => setBuscador(e.target.value)}
                     />
-                   {/*  <FaIcons.FaFileExcel  onClick={ExportarXls}  style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', cursor:'pointer' }} title='Exportar Equipos a Excel' /> */}
+                    {/*  <FaIcons.FaFileExcel  onClick={ExportarXls}  style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', cursor:'pointer' }} title='Exportar Equipos a Excel' /> */}
                 </ContentElemenAdd>
                 <Table singleLine>
                     <Table.Header>
@@ -402,9 +390,9 @@ const Asignar = () => {
                                     <Table.Cell>{item.modelo}</Table.Cell>
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.fecha_out)}</Table.Cell>
-                                    <Table.Cell>{usuarios.map((user) => (
+                                    <Table.Cell>{usuarios.map((user, index) => (
                                         user.correo === item.tecnico && (
-                                            <h5>{user.nombre} {user.apellido}</h5>
+                                            <h5 key={index}>{user.nombre} {user.apellido}</h5>
                                         )
                                     )
                                     )}</Table.Cell>
@@ -468,7 +456,7 @@ const Asignar = () => {
                                                 <Table.HeaderCell>No</Table.HeaderCell>
                                             </Table.Row>
                                         </Table.Header>
-                                        <TableBody>
+                                        <Table.Body>
                                             {testIngreso.map((item, index) => {
                                                 return (
                                                     <Table.Row key={index}>
@@ -481,7 +469,7 @@ const Asignar = () => {
                                                     </Table.Row>
                                                 )
                                             })}
-                                        </TableBody>
+                                        </Table.Body>
                                     </Table>
                                     <Table>
                                         {mostrarDet.map((item, index) => {
@@ -502,7 +490,7 @@ const Asignar = () => {
                                         <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
                                             <option>Selecciona Tecnico:</option>
                                             {usuarios.map((objeto, index) => {
-                                                return (<option key={index}>{objeto.nombre} {objeto.apellido}</option>)
+                                                return (<option key={index}>{objeto.correo} {objeto.nombre} {objeto.apellido}</option>)
                                                 // return (<option key={index}>{objeto.correo}</option>)
                                             })}
                                         </Select>
