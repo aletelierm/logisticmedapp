@@ -1356,7 +1356,8 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{item.servicio}</Table.Cell>
                                     <Table.Cell >
-                                        <Link disabled to={`/ingresopdf/${item.id}`}>
+                                        {/* <Link disabled to={`/ingresopdf/${item.id}`}> */}
+                                        <Link disabled to={`/ingresopdf/${item.id}/1`} /*component={IngresoEquiposSTPDF}*/>
                                             <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
                                         </Link>
                                     </Table.Cell>

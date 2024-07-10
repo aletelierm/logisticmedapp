@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal, Subtitulo } from '../elementos/General';
+import { ListarProveedor, Titulo, BotonGuardar, Overlay, ConfirmaModal, /*Subtitulo*/ } from '../elementos/General';
 import { Contenido, Input, ContentElemen, Formulario, Select, Label } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -15,7 +15,7 @@ import moment from 'moment';
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
 // import TablaInfo from './TablaInfo';
-import ReactDOMServer from 'react-dom/server';
+// import ReactDOMServer from 'react-dom/server';
 
 const Asignar = () => {
     //fecha hoy
@@ -250,7 +250,6 @@ const Asignar = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
 
-    console.log(asignadosOrd)
     return (
         <div>
             <ListarProveedor>
@@ -346,7 +345,7 @@ const Asignar = () => {
                                         <MdIcons.MdFactCheck style={{ fontSize: '20px', color: '#328AC4' }} />
                                     </Table.Cell>
                                     <Table.Cell >
-                                        <Link disabled to={`/ingresopdf/${item.id}`}>
+                                        <Link disabled to={`/ingresopdf/${item.id}/2`} /*component={IngresoEquiposSTPDF} */>
                                             <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
                                         </Link>
                                     </Table.Cell>

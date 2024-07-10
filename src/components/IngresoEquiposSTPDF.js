@@ -11,13 +11,14 @@ import { ContenedorProveedor, Titulo, Subtitulo, BotonGuardar } from '../element
 import { Input } from '../elementos/CrearEquipos';
 import moment from 'moment';
 
-const IngresoEquiposSTPDF = () => {
+const IngresoEquiposSTPDF = ({vuelta}) => {
     //fecha hoy
     // const fechaHoy = new Date();
     const { users } = useContext(UserContext);
-
+    
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { id, ruta } = useParams();
+    console.log(ruta)
     const [ingreso] = useObtenerIngreso(id);
 
     const [test, setTest] = useState([]);
@@ -38,9 +39,13 @@ const IngresoEquiposSTPDF = () => {
     const [usuarioIngreso, setUsuarioIngreso] = useState([]);
     
     const targetRef = useRef();
-
+    
     const volver = () => {
-        navigate('/serviciotecnico/ingreso')
+        if (ruta === '1') {
+            navigate('/serviciotecnico/ingreso')
+        } else {
+            navigate('/serviciotecnico/asignar')
+        }
     }
 
     useEffect(() => {
