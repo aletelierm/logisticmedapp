@@ -90,7 +90,7 @@ const AsignadosTecnicos = () => {
             //Envia correo al administrador cuando usuario cierra una orden de ingreso
             try {
                 alertaOrdenIngreso.forEach((destino) => {
-                    EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.correo} ha cerrado la orden N.${folio}.`)
+                    EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.nombre} ${users.apellido} ha cerrado la orden N.${folio}.`)
                 })
             } catch (error) {
                 console.log('error', error)
