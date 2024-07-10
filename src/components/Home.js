@@ -51,6 +51,8 @@ import IngresoEquiposSTPDF from './IngresoEquiposSTPDF';
 import Asignar from './Asignar';
 import AsignadosTecnicos from './AsignadosTecnicos';
 import EjecutarPresupuesto from './EjecutarPresupuesto';
+import ProgramaMant from './ProgramaMant';
+import ListadoMant from './ListadoMant';
 // import ItemsRepuestosServicios from './ItemsRepuestosServicios';
 
 export const Home = () => {
@@ -83,6 +85,8 @@ export const Home = () => {
             <Route path="reportes/reporte5" element={<ReporteInvCliente/>}/>
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>
             <Route path="serviciotecnico/items" element={<AgregarItems/>}/>            
+            <Route path="alertamantencion/programa" element={<ProgramaMant/>}/>          
+            <Route path="alertamantencion/listadomant" element={<ListadoMant/>}/>          
             <Route path="serviciotecnico/protocolos" element={<Protocolos/>}/>            
             {/* <Route path="serviciotecnico/programas" element={<Programas/>}/> */}
             {/* <Route path="serviciotecnico/certificados" element={<Certificados/>}/> */}
@@ -96,7 +100,7 @@ export const Home = () => {
             <Route path="actualizacliente/:id" element={<ActualizaCliente/>}/>
             <Route path="serviciotecnico" element={<ServicioTecnico/>}/>        
             <Route path="serviciotecnico/ingreso" element={<IngresoEquiposST/>}/> 
-            <Route path="ingresopdf/:id" element={<IngresoEquiposSTPDF/>}/>       
+            <Route path="ingresopdf/:id/:ruta" element={<IngresoEquiposSTPDF/>}/>       
             {/* <Route path="serviciotecnico/testingreso" element={<TestIngreso/>}/>         */}
             <Route path="serviciotecnico/itemsst" element={<ItemsST/>}/>        
             <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>       

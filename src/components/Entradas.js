@@ -94,7 +94,7 @@ const Entradas = () => {
     }
     // Filtar por docuemto de Entrada
     const consultarCabProt = async () => {
-        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', true));
+        const doc = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id)/*, where('confirmado', '==', true)*/);
         const docu = await getDocs(doc);
         const documen = (docu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setProtocolo(documen);

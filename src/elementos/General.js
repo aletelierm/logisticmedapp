@@ -178,7 +178,7 @@ const Boton2 = styled.button`
 
 	&:hover {
 		// background-color: red;
-        background-color: #16B9CF;
+        background-color: ${(props) => props.hover || '#16B9CF' } ;
 	}
 
 `

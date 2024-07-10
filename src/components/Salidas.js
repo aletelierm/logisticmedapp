@@ -107,7 +107,7 @@ const Salidas = () => {
     }
     // Filtar usuario transportista
     const transportista = async () => {
-        const trans = query(collection(db, 'usuarios'), where('emp_id', '==', users.emp_id), where('rol', '==', 'TRANSPORTE'));
+        const trans = query(collection(db, 'usuarios'), where('emp_id', '==', users.emp_id), where('rol', '==', 'TRANSPORTE-HC'));
         const transporte = await getDocs(trans);
         const transportista = (transporte.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setTransport(transportista);

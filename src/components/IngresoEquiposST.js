@@ -50,7 +50,7 @@ const IngresoEquiposST = () => {
     const [nombre, setNombre] = useState('');
     const [telefono, setTelefono] = useState('');
     const [direccion, setDireccion] = useState('');
-    const [correo, setCorreo] = useState('');    
+    const [correo, setCorreo] = useState('');
     const [date, setDate] = useState('');
     const [confirmar, setConfirmar] = useState(false);
     const [confirmarDet, setConfirmarDet] = useState(false);
@@ -220,88 +220,32 @@ const IngresoEquiposST = () => {
         }
         return 0;
     });
+
     //Seleccionar valores del cliente traidos del componente buscadorInput
-    const handleSelectItem = (item) => {                
-         const isObject= item!==null && typeof item==='object';//Valida si dato es un objeto o un valor normal
-         if(isObject){
-                setRut(item.rut);
-                setEntidad(item.nombre);
-                setTelefono(item.telefono);
-                setDireccion(item.direccion);
-                setCorreo(item.correo);            
-                setBtnGuardarCab(false);
-            }else{
-                 //Patron para validar rut
-                const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-                const temp = item.split('-');
-                let digito = temp[1];
-                if (digito === 'k' || digito === 'K') digito = -1;
-                const validaR = validarRut(item);
-                if(item===''){
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Favor ingresa un rut'
-                    })
-                    return;
-                }else if (!expresionRegularRut.test(item)) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Formato incorrecto de rut'
-                    })
-                    return;
-                } else if (validaR !== parseInt(digito)) {
-                    cambiarEstadoAlerta(true);
-                    cambiarAlerta({
-                        tipo: 'error',
-                        mensaje: 'Rut no válido'
-                    })
-                    return;
-
-            }else{
-                //Asigna valor de rut validado pero que no existe en DB y activa mostrar model cliente nuevo.
-                setRut(item)
-                setOpenModalCli(true)
-            }     
-      };
-    }
-    //Limpia formulario Clientes
-    const limpiaFormCte =()=>{
-        setRut('');
-        setEntidad('');
-        setTelefono('');
-        setDireccion('');
-        setCorreo('');
-        setBtnGuardarCab(true) 
-    }
-
-    // Filtar por docuemto de protoolo no confirmado => Funcional
-    const consultarprot = async (fam) => {
-        const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
-        const guardaprot = await getDocs(prot);
-        const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, /*id2: index + 1,*/ valorsi: false, valorno: false })))
-        setProtocolo(existeprot.sort((a, b) => a.fechamod - b.fechamod))
-    }
-    // protocolo.sort((a, b) => a.fechamod - b.fechamod)
-
-    //esta parte ya no sirve---
-    // Validar rut
-  /*   const detectarCli = async (e) => {
-        cambiarEstadoAlerta(false);
-        cambiarAlerta({});
-        if (e.key === 'Enter' || e.key === 'Tab') {
-            const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-            const rutCli = await getDocs(cli)
-            const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            //Patron para valiar rut
+    const handleSelectItem = (item) => {
+        const isObject = item !== null && typeof item === 'object';//Valida si dato es un objeto o un valor normal
+        if (isObject) {
+            setRut(item.rut);
+            setEntidad(item.nombre);
+            setTelefono(item.telefono);
+            setDireccion(item.direccion);
+            setCorreo(item.correo);
+            setBtnGuardarCab(false);
+        } else {
+            //Patron para validar rut
             const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-            const temp = rut.split('-');
+            const temp = item.split('-');
             let digito = temp[1];
             if (digito === 'k' || digito === 'K') digito = -1;
-            const validaR = validarRut(rut);
-
-            if (!expresionRegularRut.test(rut)) {
+            const validaR = validarRut(item);
+            if (item === '') {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Favor ingresa un rut'
+                })
+                return;
+            } else if (!expresionRegularRut.test(item)) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
                     tipo: 'error',
@@ -315,26 +259,80 @@ const IngresoEquiposST = () => {
                     mensaje: 'Rut no válido'
                 })
                 return;
-            } else if (rutCli.docs.length === 0) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'No existe rut de Cliente'
-                })
-                setOpenModalCli(!openModalCli)
-                setEntidad('');
-                setTelefono('');
-                setDireccion('');
-                setCorreo('');
             } else {
-                setEntidad(final[0].nombre);
-                setTelefono(final[0].telefono);
-                setDireccion(final[0].direccion);
-                setCorreo(final[0].correo);
-                setBtnGuardarCab(false);
+                //Asigna valor de rut validado pero que no existe en DB y activa mostrar model cliente nuevo.
+                setRut(item)
+                setOpenModalCli(true)
             }
-        }
-    } */
+        };
+    }
+    //Limpia formulario Clientes
+    const limpiaFormCte = () => {
+        setRut('');
+        setEntidad('');
+        setTelefono('');
+        setDireccion('');
+        setCorreo('');
+        setBtnGuardarCab(true)
+    }
+    // Filtar por docuemto de protoolo no confirmado => Funcional
+    const consultarprot = async (fam) => {
+        const prot = query(collection(db, 'protocolostest'), where('emp_id', '==', users.emp_id), where('familia', '==', fam)/*, where('confirmado','==',true)*/);
+        const guardaprot = await getDocs(prot);
+        const existeprot = (guardaprot.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, /*id2: index + 1,*/ valorsi: false, valorno: false })))
+        setProtocolo(existeprot.sort((a, b) => a.fechamod - b.fechamod))
+    }
+
+        //esta parte ya no sirve---
+    // // Validar rut
+    // const detectarCli = async (e) => {
+    //     cambiarEstadoAlerta(false);
+    //     cambiarAlerta({});
+    //     if (e.key === 'Enter' || e.key === 'Tab') {
+    //         const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
+    //         const rutCli = await getDocs(cli)
+    //         const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    //         //Patron para valiar rut
+    //         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
+    //         const temp = rut.split('-');
+    //         let digito = temp[1];
+    //         if (digito === 'k' || digito === 'K') digito = -1;
+    //         const validaR = validarRut(rut);
+
+    //         if (!expresionRegularRut.test(rut)) {
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'error',
+    //                 mensaje: 'Formato incorrecto de rut'
+    //             })
+    //             return;
+    //         } else if (validaR !== parseInt(digito)) {
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'error',
+    //                 mensaje: 'Rut no válido'
+    //             })
+    //             return;
+    //         } else if (rutCli.docs.length === 0) {
+    //             cambiarEstadoAlerta(true);
+    //             cambiarAlerta({
+    //                 tipo: 'error',
+    //                 mensaje: 'No existe rut de Cliente'
+    //             })
+    //             setOpenModalCli(!openModalCli)
+    //             setEntidad('');
+    //             setTelefono('');
+    //             setDireccion('');
+    //             setCorreo('');
+    //         } else {
+    //             setEntidad(final[0].nombre);
+    //             setTelefono(final[0].telefono);
+    //             setDireccion(final[0].direccion);
+    //             setCorreo(final[0].correo);
+    //             setBtnGuardarCab(false);
+    //         }
+    //     }
+    // }
     const handleChek = (e) => {
         setChecked(e.target.checked)
     }
@@ -369,14 +367,14 @@ const IngresoEquiposST = () => {
         const formatoDatetimeLocal = fechas.toISOString().slice(0, 16);
         setDate(formatoDatetimeLocal)
     }
-    // valida un Cliente nuevo en formulario modal
+    // Guardar Cliente nuevo
     const validarCli = (e) => {
         e.preventDefault();
         cambiarEstadoAlerta(false);
         cambiarAlerta({});
         //Patron para Comprobar que correo sea correcto
         const expresionRegular = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
-        //Patron para validar rut
+        //Patron para valiar rut
         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
         const temp = rut.split('-');
         let digito = temp[1];
@@ -1033,8 +1031,8 @@ const IngresoEquiposST = () => {
                                     onRequestClose={closeModal}
                                      //item={selectedItem}
                                     />
-                                    )} */}
-                                {/* <Input
+                                    )} 
+                                <Input
                                     disabled={confirmar}
                                     type='numero'
                                     placeholder='Ingrese Rut sin puntos'
@@ -1051,7 +1049,7 @@ const IngresoEquiposST = () => {
                             <ContentElemenSelect>
                                 <Label>Fecha de Ingreso</Label>
                                 <Input
-                                    style={{outlineColor:'#F0A70A'}}  
+                                    style={{ outlineColor: '#F0A70A' }}
                                     disabled={confirmar}
                                     type='datetime-local'
                                     placeholder='Seleccione Fecha'
@@ -1252,6 +1250,7 @@ const IngresoEquiposST = () => {
                             <Table.HeaderCell>Nombre</Table.HeaderCell>
                             <Table.HeaderCell>Date</Table.HeaderCell>
                             <Table.HeaderCell>Estado</Table.HeaderCell>
+                            <Table.HeaderCell>Ingresado por</Table.HeaderCell>
                             <Table.HeaderCell>Confirmar</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -1265,6 +1264,7 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.entidad}</Table.Cell>
                                     <Table.Cell>{formatearFecha(item.date)}</Table.Cell>
                                     <Table.Cell>{item.estado}</Table.Cell>
+                                    <Table.Cell>{item.useradd}</Table.Cell>
                                     <Table.Cell style={{ cursor: 'pointer' }} onClick={() => {
                                         // consultarDet(item);
                                         setFolio(item.folio);
@@ -1356,7 +1356,8 @@ const IngresoEquiposST = () => {
                                     <Table.Cell>{item.serie}</Table.Cell>
                                     <Table.Cell>{item.servicio}</Table.Cell>
                                     <Table.Cell >
-                                        <Link disabled to={`/ingresopdf/${item.id}`}>
+                                        {/* <Link disabled to={`/ingresopdf/${item.id}`}> */}
+                                        <Link disabled to={`/ingresopdf/${item.id}/1`} /*component={IngresoEquiposSTPDF}*/>
                                             <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
                                         </Link>
                                     </Table.Cell>
@@ -1533,19 +1534,19 @@ const IngresoEquiposST = () => {
 export default IngresoEquiposST;
 
 const BotonCerrar = styled.button`
-    position: absolute;
-    top:20px;
-    right: 20px;
-    width: 30px;
-    height: 30px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: all.3s ease all;
-    border-radius: 5px;
-    color: #1766DC;
+                position: absolute;
+                top:20px;
+                right: 20px;
+                width: 30px;
+                height: 30px;
+                border: none;
+                background: none;
+                cursor: pointer;
+                transition: all.3s ease all;
+                border-radius: 5px;
+                color: #1766DC;
 
-    &:hover{
-        background: #f2f2f2;
+                &:hover{
+                    background: #f2f2f2;
     }
-`
+                `

@@ -1,11 +1,12 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ProtocoloCabDB from '../firebase/ProtocoloCabDB';
 import ProtocoloDB from '../firebase/ProtocoloDB';
 import Alertas from './Alertas';
 import Modal from './Modal';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { Programas } from './TipDoc'
 import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
@@ -16,6 +17,7 @@ import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Tit
 import { ContentElemenMov, ContentElemenSelect, ListarEquipos, Select, Formulario, Label, Contenido } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import moment from 'moment';
 import Swal from 'sweetalert2';
 
 const Protocolos = () => {
@@ -41,10 +43,13 @@ const Protocolos = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
+    const [btnGuardar, setBtnGuardar] = useState(false);
     const [btnConfirmar, setBtnConfirmar] = useState(false);
+    const [btnNuevo, setBtnNuevo] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [mostrar, setMostrar] = useState(true);
     const [estadoModal, setEstadoModal] = useState(false);
+    const dias = useRef('');
 
     //Leer los datos de Familia
     const getFamilia = async () => {
@@ -143,6 +148,16 @@ const Protocolos = () => {
         setMostrarProt(documento.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     }
 
+    // Sumar dias
+    const sumarDias = (fecha, dias) => {
+        const dateObj = fecha.toDate();
+        const formatear = moment(dateObj);
+        const nuevafecha = formatear.add(dias, 'days');
+        const ultima = new Date(nuevafecha)
+        // return nuevafecha.format('DD/MM/YYYY HH:mm');
+        return ultima;
+    }
+
     const filtroItem = () => {
         const buscar = buscador.toLocaleUpperCase();
         if (buscar.length === 0)
@@ -152,6 +167,98 @@ const Protocolos = () => {
     }
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         setBuscardor(target.value)
+    }
+    const handleCheckboxChange = (event) => {
+        setConfirmar(event.target.checked);
+    };
+    // Agregar Cabecera de Protocolo
+    const addCabProtocolo = async (ev) => {
+        ev.preventDefault();
+        cambiarEstadoAlerta(false);
+        cambiarAlerta({});
+        // Filtar por docuemto de Cabecera de Protocolo
+        const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
+        const cabecera = await getDocs(cabProtocolo);
+        const existeCabProtocolo = (cabecera.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
+
+        if (nomFamilia.length === 0 || nomFamilia === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccine Familia'
+            })
+            return;
+        } else if (nomTipo.length === 0 || nomTipo === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Tipo de Equipamiento'
+            })
+            return;
+        } else if (programa.length === 0 || programa === 'Selecciona Opción:') {
+            cambiarEstadoAlerta(true);
+            cambiarAlerta({
+                tipo: 'error',
+                mensaje: 'Seleccione Programa'
+            })
+            return;
+        } else if (existeCabProtocolo.length > 0) {
+            if (existeCabProtocolo[0].confirmado) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este Protocolo y se encuentra confirmado'
+                })
+            } else {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: 'Ya existe este Protocolo. Falta confirmar'
+                })
+            }
+        } else {
+            if (programa === 'ANUAL') {
+                dias.current = 365
+            } else if (programa === 'SEMESTRAL') {
+                dias.current = 180
+            } else {
+                dias.current = 90
+            }
+            try {
+                ProtocoloCabDB({
+                    nombre: 'PAUTA DE MANTENCIÓN ' + programa,
+                    familia: nomFamilia,
+                    tipo: nomTipo,
+                    programa: programa,
+                    dias: dias.current,
+                    userAdd: user.email,
+                    userMod: user.email,
+                    fechaAdd: fechaAdd,
+                    fechaMod: fechaMod,
+                    emp_id: users.emp_id,
+                    confirmado: false
+                })
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'exito',
+                    mensaje: 'Ingreso realizado exitosamente'
+                })
+                // setNomFamilia('');
+                // setNomTipo('');
+                // setPrograma('');
+                setFlag(!flag);
+                setConfirmar(false);
+                setBtnGuardar(true);
+                setBtnNuevo(false);
+                return;
+            } catch (error) {
+                cambiarEstadoAlerta(true);
+                cambiarAlerta({
+                    tipo: 'error',
+                    mensaje: error
+                })
+            }
+        }
     }
     // Agregar Item a Protocolo
     const AgregarItem = async (id) => {
@@ -202,6 +309,8 @@ const Protocolos = () => {
                 })
                 setFlag(!flag);
                 setConfirmar(false);
+                setBtnGuardar(true);
+                setBtnNuevo(false);
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -221,36 +330,92 @@ const Protocolos = () => {
         const cabProtocolo = query(collection(db, 'protocoloscab'), where('emp_id', '==', users.emp_id), where('familia', '==', nomFamilia), where('tipo', '==', nomTipo), where('programa', '==', programa));
         const cabecera = await getDocs(cabProtocolo);
         const existeCabProtocolo = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // Buscar coincidencias de equipos
+        const traerEq = query(collection(db, 'equipos'), where('emp_id', '==', users.emp_id), where('tipo', '==', nomTipo));
+        const dato = await getDocs(traerEq);
+        const equipo = (dato.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
         if (protocolo.length === 0) {
             Swal.fire('No hay Datos por confirmar en este documento');
         } else {
-            // Actualizar la cabecera de protocolos
-            try {
-                await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
-                    confirmado: true,
-                    usermod: user.email,
-                    fechamod: fechaMod
+            if (equipo.length > 0) {
+                // Crea una nueva instancia de lote (batch)
+                const batch = writeBatch(db);
+                // Obtiene una referencia a una colección específica en Firestore
+                const mantoRef = collection(db, 'mantenciones');
+                // Itera a través de los nuevos documentos y agrégalos al lote
+                equipo.forEach((docs) => {
+                    const nuevoDocRef = doc(mantoRef); // Crea una referencia de documento vacía (Firestore asignará un ID automáticamente)
+                    batch.set(nuevoDocRef, {
+                        cab_id_protocol: existeCabProtocolo[0].id,
+                        nombre_protocolo: existeCabProtocolo[0].nombre,
+                        programa: existeCabProtocolo[0].programa,
+                        dias: existeCabProtocolo[0].dias,
+                        fecha_inicio: existeCabProtocolo[0].fechaadd,
+                        fecha_termino: sumarDias(existeCabProtocolo[0].fechaadd, existeCabProtocolo[0].dias),
+                        id_eq: docs.id,
+                        familia: docs.familia,
+                        tipo: docs.tipo,
+                        serie: docs.serie,
+                        useradd: user.email,
+                        usermod: user.email,
+                        fechaadd: fechaAdd,
+                        fechamod: fechaMod,
+                        emp_id: users.emp_id,
+                        enproceso: '0'
+                    });
                 });
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'exito',
-                    mensaje: 'Documento confirmado exitosamente.'
-                });
-            } catch (error) {
-                cambiarEstadoAlerta(true);
-                cambiarAlerta({
-                    tipo: 'error',
-                    mensaje: 'Error al confirmar Cabecera:', error
-                })
+                batch.commit()
+                    .then(() => {
+                        cambiarEstadoAlerta(true);
+                        cambiarAlerta({
+                            tipo: 'exito',
+                            mensaje: 'Docuemento creado correctamente.'
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire('Se ha producido un error al agregar equipos al Protocolo de mantención');
+                    });
+
+                // Actualizar la cabecera de protocolos
+                try {
+                    await updateDoc(doc(db, 'protocoloscab', existeCabProtocolo[0].id), {
+                        confirmado: true,
+                        usermod: user.email,
+                        fechamod: fechaMod
+                    });
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'exito',
+                        mensaje: 'Documento confirmado exitosamente.'
+                    });
+                } catch (error) {
+                    cambiarEstadoAlerta(true);
+                    cambiarAlerta({
+                        tipo: 'error',
+                        mensaje: 'Error al confirmar Cabecera:', error
+                    })
+                }
             }
+            setFlag(!flag)
+            setNomFamilia('');
+            setNomTipo('');
+            setPrograma('');
+            setConfirmar(false);
+            setBtnGuardar(false);
+            setBtnConfirmar(true);
+            setBtnNuevo(true);
         }
-        setFlag(!flag)
+    }
+
+    // Agregar una nueva cabecera
+    const nuevo = () => {
         setNomFamilia('');
         setNomTipo('');
         setPrograma('');
-        setConfirmar(false);
+        setBtnGuardar(false);
         setBtnConfirmar(true);
+        setBtnNuevo(true);
     }
 
     useEffect(() => {
@@ -259,6 +424,7 @@ const Protocolos = () => {
         consultarCabProt();
         consultarProtocolos();
         consultarCabProtConf();
+        // getEmpresa();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -315,6 +481,20 @@ const Protocolos = () => {
                             </Select>
                         </ContentElemenSelect>
                     </ContentElemenMov>
+                    <BotonGuardar
+                        style={{ margin: '10px 10px' }}
+                        onClick={addCabProtocolo}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnGuardar}
+                    >Guardar</BotonGuardar>
+                    <BotonGuardar
+                        style={{ margin: '10px 0' }}
+                        onClick={nuevo}
+                        checked={confirmar}
+                        onChange={handleCheckboxChange}
+                        disabled={btnNuevo}
+                    >Nuevo</BotonGuardar>
                 </Formulario>
             </Contenedor>
             <Contenedor>
@@ -435,7 +615,9 @@ const Protocolos = () => {
                                         setNomFamilia(item.familia);
                                         setNomTipo(item.tipo)
                                         setPrograma(item.programa);
-                                        setConfirmar(true);
+                                        setBtnGuardar(true);
+                                        // setConfirmar(true);
+                                        setBtnNuevo(false)
                                         setBtnConfirmar(false)
                                         setFlag(!flag)
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
@@ -468,7 +650,7 @@ const Protocolos = () => {
                                     <Table.Cell >{item.nombre}</Table.Cell>
                                     <Table.Cell >{item.familia}</Table.Cell>
                                     <Table.Cell >{item.tipo}</Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center', cursor: 'pointer' }}
+                                    <Table.Cell style={{ textAlign: 'center', cursor:'pointer' }}
                                         title='Ver Items'
                                         onClick={() => {
                                             leerProt(item.id)
