@@ -19,6 +19,7 @@ const TablaInfo = ({ ingreso, presupuesto, presupuestoCab }) => {
         setUsuarioIngreso(traeuser);
     }
     const usuario = usuarioIngreso.filter(usuario => usuario.correo === ingreso.useradd);
+    const total = presupuesto.reduce((total, dato) => total + dato.price, 0);
 
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -32,7 +33,6 @@ const TablaInfo = ({ ingreso, presupuesto, presupuestoCab }) => {
         consultarUsuario();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    console.log(presupuesto)
 
     return (
         <>
@@ -115,6 +115,12 @@ const TablaInfo = ({ ingreso, presupuesto, presupuestoCab }) => {
                                         )
                                     })}
                                 </Table.Body>
+                                <Table.Footer>
+                                    <Table.Row>
+                                        <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colspan='3'>Total</Table.HeaderCell>
+                                        <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Footer>
                             </Table>
 
                             <div style={{ fontSize: '12px', lineHeight: '10px' }}>

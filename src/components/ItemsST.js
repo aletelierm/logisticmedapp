@@ -155,6 +155,9 @@ const ItemsTest = () => {
         const nuevoFiltro = leer.filter(it => it.nombre.includes(buscar));
         return nuevoFiltro.slice( /* pagina, pagina + 5 */);
     }
+    const test = filtroItem().filter((t) => t.categoria === 'TEST INGRESO');
+    const rys = filtroItem().filter((t) => t.categoria !== 'TEST INGRESO');
+
     const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
         // setPagina(0);
         setBuscardor(target.value)
@@ -271,15 +274,15 @@ const ItemsTest = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {filtroItem().map((item, index) => (
-                                item.categoria === 'TEST INGRESO' && (
+                            {test.map((item, index) => (
+                                // item.categoria === 'TEST INGRESO' && (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                         <Table.Cell>{item.categoria}</Table.Cell>
                                         {/* <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell> */}
                                     </Table.Row>
-                                )
+                                // )
                             )
                             )}
                         </Table.Body>
@@ -333,15 +336,15 @@ const ItemsTest = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {filtroItem().map((item, index) => (
-                                item.categoria !== 'TEST INGRESO' && (
+                            {rys.map((item, index) => (
+                                // item.categoria !== 'TEST INGRESO' && (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>
                                         <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
                                         <Table.Cell>{item.categoria}</Table.Cell>
                                         <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
                                     </Table.Row>
-                                )
+                                // )
                             )
                             )}
                         </Table.Body>
