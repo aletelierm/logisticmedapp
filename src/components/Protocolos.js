@@ -42,7 +42,7 @@ const Protocolos = () => {
     const [buscador, setBuscardor] = useState('');
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
-    const [btnConfirmar, setBtnConfirmar] = useState(false);
+    const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [mostrar, setMostrar] = useState(true);
     const [estadoModal, setEstadoModal] = useState(false);
@@ -303,13 +303,10 @@ const Protocolos = () => {
                     tipo: 'exito',
                     mensaje: 'Ingreso realizado exitosamente'
                 })
-                setNomFamilia('');
-                setNomTipo('');
-                setPrograma('');
+                setConfirmar(true);
+                setBtnGuardar(true);
+                setBtnNuevo(false);
                 setFlag(!flag);
-                setConfirmar(false);
-                setBtnGuardar(false);
-                // setBtnNuevo(false);
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -368,7 +365,7 @@ const Protocolos = () => {
                     mensaje: 'Item Agregado correctamente'
                 })
                 setFlag(!flag);
-                setConfirmar(false);
+                setBtnConfirmar(false)
                 return;
             } catch (error) {
                 cambiarEstadoAlerta(true);
@@ -404,6 +401,13 @@ const Protocolos = () => {
                     tipo: 'exito',
                     mensaje: 'Documento confirmado exitosamente.'
                 });
+                setFlag(!flag)
+                setNomFamilia('');
+                setNomTipo('');
+                setPrograma('');
+                setConfirmar(false);
+                setBtnConfirmar(true);
+                setBtnNuevo(true);
             } catch (error) {
                 cambiarEstadoAlerta(true);
                 cambiarAlerta({
@@ -412,12 +416,6 @@ const Protocolos = () => {
                 })
             }
         }
-        setFlag(!flag)
-        setNomFamilia('');
-        setNomTipo('');
-        setPrograma('');
-        setConfirmar(false);
-        setBtnConfirmar(true);
     }
 
     // Agregar una nueva cabecera
@@ -427,6 +425,7 @@ const Protocolos = () => {
         setPrograma('');
         setBtnGuardar(false);
         setBtnNuevo(true);
+        setBtnConfirmar(true);
     }
 
     useEffect(() => {
@@ -626,8 +625,10 @@ const Protocolos = () => {
                                         setNomTipo(item.tipo)
                                         setPrograma(item.programa);
                                         setConfirmar(true);
-                                        setBtnConfirmar(false)
-                                        setFlag(!flag)
+                                        setBtnConfirmar(false);
+                                        setBtnGuardar(true);
+                                        setBtnNuevo(false);
+                                        setFlag(!flag);
                                     }}><FaIcons.FaArrowCircleUp style={{ fontSize: '20px', color: '#328AC4' }} /></Table.Cell>
                                 </Table.Row>
                             )
