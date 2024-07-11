@@ -242,6 +242,11 @@ const Asignar = () => {
             </div>
         )
     }
+
+    const handleSeleccion = ( e ) =>{
+        const tecnico = e.target.value;
+        setTecnico(tecnico);
+    }
   
     useEffect(() => {
         getIngresostcab();
@@ -506,10 +511,10 @@ const Asignar = () => {
                                 mostrarSelec && (
                                     <ContentElemen>
                                         <Label>Seleccionar Usuario:</Label>
-                                        <Select value={tecnico} onChange={e => setTecnico(e.target.value)} >
+                                        <Select value={tecnico} onChange={handleSeleccion} >
                                             <option>Selecciona Tecnico:</option>
                                             {usuarios.map((objeto, index) => {
-                                                return (<option key={index}>{objeto.correo}</option>)
+                                                return (<option key={objeto.id} value={objeto.correo}>{objeto.nombre+' '+objeto.apellido}</option>)
                                                 // return (<option key={index}>{objeto.correo}</option>)
                                             })}
                                         </Select>

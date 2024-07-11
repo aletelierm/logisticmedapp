@@ -10,14 +10,17 @@ import { UserContext } from '../context/UserContext';
 import { NavSesion, ContenedorImagenSesion, ContenedorImagenSesion2, UserSesion, TextoNavSesion, BotonSesion, BotonSesion2 } from '../elementos/Navbar';
 
 const NavbarSesion = () => {
+    
     const { users } = useContext(UserContext);//Contexto Global
     const navigate = useNavigate();
+    console.log(users)
     let fechaActual = format(new Date(), `dd 'de' MMMM 'de' yyyy`);
     /*  let horaActual = format (new Date(), `k ':' m`) */
     const cerrarSesion = () => {
         signOut(auth)
         navigate('/');
     }
+
 
     return (
         <>       

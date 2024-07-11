@@ -16,7 +16,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUsers } = useContext(UserContext);
+  const { setUsers, login } = useContext(UserContext);
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -36,6 +36,7 @@ export default function Login() {
         const docum = await getDoc(doc(db, 'usuarios', id));
         if (docum.exists) {
           setUsers(docum.data())
+          login(docum.data())
         }
       } catch (error) {
         console.log('Error de usuario', error)
