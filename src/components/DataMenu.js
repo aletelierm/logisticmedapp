@@ -168,11 +168,6 @@ export const DataMenu = [
         icon: <IoIcons.IoIosAlbums />
       },
       {
-        title: 'Programa Mant.',
-        path: 'alertamantencion/programa',
-        icon: <FaIcons.FaRegClock />,
-      },
-      {
         title: 'Protocolos',
         path: 'serviciotecnico/protocolos',
         icon: <IoIcons.IoIosAlbums />
