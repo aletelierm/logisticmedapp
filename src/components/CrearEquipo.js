@@ -34,7 +34,6 @@ const CrearEquipos = () => {
     const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
     const [equipo, setEquipo] = useState([]);
     const [buscador, setBuscardor] = useState('');
-    const [categoria, setCategoria] = useState('Tipo')
     const [flag, setFlag] = useState(false);
     const [estadoModal, setEstadoModal] = useState(false);
     const [status, setStatus] = useState([]);
@@ -165,31 +164,13 @@ const CrearEquipos = () => {
     // Ordenar el arreglo de objetos por múltiples campos
     equipo.sort(ordenar);
 
-    // Buscador de equipos
-    const filtro = () => {
-        const buscar = buscador.toLocaleUpperCase();
-        if (buscar.length === 0)
-            return equipo.slice(/*pagina, pagina + 5*/);
-        if (categoria === 'Familia') {
-            const nuevoFiltroFamilia = equipo.filter(eq => eq.familia.includes(buscar));
-            return nuevoFiltroFamilia.slice(/*pagina, pagina + 5*/);
-        } else if (categoria === 'Tipo') {
-            const nuevoFiltroTipo = equipo.filter(eq => eq.tipo.includes(buscar));
-            return nuevoFiltroTipo.slice(/*pagina, pagina + 5*/);
-        } else if (categoria === 'Marca') {
-            const nuevoFiltro = equipo.filter(eq => eq.marca.includes(buscar));
-            return nuevoFiltro.slice(/*pagina, pagina + 5*/);
-        } else if (categoria === 'Modelo') {
-            const nuevoFiltro = equipo.filter(eq => eq.modelo.includes(buscar));
-            return nuevoFiltro.slice(/*pagina, pagina + 5*/);
-        } else if (categoria === 'N°Serie') {
-            const nuevoFiltro = equipo.filter(eq => eq.serie.includes(buscar));
-            return nuevoFiltro.slice(/*pagina, pagina + 5*/);
-        }
-    }
-    const onBuscarCambios = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        setBuscardor(target.value)
-    }
+    // Filtrar los datos basado en el valor de búsqueda
+  const filteredEquipo = equipo.filter(item =>
+    Object.keys(item).some(key =>
+      String(item[key]).toLowerCase().includes(buscador.toLowerCase())
+    )
+  );
+    
 
     useEffect(() => {
         getFamilia();
@@ -425,7 +406,7 @@ const CrearEquipos = () => {
                 <ContentElemenAdd>
                     <Titulo>Listado de Dispositivos Médicos</Titulo>
                 </ContentElemenAdd>
-                <ContentElemenSelect>
+                {/* <ContentElemenSelect>
                     <Label>Buscar Por</Label>
                     <Select required value={categoria} onChange={e => setCategoria(e.target.value)} >
                         <option>Familia</option>
@@ -434,14 +415,14 @@ const CrearEquipos = () => {
                         <option>Modelo</option>
                         <option>N°Serie</option>
                     </Select>
-                </ContentElemenSelect>
+                </ContentElemenSelect> */}
                 <ContentElemenAdd>
                     <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} title='Buscar Equipos' />
                     <Input style={{ width: '100%' }}
                         type='text'
-                        placeholder={`Buscar ${categoria}`}
+                        placeholder='Buscar Equipo...'
                         value={buscador}
-                        onChange={onBuscarCambios}
+                        onChange={e => setBuscardor(e.target.value)}
                     />
                     <FaIcons.FaFileExcel onClick={ExportarXls} style={{ fontSize: '20px', color: '#328AC4', marginLeft: '20px', cursor:'pointer' }} title='Exportar Equipos a Excel' />
                 </ContentElemenAdd>
@@ -461,7 +442,7 @@ const CrearEquipos = () => {
                     </Table.Header>
                     <Table.Body style={{fontSize: '12px'}}>
                         {
-                            filtro().map((item, index) => {
+                            filteredEquipo.map((item, index) => {
                                 return (
                                     <Table.Row key={item.id2}>
                                         <Table.Cell>{index + 1}</Table.Cell>
