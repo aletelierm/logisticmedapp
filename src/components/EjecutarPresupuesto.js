@@ -38,6 +38,7 @@ const EjecutarPresupuesto = () => {
   const [presupuestoCab, setPresupuestoCab] = useState([]);
   const [presupuesto, setPresupuesto] = useState([]);
   const [item, setItem] = useState([]);
+  const [valorizado, setValorizado] = useState('');
   // const [preCabConf, setpreCabConf] = useState('');
   const [folio, setFolio] = useState('');
   // const [rut, setRut] = useState('');
@@ -103,6 +104,10 @@ const EjecutarPresupuesto = () => {
     const existePresupuesto = (presu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     setPresupuesto(existePresupuesto);
   }
+  // setValorizado(presupuesto.reduce((total, dato)=>total+dato.price,0));
+  // console.log('valorizado',valorizado)
+  const total = presupuesto.reduce((total, dato) => total + dato.price, 0);
+
   // Listado de Items Test Ingreso => Funcional
   const getItem = async () => {
     const traerit = collection(db, 'itemsst');
@@ -346,6 +351,7 @@ const EjecutarPresupuesto = () => {
   useEffect(() => {
     getItem();
     consultarPresupuesto();
+    consultarPresupuestoCab();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flag, setFlag])
 
@@ -371,11 +377,11 @@ const EjecutarPresupuesto = () => {
           </div>
         </ContenedorProveedor>
         :
+
         <>
           <Contenedor>
             <Titulo>Crear Presupuesto</Titulo>
           </Contenedor>
-
           <Contenedor>
             <TablaInfo ingreso={ingreso} presupuesto={presupuesto} presupuestoCab={presupuestoCab} />
             {/* Informacion Cliente */}
@@ -472,6 +478,13 @@ const EjecutarPresupuesto = () => {
                       )
                     })}
                   </Table.Body>
+                  <Table.Footer>
+                    <Table.Row>
+                      <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colspan='3'>Total</Table.HeaderCell>
+                      <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
+                      <Table.HeaderCell></Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Footer>
                 </Table>
               </ListarEquipos>
               <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>

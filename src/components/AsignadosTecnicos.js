@@ -127,6 +127,7 @@ const AsignadosTecnicos = () => {
                             <Table.HeaderCell>Servicio</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
                             <Table.HeaderCell>Ejecutar</Table.HeaderCell>
+                            <Table.HeaderCell>Estado</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -155,6 +156,7 @@ const AsignadosTecnicos = () => {
                                             <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
                                         {/* </Link> */}
                                     </Table.Cell>
+                                    <Table.Cell></Table.Cell>
                                 </Table.Row>
                             )
                         })}

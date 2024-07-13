@@ -44,7 +44,7 @@ const Protocolos = () => {
     const [flag, setFlag] = useState(false);
     const [confirmar, setConfirmar] = useState(false);
     const [btnGuardar, setBtnGuardar] = useState(false);
-    const [btnConfirmar, setBtnConfirmar] = useState(false);
+    const [btnConfirmar, setBtnConfirmar] = useState(true);
     const [btnNuevo, setBtnNuevo] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [mostrar, setMostrar] = useState(true);
