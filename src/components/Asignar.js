@@ -38,7 +38,7 @@ const Asignar = () => {
     const [flag, setFlag] = useState(false);
     const [tituloModal, setTituloModal] = useState('');
     const [mostrarSelec, setMostrarSelec] = useState(false);
-   
+
     // Leer datos de cabecera Ingresados
     const getIngresostcab = async () => {
         const traerCabecera = collection(db, 'ingresostcab');
@@ -175,7 +175,7 @@ const Asignar = () => {
                     <h2 style={{ color: '#ffffff' }}>Se le ha asignado la Orden de Ingreso N° {data[0].folio}</h2>
                 </div>
                 <br />
-                <div style={{backgroundColor: '#EAF1FB'}}>
+                <div style={{ backgroundColor: '#EAF1FB' }}>
                     {/* Informacion Cliente */}
                     <div style={{ fontSize: '14px', textAlign: 'center' }}>
                         <table style={{ borderCollapse: 'collapse', border: '4px solid #C8C8C8', letterSpacing: '1px', fontSize: '0.8rem', display: 'inline' }}>
@@ -243,11 +243,11 @@ const Asignar = () => {
         )
     }
 
-    const handleSeleccion = ( e ) =>{
+    const handleSeleccion = (e) => {
         const tecnico = e.target.value;
         setTecnico(tecnico);
     }
-  
+
     useEffect(() => {
         getIngresostcab();
         leerUsuarios();
@@ -514,7 +514,7 @@ const Asignar = () => {
                                         <Select value={tecnico} onChange={handleSeleccion} >
                                             <option>Selecciona Tecnico:</option>
                                             {usuarios.map((objeto, index) => {
-                                                return (<option key={objeto.id} value={objeto.correo}>{objeto.nombre+' '+objeto.apellido}</option>)
+                                                return (<option key={objeto.id} value={objeto.correo}>{objeto.nombre + ' ' + objeto.apellido}</option>)
                                                 // return (<option key={index}>{objeto.correo}</option>)
                                             })}
                                         </Select>

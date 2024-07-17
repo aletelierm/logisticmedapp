@@ -1,18 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import generatePDF from 'react-to-pdf'
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query } from 'firebase/firestore';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Table } from 'semantic-ui-react';
-import { ContenedorProveedor, Titulo, BotonGuardar, Subtitulo } from '../elementos/General'
+import { ContenedorProveedor, Subtitulo } from '../elementos/General';
 import moment from 'moment';
 
-const TablaInfo = ({ ingreso, id_cab_pre }) => {
-    const { users } = useContext(UserContext)
+const TablaInfo = ({ ingreso, presupuestoCab, id_cab_pre }) => {
+    const { users } = useContext(UserContext);
     const [usuarioIngreso, setUsuarioIngreso] = useState([]);
     const [presupuesto, setPresupuesto] = useState([]);
-    const targetRef = useRef();
 
     //Consultar usuario
     const consultarUsuario = async () => {
@@ -31,6 +29,7 @@ const TablaInfo = ({ ingreso, id_cab_pre }) => {
     }
     const usuario = usuarioIngreso.filter(usuario => usuario.correo === ingreso.useradd);
     const total = presupuesto.reduce((total, dato) => total + dato.price, 0);
+    // const total = 0
 
     const formatearFecha = (fecha) => {
         const dateObj = fecha.toDate();
@@ -38,20 +37,6 @@ const TablaInfo = ({ ingreso, id_cab_pre }) => {
         // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
         return formatear;
     }
-
-    // Configuración de react-to-pdf
-    const Options = {
-        filename: 'Documento.pdf',
-        margin: {
-            top: '1in', // Margen superior
-            right: '1in', // Margen derecho
-            bottom: '1in', // Margen inferior
-            left: '1in' // Margen izquierdo
-        },
-        orientation: 'landscape', // Orientación del PDF
-        unit: 'in', // Unidad de medida
-        format: 'a4' // Formato del PDF
-    };
 
     useEffect(() => {
         // consultarTest();
@@ -61,19 +46,9 @@ const TablaInfo = ({ ingreso, id_cab_pre }) => {
     }, [])
 
     return (
-        <ContenedorProveedor>
+        <>
             <ContenedorProveedor>
-                <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
-                    {/* cabecera pdf */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div>
-                            <img src={`../../${users.emp_id}.png`} alt='LogoEmprsa' style={{ height: '140px' }} />
-                        </div>
-                        <div style={{ marginTop: '50px', marginRight: '30px' }}>
-                            <h3>www.dormirbien.cl</h3>
-                        </div>
-                    </div>
-                    <Titulo style={{ fontSize: '24px' }}>Presupuesto</Titulo>
+                <ContenedorProveedor /*style={{ padding: '40px' }} ref={targetRef} */ >
                     {/* Informacion Cliente */}
                     <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
                     <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
@@ -127,51 +102,55 @@ const TablaInfo = ({ ingreso, id_cab_pre }) => {
                     </Table>
 
                     {/* Informacion Presuuesto */}
-                    <Subtitulo style={{ fontSize: '18px' }}>Presupuesto</Subtitulo>
-                    <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>N°</Table.HeaderCell>
-                                <Table.HeaderCell>Item</Table.HeaderCell>
-                                <Table.HeaderCell>Categoria</Table.HeaderCell>
-                                <Table.HeaderCell>Precio</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {presupuesto.map((item, index) => {
-                                return (
-                                    <Table.Row key={index}>
-                                        <Table.Cell>{index + 1}</Table.Cell>
-                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                                        <Table.Cell>{item.categoria}</Table.Cell>
-                                        <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                    {presupuestoCab.length > 0 ?
+                        <>
+                            <Subtitulo style={{ fontSize: '18px' }}>Presupuesto</Subtitulo>
+                            <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell>N°</Table.HeaderCell>
+                                        <Table.HeaderCell>Item</Table.HeaderCell>
+                                        <Table.HeaderCell>Categoria</Table.HeaderCell>
+                                        <Table.HeaderCell>Precio</Table.HeaderCell>
                                     </Table.Row>
-                                )
-                            })}
-                        </Table.Body>
-                        <Table.Footer>
-                            <Table.Row>
-                                <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colSpan='3'>Total</Table.HeaderCell>
-                                <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Footer>
-                    </Table>
-                    <div style={{ fontSize: '12px', lineHeight: '10px' }}>
-                        <h4 style={{ margin: '14px 0px' }}>{usuario.map((user, index) => {
-                            return (<h4 key={index}>Ingresado por: {user.nombre}  {user.apellido}</h4>)
-                        })}</h4>
+                                </Table.Header>
+                                <Table.Body>
+                                    {presupuesto.map((item, index) => {
+                                        return (
+                                            <Table.Row key={index}>
+                                                <Table.Cell>{index + 1}</Table.Cell>
+                                                <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                                                <Table.Cell>{item.categoria}</Table.Cell>
+                                                <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                                            </Table.Row>
+                                        )
+                                    })}
+                                </Table.Body>
+                                <Table.Footer>
+                                    <Table.Row>
+                                        <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colSpan='3'>Total</Table.HeaderCell>
+                                        <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Footer>
+                            </Table>
 
-                        <h5 style={{ margin: '14px 0px' }}>SERVICIO TÉCNICO</h5>
-                        <p>soporte@dormirbien.cl</p>
-                        <p>General Parra #674 Oficina H, Providencia</p>
-                        <p>Contacto: +569 76321481 / +569 54234538</p>
-                    </div>
+                            <div style={{ fontSize: '12px', lineHeight: '10px' }}>
+                                <h4 style={{ margin: '14px 0px' }}>{usuario.map((user, index) => {
+                                    return (<h4 key={index}>Ingresado por: {user.nombre}  {user.apellido}</h4>)
+                                })}</h4>
+
+                                <h5 style={{ margin: '14px 0px' }}>SERVICIO TÉCNICO</h5>
+                                <p>soporte@dormirbien.cl</p>
+                                <p>General Parra #674 Oficina H, Providencia</p>
+                                <p>Contacto: +569 76321481 / +569 54234538</p>
+                            </div>
+                        </>
+                        :
+                        ''
+                    }
                 </ContenedorProveedor>
-                <div>
-                    <BotonGuardar onClick={() => generatePDF(targetRef, Options)}>Descargar PDF</BotonGuardar>
-                </div>
             </ContenedorProveedor>
-        </ContenedorProveedor>
+        </>
     )
 }
 

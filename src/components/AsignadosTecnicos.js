@@ -4,7 +4,7 @@ import { ListarProveedor, Titulo, BotonGuardar } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
 import { auth, db } from '../firebase/firebaseConfig';
 import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
@@ -65,8 +65,6 @@ const AsignadosTecnicos = () => {
 
     //Ordenar fechas
     const asignarOrd = asignar.sort((a, b) => a.folio - b.folio);
-    // console.log('asignar', asignarOrd)
-    // console.log('mostrar', mostrarDet)
     // Cerrar Asignación
     const cerrar = async (id, folio) => {
         cambiarEstadoAlerta(false);
@@ -99,7 +97,6 @@ const AsignadosTecnicos = () => {
             })
         }
     }
-    // console.log(cerrar)
 
     useEffect(() => {
         getIngresostcab();
@@ -151,10 +148,13 @@ const AsignadosTecnicos = () => {
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
-                                        {/* <Link disabled to={`/ejecutarpresupuesto/${item.id}`}> */}
-                                            {/* <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} />  */}
+                                        {item.servicio === 'PRESUPUESTO' ?
+                                            <Link disabled to={`/ejecutarpresupuesto/${item.id}`}>
+                                                <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} />
+                                            </Link>
+                                            :
                                             <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
-                                        {/* </Link> */}
+                                        }
                                     </Table.Cell>
                                     <Table.Cell></Table.Cell>
                                 </Table.Row>
