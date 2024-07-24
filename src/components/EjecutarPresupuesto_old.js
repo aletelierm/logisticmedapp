@@ -1,12 +1,11 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useRef } from 'react';
-import generatePDF from 'react-to-pdf'
 import Alertas from './Alertas';
 import PresupuestoCabDB from '../firebase/PresupuestoCabDB';
 import PresupuestoDB from '../firebase/PresupuestoDB';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, deleteDoc/*addDoc, setDoc */ } from 'firebase/firestore';
+import { getDocs, collection, where, query, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
 import * as FaIcons from 'react-icons/fa';
@@ -14,10 +13,11 @@ import { RiPlayListAddLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
 import { TbNotesOff } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
-import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Overlay, ConfirmaModal, ConfirmaBtn, Boton2 } from '../elementos/General'
+import { ContenedorProveedor, Contenedor, ContentElemenAdd, ListarProveedor, Titulo, InputAdd, BotonGuardar, Boton, Subtitulo, Overlay, ConfirmaModal, ConfirmaBtn, Boton2 } from '../elementos/General'
 import { ListarEquipos } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import moment from 'moment';
 import Swal from 'sweetalert2';
 import TablaInfo from './TablaInfo';
 
@@ -38,6 +38,18 @@ const EjecutarPresupuesto = () => {
   const [presupuesto, setPresupuesto] = useState([]);
   const [item, setItem] = useState([]);
   const [folio, setFolio] = useState('');
+  const [rut, setRut] = useState('');
+  const [entidad, setEntidad] = useState('');
+  const [date, setDate] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [direccion, setDireccion] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [familia, setFamilia] = useState('');
+  const [tipo, setTipo] = useState('');
+  const [marca, setMarca] = useState('');
+  const [modelo, setModelo] = useState('');
+  const [serie, setSerie] = useState('');
+  const [servicio, setServicio] = useState('');
   const [buscador, setBuscardor] = useState('');
   const [flag, setFlag] = useState(false);
   const [btnCab, setBtnCab] = useState(false);
@@ -50,7 +62,6 @@ const EjecutarPresupuesto = () => {
   const [itemDelete, setItemdelete] = useState(false);
   const documentoId = useRef('');
 
-
   const volver = () => {
     navigate('/serviciotecnico/asignadostecnicos')
   }
@@ -58,24 +69,24 @@ const EjecutarPresupuesto = () => {
   useEffect(() => {
     if (ingreso) {
       setFolio(ingreso.folio);
-      // setRut(ingreso.rut);
-      // setEntidad(ingreso.entidad);
-      // setDate(ingreso.date);
-      // setTelefono(ingreso.telefono);
-      // setDireccion(ingreso.direccion);
-      // setCorreo(ingreso.correo);
-      // setFamilia(ingreso.familia);
-      // setTipo(ingreso.tipo);
-      // setMarca(ingreso.marca);
-      // setModelo(ingreso.modelo);
-      // setSerie(ingreso.serie);
-      // setServicio(ingreso.servicio);
+      setRut(ingreso.rut);
+      setEntidad(ingreso.entidad);
+      setDate(ingreso.date);
+      setTelefono(ingreso.telefono);
+      setDireccion(ingreso.direccion);
+      setCorreo(ingreso.correo);
+      setFamilia(ingreso.familia);
+      setTipo(ingreso.tipo);
+      setMarca(ingreso.marca);
+      setModelo(ingreso.modelo);
+      setSerie(ingreso.serie);
+      setServicio(ingreso.servicio);
     } else {
       navigate('/serviciotecnico/asignadostecnicos')
     }
   }, [ingreso, navigate])
 
-  // Cabecera de presupuesto confirmado => Funcional
+  // Detalle de Ingreso de equipo => Funcional
   const consultarPresupuestoCab = async () => {
     const pre = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
     const presu = await getDocs(pre);
@@ -84,7 +95,6 @@ const EjecutarPresupuesto = () => {
     setId_cab_pre(existePresupuesto[0].id);
   }
   const presupuestoCabConf = presupuestoCab.filter(pc => pc.confirmado === true);
-  
   // Detalle de Ingreso de equipo => Funcional
   const consultarPresupuesto = async () => {
     const pre = query(collection(db, 'presupuestos'), where('emp_id', '==', users.emp_id), where('id_cab_pre', '==', id_cab_pre));
@@ -92,8 +102,7 @@ const EjecutarPresupuesto = () => {
     const existePresupuesto = (presu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     setPresupuesto(existePresupuesto);
   }
-  const total = presupuesto.reduce((total, dato) => total + dato.price, 0); 
-
+  const total = presupuesto.reduce((total, dato) => total + dato.price, 0);
   // Listado de Items Test Ingreso => Funcional
   const getItem = async () => {
     const traerit = collection(db, 'itemsst');
@@ -110,13 +119,13 @@ const EjecutarPresupuesto = () => {
     if (nameA > nameB) { return 1; }
     return 0;
   });
-  // // Cambiar fecha
-  // const formatearFecha = (fecha) => {
-  //   const dateObj = fecha.toDate();
-  //   const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
-  //   // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
-  //   return formatear;
-  // }
+  // Cambiar fecha
+  const formatearFecha = (fecha) => {
+    const dateObj = fecha.toDate();
+    const formatear = moment(dateObj).format('DD/MM/YYYY HH:mm');
+    // const fechaHoyF = moment(fechaHoy).format('DD/MM/YYYY HH:mm');
+    return formatear;
+  }
   const filtroItem = () => {
     const buscar = buscador.toLocaleUpperCase();
     if (buscar.length === 0)
@@ -132,13 +141,20 @@ const EjecutarPresupuesto = () => {
     ev.preventDefault();
     cambiarEstadoAlerta(false);
     cambiarAlerta({});
+    const existeCab = presupuestoCab.filter(pc => pc.confirmado === false);
+    const existeCabC = presupuestoCab.filter(pc => pc.confirmado === true);
 
-    // Filtar por docuemto de Cabecera Bitacora
-    const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id), where('confirmado', '==', false));
-    const cabecera = await getDocs(cab);
-    const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
-    if (existeCab.length > 0) {
+    if (existeCabC.length > 0) {
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'error',
+        mensaje: 'Ya se encuentra un presupuesto en el cual se esta trabajando'
+      })
+      documentoId.current = existeCab[0].id;
+      setMostrarAdd(true);
+      setBtnAgregarItem(false);
+      setBtnCab(true)
+    } else if (existeCab.length > 0) {
       cambiarEstadoAlerta(true);
       cambiarAlerta({
         tipo: 'exito',
@@ -180,8 +196,7 @@ const EjecutarPresupuesto = () => {
         })
         setMostrarAdd(true);
         setBtnAgregarItem(false);
-        setBtnCab(true);
-        setFlag(!flag);
+        setBtnCab(true)
       } catch (error) {
         cambiarEstadoAlerta(true);
         cambiarAlerta({
@@ -231,9 +246,6 @@ const EjecutarPresupuesto = () => {
             mensaje: 'Item Agregado correctamente'
           })
           setFlag(!flag);
-          // setConfirmar(false);
-          // setBtnGuardar(true);
-          // setBtnNuevo(false);
           setBtnConfirmar(false);
         } catch (error) {
           cambiarEstadoAlerta(true);
@@ -313,59 +325,37 @@ const EjecutarPresupuesto = () => {
       setBtnAgregarItem(true);
     }
   }
-
   // Función para antualizar estado al enviar
   const enviar = async () => {
     cambiarEstadoAlerta(false);
     cambiarAlerta({});
-    // // Filtar por docuemto de Cabecera
+    // Filtar por docuemto de Cabecera
     const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
     const cabecera = await getDocs(cab);
     const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
-    if (presupuesto.length === 0) {
-      Swal.fire('No hay Datos por confirmar en este documento');
-    } else {
-      // Actualizar la cabecera de protocolos
-      try {
-        await updateDoc(doc(db, 'presupuestoscab', existeCab[0].id), {
-          estado: 'ENVIADO',
-          enviado: true,
-          fecha_enviado: fechaMod,
-          usermod: user.email,
-          fechamod: fechaMod
-        });
-        cambiarEstadoAlerta(true);
-        cambiarAlerta({
-          tipo: 'exito',
-          mensaje: 'Documento actualizado exitosamente.'
-        });
-        console.log('se guardo datos en enviar')
-      } catch (error) {
-        cambiarEstadoAlerta(true);
-        cambiarAlerta({
-          tipo: 'error',
-          mensaje: 'Error al confirmar Presupuesto:', error
-        })
-      }
+    // Actualizar la cabecera de protocolos
+    try {
+      await updateDoc(doc(db, 'presupuestoscab', existeCab[0].id), {
+        estado: 'ENVIADO',
+        enviado: true,
+        fecha_enviado: fechaMod,
+        usermod: user.email,
+        fechamod: fechaMod
+      });
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'exito',
+        mensaje: 'Documento actualizado exitosamente.'
+      });
       setFlag(!flag)
+    } catch (error) {
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'error',
+        mensaje: 'Error al confirmar Presupuesto:', error
+      })
     }
   }
-
-  // Configuración de react-to-pdf
-  const Options = {
-    filename: 'Documento.pdf',
-    margin: {
-      top: '1in', // Margen superior
-      right: '1in', // Margen derecho
-      bottom: '1in', // Margen inferior
-      left: '1in' // Margen izquierdo
-    },
-    // format: 'letter',
-    orientation: 'landscape', // Orientación del PDF
-    unit: 'in', // Unidad de medida
-    format: 'a4' // Formato del PDF
-  };
 
   useEffect(() => {
     consultarPresupuesto();
@@ -374,27 +364,16 @@ const EjecutarPresupuesto = () => {
   }, [])
   useEffect(() => {
     getItem();
-    consultarPresupuesto();
     consultarPresupuestoCab();
+    consultarPresupuesto();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flag, setFlag])
 
   return (
     <ContenedorProveedor style={{ width: '80%' }}>
       {presupuestoCabConf.length > 0 ?
-        <ContenedorProveedor>
-          <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <img src={`../../${users.emp_id}.png`} alt='LogoEmprsa' style={{ height: '140px' }} />
-              </div>
-              <div style={{ marginTop: '50px', marginRight: '30px' }}>
-                <h3>www.dormirbien.cl</h3>
-              </div>
-            </div>
-            <Titulo style={{ fontSize: '24px' }}>Presupuesto</Titulo>
-            <TablaInfo ingreso={ingreso} presupuestoCab={presupuestoCabConf} /*presupuesto={presupuesto}*/ id_cab_pre={id_cab_pre}/>
-          </ContenedorProveedor>
+        <>
+          <TablaInfo ingreso={ingreso} presupuestoCab={presupuestoCabConf} id_cab_pre={id_cab_pre} />
           <div>
             {presupuestoCab[0].enviado === false ?
               <BotonGuardar style={{ marginTop: '30px' }} onClick={enviar} >Enviar</BotonGuardar>
@@ -404,18 +383,17 @@ const EjecutarPresupuesto = () => {
                 <BotonGuardar style={{ marginTop: '30px' }} /*onClick={enviar}*/ >Rechazar</BotonGuardar>
               </>
             }
-            <BotonGuardar onClick={() => generatePDF(targetRef, Options)}>Descargar PDF</BotonGuardar>
           </div>
-        </ContenedorProveedor>
+        </>
         :
         <>
           <Contenedor>
             <Titulo>Crear Presupuesto</Titulo>
           </Contenedor>
+
           <Contenedor>
-            <TablaInfo ingreso={ingreso} presupuestoCab={presupuestoCabConf} />
             {/* Informacion Cliente */}
-            {/* <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
+            <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
             <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
               <Table.Header>
                 <Table.Row>
@@ -439,10 +417,10 @@ const EjecutarPresupuesto = () => {
                   <Table.Cell>{correo}</Table.Cell>
                 </Table.Row>
               </Table.Body>
-            </Table> */}
+            </Table>
 
             {/* Informacion Equipo */}
-            {/* <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
+            <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
             <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
               <Table.Header>
                 <Table.Row>
@@ -464,132 +442,131 @@ const EjecutarPresupuesto = () => {
                   <Table.Cell>{servicio}</Table.Cell>
                 </Table.Row>
               </Table.Body>
-            </Table> */}
+            </Table>
           </Contenedor>
           <BotonGuardar disabled={btnCab} style={{ marginTop: '20px', backgroundColor: btnCab && '#8F8B85', cursor: btnCab && 'default' }} onClick={addCabPresupuesto}>Comenzar Presupuesto</BotonGuardar>
+
+          {/* Listado de item agregados a presupuesto */}
+          {
+            mostrarAdd && (
+              <>
+                <Contenedor>
+                  <ContentElemenAdd>
+                    <Titulo>Items Agregados a Presupuesto</Titulo>
+                  </ContentElemenAdd>
+                  <ListarEquipos>
+                    <Table singleLine>
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.HeaderCell>N°</Table.HeaderCell>
+                          <Table.HeaderCell>Item</Table.HeaderCell>
+                          <Table.HeaderCell>Categoria</Table.HeaderCell>
+                          <Table.HeaderCell>Precio</Table.HeaderCell>
+                          <Table.HeaderCell>Eliminar</Table.HeaderCell>
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
+                        {presupuesto.map((item, index) => {
+                          return (
+                            <Table.Row key={index}>
+                              <Table.Cell>{index + 1}</Table.Cell>
+                              <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                              <Table.Cell>{item.categoria}</Table.Cell>
+                              <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                              <Table.Cell>
+                                <MdDeleteForever
+                                  style={{ fontSize: '22px', color: '#69080A', marginLeft: '20px' }}
+                                  onClick={() => handleDelete(item.id)}
+                                  title='Eliminar Item'
+                                />
+                              </Table.Cell>
+                            </Table.Row>
+                          )
+                        })}
+                      </Table.Body>
+                      <Table.Footer>
+                        <Table.Row>
+                          <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colspan='3'>Total</Table.HeaderCell>
+                          <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
+                          <Table.HeaderCell></Table.HeaderCell>
+                        </Table.Row>
+                      </Table.Footer>
+                    </Table>
+                  </ListarEquipos>
+                  <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
+                </Contenedor>
+
+                <ListarProveedor>
+                  <ContentElemenAdd>
+                    <Titulo>Listado de Items</Titulo>
+                  </ContentElemenAdd>
+                  <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
+                    <InputAdd
+                      type='text'
+                      placeholder='Buscar Item'
+                      value={buscador}
+                      onChange={onBuscarCambios}
+                    />
+                    {mostrar ?
+                      <Boton onClick={() => {
+                        setIsOpen(true)
+                        setFlag(!flag)
+                        setMostrar(false)
+                      }}
+                        style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                        title='Mostrar Listado de Items'
+                      >
+                        <TbNotes />
+                      </Boton>
+                      :
+                      <Boton onClick={() => {
+                        setIsOpen(false)
+                        setMostrar(true)
+                      }}
+                        style={{ fontSize: '28px', color: '#328AC4' }}
+                        title='No mostrar Listado de Items'
+                      >
+                        <TbNotesOff />
+                      </Boton>
+                    }
+                  </ContentElemenAdd>
+                  {isOpen &&
+                    <Table singleLine>
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.HeaderCell>N°</Table.HeaderCell>
+                          <Table.HeaderCell>Item</Table.HeaderCell>
+                          <Table.HeaderCell>Categoria</Table.HeaderCell>
+                          <Table.HeaderCell>Precio</Table.HeaderCell>
+                          <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
+                        {filtroItem().map((item, index) => {
+                          return (
+                            <Table.Row key={index}>
+                              <Table.Cell>{index + 1}</Table.Cell>
+                              <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                              <Table.Cell >{item.categoria}</Table.Cell>
+                              <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                              <Table.Cell style={{ textAlign: 'center' }}>
+                                <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
+                                  <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
+                                </Boton>
+                              </Table.Cell>
+                            </Table.Row>
+                          )
+                        })}
+                      </Table.Body>
+                    </Table>
+                  }
+                </ListarProveedor>
+              </>
+            )
+          }
         </>
       }
-
-      {/* Listado de item agregados a presupuesto */}
-      {
-        mostrarAdd && (
-          <>
-            <Contenedor>
-              <ContentElemenAdd>
-                <Titulo>Items Agregados a Presupuesto</Titulo>
-              </ContentElemenAdd>
-              <ListarEquipos>
-                <Table singleLine>
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.HeaderCell>N°</Table.HeaderCell>
-                      <Table.HeaderCell>Item</Table.HeaderCell>
-                      <Table.HeaderCell>Categoria</Table.HeaderCell>
-                      <Table.HeaderCell>Precio</Table.HeaderCell>
-                      <Table.HeaderCell>Eliminar</Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                    {presupuesto.map((item, index) => {
-                      return (
-                        <Table.Row key={index}>
-                          <Table.Cell>{index + 1}</Table.Cell>
-                          <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                          <Table.Cell>{item.categoria}</Table.Cell>
-                          <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                          <Table.Cell>
-                            <MdDeleteForever
-                              style={{ fontSize: '22px', color: '#69080A', marginLeft: '20px' }}
-                              onClick={() => handleDelete(item.id)}
-                              title='Eliminar Item'
-                            />
-                          </Table.Cell>
-                        </Table.Row>
-                      )
-                    })}
-                  </Table.Body>
-                  <Table.Footer>
-                    <Table.Row>
-                      <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colspan='3'>Total</Table.HeaderCell>
-                      <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
-                      <Table.HeaderCell></Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Footer>
-                </Table>
-              </ListarEquipos>
-              <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
-            </Contenedor>
-
-            <ListarProveedor>
-              <ContentElemenAdd>
-                <Titulo>Listado de Items</Titulo>
-              </ContentElemenAdd>
-              <ContentElemenAdd>
-                <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
-                <InputAdd
-                  type='text'
-                  placeholder='Buscar Item'
-                  value={buscador}
-                  onChange={onBuscarCambios}
-                />
-                {mostrar ?
-                  <Boton onClick={() => {
-                    setIsOpen(true)
-                    setFlag(!flag)
-                    setMostrar(false)
-                  }}
-                    style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
-                    title='Mostrar Listado de Items'
-                  >
-                    <TbNotes />
-                  </Boton>
-                  :
-                  <Boton onClick={() => {
-                    setIsOpen(false)
-                    setMostrar(true)
-                  }}
-                    style={{ fontSize: '28px', color: '#328AC4' }}
-                    title='No mostrar Listado de Items'
-                  >
-                    <TbNotesOff />
-                  </Boton>
-                }
-              </ContentElemenAdd>
-              {isOpen &&
-                <Table singleLine>
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.HeaderCell>N°</Table.HeaderCell>
-                      <Table.HeaderCell>Item</Table.HeaderCell>
-                      <Table.HeaderCell>Categoria</Table.HeaderCell>
-                      <Table.HeaderCell>Precio</Table.HeaderCell>
-                      <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                    {filtroItem().map((item, index) => {
-                      return (
-                        <Table.Row key={index}>
-                          <Table.Cell>{index + 1}</Table.Cell>
-                          <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                          <Table.Cell >{item.categoria}</Table.Cell>
-                          <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                          <Table.Cell style={{ textAlign: 'center' }}>
-                            <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
-                              <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
-                            </Boton>
-                          </Table.Cell>
-                        </Table.Row>
-                      )
-                    })}
-                  </Table.Body>
-                </Table>
-              }
-            </ListarProveedor>
-          </>
-        )
-      }
-
 
       {/* Modal para confirmar eliminacion de item en la lista de presupuesto en proceso */}
       {
