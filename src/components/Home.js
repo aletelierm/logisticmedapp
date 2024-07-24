@@ -53,6 +53,7 @@ import AsignadosTecnicos from './AsignadosTecnicos';
 import EjecutarPresupuesto from './EjecutarPresupuesto';
 import ProgramaMant from './ProgramaMant';
 import ListadoMant from './ListadoMant';
+import PresupuestoPDF from './PresupuestoPDF';
 // import ItemsRepuestosServicios from './ItemsRepuestosServicios';
 
 export const Home = () => {
@@ -106,7 +107,7 @@ export const Home = () => {
             <Route path="serviciotecnico/protocolotest" element={<ProtocolosTest/>}/>       
             <Route path="serviciotecnico/asignar" element={<Asignar/>}/>       
             <Route path="serviciotecnico/asignadostecnicos" element={<AsignadosTecnicos/>}/>  
-            <Route path="ejecutarpresupuesto/:id" element={<EjecutarPresupuesto/>}/>
+            <Route path="presupuesto/:id/:ruta" element={<EjecutarPresupuesto/>}/>
             {/* <Route path="serviciotecnico/itemsrepuestosyservicios" element={<ItemsRepuestosServicios/>}/>        */}
             <Route path="configuracion" element={<Configuracion/>}/>        
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>

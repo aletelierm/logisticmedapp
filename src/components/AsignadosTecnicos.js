@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Alertas from './Alertas';
+import { auth, db } from '../firebase/firebaseConfig';
+import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import { ListarProveedor, Titulo, BotonGuardar, Contenedor } from '../elementos/General';
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
-import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc } from 'firebase/firestore';
 import moment from 'moment';
 import Modal from './Modal';
 import * as MdIcons from 'react-icons/md';
+import { FaRegFilePdf } from "react-icons/fa";
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
 import EnviarCorreo from '../funciones/EnviarCorreo';
+import TablaInfo from './TablaInfo';
 
 const AsignadosTecnicos = () => {
     //fecha hoy
@@ -44,12 +46,20 @@ const AsignadosTecnicos = () => {
         setAsignar(data.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })))
     }
     const mantoprev = asignar.filter(mp => mp.servicio === 'MANTENCION PREVENTIVA');
-    //Ordenar fechas
     const asignarOrdmp = mantoprev.sort((a, b) => a.folio - b.folio);
     const presu = asignar.filter(p => p.servicio === 'PRESUPUESTO');
     const asignarOrdp = presu.sort((a, b) => a.folio - b.folio);
     const evaluacion = asignar.filter(e => e.servicio === 'EVALUACION Y DIAGNOSTICO');
     const asignarOrde = evaluacion.sort((a, b) => a.folio - b.folio);
+
+    // // Detalle de Ingreso de equipo => Funcional
+    // const consultarPresupuestoCab = async () => {
+    //     const pre = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id), where('confirmado', '==', true));
+    //     const presu = await getDocs(pre);
+    //     const existePresupuesto = (presu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    //     setPresupuestoCab(existePresupuesto);
+    //     id_cab_pre.current = existePresupuesto[0].id;
+    // }
 
     // Leer datos de cabecera Entradas
     const leerIngresoCab = async (id) => {
@@ -205,12 +215,16 @@ const AsignadosTecnicos = () => {
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Generar Presupuesto'>
-                                        <Link disabled to={`/ejecutarpresupuesto/${item.id}`}>
+                                        <Link disabled to={`/presupuesto/${item.id}/1`}>
                                             <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} />
                                         </Link>
                                     </Table.Cell>
                                     <Table.Cell style={{ textAlign: 'center' }} title='Ejecutar Presupuesto'></Table.Cell>
-                                    <Table.Cell></Table.Cell>
+                                    <Table.Cell style={{ textAlign: 'center' }} title='Descargar Presupuesto'>
+                                        <Link disabled to={`/presupuesto/${item.id}/2`} >
+                                            <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
+                                        </Link>
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })}

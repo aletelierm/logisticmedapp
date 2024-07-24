@@ -28,7 +28,7 @@ const EjecutarPresupuesto = () => {
   const user = auth.currentUser;
   const { users } = useContext(UserContext);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id, ruta } = useParams();
   const [ingreso] = useObtenerIngreso(id);
 
   const [estadoAlerta, cambiarEstadoAlerta] = useState(false);
@@ -371,183 +371,206 @@ const EjecutarPresupuesto = () => {
 
   return (
     <ContenedorProveedor style={{ width: '80%' }}>
-      <Contenedor>
-        <Titulo>Crear Presupuesto</Titulo>
-      </Contenedor>
+      {presupuestoCabConf.length > 0 ?
+        <>
+          <TablaInfo ingreso={ingreso} presupuestoCab={presupuestoCabConf} id_cab_pre={id_cab_pre} ruta={ruta} />
+          {ruta === '1' ?
+          <div>
+          {presupuestoCab[0].enviado === false ?
+            <BotonGuardar style={{ marginTop: '30px' }} onClick={enviar} >Enviar</BotonGuardar>
+            :
+            <>
+              <BotonGuardar style={{ marginTop: '30px' }} /*onClick={enviar}*/ >Aceptar</BotonGuardar>
+              <BotonGuardar style={{ marginTop: '30px' }} /*onClick={enviar}*/ >Rechazar</BotonGuardar>
+            </>
+          }
+        </div>
+        :
+        ''
+        }
+          
+        </>
+        :
+        <>
+          <Contenedor>
+            <Titulo>Crear Presupuesto</Titulo>
+          </Contenedor>
 
-      <Contenedor>
-        {/* Informacion Cliente */}
-        <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
-        <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Folio</Table.HeaderCell>
-              <Table.HeaderCell>Rut</Table.HeaderCell>
-              <Table.HeaderCell>Nombre</Table.HeaderCell>
-              <Table.HeaderCell>Fecha</Table.HeaderCell>
-              <Table.HeaderCell>Telefono</Table.HeaderCell>
-              <Table.HeaderCell>Dirección</Table.HeaderCell>
-              <Table.HeaderCell>Email</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            <Table.Row>
-              <Table.Cell>{folio}</Table.Cell>
-              <Table.Cell>{rut}</Table.Cell>
-              <Table.Cell>{entidad}</Table.Cell>
-              <Table.Cell>{date ? formatearFecha(date) : '00/00/00 00:00'}</Table.Cell>
-              <Table.Cell>{telefono}</Table.Cell>
-              <Table.Cell>{direccion}</Table.Cell>
-              <Table.Cell>{correo}</Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
+          <Contenedor>
+            {/* Informacion Cliente */}
+            <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
+            <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Folio</Table.HeaderCell>
+                  <Table.HeaderCell>Rut</Table.HeaderCell>
+                  <Table.HeaderCell>Nombre</Table.HeaderCell>
+                  <Table.HeaderCell>Fecha</Table.HeaderCell>
+                  <Table.HeaderCell>Telefono</Table.HeaderCell>
+                  <Table.HeaderCell>Dirección</Table.HeaderCell>
+                  <Table.HeaderCell>Email</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell>{folio}</Table.Cell>
+                  <Table.Cell>{rut}</Table.Cell>
+                  <Table.Cell>{entidad}</Table.Cell>
+                  <Table.Cell>{date ? formatearFecha(date) : '00/00/00 00:00'}</Table.Cell>
+                  <Table.Cell>{telefono}</Table.Cell>
+                  <Table.Cell>{direccion}</Table.Cell>
+                  <Table.Cell>{correo}</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
 
-        {/* Informacion Equipo */}
-        <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
-        <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Familia</Table.HeaderCell>
-              <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
-              <Table.HeaderCell>Marca</Table.HeaderCell>
-              <Table.HeaderCell>Modelo</Table.HeaderCell>
-              <Table.HeaderCell>Serie</Table.HeaderCell>
-              <Table.HeaderCell>Servicio</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            <Table.Row >
-              <Table.Cell>{familia}</Table.Cell>
-              <Table.Cell>{tipo}</Table.Cell>
-              <Table.Cell>{marca}</Table.Cell>
-              <Table.Cell>{modelo}</Table.Cell>
-              <Table.Cell>{serie}</Table.Cell>
-              <Table.Cell>{servicio}</Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
-      </Contenedor>
-      <BotonGuardar disabled={btnCab} style={{ marginTop: '20px', backgroundColor: btnCab && '#8F8B85', cursor: btnCab && 'default' }} onClick={addCabPresupuesto}>Comenzar Presupuesto</BotonGuardar>
+            {/* Informacion Equipo */}
+            <Subtitulo style={{ fontSize: '18px' }}>Informacion Equipo</Subtitulo>
+            <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Familia</Table.HeaderCell>
+                  <Table.HeaderCell>Tipo Equipamiento</Table.HeaderCell>
+                  <Table.HeaderCell>Marca</Table.HeaderCell>
+                  <Table.HeaderCell>Modelo</Table.HeaderCell>
+                  <Table.HeaderCell>Serie</Table.HeaderCell>
+                  <Table.HeaderCell>Servicio</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                <Table.Row >
+                  <Table.Cell>{familia}</Table.Cell>
+                  <Table.Cell>{tipo}</Table.Cell>
+                  <Table.Cell>{marca}</Table.Cell>
+                  <Table.Cell>{modelo}</Table.Cell>
+                  <Table.Cell>{serie}</Table.Cell>
+                  <Table.Cell>{servicio}</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </Contenedor>
+          <BotonGuardar disabled={btnCab} style={{ marginTop: '20px', backgroundColor: btnCab && '#8F8B85', cursor: btnCab && 'default' }} onClick={addCabPresupuesto}>Comenzar Presupuesto</BotonGuardar>
 
-      {/* Listado de item agregados a presupuesto */}
-      {
-        mostrarAdd && (
-          <>
-            <Contenedor>
-              <ContentElemenAdd>
-                <Titulo>Items Agregados a Presupuesto</Titulo>
-              </ContentElemenAdd>
-              <ListarEquipos>
-                <Table singleLine>
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.HeaderCell>N°</Table.HeaderCell>
-                      <Table.HeaderCell>Item</Table.HeaderCell>
-                      <Table.HeaderCell>Categoria</Table.HeaderCell>
-                      <Table.HeaderCell>Precio</Table.HeaderCell>
-                      <Table.HeaderCell>Eliminar</Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                    {presupuesto.map((item, index) => {
-                      return (
-                        <Table.Row key={index}>
-                          <Table.Cell>{index + 1}</Table.Cell>
-                          <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
-                          <Table.Cell>{item.categoria}</Table.Cell>
-                          <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                          <Table.Cell>
-                            <MdDeleteForever
-                              style={{ fontSize: '22px', color: '#69080A', marginLeft: '20px' }}
-                              onClick={() => handleDelete(item.id)}
-                              title='Eliminar Item'
-                            />
-                          </Table.Cell>
+          {/* Listado de item agregados a presupuesto */}
+          {
+            mostrarAdd && (
+              <>
+                <Contenedor>
+                  <ContentElemenAdd>
+                    <Titulo>Items Agregados a Presupuesto</Titulo>
+                  </ContentElemenAdd>
+                  <ListarEquipos>
+                    <Table singleLine>
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.HeaderCell>N°</Table.HeaderCell>
+                          <Table.HeaderCell>Item</Table.HeaderCell>
+                          <Table.HeaderCell>Categoria</Table.HeaderCell>
+                          <Table.HeaderCell>Precio</Table.HeaderCell>
+                          <Table.HeaderCell>Eliminar</Table.HeaderCell>
                         </Table.Row>
-                      )
-                    })}
-                  </Table.Body>
-                  <Table.Footer>
-                    <Table.Row>
-                      <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colspan='3'>Total</Table.HeaderCell>
-                      <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
-                      <Table.HeaderCell></Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Footer>
-                </Table>
-              </ListarEquipos>
-              <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
-            </Contenedor>
-
-            <ListarProveedor>
-              <ContentElemenAdd>
-                <Titulo>Listado de Items</Titulo>
-              </ContentElemenAdd>
-              <ContentElemenAdd>
-                <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
-                <InputAdd
-                  type='text'
-                  placeholder='Buscar Item'
-                  value={buscador}
-                  onChange={onBuscarCambios}
-                />
-                {mostrar ?
-                  <Boton onClick={() => {
-                    setIsOpen(true)
-                    setFlag(!flag)
-                    setMostrar(false)
-                  }}
-                    style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
-                    title='Mostrar Listado de Items'
-                  >
-                    <TbNotes />
-                  </Boton>
-                  :
-                  <Boton onClick={() => {
-                    setIsOpen(false)
-                    setMostrar(true)
-                  }}
-                    style={{ fontSize: '28px', color: '#328AC4' }}
-                    title='No mostrar Listado de Items'
-                  >
-                    <TbNotesOff />
-                  </Boton>
-                }
-              </ContentElemenAdd>
-              {isOpen &&
-                <Table singleLine>
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.HeaderCell>N°</Table.HeaderCell>
-                      <Table.HeaderCell>Item</Table.HeaderCell>
-                      <Table.HeaderCell>Categoria</Table.HeaderCell>
-                      <Table.HeaderCell>Precio</Table.HeaderCell>
-                      <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                    {filtroItem().map((item, index) => {
-                      return (
-                        <Table.Row key={index}>
-                          <Table.Cell>{index + 1}</Table.Cell>
-                          <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
-                          <Table.Cell >{item.categoria}</Table.Cell>
-                          <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
-                          <Table.Cell style={{ textAlign: 'center' }}>
-                            <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
-                              <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
-                            </Boton>
-                          </Table.Cell>
+                      </Table.Header>
+                      <Table.Body>
+                        {presupuesto.map((item, index) => {
+                          return (
+                            <Table.Row key={index}>
+                              <Table.Cell>{index + 1}</Table.Cell>
+                              <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                              <Table.Cell>{item.categoria}</Table.Cell>
+                              <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                              <Table.Cell>
+                                <MdDeleteForever
+                                  style={{ fontSize: '22px', color: '#69080A', marginLeft: '20px' }}
+                                  onClick={() => handleDelete(item.id)}
+                                  title='Eliminar Item'
+                                />
+                              </Table.Cell>
+                            </Table.Row>
+                          )
+                        })}
+                      </Table.Body>
+                      <Table.Footer>
+                        <Table.Row>
+                          <Table.HeaderCell style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold' }} colspan='3'>Total</Table.HeaderCell>
+                          <Table.HeaderCell style={{ fontSize: '16px', fontWeight: 'bold' }}>${total.toLocaleString()}.-</Table.HeaderCell>
+                          <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
-                      )
-                    })}
-                  </Table.Body>
-                </Table>
-              }
-            </ListarProveedor>
-          </>
-        )
+                      </Table.Footer>
+                    </Table>
+                  </ListarEquipos>
+                  <BotonGuardar onClick={actualizarDocs} disabled={btnConfirmar}>Confirmar</BotonGuardar>
+                </Contenedor>
+
+                <ListarProveedor>
+                  <ContentElemenAdd>
+                    <Titulo>Listado de Items</Titulo>
+                  </ContentElemenAdd>
+                  <ContentElemenAdd>
+                    <FaIcons.FaSearch style={{ fontSize: '30px', color: '#328AC4', padding: '5px', marginRight: '15px' }} />
+                    <InputAdd
+                      type='text'
+                      placeholder='Buscar Item'
+                      value={buscador}
+                      onChange={onBuscarCambios}
+                    />
+                    {mostrar ?
+                      <Boton onClick={() => {
+                        setIsOpen(true)
+                        setFlag(!flag)
+                        setMostrar(false)
+                      }}
+                        style={{ fontSize: '28px', color: '#328AC4', marginTop: '5px' }}
+                        title='Mostrar Listado de Items'
+                      >
+                        <TbNotes />
+                      </Boton>
+                      :
+                      <Boton onClick={() => {
+                        setIsOpen(false)
+                        setMostrar(true)
+                      }}
+                        style={{ fontSize: '28px', color: '#328AC4' }}
+                        title='No mostrar Listado de Items'
+                      >
+                        <TbNotesOff />
+                      </Boton>
+                    }
+                  </ContentElemenAdd>
+                  {isOpen &&
+                    <Table singleLine>
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.HeaderCell>N°</Table.HeaderCell>
+                          <Table.HeaderCell>Item</Table.HeaderCell>
+                          <Table.HeaderCell>Categoria</Table.HeaderCell>
+                          <Table.HeaderCell>Precio</Table.HeaderCell>
+                          <Table.HeaderCell style={{ textAlign: 'center' }}>Agregar</Table.HeaderCell>
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
+                        {filtroItem().map((item, index) => {
+                          return (
+                            <Table.Row key={index}>
+                              <Table.Cell>{index + 1}</Table.Cell>
+                              <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.nombre}</Table.Cell>
+                              <Table.Cell >{item.categoria}</Table.Cell>
+                              <Table.Cell>${item.price.toLocaleString()}.-</Table.Cell>
+                              <Table.Cell style={{ textAlign: 'center' }}>
+                                <Boton disabled={btnAgregarItem} onClick={() => AgregarItem(item.id)}>
+                                  <RiPlayListAddLine style={{ fontSize: '20px', color: '#328AC4' }} title='Agregar Item a protocolo' />
+                                </Boton>
+                              </Table.Cell>
+                            </Table.Row>
+                          )
+                        })}
+                      </Table.Body>
+                    </Table>
+                  }
+                </ListarProveedor>
+              </>
+            )
+          }
+        </>
       }
 
       {/* Modal para confirmar eliminacion de item en la lista de presupuesto en proceso */}

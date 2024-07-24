@@ -8,7 +8,7 @@ import { Table } from 'semantic-ui-react';
 import { ContenedorProveedor, Titulo, BotonGuardar, Subtitulo } from '../elementos/General'
 import moment from 'moment';
 
-const TablaInfo = ({ ingreso, id_cab_pre }) => {
+const TablaInfo = ({ ingreso, id_cab_pre, ruta }) => {
     const { users } = useContext(UserContext)
     const [usuarioIngreso, setUsuarioIngreso] = useState([]);
     const [presupuesto, setPresupuesto] = useState([]);
@@ -65,14 +65,18 @@ const TablaInfo = ({ ingreso, id_cab_pre }) => {
             <ContenedorProveedor>
                 <ContenedorProveedor style={{ padding: '40px' }} ref={targetRef} >
                     {/* cabecera pdf */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div>
-                            <img src={`../../${users.emp_id}.png`} alt='LogoEmprsa' style={{ height: '140px' }} />
+                    {ruta === '2' ?
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div>
+                                <img src={`../../${users.emp_id}.png`} alt='LogoEmprsa' style={{ height: '140px' }} />
+                            </div>
+                            <div style={{ marginTop: '50px', marginRight: '30px' }}>
+                                <h3>www.dormirbien.cl</h3>
+                            </div>
                         </div>
-                        <div style={{ marginTop: '50px', marginRight: '30px' }}>
-                            <h3>www.dormirbien.cl</h3>
-                        </div>
-                    </div>
+                        :
+                        ''
+                    }
                     <Titulo style={{ fontSize: '24px' }}>Presupuesto</Titulo>
                     {/* Informacion Cliente */}
                     <Subtitulo style={{ fontSize: '18px' }}>Informacion Cliente</Subtitulo>
@@ -156,20 +160,28 @@ const TablaInfo = ({ ingreso, id_cab_pre }) => {
                             </Table.Row>
                         </Table.Footer>
                     </Table>
-                    <div style={{ fontSize: '12px', lineHeight: '10px' }}>
-                        <h4 style={{ margin: '14px 0px' }}>{usuario.map((user, index) => {
-                            return (<h4 key={index}>Ingresado por: {user.nombre}  {user.apellido}</h4>)
-                        })}</h4>
+                    {ruta === '2' ?
+                        <div style={{ fontSize: '12px', lineHeight: '10px' }}>
+                            <h4 style={{ margin: '14px 0px' }}>{usuario.map((user, index) => {
+                                return (<h4 key={index}>Ingresado por: {user.nombre}  {user.apellido}</h4>)
+                            })}</h4>
 
-                        <h5 style={{ margin: '14px 0px' }}>SERVICIO TÉCNICO</h5>
-                        <p>soporte@dormirbien.cl</p>
-                        <p>General Parra #674 Oficina H, Providencia</p>
-                        <p>Contacto: +569 76321481 / +569 54234538</p>
-                    </div>
+                            <h5 style={{ margin: '14px 0px' }}>SERVICIO TÉCNICO</h5>
+                            <p>soporte@dormirbien.cl</p>
+                            <p>General Parra #674 Oficina H, Providencia</p>
+                            <p>Contacto: +569 76321481 / +569 54234538</p>
+                        </div>
+                        :
+                        ''
+                    }
                 </ContenedorProveedor>
-                <div>
-                    <BotonGuardar onClick={() => generatePDF(targetRef, Options)}>Descargar PDF</BotonGuardar>
-                </div>
+                {ruta === '2' ?
+                    <div>
+                        <BotonGuardar onClick={() => generatePDF(targetRef, Options)}>Descargar PDF</BotonGuardar>
+                    </div>
+                    :
+                    ''
+                }
             </ContenedorProveedor>
         </ContenedorProveedor>
     )
