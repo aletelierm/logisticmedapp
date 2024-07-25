@@ -29,6 +29,9 @@ const TablaInfo = ({ ingreso, id_cab_pre, ruta }) => {
         const existePresupuesto = (presu.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         setPresupuesto(existePresupuesto);
     }
+    const presu = presupuesto.filter(p => p.categoria === 'REPUESTO' || p.categoria === 'SERVICIO');
+    console.log(presu)
+    const falla = presupuesto.filter(f => f.categoria === 'FALLA');
     const usuario = usuarioIngreso.filter(usuario => usuario.correo === ingreso.useradd);
     const total = presupuesto.reduce((total, dato) => total + dato.price, 0);
 
@@ -130,6 +133,29 @@ const TablaInfo = ({ ingreso, id_cab_pre, ruta }) => {
                         </Table.Body>
                     </Table>
 
+                    {/* Informacion Evaluacion */}
+                    <Subtitulo style={{ fontSize: '18px' }}>Evaluacion</Subtitulo>
+                    <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>N°</Table.HeaderCell>
+                                <Table.HeaderCell>Item</Table.HeaderCell>
+                                <Table.HeaderCell>Categoria</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {falla.map((item, index) => {
+                                return (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{item.item}</Table.Cell>
+                                        <Table.Cell>{item.categoria}</Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
+                        </Table.Body>
+                    </Table>
+
                     {/* Informacion Presuuesto */}
                     <Subtitulo style={{ fontSize: '18px' }}>Presupuesto</Subtitulo>
                     <Table singleLine style={{ fontSize: '12px', lineHeight: '8px' }}>
@@ -142,7 +168,7 @@ const TablaInfo = ({ ingreso, id_cab_pre, ruta }) => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {presupuesto.map((item, index) => {
+                            {presu.map((item, index) => {
                                 return (
                                     <Table.Row key={index}>
                                         <Table.Cell>{index + 1}</Table.Cell>

@@ -56,7 +56,9 @@ const EjecutarPresupuesto = () => {
   const [btnAgregarItem, setBtnAgregarItem] = useState(true);
   const [btnConfirmar, setBtnConfirmar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenf, setIsOpenf] = useState(false);
   const [mostrar, setMostrar] = useState(true);
+  const [mostrarF, setMostrarF] = useState(true);
   const [mostrarAdd, setMostrarAdd] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showConfirmationAceptado, setShowConfirmationAceptado] = useState(false);
@@ -112,7 +114,7 @@ const EjecutarPresupuesto = () => {
     const data = await getDocs(dato)
     setItem(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   }
-  const itemrs = item.filter(it => it.categoria !== 'TEST INGRESO')
+  const itemrs = item.filter(it => it.categoria !== 'TEST INGRESO' )
   // Ordenar Listado por item =>  Funcional
   itemrs.sort((a, b) => {
     const nameA = a.nombre;
@@ -232,7 +234,7 @@ const EjecutarPresupuesto = () => {
         try {
           PresupuestoDB({
             id_cab_pre: existecabPresupuesto[0].id,
-            item_id: item_id[0].id,
+            item_id: item,
             item: item_id[0].nombre,
             categoria: item_id[0].categoria,
             price: item_id[0].price,
@@ -586,7 +588,7 @@ const EjecutarPresupuesto = () => {
               <>
                 <Contenedor>
                   <ContentElemenAdd>
-                    <Titulo>Items Agregados a Presupuesto</Titulo>
+                    <Titulo>Items Agregados a Evaluacion y Presupuesto</Titulo>
                   </ContentElemenAdd>
                   <ListarEquipos>
                     <Table singleLine>
