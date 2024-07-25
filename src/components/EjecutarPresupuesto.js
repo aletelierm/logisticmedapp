@@ -36,6 +36,7 @@ const EjecutarPresupuesto = () => {
   const [presupuestoCab, setPresupuestoCab] = useState([]);
   const [id_cab_pre, setId_cab_pre] = useState('');
   const [presupuesto, setPresupuesto] = useState([]);
+  const [cab, setCab] = useState([]);
   const [item, setItem] = useState([]);
   const [folio, setFolio] = useState('');
   const [rut, setRut] = useState('');
@@ -357,6 +358,118 @@ const EjecutarPresupuesto = () => {
     }
   }
 
+  // Función para antualizar estado al aceptar
+  const aceptar = async () => {
+    cambiarEstadoAlerta(false);
+    cambiarAlerta({});
+    // Filtar por docuemto de Cabecera
+    const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+    const cabecera = await getDocs(cab);
+    const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    // Actualizar la cabecera de protocolos
+    try {
+      await updateDoc(doc(db, 'presupuestoscab', existeCab[0].id), {
+        estado: 'ACEPTADO CERRADO',
+        aceptado: true,
+        fecha_aceptado: fechaMod,
+        cerrado: true,
+        fecha_cerrado: fechaMod,
+        usermod: user.email,
+        fechamod: fechaMod
+      });
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'exito',
+        mensaje: 'Documento actualizado exitosamente.'
+      });
+      setFlag(!flag)
+    } catch (error) {
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'error',
+        mensaje: 'Error al confirmar Presupuesto:', error
+      })
+    }
+    try {
+      await updateDoc(doc(db, 'ingresostcab', id), {
+        estado: 'CERRADO',
+        fecha_out: fechaMod,
+        usermod: user.email,
+        fechamod: fechaMod
+      });
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'exito',
+        mensaje: 'Documento actualizado exitosamente.'
+      });
+      console.log('se cerro OE con estado CERRADO')
+      setFlag(!flag)
+    } catch (error) {
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'error',
+        mensaje: 'Error al confirmar Presupuesto:', error
+      })
+    }
+    navigate('/serviciotecnico/asignadostecnicos')
+  }
+
+  // Función para antualizar estado al aceptar
+  const rechazado = async () => {
+    cambiarEstadoAlerta(false);
+    cambiarAlerta({});
+    // Filtar por docuemto de Cabecera
+    const cab = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id));
+    const cabecera = await getDocs(cab);
+    const existeCab = (cabecera.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    // Actualizar la cabecera de protocolos
+    try {
+      await updateDoc(doc(db, 'presupuestoscab', existeCab[0].id), {
+        estado: 'ACEPTADO CERRADO',
+        rechazado: true,
+        fecha_rechazado: fechaMod,
+        cerrado: true,
+        fecha_cerrado: fechaMod,
+        usermod: user.email,
+        fechamod: fechaMod
+      });
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'exito',
+        mensaje: 'Documento actualizado exitosamente.'
+      });
+      setFlag(!flag)
+    } catch (error) {
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'error',
+        mensaje: 'Error al confirmar Presupuesto:', error
+      })
+    }
+    try {
+      await updateDoc(doc(db, 'ingresostcab', id), {
+        estado: 'CERRADO',
+        fecha_out: fechaMod,
+        usermod: user.email,
+        fechamod: fechaMod
+      });
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'exito',
+        mensaje: 'Documento actualizado exitosamente.'
+      });
+      console.log('se cerro OE con estado CERRADO')
+      setFlag(!flag)
+    } catch (error) {
+      cambiarEstadoAlerta(true);
+      cambiarAlerta({
+        tipo: 'error',
+        mensaje: 'Error al confirmar Presupuesto:', error
+      })
+    }
+    navigate('/serviciotecnico/asignadostecnicos')
+  }
+
   useEffect(() => {
     consultarPresupuesto();
     consultarPresupuestoCab();
@@ -380,8 +493,8 @@ const EjecutarPresupuesto = () => {
             <BotonGuardar style={{ marginTop: '30px' }} onClick={enviar} >Enviar</BotonGuardar>
             :
             <>
-              <BotonGuardar style={{ marginTop: '30px' }} /*onClick={enviar}*/ >Aceptar</BotonGuardar>
-              <BotonGuardar style={{ marginTop: '30px' }} /*onClick={enviar}*/ >Rechazar</BotonGuardar>
+              <BotonGuardar style={{ marginTop: '30px' }} onClick={aceptar} >Aceptar</BotonGuardar>
+              <BotonGuardar style={{ marginTop: '30px' }} onClick={rechazado} >Rechazar</BotonGuardar>
             </>
           }
         </div>
