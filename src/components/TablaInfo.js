@@ -30,7 +30,6 @@ const TablaInfo = ({ ingreso, id_cab_pre, ruta }) => {
         setPresupuesto(existePresupuesto);
     }
     const presu = presupuesto.filter(p => p.categoria === 'REPUESTO' || p.categoria === 'SERVICIO');
-    console.log(presu)
     const falla = presupuesto.filter(f => f.categoria === 'FALLA');
     const usuario = usuarioIngreso.filter(usuario => usuario.correo === ingreso.useradd);
     const total = presupuesto.reduce((total, dato) => total + dato.price, 0);
