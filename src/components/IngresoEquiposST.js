@@ -93,7 +93,7 @@ const IngresoEquiposST = () => {
 
     // Filtar por docuemto de Cabecera
     const consultarCab = async () => {
-        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false),where('useradd','==',users.correo));
+        const cab = query(collection(db, 'ingresostcab'), where('emp_id', '==', users.emp_id), where('confirmado', '==', false), where('useradd', '==', users.correo));
         const guardaCab = await getDocs(cab);
         const existeCab = (guardaCab.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setCabecera(existeCab);
@@ -112,41 +112,6 @@ const IngresoEquiposST = () => {
         const existeCtes = (Ctes.docs.map((doc, index) => ({ ...doc.data(), id: doc.id })))
         setClientes(existeCtes);
     }
-    // // Filtar por docuemto de Cabecera
-    // const consultarDet = async (item) => {
-    //     const det = query(collection(db, 'ingresostdet'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', item.id));
-    //     const guardaDet = await getDocs(det);
-    //     const existeDet = (guardaDet.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-
-    //     if (existeDet.length > 0) {
-    //         setNomFamilia(existeDet[0].familia);
-    //         setNomTipo(existeDet[0].tipo);
-    //         setNomMarca(existeDet[0].marca);
-    //         setNomModelo(existeDet[0].modelo);
-    //         setSerie(existeDet[0].serie);
-    //         setServicio(existeDet[0].servicio);
-    //         setObs(existeDet[0].observaciones);
-    //         consultarprot(existeDet[0].familia);
-    //         setCont1('#D1D1D1');
-    //         setCont2('#D1D1D1');
-    //         setCont3('#FF0000');
-    //         setConfirmarDet(true);
-    //         setBtnGuardarDet(true);
-    //         setMostrarTest(true);
-    //     } else {
-    //         setCont1('#D1D1D1');
-    //         setCont2('#FF0000');
-    //         setNomFamilia('');
-    //         setNomTipo('');
-    //         setNomMarca('');
-    //         setNomModelo('');
-    //         setSerie('');
-    //         setServicio('');
-    //         setObs('');
-    //         setConfirmarDet(false);
-    //         setMostrarTest(false);
-    //     }
-    // }
     //Leer los datos de Familia
     const getFamilia = async () => {
         const traerFam = collection(db, 'familias');
@@ -283,56 +248,6 @@ const IngresoEquiposST = () => {
         setProtocolo(existeprot.sort((a, b) => a.fechamod - b.fechamod))
     }
 
-        //esta parte ya no sirve---
-    // // Validar rut
-    // const detectarCli = async (e) => {
-    //     cambiarEstadoAlerta(false);
-    //     cambiarAlerta({});
-    //     if (e.key === 'Enter' || e.key === 'Tab') {
-    //         const cli = query(collection(db, 'clientes'), where('emp_id', '==', users.emp_id), where('rut', '==', rut));
-    //         const rutCli = await getDocs(cli)
-    //         const final = (rutCli.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    //         //Patron para valiar rut
-    //         const expresionRegularRut = /^[0-9]+[-|‐]{1}[0-9kK]{1}$/;
-    //         const temp = rut.split('-');
-    //         let digito = temp[1];
-    //         if (digito === 'k' || digito === 'K') digito = -1;
-    //         const validaR = validarRut(rut);
-
-    //         if (!expresionRegularRut.test(rut)) {
-    //             cambiarEstadoAlerta(true);
-    //             cambiarAlerta({
-    //                 tipo: 'error',
-    //                 mensaje: 'Formato incorrecto de rut'
-    //             })
-    //             return;
-    //         } else if (validaR !== parseInt(digito)) {
-    //             cambiarEstadoAlerta(true);
-    //             cambiarAlerta({
-    //                 tipo: 'error',
-    //                 mensaje: 'Rut no válido'
-    //             })
-    //             return;
-    //         } else if (rutCli.docs.length === 0) {
-    //             cambiarEstadoAlerta(true);
-    //             cambiarAlerta({
-    //                 tipo: 'error',
-    //                 mensaje: 'No existe rut de Cliente'
-    //             })
-    //             setOpenModalCli(!openModalCli)
-    //             setEntidad('');
-    //             setTelefono('');
-    //             setDireccion('');
-    //             setCorreo('');
-    //         } else {
-    //             setEntidad(final[0].nombre);
-    //             setTelefono(final[0].telefono);
-    //             setDireccion(final[0].direccion);
-    //             setCorreo(final[0].correo);
-    //             setBtnGuardarCab(false);
-    //         }
-    //     }
-    // }
     const handleChek = (e) => {
         setChecked(e.target.checked)
     }
@@ -772,16 +687,6 @@ const IngresoEquiposST = () => {
         setBtnGuardarDet(false)
     }
 
-    // // Agregar numero a protocolo para validación
-    // const agregarNumero = () => {
-    //     const nuevoarreglo = protocolo.map((p, index) => ({
-    //         ...p,
-    //         id2: index + 1
-    //     }));
-    //     setProtocolo(nuevoarreglo);
-    // }
-    // console.log(protocolo)
-
     // Boton Guardar => Funcional
     const validarTest = async (e) => {
         e.preventDefault();
@@ -1024,8 +929,8 @@ const IngresoEquiposST = () => {
                             </ContentElemenSelect>
                             <ContentElemenSelect>
                                 <Label>Cliente</Label>
-                                <BuscadorInput items={clientes} onSelectItem={handleSelectItem} limpiaFormCte={limpiaFormCte} confirmar={confirmar} rut={rut}/>
-                               {/*  {selectedItem && (
+                                <BuscadorInput items={clientes} onSelectItem={handleSelectItem} limpiaFormCte={limpiaFormCte} confirmar={confirmar} rut={rut} />
+                                {/*  {selectedItem && (
                                     <ItemModal
                                     isOpen={isModalOpen}
                                     onRequestClose={closeModal}
@@ -1291,7 +1196,7 @@ const IngresoEquiposST = () => {
                                             setBtnValidarDet(false)
                                             setConfirmarDet(false);
                                             setBtnGuardarDet(false);
-                                            setMostrarTest(false);                                           
+                                            setMostrarTest(false);
                                             setMostrarEq(false);
                                             setIsOpenEq(true);
                                         } else {
@@ -1316,7 +1221,7 @@ const IngresoEquiposST = () => {
                                             setIsOpenEq(false);
                                         }
                                         setConfirmar(true);
-                                        setBtnGuardarCab(true);                                        
+                                        setBtnGuardarCab(true);
                                         setBtnNuevo(false);
                                         setFlag(!flag)
                                         setBtnGuardarTestColor('#43A854')

@@ -36,7 +36,6 @@ const EjecutarPresupuesto = () => {
   const [presupuestoCab, setPresupuestoCab] = useState([]);
   const [id_cab_pre, setId_cab_pre] = useState('');
   const [presupuesto, setPresupuesto] = useState([]);
-  const [cab, setCab] = useState([]);
   const [item, setItem] = useState([]);
   const [folio, setFolio] = useState('');
   const [rut, setRut] = useState('');
@@ -60,6 +59,8 @@ const EjecutarPresupuesto = () => {
   const [mostrar, setMostrar] = useState(true);
   const [mostrarAdd, setMostrarAdd] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showConfirmationAceptado, setShowConfirmationAceptado] = useState(false);
+  const [showConfirmationRechazar, setShowConfirmationRechazar] = useState(false);
   const [itemDelete, setItemdelete] = useState(false);
   const documentoId = useRef('');
 
@@ -358,6 +359,10 @@ const EjecutarPresupuesto = () => {
     }
   }
 
+  // Cancelar Ingreso Cabecera
+  const validarAceptado = () => {
+    setShowConfirmationAceptado(true);
+  }
   // Función para antualizar estado al aceptar
   const aceptar = async () => {
     cambiarEstadoAlerta(false);
@@ -413,8 +418,16 @@ const EjecutarPresupuesto = () => {
     }
     navigate('/serviciotecnico/asignadostecnicos')
   }
+  // Cancelar Ingreso Cabecera
+  const cancelAceptado = () => {
+    setShowConfirmationAceptado(false);
+  }
 
-  // Función para antualizar estado al aceptar
+  // Cancelar Ingreso Cabecera
+  const validarRechazo = () => {
+    setShowConfirmationRechazar(true);
+  }
+  // Función para antualizar estado al rechazar
   const rechazado = async () => {
     cambiarEstadoAlerta(false);
     cambiarAlerta({});
@@ -469,6 +482,10 @@ const EjecutarPresupuesto = () => {
     }
     navigate('/serviciotecnico/asignadostecnicos')
   }
+  // Cancelar Ingreso Cabecera
+  const cancelRechazado = () => {
+    setShowConfirmationRechazar(false);
+  }
 
   useEffect(() => {
     consultarPresupuesto();
@@ -488,20 +505,19 @@ const EjecutarPresupuesto = () => {
         <>
           <TablaInfo ingreso={ingreso} presupuestoCab={presupuestoCabConf} id_cab_pre={id_cab_pre} ruta={ruta} />
           {ruta === '1' ?
-          <div>
-          {presupuestoCab[0].enviado === false ?
-            <BotonGuardar style={{ marginTop: '30px' }} onClick={enviar} >Enviar</BotonGuardar>
+            <div>
+              {presupuestoCab[0].enviado === false ?
+                <BotonGuardar style={{ marginTop: '30px' }} onClick={enviar} >Enviar</BotonGuardar>
+                :
+                <>
+                  <BotonGuardar style={{ marginTop: '30px' }} onClick={validarAceptado} >Aceptar</BotonGuardar>
+                  <BotonGuardar style={{ marginTop: '30px' }} onClick={validarRechazo} >Rechazar</BotonGuardar>
+                </>
+              }
+            </div>
             :
-            <>
-              <BotonGuardar style={{ marginTop: '30px' }} onClick={aceptar} >Aceptar</BotonGuardar>
-              <BotonGuardar style={{ marginTop: '30px' }} onClick={rechazado} >Rechazar</BotonGuardar>
-            </>
+            ''
           }
-        </div>
-        :
-        ''
-        }
-          
         </>
         :
         <>
@@ -695,6 +711,34 @@ const EjecutarPresupuesto = () => {
               <ConfirmaBtn className="confirmation-buttons">
                 <Boton2 color={'#940000'} hover={'#FF0000'} onClick={borrarItem}>Aceptar</Boton2>
                 <Boton2 onClick={cancelDelete}>Cancelar</Boton2>
+              </ConfirmaBtn>
+            </ConfirmaModal>
+          </Overlay>
+        )
+      }
+      {/* Modal para de validacion de Aceptado */}
+      {
+        showConfirmationAceptado && (
+          <Overlay>
+            <ConfirmaModal className="confirmation-modal">
+              <h2>¿Estás seguro de que deseas aceptar el Presupuesto?</h2>
+              <ConfirmaBtn className="confirmation-buttons">
+                <Boton2 style={{ backgroundColor: '#43A854', }} onClick={aceptar}>Aceptar</Boton2>
+                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelAceptado}>Cancelar</Boton2>
+              </ConfirmaBtn>
+            </ConfirmaModal>
+          </Overlay>
+        )
+      }
+      {/* Modal para de validacion de Rechazo */}
+      {
+        showConfirmationRechazar && (
+          <Overlay>
+            <ConfirmaModal className="confirmation-modal">
+              <h2>¿Estás seguro de que deseas rechazar el Presupuesto?</h2>
+              <ConfirmaBtn className="confirmation-buttons">
+                <Boton2 style={{ backgroundColor: '#43A854', }} onClick={rechazado}>Aceptar</Boton2>
+                <Boton2 style={{ backgroundColor: '#E34747' }} onClick={cancelRechazado}>Cancelar</Boton2>
               </ConfirmaBtn>
             </ConfirmaModal>
           </Overlay>
