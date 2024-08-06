@@ -1,24 +1,24 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, /* useRef */ } from 'react';
 import Alertas from './Alertas';
 import { Table } from 'semantic-ui-react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { getDocs, collection, where, query, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getDocs, collection, where, query, /* updateDoc, doc, deleteDoc */ } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import useObtenerIngreso from '../hooks/useObtenerIngreso';
-import * as FaIcons from 'react-icons/fa';
+// import * as FaIcons from 'react-icons/fa';
 import { ContenedorProveedor, Contenedor, Titulo, BotonGuardar, Subtitulo, Overlay, ConfirmaModal, ConfirmaBtn, Boton2, BotonCheck } from '../elementos/General'
 import { ContentElemenMov, ContentElemenSelect, Select, Label, Input } from '../elementos/CrearEquipos'
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Opcion } from './TipDoc';
 import moment from 'moment';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 
 const EjecutarMantencionSt = () => {
   //fecha hoy
-  let fechaAdd = new Date();
-  let fechaMod = new Date();
+  // let fechaAdd = new Date();
+  // let fechaMod = new Date();
   const user = auth.currentUser;
   const { users } = useContext(UserContext);
   const navigate = useNavigate();
@@ -48,10 +48,10 @@ const EjecutarMantencionSt = () => {
   const [mostrar, setMostrar] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [flag, setFlag] = useState(false);
-  const documentoId = useRef('');
+  // const documentoId = useRef('');
 
   const volver = () => {
-    navigate('/serviciotecnico/asignadostecnicos')
+    navigate('/serviciotecnico/asignadostecnicos');
   }
 
   useEffect(() => {
@@ -107,37 +107,37 @@ const EjecutarMantencionSt = () => {
 
   const handleButtonClick = (index, buttonId) => {
     setItemsCheck((prevItems) => {
-        const nuevosElementos = [...prevItems];
-        nuevosElementos[index].valor = buttonId;
-        return nuevosElementos;
+      const nuevosElementos = [...prevItems];
+      nuevosElementos[index].valor = buttonId;
+      return nuevosElementos;
     });
-}
-const handleButtonClickLlen = (e, index) => {
-    setItemsMedicion((prevItems) => {
-        const nuevosElementos = [...prevItems];
-        nuevosElementos[index].valor = e.target.value;
-        return nuevosElementos;
-    });
-}
-const handleButtonClickSeg = (e, index) => {
+  }
+  // const handleButtonClickLlen = (e, index) => {
+  //   setItemsMedicion((prevItems) => {
+  //     const nuevosElementos = [...prevItems];
+  //     nuevosElementos[index].valor = e.target.value;
+  //     return nuevosElementos;
+  //   });
+  // }
+  const handleButtonClickSeg = (e, index) => {
     setItemsSeg((prevItems) => {
-        const nuevosElementos = [...prevItems];
-        nuevosElementos[index].valor = e.target.value;
-        return nuevosElementos;
+      const nuevosElementos = [...prevItems];
+      nuevosElementos[index].valor = e.target.value;
+      return nuevosElementos;
     });
-}
+  }
 
   // const cancelDelete = () => {
   //   setShowConfirmation(false);
   // }
 
+  // useEffect(() => {
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
   useEffect(() => {
     consultarProtocolos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  // useEffect(() => {
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [flag, setFlag])
+  }, [flag, setFlag])
 
   return (
     <ContenedorProveedor style={{ width: '80%' }}>
@@ -217,8 +217,9 @@ const handleButtonClickSeg = (e, index) => {
         {
           isOpen &&
           <BotonGuardar onClick={() => {
-            setMostrar(true); 
-            // setIsOpen(false);
+            setMostrar(true);
+            console.log(mostrar)
+            setIsOpen(false);
             setFlag(!flag);
             // addCabBitacora();
           }}>Siguente</BotonGuardar>
@@ -289,7 +290,7 @@ const handleButtonClickSeg = (e, index) => {
                             <Input
                               type="number"
                               value={item.valor}
-                              // onChange={e => handleButtonClickLlen(e, index)}
+                            // onChange={e => handleButtonClickLlen(e, index)}
                             />
                           </Table.Cell>
                           <Table.Cell>{item.medida}</Table.Cell>
@@ -342,7 +343,7 @@ const handleButtonClickSeg = (e, index) => {
                                   <Input
                                     type="text"
                                     value={item.valor}
-                                    // onChange={e => handleButtonClickSeg(e, index)}
+                                  // onChange={e => handleButtonClickSeg(e, index)}
                                   />
                                 </Table.Cell>
                               </>
