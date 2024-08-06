@@ -14,7 +14,7 @@ import * as MdIcons from 'react-icons/md';
 import { FaRegFilePdf } from "react-icons/fa";
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
 import EnviarCorreo from '../funciones/EnviarCorreo';
-import TablaInfo from './TablaInfo';
+// import TablaInfo from './TablaInfo';
 
 const AsignadosTecnicos = () => {
     //fecha hoy
@@ -165,8 +165,13 @@ const AsignadosTecnicos = () => {
                                             setEstadoModal(!estadoModal)
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
+                                    {/* <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
                                         <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
+                                    </Table.Cell> */}
+                                    <Table.Cell style={{ textAlign: 'center' }} /* onClick={() => ejecutar()} */ title="Ejecutar Mantención">
+                                        <Link disabled to={`/ejecutarmantencionst/${item.id}`}>
+                                            <MdIcons.MdPlayCircle style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} />
+                                        </Link>
                                     </Table.Cell>
                                 </Table.Row>
                             )

@@ -55,8 +55,6 @@ const EjecutarMantencion = () => {
         navigate('/serviciotecnico/mantencion')
     }
 
-    // protocoloCab.current = 0
-
     useEffect(() => {
         if (manto) {
             protocoloCab.current = manto.cab_id_protocol
@@ -68,11 +66,10 @@ const EjecutarMantencion = () => {
             setSerie(manto.serie);
             setEq_id(manto.id_eq)
         } else {
-            navigate('/')
+            navigate('/serviciotecnico/mantencion')
         }
     }, [manto, navigate])
-    
-    // console.log('protocolo cab despues del primer useeffect',protocoloCab.current)
+
     // Filtar por docuemto de Protocolo
     const consultarProtocolos = async () => {
         const docInst = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'INSTRUMENTOS'));
@@ -85,7 +82,7 @@ const EjecutarMantencion = () => {
         const documenCheck = (docuCheck.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsCheck(documenCheck);
 
-    const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
+        const docLlen = query(collection(db, 'protocolos'), where('emp_id', '==', users.emp_id), where('cab_id', '==', protocoloCab.current), where('categoria', '==', 'MEDICION'));
         const docuLlen = await getDocs(docLlen);
         const documenLlen = (docuLlen.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1, valor: '' })));
         setItemsMedicion(documenLlen);
@@ -226,18 +223,6 @@ const EjecutarMantencion = () => {
         const docuSel = await getDocs(docSel);
         const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
         setItemsSeg(documenSel);
-        // const docSel = query(collection(db, 'bitacoras'), where('emp_id', '==', users.emp_id), where('cab_id_bitacora', '==', idbitacora.current));
-        // const docuSel = await getDocs(docSel);
-        // const documenSel = (docuSel.docs.map((doc, index) => ({ ...doc.data(), id: doc.id, id2: index + 1 })));
-        // setProtocolo(documenSel);
-        // const inst = protocolo.filter(p => p.categoria === 'INSTRUMENTOS')
-        // const check = protocolo.filter(p => p.categoria === 'CHECK')
-        // const llen = protocolo.filter(p => p.categoria === 'LLENADO')
-        // const sel = protocolo.filter(p => p.categoria === 'SELECCION') 
-        // setItemsInst(inst);
-        // setItemsCheck(check);
-        // setItemsLlenado(llen);
-        // setItemsSelec(sel);
     }
 
     // Boton Guardar

@@ -54,6 +54,7 @@ import EjecutarPresupuesto from './EjecutarPresupuesto';
 import ProgramaMant from './ProgramaMant';
 import ListadoMant from './ListadoMant';
 import PresupuestoPDF from './PresupuestoPDF';
+import EjecutarMantencionSt from './EjecutarMantencionSt';
 // import ItemsRepuestosServicios from './ItemsRepuestosServicios';
 
 export const Home = () => {
@@ -108,6 +109,7 @@ export const Home = () => {
             <Route path="serviciotecnico/asignar" element={<Asignar/>}/>       
             <Route path="serviciotecnico/asignadostecnicos" element={<AsignadosTecnicos/>}/>  
             <Route path="presupuesto/:id/:ruta" element={<EjecutarPresupuesto/>}/>
+            <Route path="ejecutarmantencionst/:id" element={<EjecutarMantencionSt/>}/>
             {/* <Route path="serviciotecnico/itemsrepuestosyservicios" element={<ItemsRepuestosServicios/>}/>        */}
             <Route path="configuracion" element={<Configuracion/>}/>        
             <Route path="configuracion/registrausuarios" element={<RegistroUsuarios/>}/>

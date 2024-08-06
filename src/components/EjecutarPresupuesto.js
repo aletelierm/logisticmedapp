@@ -56,9 +56,7 @@ const EjecutarPresupuesto = () => {
   const [btnAgregarItem, setBtnAgregarItem] = useState(true);
   const [btnConfirmar, setBtnConfirmar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isOpenf, setIsOpenf] = useState(false);
   const [mostrar, setMostrar] = useState(true);
-  const [mostrarF, setMostrarF] = useState(true);
   const [mostrarAdd, setMostrarAdd] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showConfirmationAceptado, setShowConfirmationAceptado] = useState(false);
