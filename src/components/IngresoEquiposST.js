@@ -83,6 +83,7 @@ const IngresoEquiposST = () => {
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
+    const [horaMaquina, setHoraMaquina] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
     const [cont1, setCont1] = useState('#FF0000');
@@ -525,6 +526,7 @@ const IngresoEquiposST = () => {
                     serie: '',
                     servicio: '',
                     observaciones: '',
+                    horamaquina: '',
                     userAdd: user.email,
                     userMod: user.email,
                     fechaAdd: fechaAdd,
@@ -617,6 +619,9 @@ const IngresoEquiposST = () => {
             })
             return;
         } else {
+            if (horaMaquina === ''){
+                setHoraMaquina(0)
+            }
             setCont2('#D1D1D1');
             setCont3('#FF0000');
             setShowConfirmationDet(true);
@@ -649,6 +654,7 @@ const IngresoEquiposST = () => {
                     serie: serie,
                     servicio: servicio,
                     observaciones: '',
+                    horamaquina: horaMaquina,
                     fechaMod: fechaMod
                 })
                 consultarprot(nomFamilia);
@@ -1067,17 +1073,17 @@ const IngresoEquiposST = () => {
                                             onChange={e => { setSerie(e.target.value) }}
                                         />
                                     </ContentElemenSelect>
-                                    {/* <ContentElemenSelect>
+                                    <ContentElemenSelect>
                                         <Label>Horas Maquina</Label>
                                         <Input
                                             // disabled={confirmarDet}
                                             type='number'
                                             placeholder='Ingrese Horas Maquina'
                                             name='horas'
-                                            // value={serie}
-                                            // onChange={e => { setSerie(e.target.value) }}
+                                            value={horaMaquina}
+                                            onChange={e => { setHoraMaquina(e.target.value) }}
                                         />
-                                    </ContentElemenSelect> */}
+                                    </ContentElemenSelect>
                                     <ContentElemenSelect>
                                         <Label>Tipo de Servicio</Label>
                                         <Select
