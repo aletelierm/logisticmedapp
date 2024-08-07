@@ -36,6 +36,7 @@ const IngresoEquiposSTPDF = ({vuelta}) => {
     const [servicio, setServicio ] = useState('');
     const [observaciones, setObservaciones] = useState('');
     const [correo, setCorreo] = useState('');
+    const [hora, setHora] = useState(0);
     const [usuarioIngreso, setUsuarioIngreso] = useState([]);
     
     const targetRef = useRef();
@@ -63,7 +64,8 @@ const IngresoEquiposSTPDF = ({vuelta}) => {
             setModelo(ingreso.modelo);
             setSerie(ingreso.serie);
             setServicio(ingreso.servicio);
-            setObservaciones(ingreso.observaciones)                                      
+            setObservaciones(ingreso.observaciones)
+            setHora(ingreso.horamaquina)                                      
         } else {
             navigate('/serviciotecnico/ingreso')
         }
@@ -170,6 +172,7 @@ const IngresoEquiposSTPDF = ({vuelta}) => {
                                 <Table.HeaderCell>Modelo</Table.HeaderCell>
                                 <Table.HeaderCell>Serie</Table.HeaderCell>
                                 <Table.HeaderCell>Servicio</Table.HeaderCell>
+                                <Table.HeaderCell>Hora</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -180,6 +183,7 @@ const IngresoEquiposSTPDF = ({vuelta}) => {
                                         <Table.Cell>{modelo}</Table.Cell>
                                         <Table.Cell>{serie}</Table.Cell>
                                         <Table.Cell>{servicio}</Table.Cell>
+                                        <Table.Cell>{hora}</Table.Cell>
                                     </Table.Row>
                         </Table.Body>
                     </Table>

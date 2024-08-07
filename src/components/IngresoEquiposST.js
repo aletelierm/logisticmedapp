@@ -83,7 +83,7 @@ const IngresoEquiposST = () => {
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
-    const [horaMaquina, setHoraMaquina] = useState(0);
+    const [horaMaquina, setHoraMaquina] = useState('');
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
     const [cont1, setCont1] = useState('#FF0000');
