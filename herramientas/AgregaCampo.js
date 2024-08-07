@@ -25,10 +25,10 @@ collectionRef.get()
 
       // Actualiza el campo en cada documento
       docRef.update({
-        horaMaquina: admin.firestore.FieldValue.delete()        
+        horamaquina: 0       
       })
       .then(() => {
-        console.log(`Documento con ID ${id} eliminado con éxito.`);
+        console.log(`Documento con ID ${id} Actulizado con éxito.`);
       })
       .catch(error => {
         console.error(`Error al actualizar el documento con ID ${id}:`, error);
