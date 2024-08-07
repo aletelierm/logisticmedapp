@@ -6,7 +6,7 @@ import { ListarProveedor, Titulo, BotonGuardar, Contenedor } from '../elementos/
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Link } from 'react-router-dom';
+/* import { Link } from 'react-router-dom'; */
 import { Table, TableBody } from 'semantic-ui-react'
 import moment from 'moment';
 import Modal from './Modal';
@@ -14,6 +14,7 @@ import * as MdIcons from 'react-icons/md';
 // import { FaRegFilePdf } from "react-icons/fa";
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
 import EnviarCorreo from '../funciones/EnviarCorreo';
+import ReactDOMServer from 'react-dom/server';
 // import TablaInfo from './TablaInfo';
 
 const AsignadosTecnicos = () => {
@@ -28,7 +29,7 @@ const AsignadosTecnicos = () => {
     const [estadoModal, setEstadoModal] = useState(false);
     const [mostrarDet, setMostrarDet] = useState(false);
     const [testIngreso, setTestIngreso] = useState([]);
-    const [alertaOrdenIngreso, setAlertaOrdenIngreso] = useState([]);
+    const [alertaOrdenIngreso, setAlertaOrdenIngreso] = useState([]);  
     const [flag, setFlag] = useState(false);
 
     //Lectura de usuario para alertas de ST-Asignados
@@ -51,7 +52,8 @@ const AsignadosTecnicos = () => {
     const asignarOrdp = presu.sort((a, b) => a.folio - b.folio);
     const evaluacion = asignar.filter(e => e.servicio === 'EVALUACION Y DIAGNOSTICO');
     const asignarOrde = evaluacion.sort((a, b) => a.folio - b.folio);
-
+    
+     
     // // Detalle de Ingreso de equipo => Funcional
     // const consultarPresupuestoCab = async () => {
     //     const pre = query(collection(db, 'presupuestoscab'), where('emp_id', '==', users.emp_id), where('id_cab_inst', '==', id), where('confirmado', '==', true));
@@ -98,8 +100,10 @@ const AsignadosTecnicos = () => {
             setFlag(!flag);
             //Envia correo al administrador cuando usuario cierra una orden de ingreso
             try {
+                const msj = asignar.filter(fol => fol.folio === folio);
+                const mensaje = cuerpoCorreo(msj)
                 alertaOrdenIngreso.forEach((destino) => {
-                    EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', )
+                    EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada',mensaje)
                 })
             } catch (error) {
                 console.log('error', error)
@@ -127,7 +131,7 @@ const AsignadosTecnicos = () => {
         return ReactDOMServer.renderToString(
             <div style={{ backgroundColor: '#EEF2EF', textAlign: 'center', padding: '40px' }}>
                 <div style={{ backgroundColor: '#3A9A9D', fontSize: '20px' }}>
-                    <h2 style={{ color: '#ffffff' }}>`El Usuario ${users.nombre} ${users.apellido} ha cerrado la orden N.${data[0].folio}.`</h2>
+                    <h2 style={{ color: '#ffffff' }}>El Usuario {users.nombre} {users.apellido} ha cerrado la orden N° {data[0].folio}</h2>
                 </div>
                 <br />
                 <div style={{backgroundColor: '#EAF1FB'}}>
