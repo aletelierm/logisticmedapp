@@ -83,7 +83,7 @@ const IngresoEquiposST = () => {
     const [nomMarca, setNomMarca] = useState('');
     const [nomModelo, setNomModelo] = useState('');
     const [servicio, setServicio] = useState('');
-    const [horaMaquina, setHoraMaquina] = useState('');
+    const [horaMaquina, setHoraMaquina] = useState(0);
     const [obs, setObs] = useState('');
     const [flag, setFlag] = useState('');
     const [cont1, setCont1] = useState('#FF0000');
@@ -1081,7 +1081,7 @@ const IngresoEquiposST = () => {
                                             placeholder='Ingrese Horas Maquina'
                                             name='horas'
                                             value={horaMaquina}
-                                            onChange={e => { setHoraMaquina(e.target.value) }}
+                                            onChange={e => { setHoraMaquina(Number(e.target.value)) }}
                                         />
                                     </ContentElemenSelect>
                                     <ContentElemenSelect>
