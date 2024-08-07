@@ -6,12 +6,12 @@ import { ListarProveedor, Titulo, BotonGuardar, Contenedor } from '../elementos/
 import { Contenido, Input } from '../elementos/CrearEquipos';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { Table, TableBody } from 'semantic-ui-react'
 import moment from 'moment';
 import Modal from './Modal';
 import * as MdIcons from 'react-icons/md';
-import { FaRegFilePdf } from "react-icons/fa";
+// import { FaRegFilePdf } from "react-icons/fa";
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
 import EnviarCorreo from '../funciones/EnviarCorreo';
 // import TablaInfo from './TablaInfo';
@@ -165,14 +165,14 @@ const AsignadosTecnicos = () => {
                                             setEstadoModal(!estadoModal)
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
-                                    {/* <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
+                                    <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
                                         <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
-                                    </Table.Cell> */}
-                                    <Table.Cell style={{ textAlign: 'center' }} /* onClick={() => ejecutar()} */ title="Ejecutar Mantención">
+                                    </Table.Cell>
+                                    {/* <Table.Cell style={{ textAlign: 'center' }} onClick={() => ejecutar()} title="Ejecutar Mantención">
                                         <Link disabled to={`/ejecutarmantencionst/${item.id}`}>
                                             <MdIcons.MdPlayCircle style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} />
                                         </Link>
-                                    </Table.Cell>
+                                    </Table.Cell> */}
                                 </Table.Row>
                             )
                         })}
@@ -194,9 +194,9 @@ const AsignadosTecnicos = () => {
                             <Table.HeaderCell>N°Serie</Table.HeaderCell>
                             <Table.HeaderCell>Servicio</Table.HeaderCell>
                             <Table.HeaderCell>Ver</Table.HeaderCell>
-                            <Table.HeaderCell>Generar</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Generar</Table.HeaderCell> */}
                             <Table.HeaderCell>Ejecutar</Table.HeaderCell>
-                            <Table.HeaderCell>PDF</Table.HeaderCell>
+                            {/* <Table.HeaderCell>PDF</Table.HeaderCell> */}
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -219,17 +219,20 @@ const AsignadosTecnicos = () => {
                                             setEstadoModal(!estadoModal)
                                         }}
                                     ><MdIcons.MdFactCheck style={{ fontSize: '26px', color: '#328AC4', cursor: 'pointer' }} /></Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }} title='Generar Presupuesto'>
+                                    {/* <Table.Cell style={{ textAlign: 'center' }} title='Generar Presupuesto'>
                                         <Link disabled to={`/presupuesto/${item.id}/1`}>
                                             <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} />
                                         </Link>
+                                    </Table.Cell> */}
+                                    {/* <Table.Cell style={{ textAlign: 'center' }} title='Ejecutar Presupuesto'></Table.Cell> */}
+                                    <Table.Cell style={{ textAlign: 'center' }} title='Cerrar' >
+                                        <HiClipboardDocumentCheck style={{ fontSize: '26px', color: '#69080A', cursor: 'pointer', textAlign: 'center' }} onClick={() => cerrar(item.id, item.folio)} />
                                     </Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }} title='Ejecutar Presupuesto'></Table.Cell>
-                                    <Table.Cell style={{ textAlign: 'center' }} title='Descargar Presupuesto'>
+                                    {/* <Table.Cell style={{ textAlign: 'center' }} title='Descargar Presupuesto'>
                                         <Link disabled to={`/presupuesto/${item.id}/2`} >
                                             <FaRegFilePdf style={{ fontSize: '24px', color: 'red' }} title='Ver Orden de Ingreso' />
                                         </Link>
-                                    </Table.Cell>
+                                    </Table.Cell> */}
                                 </Table.Row>
                             )
                         })}

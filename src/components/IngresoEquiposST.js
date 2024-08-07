@@ -1067,6 +1067,17 @@ const IngresoEquiposST = () => {
                                             onChange={e => { setSerie(e.target.value) }}
                                         />
                                     </ContentElemenSelect>
+                                    {/* <ContentElemenSelect>
+                                        <Label>Horas Maquina</Label>
+                                        <Input
+                                            // disabled={confirmarDet}
+                                            type='number'
+                                            placeholder='Ingrese Horas Maquina'
+                                            name='horas'
+                                            // value={serie}
+                                            // onChange={e => { setSerie(e.target.value) }}
+                                        />
+                                    </ContentElemenSelect> */}
                                     <ContentElemenSelect>
                                         <Label>Tipo de Servicio</Label>
                                         <Select
