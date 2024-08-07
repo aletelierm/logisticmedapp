@@ -13,6 +13,7 @@ import Modal from './Modal';
 import * as MdIcons from 'react-icons/md';
 import { HiClipboardDocumentCheck } from "react-icons/hi2";
 import EnviarCorreo from '../funciones/EnviarCorreo';
+import ReactDOMServer from 'react-dom/server';
 
 const AsignadosTecnicos = () => {
     //fecha hoy
@@ -86,7 +87,7 @@ const AsignadosTecnicos = () => {
             //Envia correo al administrador cuando usuario cierra una orden de ingreso
             try {
                 alertaOrdenIngreso.forEach((destino) => {
-                    EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', `El Usuario ${users.nombre} ${users.apellido} ha cerrado la orden N.${folio}.`)
+                    EnviarCorreo(destino.correo, 'Orden de ingreso Cerrada', )
                 })
             } catch (error) {
                 console.log('error', error)
@@ -110,6 +111,81 @@ const AsignadosTecnicos = () => {
         getIngresostcab();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [flag, setFlag])
+
+    const cuerpoCorreo = (data) => {
+        return ReactDOMServer.renderToString(
+            <div style={{ backgroundColor: '#EEF2EF', textAlign: 'center', padding: '40px' }}>
+                <div style={{ backgroundColor: '#3A9A9D', fontSize: '20px' }}>
+                    <h2 style={{ color: '#ffffff' }}>`El Usuario ${users.nombre} ${users.apellido} ha cerrado la orden N.${data[0].folio}.`</h2>
+                </div>
+                <br />
+                <div style={{backgroundColor: '#EAF1FB'}}>
+                    {/* Informacion Cliente */}
+                    <div style={{ fontSize: '14px', textAlign: 'center' }}>
+                        <table style={{ borderCollapse: 'collapse', border: '4px solid #C8C8C8', letterSpacing: '1px', fontSize: '0.8rem', display: 'inline' }}>
+                            <caption style={{ padding: '10px', fontSize: '22px' }}>Informacion Cliente</caption>
+                            <thead>
+                                <tr>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Rut</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Nombre</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Fecha</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Telefono</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Direccion</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Correo</th>
+                                </tr>
+                            </thead>
+                            <tbody style={{ fontSize: '90%' }}>
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.rut}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.entidad}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{formatearFecha(item.date)}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.telefono}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.direccion}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.correo}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    {/* Informacion Equipo */}
+                    <div style={{ fontSize: '14px', textAlign: 'center' }}>
+                        <table style={{ borderCollapse: 'collapse', border: '4px solid #C8C8C8', letterSpacing: '1px', fontSize: '0.8rem', display: 'inline' }}>
+                            <caption style={{ padding: '10px', fontSize: '22px' }}>Informacion Equipo</caption>
+                            <thead>
+                                <tr>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Familia</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Tipo Equipamiento</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Marca</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Modelo</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Serie</th>
+                                    <th style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#EBEBEB' }}>Servicio</th>
+                                </tr>
+                            </thead>
+                            <tbody style={{ fontSize: '90%' }}>
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.familia}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.tipo}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.marca}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.modelo}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5' }}>{item.serie}</td>
+                                        <td style={{ border: '4px solid #BEBEBE', padding: '10px 20px', backgroundColor: '#F5F5F5', color: 'red' }}>{item.servicio}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    {/* Observaciones */}
+                    <div style={{ fontSize: '14px', textAlign: 'center' }}>
+                        <p>Observaciones : {data[0].observaciones}</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div>
